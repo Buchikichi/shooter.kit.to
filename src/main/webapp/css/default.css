@@ -1,0 +1,11 @@
+#view {
+	background-color: #f0f8FF;
+}
+div[data-role=header] {
+	background-image: url('../img/titlebar.png');
+	background-position: -20px 0;
+}
+.message {
+	color: #880000;
+	font-weight: bold;
+}

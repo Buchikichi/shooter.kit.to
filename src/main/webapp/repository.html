@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Repository</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<link rel="stylesheet" href="css/default.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="js/repository-min.js"></script>
+</head>
+
+<body>
+<div data-role="page">
+  <div data-role="header" data-theme="b" data-position="fixed">
+    <h1>Repository</h1>
+    <a href="#stagePanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-notext ui-icon-plus"></a>
+  </div>
+  <div id="view" data-role="content">
+    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+      <input name="filter" id="radio-choice-h-2a" value="on" checked="checked" type="radio">
+      <label for="radio-choice-h-2a">Date</label>
+      <input name="filter" id="radio-choice-h-2b" value="off" type="radio">
+      <label for="radio-choice-h-2b">Name</label>
+      <input name="filter" id="radio-choice-h-2d" value="other" type="radio">
+      <label for="radio-choice-h-2d">Own</label>
+    </fieldset>
+    <ul id="listView" data-role="listview" data-filter="true"></ul>
+  </div>
+  <div data-role="footer" data-position="fixed">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#" data-icon="star" class="ui-btn-active">Stage</a></li>
+        <li><a href="#" data-icon="bullets">Actor</a></li>
+        <li><a href="#" data-icon="heart">Image</a></li>
+        <li><a href="#" data-icon="audio">Audio</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="stagePanel" data-role="panel" data-position="right" data-display="overlay">
+    <form id="stageForm" enctype="multipart/form-data">
+      <input type="hidden" name="id"/>
+      <input type="text" name="name" required="required"/>
+      <textarea name="description" required="required"></textarea>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <legend>Access:</legend>
+        <input type="radio" name="access" id="stageAccess0" value="0" checked="checked"/>
+        <label for="stageAccess0">Private</label>
+        <input type="radio" name="access" id="stageAccess1" value="1"/>
+        <label for="stageAccess1">Protected</label>
+        <input type="radio" name="access" id="stageAccess2" value="2"/>
+        <label for="stageAccess2">Public</label>
+      </fieldset>
+      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
+    </form>
+    <div class="message"></div>
+  </div>
+  <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
+    <form id="actorForm" enctype="multipart/form-data">
+      <input type="hidden" name="id"/>
+      <label for="actorName">Name:</label><input type="text" id="actorName" name="name" required="required"/>
+      <label for="actorDescription">Description:</label><textarea id="actorDescription" name="description" required="required"></textarea>
+      <a href="#imageChooser" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-heart ui-btn-icon-left ui-btn-a">Image...</a>
+      <input type="hidden" name="imageid"/>
+      <button class="ui-btn ui-btn-icon-left ui-icon-check">Save</button>
+      <button type="button" data-rel="close" class="ui-btn ui-btn-a">Cancel</button>
+    </form>
+  </div>
+  <div id="imagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
+    <form id="imageForm" enctype="multipart/form-data">
+      <input type="hidden" name="id"/>
+      <label for="imageName">Name:</label><input type="text" id="imageName" name="name" required="required"/>
+      <label for="imageDescription">Description:</label><textarea id="imageDescription" name="description" required="required"></textarea>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <legend>Access:</legend>
+        <label for="imageAccess0">Private</label>
+        <input type="radio" name="access" id="imageAccess0" value="0" checked="checked"/>
+        <label for="imageAccess1">Protected</label>
+        <input type="radio" name="access" id="imageAccess1" value="1"/>
+        <label for="imageAccess2">Public</label>
+        <input type="radio" name="access" id="imageAccess2" value="2"/>
+      </fieldset>
+      <label for="imageType">Type:</label>
+      <select id="imageType" name="imageType">
+        <option value="1">Act</option>
+        <option value="2">Back</option>
+        <option value="3">Fore</option>
+        <option value="0">Other</option>
+      </select>
+      <label for="imageFile">Image:</label><input type="file" id="imageFile" name="image"/>
+      <label for="imageThumb">Thumbnail:</label><input type="file" id="imageThumb" name="thumb"/>
+      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
+    </form>
+    <div class="message"></div>
+  </div>
+  <div id="audioPanel" data-role="panel" data-position="right" data-display="overlay">
+    <form id="audioForm" enctype="multipart/form-data">
+      <input type="text" name="name"/>
+      <textarea name="description"></textarea>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <legend>Access:</legend>
+        <input type="radio" name="access" id="audioAccess0" value="0" checked="checked"/>
+        <label for="audioAccess0">Private</label>
+        <input type="radio" name="access" id="audioAccess1" value="1"/>
+        <label for="audioAccess1">Protected</label>
+        <input type="radio" name="access" id="audioAccess2" value="2"/>
+        <label for="audioAccess2">Public</label>
+      </fieldset>
+      <label for="imageType">Type:</label>
+      <select id="imageType" name="type">
+        <option>Fx</option>
+        <option>Back</option>
+      </select>
+      <button class="ui-btn ui-btn-icon-left ui-icon-check">OK</button>
+      <button type="button" data-rel="close" class="ui-btn ui-btn-a">Cancel</button>
+    </form>
+  </div>
+  <div id="imageChooser" data-role="popup">
+    <ul data-role="listview" data-inset="true" data-filter="true">
+      <li data-role="list-divider">Choose an image</li>
+    </ul>
+  </div>
+  <div id="audioChooser" data-role="popup">
+    <ul data-role="listview" data-inset="true" data-filter="true">
+      <li data-role="list-divider">Choose an audio</li>
+      <li><a href="#" data-rel="close">View details<p>説明せつめい説明せつめい説明せつめい説明せつめい説明せつめい</p><p>ひと</p></a></li>
+      <li><a href="#">Edit</a></li>
+      <li><a href="#">Disable</a></li>
+      <li><a href="#">Delete</a></li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

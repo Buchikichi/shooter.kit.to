@@ -1,0 +1,6 @@
+{
+  "name": "Shooter",
+  "description": "shooter.kit.to.",
+  "image": "heroku/java",
+  "addons": [ "heroku-postgresql" ]
+}
