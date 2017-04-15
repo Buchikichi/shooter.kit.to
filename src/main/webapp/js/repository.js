@@ -62,6 +62,7 @@ console.log('AppMain::setupPanel');
 class RepositoryManager {
 	constructor() {
 		this.listView = document.getElementById('listView');
+		this.valueChangedevent = new Event('valueChanged');
 	}
 
 	get panelId() {
@@ -74,6 +75,7 @@ class RepositoryManager {
 			this.entity.save(this.form).then(data => {
 				if (data.ok) {
 					$(this.panel).panel('close');
+					this.list();
 				} else {
 					$(this.panel).find('.message').text('Saving failed.');
 				}
@@ -92,31 +94,58 @@ class RepositoryManager {
 			if (name) {
 				let val = '';
 
-				if (name in rec) {
+				if (name in rec && rec[name] != null) {
 					val = '' + rec[name];
 				}
 				if (element.is(':radio')) {
 					element.val([val]).checkboxradio('refresh')
+				} else if (element.is('select')) {
+					element.val(val).selectmenu('refresh', false);
 				} else {
 					element.val(val);
 				}
 //console.log(name + ':' + val);
+				if (element.is(':hidden')) {
+					input.dispatchEvent(this.valueChangedevent);
+				}
 			}
 		});
 	}
 
 	list() {
-		let keyword = '';
+		let param = {keyword: ''};
 
-		$(this.listView).empty();
-		this.entity.list(keyword).then(data => {
+		this.listView.textContent = 'Loadling...';
+		this.entity.list(param).then(data => {
+			this.listView.textContent = null;
 			data.forEach(rec => {
 				let li = this.createRow(rec);
+				let anchor = li.querySelector('a');
 
+				anchor.addEventListener('click', ()=> {
+					this.resetPanel(rec);
+				});
 				this.listView.append(li);
 			});
 			$(this.listView).listview('refresh');
 		});
+	}
+
+	createRow(rec) {
+		let img = document.createElement('img');
+		let name = document.createElement('span');
+		let description = document.createElement('p');
+		let anchor = document.createElement('a');
+		let li = document.createElement('li');
+
+		name.textContent = rec.name;
+		description.textContent = rec.description;
+		anchor.append(img);
+		anchor.append(name);
+		anchor.append(description);
+		anchor.setAttribute('href', '#' + this.panelId);
+		li.append(anchor);
+		return li;
 	}
 }
 
@@ -132,25 +161,24 @@ class StageManager extends RepositoryManager {
 		this.setupPanel();
 	}
 
+	setupPanel() {
+		let imageButtons = this.form.querySelector('.imageButtons');
+
+		super.setupPanel();
+		this.buttonMap = {};
+		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach(name => {
+			let button = new ImageButton(name);
+
+			this.buttonMap[name] = button;
+			imageButtons.append(button.fieldset);
+		});
+	}
+
 	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
+		let li = super.createRow(rec);
+		let img = li.querySelector('img');
 
 		img.setAttribute('src', 'img/icon.listview.png');
-		name.innerText = rec.name;
-		description.innerText = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.setAttribute('href', '#' + this.panelId);
-		li.append(anchor);
-		//
-		anchor.addEventListener('click', ()=> {
-			this.resetPanel(rec);
-		});
 		return li;
 	}
 }
@@ -175,8 +203,8 @@ class ActorManager extends RepositoryManager {
 		let li = document.createElement('li');
 
 		img.setAttribute('src', '/image/src?id=' + rec.imageid);
-		name.innerText = rec.name;
-		description.innerText = rec.description;
+		name.textContent = rec.name;
+		description.textContent = rec.description;
 		anchor.append(img);
 		anchor.append(name);
 		anchor.append(description);
@@ -210,8 +238,8 @@ class ImageManager extends RepositoryManager {
 		let li = document.createElement('li');
 
 		img.setAttribute('src', '/image/src?id=' + rec.id);
-		name.innerText = rec.name;
-		description.innerText = rec.description;
+		name.textContent = rec.name;
+		description.textContent = rec.description;
 		anchor.append(img);
 		anchor.append(name);
 		anchor.append(description);
@@ -222,6 +250,17 @@ class ImageManager extends RepositoryManager {
 			this.resetPanel(rec);
 		});
 		return li;
+	}
+
+	resetPanel(rec = {}) {
+		super.resetPanel(rec);
+		let img = document.getElementById('image.thumbnail');
+
+		if (rec.id) {
+			img.setAttribute('src', '/image/src?id=' + rec.id);
+		} else {
+			img.removeAttribute('src');
+		}
 	}
 }
 
@@ -242,8 +281,8 @@ class AudioManager extends RepositoryManager {
 		let li = document.createElement('li');
 
 		img.setAttribute('src', 'data:image/png;base64,' + rec.image);
-		name.innerText = rec.name;
-		description.innerText = rec.description;
+		name.textContent = rec.name;
+		description.textContent = rec.description;
 		anchor.append(img);
 		anchor.append(name);
 		anchor.append(description);
@@ -257,24 +296,102 @@ class AudioManager extends RepositoryManager {
 	}
 }
 
+/**
+ * イメージ選択ボタン.
+ */
+class ImageButton {
+	//	<fieldset>
+	//	  <legend>BG1:</legend>
+	//	  <a href="#imageChooser" data-target="bg1" data-filter="back" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-icon-heart ui-btn-icon-left ui-btn-a">Choose...</a>
+	//	  <input type="hidden" name="bg1"/>
+	//	  <img id="bg1.thumbnail"/>
+	//	</fieldset>
+	constructor(name) {
+		let legend = document.createElement('fieldset');
+		let anchor = document.createElement('a');
+		let hidden = document.createElement('input');
+		let img = document.createElement('img');
+		let fieldset = document.createElement('fieldset');
+		let filter = name.indexOf('b') != -1 ? 'back' : 'fore';
+
+		legend.textContent = name.toUpperCase() + ':';
+		anchor.setAttribute('href', '#imageChooser');
+		anchor.setAttribute('data-target', name);
+		anchor.setAttribute('data-filter', filter);
+		anchor.setAttribute('data-rel', 'popup');
+		anchor.className = 'ui-btn ui-corner-all ui-shadow ui-icon-heart ui-btn-icon-left ui-btn-a';
+		anchor.textContent = 'Choose...';
+		hidden.setAttribute('type', 'hidden');
+		hidden.setAttribute('name', name);
+		hidden.addEventListener('valueChanged', ()=> {
+//console.log(name + ' changed:' + hidden.value);
+			this.resetImage();
+		});
+		fieldset.append(legend);
+		fieldset.append(anchor);
+		fieldset.append(hidden);
+		fieldset.append(img);
+		//
+		this.fieldset = fieldset;
+		this.button = anchor;
+		this.hidden = hidden;
+		this.img = img;
+	}
+
+	resetImage() {
+		let id = this.hidden.value;
+
+		if (id) {
+			this.img.setAttribute('src', '/image/src?id=' + id);
+			$(this.button).hide();
+		} else {
+			this.img.removeAttribute('src');
+			$(this.button).show();
+		}
+	}
+}
+
+/**
+ * イメージ選択ダイアログ.
+ */
 class ImageChooser {
 	constructor() {
 		this.listView = document.querySelector('#imageChooser > ul');
 		this.entity = new ImageEntity();
-		$('[href="#imageChooser"]').click(()=> {
-			this.list();
+
+		let filterOptions = {'act':1, 'back':2, 'fore':3, 'other':0};
+		let anchorList = document.querySelectorAll('[href="#imageChooser"]');
+
+		anchorList.forEach(anchor => {
+			anchor.addEventListener('click', ()=> {
+				let target = anchor.getAttribute('data-target');
+				let filter = anchor.getAttribute('data-filter');
+				let button = this.manager.buttonMap[target];
+				let type = filterOptions[filter];
+
+				this.list(button, type);
+			});
 		});
 	}
 
-	list() {
-		let keyword = '';
+	get manager() {
+		return AppMain.Instance.manager;
+	}
 
-		$(this.listView).empty();
-		this.entity.list(keyword).then(data => {
+	list(button, type) {
+		let param = {type: type};
+
+		this.listView.textContent = 'Loadling...';
+		this.entity.list(param).then(data => {
+			this.listView.textContent = null;
 			data.forEach(rec => {
 				let li = this.createRow(rec);
+				let anchor = li.querySelector('a');
 
 				this.listView.append(li);
+				anchor.addEventListener('click', ()=> {
+					this.embedId(button, rec.id);
+				});
 			});
 			$(this.listView).listview('refresh');
 		});
@@ -288,26 +405,20 @@ class ImageChooser {
 		let li = document.createElement('li');
 		
 		img.setAttribute('src', '/image/src?id=' + rec.id);
-		name.innerText = rec.name;
-		description.innerText = rec.description;
+		name.textContent = rec.name;
+		description.textContent = rec.description;
 		anchor.append(img);
 		anchor.append(name);
 		anchor.append(description);
 		li.append(anchor);
-		//
-		$(anchor).click(()=>{
-			this.embedId(rec.id);
-		});
 		return li;
 	}
 
-	embedId(id) {
-		let app = AppMain.Instance;
-		let panelId = app.manager.panelId;
+	embedId(button, id) {
+		let hiden = button.hidden;
 
-		if ('actorPanel') {
-			$('#actorPanel [name="imageid"]').val(id);
-		}
+		hiden.value = id;
+		hiden.dispatchEvent(this.manager.valueChangedevent);
 		$('#imageChooser').popup('close');
 	}
 }

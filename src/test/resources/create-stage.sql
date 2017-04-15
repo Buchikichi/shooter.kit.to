@@ -11,12 +11,12 @@ CREATE TABLE stage(
 	map text,
 	theme varchar(36),
 	boss varchar(36),
-	b1 varchar(36),
-	b2 varchar(36),
-	b3 varchar(36),
-	f1 varchar(36),
-	f2 varchar(36),
-	f3 varchar(36),
+	bg1 varchar(36),
+	bg2 varchar(36),
+	bg3 varchar(36),
+	fg1 varchar(36),
+	fg2 varchar(36),
+	fg3 varchar(36),
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
@@ -29,11 +29,11 @@ COMMENT ON COLUMN stage.description IS '説明';
 COMMENT ON COLUMN stage.map IS 'map';
 COMMENT ON COLUMN stage.theme IS 'theme';
 COMMENT ON COLUMN stage.boss IS 'boss';
-COMMENT ON COLUMN stage.b1 IS 'b1';
-COMMENT ON COLUMN stage.b2 IS 'b2';
-COMMENT ON COLUMN stage.b3 IS 'b3';
-COMMENT ON COLUMN stage.f1 IS 'f1';
-COMMENT ON COLUMN stage.f2 IS 'f2';
-COMMENT ON COLUMN stage.f3 IS 'f3';
+COMMENT ON COLUMN stage.bg1 IS 'bg1';
+COMMENT ON COLUMN stage.bg2 IS 'bg2';
+COMMENT ON COLUMN stage.bg3 IS 'bg3';
+COMMENT ON COLUMN stage.fg1 IS 'fg1';
+COMMENT ON COLUMN stage.fg2 IS 'fg2';
+COMMENT ON COLUMN stage.fg3 IS 'fg3';
 COMMENT ON COLUMN stage.created IS '作成日';
 COMMENT ON COLUMN stage.updated IS '更新日';

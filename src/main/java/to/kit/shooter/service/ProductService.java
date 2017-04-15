@@ -1,5 +1,6 @@
 package to.kit.shooter.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,13 @@ public class ProductService {
 		return this.productRepository.findOne(id);
 	}
 
-	public Product save(Product product) {
-		String id = product.getId();
+	public Product save(Product entity) {
+		String id = entity.getId();
 
 		if (!this.productRepository.exists(id)) {
-			product.setId(null);
+			entity.setId(null);
 		}
-		return this.productRepository.saveAndFlush(product);
+		entity.setUpdated(new Date());
+		return this.productRepository.saveAndFlush(entity);
 	}
 }

@@ -1,7 +1,6 @@
 package to.kit.shooter.web;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +87,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 		Product entity = new Product();
 		BeanUtils.copyProperties(form, entity);
 		entity.setOwner(loginId);
-		entity.setUpdated(new Date());
 		Product saved = this.productService.save(entity);
 
 		result.setInfo(saved);

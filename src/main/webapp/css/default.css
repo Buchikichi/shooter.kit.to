@@ -9,3 +9,12 @@ div[data-role=header] {
 	color: #880000;
 	font-weight: bold;
 }
+
+/** Image. */
+#listView img {
+	background-color: black;
+}
+form img {
+	max-height: 5em;
+	background-color: black;
+}

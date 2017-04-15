@@ -5,9 +5,7 @@ class EntityBase {
 	/**
 	 * 一覧取得.
 	 */
-	list(keyword) {
-		let data = {keyword:keyword};
-
+	list(data = {}) {
 		return $.ajax({
 			type: 'post',
 			url: '/' + this.base + '/list',

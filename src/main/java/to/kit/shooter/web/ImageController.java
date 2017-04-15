@@ -48,11 +48,11 @@ public class ImageController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<ImageShort> list() {
-		return this.imageService.list();
+	public List<ImageShort> list(ImageForm form) {
+		return this.imageService.list(form.getName(), form.getType());
 	}
 
-	@RequestMapping(value = "/src",produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/src", produces = MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	public Resource src(ImageForm form) {
 		Image image = this.imageService.detail(form.getId());
@@ -64,7 +64,7 @@ public class ImageController {
 	private String getImageString(MultipartFile file) {
 		BufferedImage image = null;
 
-		if (file.isEmpty()) {
+		if (file == null || file.isEmpty()) {
 			return null;
 		}
 		String[] types = file.getContentType().split("/");

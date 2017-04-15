@@ -16,10 +16,10 @@ public final class StageForm {
 	private String map;
 	private String theme;
 	private String boss;
-	private String b1;
-	private String b2;
-	private String b3;
-	private String f1;
-	private String f2;
-	private String f3;
+	private String bg1;
+	private String bg2;
+	private String bg3;
+	private String fg1;
+	private String fg2;
+	private String fg3;
 }
