@@ -182,8 +182,9 @@ class StageManager extends RepositoryManager {
 		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
 			let filter = name.indexOf('b') != -1 ? 'back' : 'fore';
 			let button = new ImageSelectionButton(name, filter);
+			let field = button.hidden.getAttribute('name');
 
-			this.buttonMap[name] = button;
+			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
 	}
@@ -191,8 +192,20 @@ class StageManager extends RepositoryManager {
 	createRow(rec) {
 		let li = super.createRow(rec);
 		let img = li.querySelector('img');
+		let imageId = null;
 
-		img.setAttribute('src', 'img/icon.listview.png');
+		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach(field => {
+			let id = rec[field];
+
+			if (imageId == null && id != null && 0 < id.length) {
+				imageId = id;
+			}
+		});
+		if (imageId == null) {
+			img.setAttribute('src', '/img/icon.listview.png');
+		} else {
+			img.setAttribute('src', '/image/src?id=' + imageId);
+		}
 		return li;
 	}
 }
@@ -216,8 +229,9 @@ class ActorManager extends RepositoryManager {
 		this.buttonMap = {};
 		['ImageId'].forEach(name => {
 			let button = new ImageSelectionButton(name, 'act');
+			let field = button.hidden.getAttribute('name');
 
-			this.buttonMap[name] = button;
+			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
 	}

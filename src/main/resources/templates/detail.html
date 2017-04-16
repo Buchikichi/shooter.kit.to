@@ -50,7 +50,15 @@
       </div>
     </form>
     <ul data-role="listview"><li data-role="list-divider">Stage</li></ul>
-    <ul id="productStageView" data-role="listview"></ul>
+    <ul id="productStageView" data-role="listview">
+      <li th:each="detail:${product.detailList}">
+        <a th:with="stage=${detail.stage}">
+          <img src="/img/icon.listview.png"/>
+          <span th:text="${stage.name}"></span>
+          <p th:text="${stage.description}"></p>
+        </a>
+      </li>
+    </ul>
     <div class="ui-field-contain">
       <span>Created:</span>
       <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>

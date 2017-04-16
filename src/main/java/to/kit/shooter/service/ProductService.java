@@ -19,7 +19,12 @@ public class ProductService {
 
 	public List<Product> list() {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		return this.productRepository.findAll(sort);
+		List<Product> list = this.productRepository.findAll(sort);
+
+		for (Product entity : list) {
+			entity.getDetailList().clear();
+		}
+		return list;
 	}
 
 	public Product detail(String id) {

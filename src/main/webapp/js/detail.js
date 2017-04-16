@@ -34,8 +34,9 @@ class AppMain {
 		plusButton.addEventListener('click', ()=> {
 			let keyword = '';
 
+			this.stageView.textContent = 'Loading...';
 			this.stage.list(keyword).then(data => {
-				$(this.stageView).empty();
+				this.stageView.textContent = null;
 				data.forEach(rec => {
 					let li = this.createRow(rec);
 					let anchor = li.querySelector('a');
@@ -81,8 +82,8 @@ class AppMain {
 		let li = document.createElement('li');
 
 		img.setAttribute('src', '/img/icon.listview.png');
-		name.innerText = rec.name;
-		description.innerText = rec.description;
+		name.textContent = rec.name;
+		description.textContent = rec.description;
 		anchor.append(img);
 		anchor.append(name);
 		anchor.append(description);
