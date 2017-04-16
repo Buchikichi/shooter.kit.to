@@ -56,45 +56,21 @@ class AppMain {
 		let listView = document.getElementById('listView');
 
 		list.forEach(rec => {
-			let li = this.createRow(rec);
+			rec['href'] = '#detailPopup';
+			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
 
 			//console.log('name:' + rec.name);
-			listView.append(li);
+			listView.append(listviewRow.li);
+			listviewRow.anchor.addEventListener('click', e => {
+				e.preventDefault();
+				this.clearDetailInfo();
+				this.product.select(rec.id).then(data => {
+					this.fillDetailInfo(data);
+				});
+				this.selectedId = rec.id;
+			});
 		});
 		$(listView).listview('refresh');
-	}
-
-	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let count = document.createElement('span');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
-
-		img.setAttribute('src', 'img/icon.listview.png');
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		count.classList.add('ui-li-count');
-		count.textContent = rec.count;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.append(count);
-//		anchor.setAttribute('href', 'product/detail?id=' + rec.id);
-		anchor.setAttribute('href', '#detailPopup');
-		anchor.setAttribute('data-rel', 'popup');
-		li.append(anchor);
-		//
-		anchor.addEventListener('click', e => {
-			e.preventDefault();
-			this.clearDetailInfo();
-			this.product.select(rec.id).then(data => {
-				this.fillDetailInfo(data);
-			});
-			this.selectedId = rec.id;
-		});
-		return li;
 	}
 
 	clearDetailInfo() {

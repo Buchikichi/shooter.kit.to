@@ -144,21 +144,11 @@ class RepositoryManager {
 		});
 	}
 
-	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
+	createRow(rec, imgsrc = null) {
+		rec['href'] = '#' + this.panelId;
+		let listviewRow = new ListviewRow(rec, imgsrc);
 
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.setAttribute('href', '#' + this.panelId);
-		li.append(anchor);
-		return li;
+		return listviewRow.li;
 	}
 }
 
@@ -180,7 +170,7 @@ class StageManager extends RepositoryManager {
 		super.setupPanel();
 		this.buttonMap = {};
 		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
-			let filter = name.indexOf('b') != -1 ? 'back' : 'fore';
+			let filter = name.indexOf('B') != -1 ? 'back' : 'fore';
 			let button = new ImageSelectionButton(name, filter);
 			let field = button.hidden.getAttribute('name');
 
@@ -189,9 +179,7 @@ class StageManager extends RepositoryManager {
 		});
 	}
 
-	createRow(rec) {
-		let li = super.createRow(rec);
-		let img = li.querySelector('img');
+	getImgsrc(rec) {
 		let imageId = null;
 
 		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach(field => {
@@ -202,11 +190,13 @@ class StageManager extends RepositoryManager {
 			}
 		});
 		if (imageId == null) {
-			img.setAttribute('src', '/img/icon.listview.png');
-		} else {
-			img.setAttribute('src', '/image/src?id=' + imageId);
+			return '/img/icon.listview.png';
 		}
-		return li;
+		return '/image/src?id=' + imageId;
+	}
+
+	createRow(rec) {
+		return super.createRow(rec, this.getImgsrc(rec));
 	}
 }
 
@@ -237,11 +227,7 @@ class ActorManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		let li = super.createRow(rec);
-		let img = li.querySelector('img');
-
-		img.setAttribute('src', '/image/src?id=' + rec.imageid);
-		return li;
+		return super.createRow(rec, '/image/src?id=' + rec.imageid);
 	}
 }
 
@@ -258,25 +244,7 @@ class ImageManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
-
-		img.setAttribute('src', '/image/src?id=' + rec.id);
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.setAttribute('href', '#' + this.panelId);
-		li.append(anchor);
-		//
-		$(anchor).click(()=>{
-			this.resetPanel(rec);
-		});
-		return li;
+		return super.createRow(rec, '/image/src?id=' + rec.id);
 	}
 
 	resetPanel(rec = {}) {
@@ -357,33 +325,15 @@ class ImageChooser {
 		this.entity.list(param).then(data => {
 			this.listView.textContent = null;
 			data.forEach(rec => {
-				let li = this.createRow(rec);
-				let anchor = li.querySelector('a');
+				let listviewRow = new ListviewRow(rec, '/image/src?id=' + rec.id);
 
-				this.listView.append(li);
-				anchor.addEventListener('click', ()=> {
+				this.listView.append(listviewRow.li);
+				listviewRow.anchor.addEventListener('click', ()=> {
 					this.embedId(button, rec.id);
 				});
 			});
 			$(this.listView).listview('refresh');
 		});
-	}
-
-	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
-		
-		img.setAttribute('src', '/image/src?id=' + rec.id);
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		li.append(anchor);
-		return li;
 	}
 
 	embedId(button, id) {
