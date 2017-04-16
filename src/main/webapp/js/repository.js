@@ -17,7 +17,7 @@ class AppMain {
 	}
 
 	setupPanel() {
-console.log('AppMain::setupPanel');
+//console.log('AppMain::setupPanel');
 		let plusButton = document.querySelector('[data-role="header"] a');
 		let stageButton = document.querySelector('[data-icon="star"]');
 		let actorButton = document.querySelector('[data-icon="bullets"]');
@@ -70,6 +70,11 @@ class RepositoryManager {
 	}
 
 	setupPanel() {
+		let access = this.form.querySelector('.access');
+
+		if (access) {
+			new AccessibleRange(access, this.panelId);
+		}
 		this.form.addEventListener('submit', event => {
 			event.preventDefault();
 			this.entity.save(this.form).then(data => {
@@ -110,6 +115,14 @@ class RepositoryManager {
 				}
 			}
 		});
+		let collapsible = $(this.panel).find('[data-role="collapsible"]');
+		let len = Object.keys(rec).length;
+
+		if (0 < len) {
+			collapsible.collapsible('collapse')
+		} else {
+			collapsible.collapsible('expand')
+		}
 	}
 
 	list() {
@@ -166,8 +179,9 @@ class StageManager extends RepositoryManager {
 
 		super.setupPanel();
 		this.buttonMap = {};
-		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach(name => {
-			let button = new ImageButton(name);
+		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
+			let filter = name.indexOf('b') != -1 ? 'back' : 'fore';
+			let button = new ImageSelectionButton(name, filter);
 
 			this.buttonMap[name] = button;
 			imageButtons.append(button.fieldset);
@@ -195,25 +209,24 @@ class ActorManager extends RepositoryManager {
 		this.setupPanel();
 	}
 
+	setupPanel() {
+		let imageButtons = this.form.querySelector('.imageButtons');
+
+		super.setupPanel();
+		this.buttonMap = {};
+		['ImageId'].forEach(name => {
+			let button = new ImageSelectionButton(name, 'act');
+
+			this.buttonMap[name] = button;
+			imageButtons.append(button.fieldset);
+		});
+	}
+
 	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
+		let li = super.createRow(rec);
+		let img = li.querySelector('img');
 
 		img.setAttribute('src', '/image/src?id=' + rec.imageid);
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.setAttribute('href', '#' + this.panelId);
-		li.append(anchor);
-		//
-		$(anchor).click(()=>{
-			this.resetPanel(rec);
-		});
 		return li;
 	}
 }
@@ -293,61 +306,6 @@ class AudioManager extends RepositoryManager {
 			this.resetPanel(rec);
 		});
 		return li;
-	}
-}
-
-/**
- * イメージ選択ボタン.
- */
-class ImageButton {
-	//	<fieldset>
-	//	  <legend>BG1:</legend>
-	//	  <a href="#imageChooser" data-target="bg1" data-filter="back" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-icon-heart ui-btn-icon-left ui-btn-a">Choose...</a>
-	//	  <input type="hidden" name="bg1"/>
-	//	  <img id="bg1.thumbnail"/>
-	//	</fieldset>
-	constructor(name) {
-		let legend = document.createElement('fieldset');
-		let anchor = document.createElement('a');
-		let hidden = document.createElement('input');
-		let img = document.createElement('img');
-		let fieldset = document.createElement('fieldset');
-		let filter = name.indexOf('b') != -1 ? 'back' : 'fore';
-
-		legend.textContent = name.toUpperCase() + ':';
-		anchor.setAttribute('href', '#imageChooser');
-		anchor.setAttribute('data-target', name);
-		anchor.setAttribute('data-filter', filter);
-		anchor.setAttribute('data-rel', 'popup');
-		anchor.className = 'ui-btn ui-corner-all ui-shadow ui-icon-heart ui-btn-icon-left ui-btn-a';
-		anchor.textContent = 'Choose...';
-		hidden.setAttribute('type', 'hidden');
-		hidden.setAttribute('name', name);
-		hidden.addEventListener('valueChanged', ()=> {
-//console.log(name + ' changed:' + hidden.value);
-			this.resetImage();
-		});
-		fieldset.append(legend);
-		fieldset.append(anchor);
-		fieldset.append(hidden);
-		fieldset.append(img);
-		//
-		this.fieldset = fieldset;
-		this.button = anchor;
-		this.hidden = hidden;
-		this.img = img;
-	}
-
-	resetImage() {
-		let id = this.hidden.value;
-
-		if (id) {
-			this.img.setAttribute('src', '/image/src?id=' + id);
-			$(this.button).hide();
-		} else {
-			this.img.removeAttribute('src');
-			$(this.button).show();
-		}
 	}
 }
 

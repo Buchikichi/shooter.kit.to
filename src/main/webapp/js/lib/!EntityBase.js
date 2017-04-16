@@ -1,5 +1,6 @@
 class EntityBase {
-	constructor() {
+	constructor(base) {
+		this.base = base;
 	}
 
 	/**
