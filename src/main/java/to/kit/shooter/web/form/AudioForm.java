@@ -1,5 +1,7 @@
 package to.kit.shooter.web.form;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 /**
@@ -13,5 +15,5 @@ public final class AudioForm {
 	private int access;
 	private int type;
 	private String name;
-	private String data;
+	private MultipartFile data;
 }

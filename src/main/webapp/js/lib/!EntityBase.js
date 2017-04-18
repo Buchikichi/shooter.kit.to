@@ -36,9 +36,7 @@ class EntityBase {
 //		});
 	}
 
-	save(form) {
-		let formData = new FormData(form);
-
+	save(formData) {
 		return $.ajax({
 			type: 'post',
 			url: '/' + this.base + '/save',

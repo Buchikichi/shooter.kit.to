@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 class AppMain {
 	constructor() {
 		this.selectedId = '';
-		this.product = new Product();
+		this.product = new ProductEntity();
 		this.product.list().then(data => {
 			this.setResult(data);
 		});

@@ -4,3 +4,6 @@ spring:
     username: inyfdckdjiqsjy
     password: ${DB_PASS}
     driverClassName: org.postgresql.Driver
+multipart:
+  maxFileSize: 4MB
+  maxRequestSize: 4MB

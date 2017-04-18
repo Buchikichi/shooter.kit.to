@@ -11,7 +11,7 @@ class AppMain {
 		this.productStageView = document.getElementById('productStageView');
 		this.stagePanel = document.getElementById('stagePanel');
 		this.stageView = document.getElementById('stageView');
-		this.product = new Product();
+		this.product = new ProductEntity();
 		this.customer = new Customer();
 		this.stage = new StageEntity();
 		this.setupButton();
@@ -104,8 +104,9 @@ class AppMain {
 
 	saveProduct() {
 		let form = document.getElementById('productForm');
+		let formData = new FormData(form);
 
-		this.product.save(form).then(data => {
+		this.product.save(formData).then(data => {
 console.log(data);
 		});
 //*/

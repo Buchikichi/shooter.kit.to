@@ -1,7 +1,7 @@
 /**
  * プロダクト.
  */
-class Product extends EntityBase {
+class ProductEntity extends EntityBase {
 	constructor() {
 		super('product');
 	}

@@ -76,8 +76,10 @@ class RepositoryManager {
 			new AccessibleRange(access, this.panelId);
 		}
 		this.form.addEventListener('submit', event => {
+			let formData = new FormData(this.form);
+
 			event.preventDefault();
-			this.entity.save(this.form).then(data => {
+			this.entity.save(formData).then(data => {
 				if (data.ok) {
 					$(this.panel).panel('close');
 					this.list();
@@ -106,6 +108,8 @@ class RepositoryManager {
 					element.val([val]).checkboxradio('refresh')
 				} else if (element.is('select')) {
 					element.val(val).selectmenu('refresh', false);
+				} else if (element.is('file')) {
+					element.val(null);
 				} else {
 					element.val(val);
 				}
@@ -182,7 +186,7 @@ class StageManager extends RepositoryManager {
 	getImgsrc(rec) {
 		let imageId = null;
 
-		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach(field => {
+		['fg1', 'fg2', 'fg3', 'bg1', 'bg2', 'bg3'].forEach(field => {
 			let id = rec[field];
 
 			if (imageId == null && id != null && 0 < id.length) {
@@ -259,6 +263,9 @@ class ImageManager extends RepositoryManager {
 	}
 }
 
+/**
+ * オーディオ.
+ */
 class AudioManager extends RepositoryManager {
 	constructor() {
 		super();
@@ -269,24 +276,11 @@ class AudioManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
+		let li = super.createRow(rec);
+		let anchor = li.querySelector('a');
+		let img = li.querySelector('img');
 
-		img.setAttribute('src', 'data:image/png;base64,' + rec.image);
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		anchor.setAttribute('href', '#' + this.panelId);
-		li.append(anchor);
-		//
-		$(anchor).click(()=>{
-			this.resetPanel(rec);
-		});
+		anchor.removeChild(img);
 		return li;
 	}
 }

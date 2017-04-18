@@ -93,16 +93,18 @@
   </div>
   <div id="audioPanel" data-role="panel" data-position="right" data-display="overlay">
     <form id="audioForm" enctype="multipart/form-data">
-      <input type="text" name="name"/>
-      <textarea name="description"></textarea>
+      <input type="hidden" name="id"/>
+      <label>Name:<input type="text" name="name" required="required"/></label>
       <fieldset class="access"></fieldset>
-      <label for="imageType">Type:</label>
-      <select id="imageType" name="type">
-        <option>Fx</option>
-        <option>Back</option>
-      </select>
-      <button class="ui-btn ui-btn-icon-left ui-icon-check">OK</button>
-      <button type="button" data-rel="close" class="ui-btn ui-btn-a">Cancel</button>
+      <label>Type:
+        <select id="imageType" name="type" required="required">
+          <option value="0" selected="selected">Fx</option>
+          <option value="1">BGM</option>
+        </select>
+      </label>
+      <label>Audio:<input type="file" name="data"/></label>
+      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
     </form>
   </div>
   <div id="imageChooser" data-role="popup">
