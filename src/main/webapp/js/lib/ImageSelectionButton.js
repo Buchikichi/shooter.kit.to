@@ -12,7 +12,7 @@ class ImageSelectionButton {
 		let legend = document.createElement('legend');
 		let anchor = document.createElement('a');
 		let hidden = document.createElement('input');
-		let img = document.createElement('img');
+		let img = document.createElement('input');
 		let fieldset = document.createElement('fieldset');
 		let attrName = name.toLowerCase();
 
@@ -27,6 +27,12 @@ class ImageSelectionButton {
 		hidden.setAttribute('name', attrName);
 		hidden.addEventListener('valueChanged', ()=> {
 //console.log(name + ' changed:' + hidden.value);
+			this.resetImage();
+		});
+		img.setAttribute('type', 'image');
+		img.addEventListener('click', e => {
+			e.preventDefault();
+			hidden.value = '';
 			this.resetImage();
 		});
 		fieldset.append(legend);
@@ -45,9 +51,11 @@ class ImageSelectionButton {
 
 		if (id) {
 			this.img.setAttribute('src', '/image/src?id=' + id);
+			$(this.img).show();
 			$(this.button).hide();
 		} else {
 			this.img.removeAttribute('src');
+			$(this.img).hide();
 			$(this.button).show();
 		}
 	}

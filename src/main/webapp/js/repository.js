@@ -28,21 +28,25 @@ class AppMain {
 			plusButton.setAttribute('href', '#stagePanel');
 			this.manager = this.stageManager;
 			this.manager.list();
+			$('#type-checkbox').hide();
 		});
 		actorButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#actorPanel');
 			this.manager = this.actorManager;
 			this.manager.list();
+			$('#type-checkbox').hide();
 		});
 		imageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#imagePanel');
 			this.manager = this.imageManager;
 			this.manager.list();
+			$('#type-checkbox').show();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
 			this.manager = this.audioManager;
 			this.manager.list();
+			$('#type-checkbox').hide();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
@@ -248,6 +252,8 @@ class ImageManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
+		let dic = {0:'Other', 1:'Act', 2:'Back', 3:'Fore'};
+		rec['count'] = dic[rec.type];
 		return super.createRow(rec, '/image/src?id=' + rec.id);
 	}
 
@@ -276,6 +282,7 @@ class AudioManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
+		rec['count'] = rec.type == 0 ? 'FX' : 'BGM';
 		let li = super.createRow(rec);
 		let anchor = li.querySelector('a');
 		let img = li.querySelector('img');

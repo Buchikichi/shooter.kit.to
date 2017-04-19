@@ -18,3 +18,7 @@ form img {
 	max-height: 5em;
 	background-color: black;
 }
+form [type=image] {
+	max-height: 5em;
+	background-color: black;
+}
