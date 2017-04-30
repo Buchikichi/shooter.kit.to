@@ -11,12 +11,12 @@ import javax.persistence.Id;
 import lombok.Data;
 
 /**
- * Audio.
+ * AudioView.
  * @author H.Sasai
  */
-@Entity(name = "audio")
+@Entity
 @Data
-public class AudioShort {
+public class AudioView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
@@ -24,6 +24,8 @@ public class AudioShort {
 	private int access;
 	private int type;
 	private String name;
+	private int webmlen;
+	private int audiolen;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

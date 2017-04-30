@@ -10,23 +10,27 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Audio;
-import to.kit.shooter.entity.AudioShort;
+import to.kit.shooter.entity.AudioView;
 import to.kit.shooter.repository.AudioRepository;
-import to.kit.shooter.repository.AudioShortRepository;
+import to.kit.shooter.repository.AudioViewRepository;
 
 @Service
 public class AudioService {
 	@Autowired
 	private AudioRepository audioRepository;
 	@Autowired
-	private AudioShortRepository audioShortRepository;
+	private AudioViewRepository audioViewRepository;
 
-	public List<AudioShort> list() {
+	public List<AudioView> list() {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		return this.audioShortRepository.findAll(sort);
+		return this.audioViewRepository.findAll(sort);
 	}
 
-	public Audio detail(String id) {
+	public AudioView detail(String id) {
+		return this.audioViewRepository.findOne(id);
+	}
+
+	public Audio findOne(String id) {
 		return this.audioRepository.findOne(id);
 	}
 

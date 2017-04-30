@@ -2,11 +2,11 @@ package to.kit.shooter.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import to.kit.shooter.entity.AudioShort;
+import to.kit.shooter.entity.AudioView;
 
 /**
  * @author H.Sasai
  */
-public interface AudioShortRepository extends JpaRepository<AudioShort, String> {
+public interface AudioViewRepository extends JpaRepository<AudioView, String> {
 	// nop
 }

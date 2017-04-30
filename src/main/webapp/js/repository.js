@@ -294,7 +294,7 @@ class AudioManager extends RepositoryManager {
 		$.mobile.loading('show', {textVisible: true});
 		this.entity.select(rec.id).then(audio => {
 			this.resetPanel(audio);
-			if (audio.webm && 0 < audio.webm.length) {
+			if (audio.webmlen) {
 				$(webmFile).hide();
 				$(webmAnchor).show();
 				webmAnchor.setAttribute('href', '/audio/webm?id=' + rec.id);
@@ -302,7 +302,7 @@ class AudioManager extends RepositoryManager {
 				$(webmFile).show();
 				$(webmAnchor).hide();
 			}
-			if (audio.audio && 0 < audio.audio.length) {
+			if (audio.audiolen) {
 				$(audioFile).hide();
 				$(audioAnchor).show();
 				audioAnchor.setAttribute('href', '/audio/audio?id=' + rec.id);

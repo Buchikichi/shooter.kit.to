@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Audio;
-import to.kit.shooter.entity.AudioShort;
+import to.kit.shooter.entity.AudioView;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.AudioService;
 import to.kit.shooter.web.form.AudioForm;
@@ -42,7 +42,7 @@ public class AudioController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<AudioShort> list() {
+	public List<AudioView> list() {
 		return this.audioService.list();
 	}
 
@@ -53,7 +53,7 @@ public class AudioController {
 	 */
 	@RequestMapping("/select")
 	@ResponseBody
-	public Audio select(@RequestParam String id) {
+	public AudioView select(@RequestParam String id) {
 		return this.audioService.detail(id);
 	}
 
@@ -74,7 +74,7 @@ public class AudioController {
 	@RequestMapping(value = "/webm", produces = "audio/webm")
 	@ResponseBody
 	public Resource webm(@RequestParam String id) {
-		Audio audio = this.audioService.detail(id);
+		Audio audio = this.audioService.findOne(id);
 
 		if (audio == null) {
 			return null;
@@ -90,7 +90,7 @@ public class AudioController {
 	@RequestMapping(value = "/audio", produces = "audio/mpeg")
 	@ResponseBody
 	public Resource audio(@RequestParam String id) {
-		Audio audio = this.audioService.detail(id);
+		Audio audio = this.audioService.findOne(id);
 
 		if (audio == null) {
 			return null;
