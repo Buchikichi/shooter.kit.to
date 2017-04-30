@@ -1,5 +1,6 @@
 package to.kit.shooter.web;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Product;
+import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.LoginInfo;
+import to.kit.shooter.web.form.ProductDetailForm;
 import to.kit.shooter.web.form.ProductForm;
 import to.kit.shooter.web.form.ResultForm;
 
@@ -44,6 +48,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private LoginInfo loginInfo;
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private ProductDetailService productDetailService;
 
 	@RequestMapping("/list")
 	@ResponseBody
@@ -70,6 +76,21 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return "detail";
 	}
 
+	private boolean saveDetail(Product product, List<ProductDetailForm> detailList) {
+		if (product == null) {
+			return false;
+		}
+		List<ProductDetail> list = new ArrayList<>();
+
+		for (ProductDetailForm form : detailList) {
+			ProductDetail entity = new ProductDetail();
+
+			BeanUtils.copyProperties(form, entity);
+			list.add(entity);
+		}
+		return this.productDetailService.save(product, list);
+	}
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm save(ProductForm form) {
@@ -89,6 +110,9 @@ public class ProductController implements BasicControllerInterface<Product> {
 		entity.setOwner(loginId);
 		Product saved = this.productService.save(entity);
 
+		if (!saveDetail(saved, form.getDetail())) {
+			return result;
+		}
 		result.setInfo(saved);
 		result.setOk(true);
 		return result;

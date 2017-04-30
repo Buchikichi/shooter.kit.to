@@ -1,5 +1,7 @@
 package to.kit.shooter.web.form;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -14,4 +16,5 @@ public class ProductForm {
 	private int access;
 	private int width;
 	private int height;
+	private List<ProductDetailForm> detail;
 }

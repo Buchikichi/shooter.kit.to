@@ -22,3 +22,8 @@ form [type=image] {
 	max-height: 5em;
 	background-color: black;
 }
+
+/** Button. */
+#editStagePanel .ui-icon-delete {
+	background-color: #FFaaaa;
+}
