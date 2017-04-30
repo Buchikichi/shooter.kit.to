@@ -8,7 +8,8 @@ CREATE TABLE audio(
 	access integer  NOT NULL DEFAULT 0,
 	type integer NOT NULL,
 	name text NOT NULL,
-	data text NOT NULL,
+	webm text,
+	audio text,
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
@@ -18,6 +19,7 @@ COMMENT ON COLUMN audio.owner IS '所有者';
 COMMENT ON COLUMN audio.access IS 'アクセスレベル{0:private, 1:protected, 2:public}';
 COMMENT ON COLUMN audio.type IS 'タイプ';
 COMMENT ON COLUMN audio.name IS '名前';
-COMMENT ON COLUMN audio.data IS 'データ';
+COMMENT ON COLUMN audio.webm IS 'WebM';
+COMMENT ON COLUMN audio.audio IS 'MP3?';
 COMMENT ON COLUMN audio.created IS '作成日';
 COMMENT ON COLUMN audio.updated IS '更新日';

@@ -6,8 +6,11 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +46,59 @@ public class AudioController {
 		return this.audioService.list();
 	}
 
-	private String getAudioString(MultipartFile file) {
+	/**
+	 * 一件取得.
+	 * @param id オーディオID
+	 * @return オーディオ
+	 */
+	@RequestMapping("/select")
+	@ResponseBody
+	public Audio select(@RequestParam String id) {
+		return this.audioService.detail(id);
+	}
+
+	private Resource decodeAudio(String base64) {
+		if (base64 == null || base64.isEmpty()) {
+			return null;
+		}
+		byte[] bytes = Base64.decodeBase64(base64);
+
+		return new ByteArrayResource(bytes);
+	}
+
+	/**
+	 * WebM取得.
+	 * @param id オーディオID
+	 * @return WebMデータ
+	 */
+	@RequestMapping(value = "/webm", produces = "audio/webm")
+	@ResponseBody
+	public Resource webm(@RequestParam String id) {
+		Audio audio = this.audioService.detail(id);
+
+		if (audio == null) {
+			return null;
+		}
+		return decodeAudio(audio.getWebm());
+	}
+
+	/**
+	 * Audio取得.
+	 * @param id オーディオID
+	 * @return WebMデータ
+	 */
+	@RequestMapping(value = "/audio", produces = "audio/mpeg")
+	@ResponseBody
+	public Resource audio(@RequestParam String id) {
+		Audio audio = this.audioService.detail(id);
+
+		if (audio == null) {
+			return null;
+		}
+		return decodeAudio(audio.getAudio());
+	}
+
+	private String getAudioString(MultipartFile file, String accept) {
 		if (file == null || file.isEmpty()) {
 			return null;
 		}
@@ -51,7 +106,7 @@ public class AudioController {
 		boolean isOK = false;
 
 		for (String type : types) {
-			if ("audio".equals(type) || "webm".equals(type)) {
+			if (type.equals(accept)) {
 				isOK = true;
 				break;
 			}
@@ -87,7 +142,8 @@ public class AudioController {
 		}
 		Audio entity = new Audio();
 		BeanUtils.copyProperties(form, entity);
-		entity.setData(getAudioString(form.getData()));
+		entity.setWebm(getAudioString(form.getWebm(), "webm"));
+		entity.setAudio(getAudioString(form.getAudio(), "audio"));
 		entity.setOwner(loginId);
 		Audio saved = this.audioService.save(entity);
 

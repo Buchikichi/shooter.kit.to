@@ -83,7 +83,9 @@ class RepositoryManager {
 			let formData = new FormData(this.form);
 
 			event.preventDefault();
+			$.mobile.loading('show', {text: 'Save...', textVisible: true});
 			this.entity.save(formData).then(data => {
+				$.mobile.loading('hide');
 				if (data.ok) {
 					$(this.panel).panel('close');
 					this.list();
@@ -95,32 +97,34 @@ class RepositoryManager {
 		});
 	}
 
+	select(rec) {
+		return rec;
+	}
+
 	resetPanel(rec = {}) {
 		let id = '#' + this.panelId;
 
 		$(id + ' :input').each((ix, input) => {
 			let name = input.getAttribute('name');
+
+			if (!name) {
+				return;
+			}
 			let element = $(input);
+			let val = '';
 
-			if (name) {
-				let val = '';
-
-				if (name in rec && rec[name] != null) {
-					val = '' + rec[name];
-				}
-				if (element.is(':radio')) {
-					element.val([val]).checkboxradio('refresh')
-				} else if (element.is('select')) {
-					element.val(val).selectmenu('refresh', false);
-				} else if (element.is('file')) {
-					element.val(null);
-				} else {
-					element.val(val);
-				}
-//console.log(name + ':' + val);
-				if (element.is(':hidden')) {
-					input.dispatchEvent(this.valueChangedevent);
-				}
+//console.log(name + ':' + element.attr('type'));
+			if (element.is(':radio')) {
+				element.val([rec[name]]).checkboxradio('refresh')
+			} else if (element.is('select')) {
+				element.val(rec[name]).selectmenu('refresh', false);
+			} else if (element.is(':file')) {
+				element.val(null);
+			} else {
+				element.val(rec[name]);
+			}
+			if (element.is(':hidden')) {
+				input.dispatchEvent(this.valueChangedevent);
 			}
 		});
 		let collapsible = $(this.panel).find('[data-role="collapsible"]');
@@ -144,7 +148,7 @@ class RepositoryManager {
 				let anchor = li.querySelector('a');
 
 				anchor.addEventListener('click', ()=> {
-					this.resetPanel(rec);
+					this.resetPanel(this.select(rec));
 				});
 				this.listView.append(li);
 			});
@@ -279,6 +283,36 @@ class AudioManager extends RepositoryManager {
 		this.form = document.getElementById('audioForm');
 		this.entity = new AudioEntity();
 		this.setupPanel();
+	}
+
+	select(rec) {
+		let webmFile = this.form.querySelector('[name="webm"]');
+		let webmAnchor = document.getElementById('webmAnchor');
+		let audioFile = this.form.querySelector('[name="audio"]');
+		let audioAnchor = document.getElementById('audioAnchor');
+
+		$.mobile.loading('show', {textVisible: true});
+		this.entity.select(rec.id).then(audio => {
+			this.resetPanel(audio);
+			if (audio.webm && 0 < audio.webm.length) {
+				$(webmFile).hide();
+				$(webmAnchor).show();
+				webmAnchor.setAttribute('href', '/audio/webm?id=' + rec.id);
+			} else {
+				$(webmFile).show();
+				$(webmAnchor).hide();
+			}
+			if (audio.audio && 0 < audio.audio.length) {
+				$(audioFile).hide();
+				$(audioAnchor).show();
+				audioAnchor.setAttribute('href', '/audio/audio?id=' + rec.id);
+			} else {
+				$(audioFile).show();
+				$(audioAnchor).hide();
+			}
+			$.mobile.loading('hide');
+		});
+		return {};
 	}
 
 	createRow(rec) {

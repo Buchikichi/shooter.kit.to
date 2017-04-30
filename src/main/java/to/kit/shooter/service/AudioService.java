@@ -36,18 +36,21 @@ public class AudioService {
 
 		if (id != null && !id.isEmpty()) {
 			prev = this.audioRepository.findOne(id);
-			if (prev == null) {
-				entity.setId(null);
-			} else {
-				String data = entity.getData();
-
-				if (data == null || data.isEmpty()) {
-					entity.setData(prev.getData());
-				}
-			}
 		}
-//		entity.setCreated(prev.getCreated());
-		entity.setUpdated(new Date());
+		if (prev != null) {
+			String webm = entity.getWebm();
+			String audio = entity.getAudio();
+
+			if (webm == null || webm.isEmpty()) {
+				entity.setWebm(prev.getWebm());
+			}
+			if (audio == null || audio.isEmpty()) {
+				entity.setAudio(prev.getAudio());
+			}
+			entity.setId(prev.getId());
+			entity.setCreated(prev.getCreated());
+			entity.setUpdated(new Date());
+		}
 		return this.audioRepository.saveAndFlush(entity);
 	}
 }

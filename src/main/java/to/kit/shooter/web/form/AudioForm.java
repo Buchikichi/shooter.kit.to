@@ -15,5 +15,6 @@ public final class AudioForm {
 	private int access;
 	private int type;
 	private String name;
-	private MultipartFile data;
+	private MultipartFile webm;
+	private MultipartFile audio;
 }

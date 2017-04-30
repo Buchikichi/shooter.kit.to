@@ -24,7 +24,8 @@ public class Audio {
 	private int access;
 	private int type;
 	private String name;
-	private String data;
+	private String webm;
+	private String audio;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
