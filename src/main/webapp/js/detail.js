@@ -38,7 +38,8 @@ class AppMain {
 			this.stage.list(keyword).then(data => {
 				this.stageView.textContent = null;
 				data.forEach(rec => {
-					let li = this.createRow(rec);
+					let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
+					let li = listviewRow.li;
 					let anchor = li.querySelector('a');
 
 					this.stageView.append(li);
@@ -53,43 +54,27 @@ class AppMain {
 	}
 
 	addStage(rec) {
-		let id = rec.id;
+		let stageId = rec.id;
 		let elements = this.productStageView.querySelectorAll('li');
 		let exists = false;
 
 		elements.forEach(li => {
 			let dataId = li.getAttribute('data-id');
 
-			if (dataId == rec.id) {
+			if (dataId == stageId) {
 				exists = true;
 			}
 		});
 		if (exists) {
 			return;
 		}
-		let li = this.createRow(rec);
+		rec.href = '#editStagePanel';
+		let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
+		let li = listviewRow.li;
 
-		li.setAttribute('data-icon', 'false');
+		li.setAttribute('data-id', stageId);
 		this.productStageView.append(li);
 		$(this.productStageView).listview('refresh');
-	}
-
-	createRow(rec) {
-		let img = document.createElement('img');
-		let name = document.createElement('span');
-		let description = document.createElement('p');
-		let anchor = document.createElement('a');
-		let li = document.createElement('li');
-
-		img.setAttribute('src', '/img/icon.listview.png');
-		name.textContent = rec.name;
-		description.textContent = rec.description;
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
-		li.setAttribute('data-id', rec.id);
-		li.append(anchor);
-		return li;
 	}
 
 	checkCustomer() {
@@ -106,9 +91,19 @@ class AppMain {
 		let form = document.getElementById('productForm');
 		let formData = new FormData(form);
 
+		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		this.product.save(formData).then(data => {
+			let messagePopup = document.getElementById('messagePopup');
+			let content = messagePopup.querySelector('p');
+
 console.log(data);
+			$.mobile.loading('hide');
+			if (data.ok) {
+				content.textContent = 'Saved.';
+			} else {
+				content.textContent = 'Save failed.';
+			}
+			$(messagePopup).popup('open', {});
 		});
-//*/
 	}
 }
