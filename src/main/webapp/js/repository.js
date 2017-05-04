@@ -189,6 +189,15 @@ class StageManager extends RepositoryManager {
 			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
+		// edit map
+		let editButton = this.form.querySelector('.ui-icon-edit');
+
+		editButton.addEventListener('click', ()=> {
+			let hidden = this.form.querySelector('[name="id"]');
+			let id = hidden.value;
+
+			window.open('/stage/edit?id=' + id);
+		});
 	}
 
 	getImgsrc(rec) {

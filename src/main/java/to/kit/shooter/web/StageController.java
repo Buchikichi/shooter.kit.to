@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -39,22 +41,11 @@ public class StageController {
 		return this.stageService.list();
 	}
 
-//	@RequestMapping("/info")
-//	@ResponseBody
-//	public Stage info(StageForm form) {
-//		Stage stage = this.stageService.detail(form.getId());
-//
-//		return stage;
-//	}
-//
-//	@RequestMapping("/detail")
-//	public String detail(Model model, StageForm form) {
-//		Stage stage = this.stageService.detail(form.getId());
-//
-//		model.addAttribute("stage", stage);
-//		return "detail";
-//	}
-
+	/**
+	 * パネルでの保存.
+	 * @param form フォーム
+	 * @return 結果
+	 */
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm save(StageForm form) {
@@ -76,5 +67,13 @@ public class StageController {
 			result.setOk(true);
 		}
 		return result;
+	}
+
+	@RequestMapping("/edit")
+	public String play(Model model, @RequestParam String id) {
+		Stage stage = this.stageService.detail(id);
+
+		model.addAttribute("stage", stage);
+		return "edit";
 	}
 }
