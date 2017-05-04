@@ -4,6 +4,7 @@ class AudioEntity extends EntityBase {
 	}
 }
 AudioEntity.Type = {
-	FX: 0,
-	BGM: 1,
+	OTHER: 0,
+	FX: 1,
+	BGM: 2,
 };

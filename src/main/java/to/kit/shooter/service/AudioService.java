@@ -29,7 +29,7 @@ public class AudioService {
 			return cb.like(root.get("name"), "%" + keyword + "%");
 		});
 		Specification<AudioView> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
-			return cb.equal(root.get("type"), Integer.valueOf(type));
+			return type == 0 ? null : cb.equal(root.get("type"), Integer.valueOf(type));
 		});
 		return this.audioViewRepository.findAll(spec, sort);
 	}

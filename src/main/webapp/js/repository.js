@@ -30,24 +30,28 @@ class AppMain {
 			this.manager = this.stageManager;
 			this.manager.list();
 			$('#type-radio').hide();
+			$('#audioType').hide();
 		});
 		actorButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#actorPanel');
 			this.manager = this.actorManager;
 			this.manager.list();
 			$('#type-radio').hide();
+			$('#audioType').hide();
 		});
 		imageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#imagePanel');
 			this.manager = this.imageManager;
 			this.manager.list();
 			$('#type-radio').show();
+			$('#audioType').hide();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
 			this.manager = this.audioManager;
 			this.manager.list();
 			$('#type-radio').hide();
+			$('#audioType').show();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
@@ -188,17 +192,21 @@ class StageManager extends RepositoryManager {
 		// Image selection
 		let imageButtons = this.form.querySelector('.imageButtons');
 
-		this.buttonMap = {};
 		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
-			let filter = name.indexOf('B') != -1 ? 'BACK' : 'FORE';
+			let filter = name.indexOf('B') != -1 ? ImageEntity.Type.BACK : ImageEntity.Type.FORE;
 			let button = new ImageSelectionButton(name, filter);
-			let field = button.hidden.getAttribute('name');
 
-			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
+
 		// Audio selection
 		let audioButtons = this.form.querySelector('.audioButtons');
+
+		['theme', 'boss'].forEach(name => {
+			let button = new AudioSelectionButton(name, AudioEntity.Type.BGM);
+
+			audioButtons.append(button.fieldset);
+		});
 
 		// edit map
 		let editButton = this.form.querySelector('.ui-icon-edit');
@@ -248,12 +256,9 @@ class ActorManager extends RepositoryManager {
 		let imageButtons = this.form.querySelector('.imageButtons');
 
 		super.setupPanel();
-		this.buttonMap = {};
 		['ImageId'].forEach(name => {
-			let button = new ImageSelectionButton(name, 'ACT');
-			let field = button.hidden.getAttribute('name');
+			let button = new ImageSelectionButton(name, ImageEntity.Type.ACT);
 
-			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
 	}
@@ -312,6 +317,13 @@ class AudioManager extends RepositoryManager {
 		this.setupPanel();
 	}
 
+	setupPanel() {
+		super.setupPanel();
+		$('#audioType [name="audioType"]').click(()=> {
+			this.list();
+		});
+	}
+
 	select(rec) {
 		let webmFile = this.form.querySelector('[name="webm"]');
 		let webmAnchor = document.getElementById('webmAnchor');
@@ -342,8 +354,14 @@ class AudioManager extends RepositoryManager {
 		return {};
 	}
 
+	createParameter() {
+		let type = $('#audioType [name="audioType"]:checked').val();
+
+		return {keyword: '', type: type};
+	}
+
 	createRow(rec) {
-		rec['count'] = rec.type == 0 ? 'FX' : 'BGM';
+		rec['count'] = rec.type == 1 ? 'FX' : 'BGM';
 		let li = super.createRow(rec);
 		let anchor = li.querySelector('a');
 		let img = li.querySelector('img');
@@ -354,67 +372,6 @@ class AudioManager extends RepositoryManager {
 }
 
 /**
- * リソース選択(基底クラス).
- */
-class ResourceChooser {
-	constructor(id) {
-		this.id = '#' + id;
-		this.setupEvents();
-	}
-
-	get filterOptions() {
-		return {};
-	}
-
-	setupEvents() {
-		let anchorList = document.querySelectorAll('[href="' + this.id + '"]');
-
-		anchorList.forEach(anchor => {
-			let fieldset = $(anchor).parents('fieldset')[0];
-
-			anchor.addEventListener('click', ()=> {
-				let target = anchor.getAttribute('data-target');
-				let filter = anchor.getAttribute('data-filter');
-				let hidden = fieldset.querySelector('[name="' + target + '"]');
-				let type = this.filterOptions[filter];
-
-				this.list(hidden, type);
-			});
-		});
-	}
-
-	createRow(rec) {
-		return new ListviewRow(rec);
-	}
-
-	list(hidden, type) {
-		let param = {keyword: '', type: type};
-
-		this.listView = document.querySelector(this.id + ' > ul');
-		this.listView.textContent = 'Loadling...';
-		this.entity.list(param).then(data => {
-			this.listView.textContent = null;
-			data.forEach(rec => {
-				let listviewRow = this.createRow(rec);
-
-				this.listView.append(listviewRow.li);
-				listviewRow.anchor.addEventListener('click', ()=> {
-					this.embedId(hidden, rec.id);
-				});
-			});
-			$(this.listView).listview('refresh');
-		});
-	}
-
-	embedId(hidden, id) {
-		hidden.value = id;
-		hidden.dispatchEvent(ResourceChooser.ValueChangedEvent);
-		$(this.id).popup('close');
-	}
-}
-ResourceChooser.ValueChangedEvent = new Event('valueChanged');
-
-/**
  * イメージ選択ダイアログ.
  */
 class ImageChooser extends ResourceChooser {
@@ -423,8 +380,8 @@ class ImageChooser extends ResourceChooser {
 		this.entity = new ImageEntity();
 	}
 
-	get filterOptions() {
-		return ImageEntity.Type;
+	createRow(rec) {
+		return super.createRow(rec, '/image/src?id=' + rec.id);
 	}
 }
 
@@ -435,10 +392,6 @@ class AudioChooser extends ResourceChooser {
 	constructor() {
 		super('audioChooser');
 		this.entity = new AudioEntity();
-	}
-
-	get filterOptions() {
-		return AudioEntity.Type;
 	}
 
 	createRow(rec) {

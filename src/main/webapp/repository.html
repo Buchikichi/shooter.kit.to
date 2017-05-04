@@ -31,10 +31,16 @@
 -->
     <fieldset id="type-radio" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <label>Act<input type="radio" name="type" value="1"/></label>
+      <label>Act<input type="radio" name="type" value="1" checked="checked"/></label>
       <label>Back<input type="radio" name="type" value="2"/></label>
       <label>Fore<input type="radio" name="type" value="3"/></label>
       <label>Other<input type="radio" name="type" value="0"/></label>
+    </fieldset>
+    <fieldset id="audioType" data-role="controlgroup" data-type="horizontal" data-mini="true">
+      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+      <label>FX<input type="radio" name="audioType" value="1"/></label>
+      <label>BGM<input type="radio" name="audioType" value="2"/></label>
+      <label>All<input type="radio" name="audioType" value="0" checked="checked"/></label>
     </fieldset>
     <ul id="listView" data-role="listview" data-filter="true"></ul>
   </div>
@@ -60,13 +66,7 @@
       </div>
       <div data-role="collapsible" data-mini="true">
         <h4>Audio</h4>
-        <div class="audioButtons">
-<fieldset>
-  <legend>Theme:</legend>
-  <a href="#audioChooser" data-target="theme" data-filter="BGM" data-rel="popup" class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-icon-left ui-icon-audio">Choose...</a>
-  <input type="hidden" name="theme"/>
-</fieldset>
-        </div>
+        <div class="audioButtons"></div>
       </div>
       <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-edit">Edit map</button>
       <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
@@ -119,8 +119,8 @@
       <fieldset class="access"></fieldset>
       <label>Type:
         <select id="imageType" name="type" required="required">
-          <option value="0" selected="selected">Fx</option>
-          <option value="1">BGM</option>
+          <option value="1" selected="selected">Fx</option>
+          <option value="2">BGM</option>
         </select>
       </label>
       <label>WebM:<input type="file" name="webm"/><a id="webmAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>

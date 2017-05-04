@@ -90,19 +90,12 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 
 		rec.detailList.forEach((detail, ix) => {
 			let view = this.createViewList(detail.stage);
-			let stage = new Stage(detail.roll, testMap[ix], view);
+			let stage = new Stage(detail.roll, testMap[ix], view).setBgm(detail.stage.theme, detail.stage.boss);
 
-			// TODO 正しい値に修正する
-			if (ix == 0) {
-				stage.setBgm('bgm-edo-beth');
-			} else if (ix == 1) {
-				stage.setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero');
-			} else if (ix == 2) {
-				stage.setBgm('bgm-edo-beth');
-			} else if (ix == 3) {
-				stage.setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero');
-			}
+console.log(stage);
+			stageList.push(stage);
 		});
+		Stage.LIST = stageList;
 	}
 
 	setupActors(rec) {

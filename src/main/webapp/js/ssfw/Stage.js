@@ -36,10 +36,14 @@ class Stage {
 		let fg;
 
 		this.view.forEach(ground => {
+console.log('ground:');
+console.log(ground);
 			if (ground instanceof StageFg) {
 				fg = ground;
 			}
 		});
+console.log('fg:');
+console.log(fg);
 		this.fg = fg;
 		return fg;
 	}

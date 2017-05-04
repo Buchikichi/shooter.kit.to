@@ -104,7 +104,7 @@ Landform.prototype.retry = function() {
 	this.next = Landform.NEXT.NONE;
 	if (this.stage) {
 		this.stage.retry();
-		this.loadMapData('./img/' + this.stage.map);
+		this.loadMapData('/img/' + this.stage.map);
 	}
 };
 

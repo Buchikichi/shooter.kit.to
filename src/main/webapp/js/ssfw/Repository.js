@@ -19,7 +19,7 @@ Repository.prototype.reserve = function(list) {
 	var repository = this;
 
 	list.forEach(function(key) {
-		if (key == null) {
+		if (key == null || key.length == 0) {
 			return;
 		}
 		if (key in repository.reserved) {

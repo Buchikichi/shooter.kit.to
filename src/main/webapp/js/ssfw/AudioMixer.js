@@ -17,11 +17,18 @@ AudioMixer.prototype = Object.create(Repository.prototype);
 AudioMixer.INSTANCE = new AudioMixer();
 
 AudioMixer.prototype.makeName = function(key) {
-	var ua = navigator.userAgent.toLowerCase();
+	let ua = navigator.userAgent.toLowerCase();
 
 	if (ua.indexOf('edge') !== -1 || ua.indexOf('safari') !== -1) {
+// TODO いずれIDのみに修正する予定
+if (key.length == 36)
+		return '/audio/audio?id=' + key;
+else
 		return '/audio/' + key + '.mp3';
 	}
+if (key.length == 36)
+	return '/audio/webm?id=' + key;
+else
 	return '/audio/' + key + '.webm';
 };
 

@@ -1,13 +1,7 @@
 package to.kit.shooter.web;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
@@ -61,7 +55,7 @@ public class ImageController {
 		return new ByteArrayResource(bytes);
 	}
 
-	private String getImageString(MultipartFile file) {
+/*	private String getImageString(MultipartFile file) {
 		BufferedImage image = null;
 
 		if (file == null || file.isEmpty()) {
@@ -88,6 +82,28 @@ public class ImageController {
 			ImageIO.write(image, "png", buff);
 			buff.flush();
 			bytes = out.toByteArray();
+		} catch (@SuppressWarnings("unused") IOException e) {
+			// nop
+		}
+		if (bytes == null) {
+			return null;
+		}
+		return Base64.encodeBase64String(bytes);
+	}
+	//*/
+
+	private String getImageString(MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			return null;
+		}
+		String contentType = file.getContentType();
+
+		if (!"image/png".equals(contentType)) {
+			return null;
+		}
+		byte[] bytes = null;
+		try {
+			bytes = file.getBytes();
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// nop
 		}
