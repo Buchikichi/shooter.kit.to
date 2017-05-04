@@ -48,14 +48,7 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 
 	setupStage(rec) {
 		Stage.LIST = [
-		/*	new Stage(Stage.SCROLL.LOOP, 'g1.2.map.png', [
-					new StageBg('stage01bg0.png', .5), new StageBg('stage01bg1.png', .4), new StageFg('g1.2.png'),
-				]).setBgm('g1.2', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.OFF, 'g1.4.map.png', [
-					new StageBg('stage01bg0.png', .5), new StageBg('stage01bg1.png', .4), new StageFg('g1.4.png'),
-				]).setBgm('g1.4', 'bgm-edo-omega-zero'),
-		//*/
-			new Stage(Stage.SCROLL.ON, 'stage00map.png', [
+/*			new Stage(Stage.SCROLL.ON, 'stage00map.png', [
 					new StageBg('stage01bg0.png', .3), new StageBg('stage01bg1.png', .4, 0, .02), new StageFg('stage00bg.png'),
 				]).setBgm('bgm-edo-beth'),
 			new Stage(Stage.SCROLL.ON, 'stage01map.png', [
@@ -67,12 +60,12 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 			new Stage(Stage.SCROLL.ON, 'stage02map.png', [
 					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage02bg.png'),
 				]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
-			//*/
+//*/
 
 //			new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
 //				new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage-bg.png'),
 //			]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.ON, 'stage1.map.png', [
+/*			new Stage(Stage.SCROLL.ON, 'stage1.map.png', [
 					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage1.1.0.png', .6),
 				]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
 			new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
@@ -84,15 +77,22 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 			new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
 					new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .3),
 				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+//*/
 		];
-		let testMap = ['stage00map.png', 'stage01map.png', 'stage00map.png', 'stage02map.png'];
+		let testMap = {
+			A:['stage00map.png', 'stage01map.png', 'stage00map.png', 'stage02map.png'],
+			B:['stage1.map.png', 'stage2.map.png', 'stage3.map.png', 'stage4.map.png'],
+			C:['stage-map.png'],
+		};
+		let type = rec.name.substr(-1);
+		let map = testMap[type];
 		let stageList = [];
 
 		rec.detailList.forEach((detail, ix) => {
 			let view = this.createViewList(detail.stage);
-			let stage = new Stage(detail.roll, testMap[ix], view).setBgm(detail.stage.theme, detail.stage.boss);
+			let stage = new Stage(detail.roll, map[ix], view).setBgm(detail.stage.theme, detail.stage.boss);
 
-console.log(stage);
+//console.log(stage);
 			stageList.push(stage);
 		});
 		Stage.LIST = stageList;
