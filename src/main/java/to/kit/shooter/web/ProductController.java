@@ -63,7 +63,9 @@ public class ProductController implements BasicControllerInterface<Product> {
 	@Override
 	public Product select(@RequestParam String id) {
 		Product product = this.productService.detail(id);
+		List<ProductDetail> detailList = product.getDetailList();
 
+		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
 		return product;
 	}
 
@@ -71,6 +73,12 @@ public class ProductController implements BasicControllerInterface<Product> {
 	public String detail(Model model, ProductForm form) {
 		Product product = this.productService.detail(form.getId());
 
+		if (product == null) {
+			return "error";
+		}
+		List<ProductDetail> detailList = product.getDetailList();
+
+		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
 		model.addAttribute("product", product);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		return "detail";

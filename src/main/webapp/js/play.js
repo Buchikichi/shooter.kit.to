@@ -22,10 +22,31 @@ class ShooterMain {
 		});
 	}
 
-	setupStage(rec) {
-		rec.detailList.forEach(detail => {
-console.log(detail);
+	createViewList(stage) {
+		let list = [];
+let speedList = [.3, .4, .2, .5, .5, .5];
+let blinkList = [0, .2, 0, 0, 0, 0];
+
+		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach((key, ix) => {
+			let imageId = stage[key];
+
+			if (!imageId || imageId.length == 0) {
+				return;
+			}
+			let speed = speedList[ix]; // TODO 仮のため、正しく設定する
+			let dir = 0; // TODO 仮のため、正しく設定する
+			let blink = blinkList[ix]; // TODO 仮のため、正しく設定する
+			// (img, speed = .5, dir = 0, blink = 0)
+			if (key.startsWith('b')) {
+				list.push(new StageBg(imageId, speed, dir, blink));
+			} else {
+				list.push(new StageFg(imageId, speed, dir, blink));
+			}
 		});
+		return list;
+	}
+
+	setupStage(rec) {
 		Stage.LIST = [
 		/*	new Stage(Stage.SCROLL.LOOP, 'g1.2.map.png', [
 					new StageBg('stage01bg0.png', .5), new StageBg('stage01bg1.png', .4), new StageFg('g1.2.png'),
@@ -64,6 +85,24 @@ console.log(detail);
 					new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .3),
 				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
 		];
+		let testMap = ['stage00map.png', 'stage01map.png', 'stage00map.png', 'stage02map.png'];
+		let stageList = [];
+
+		rec.detailList.forEach((detail, ix) => {
+			let view = this.createViewList(detail.stage);
+			let stage = new Stage(detail.roll, testMap[ix], view);
+
+			// TODO 正しい値に修正する
+			if (ix == 0) {
+				stage.setBgm('bgm-edo-beth');
+			} else if (ix == 1) {
+				stage.setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero');
+			} else if (ix == 2) {
+				stage.setBgm('bgm-edo-beth');
+			} else if (ix == 3) {
+				stage.setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero');
+			}
+		});
 	}
 
 	setupActors(rec) {

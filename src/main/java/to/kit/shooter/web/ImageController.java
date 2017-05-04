@@ -49,7 +49,7 @@ public class ImageController {
 	@RequestMapping("/list")
 	@ResponseBody
 	public List<ImageShort> list(ImageForm form) {
-		return this.imageService.list(form.getName(), form.getType());
+		return this.imageService.list(form.getKeyword(), form.getType());
 	}
 
 	@RequestMapping(value = "/src", produces = MediaType.IMAGE_PNG_VALUE)

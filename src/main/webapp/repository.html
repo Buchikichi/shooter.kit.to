@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Repository</title>
+<link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <link rel="stylesheet" href="css/default.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -17,7 +18,7 @@
     <h1>Repository</h1>
     <a href="#stagePanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-notext ui-icon-plus"></a>
   </div>
-  <div id="view" data-role="content">
+  <div data-role="content">
 <!--
     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
       <input name="filter" id="radio-choice-h-2a" value="on" checked="checked" type="radio">
@@ -28,12 +29,12 @@
       <label for="radio-choice-h-2d">Own</label>
     </fieldset>
 -->
-    <fieldset id="type-checkbox" data-role="controlgroup" data-type="horizontal" data-mini="true">
+    <fieldset id="type-radio" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <label>Act<input type="checkbox" name="type" value="1"/></label>
-      <label>Back<input type="checkbox" name="type" value="2"/></label>
-      <label>Fore<input type="checkbox" name="type" value="3"/></label>
-      <label>Other<input type="checkbox" name="type" value="0"/></label>
+      <label>Act<input type="radio" name="type" value="1"/></label>
+      <label>Back<input type="radio" name="type" value="2"/></label>
+      <label>Fore<input type="radio" name="type" value="3"/></label>
+      <label>Other<input type="radio" name="type" value="0"/></label>
     </fieldset>
     <ul id="listView" data-role="listview" data-filter="true"></ul>
   </div>

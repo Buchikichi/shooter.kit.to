@@ -9,7 +9,7 @@ class ImageManager {
 		return 0 < this.max && this.max == this.loaded;
 	}
 
-	reserve(list) {
+	reserve(...list) {
 		list.forEach(src => {
 			if (src in this.dic) {
 				return;
@@ -22,6 +22,10 @@ class ImageManager {
 				this.dic[src] = img;
 				this.loaded++;
 			};
+// TODO いずれIDのみに修正する予定
+if (src.length == 36)
+			img.src = '/image/src?id=' + src;
+else
 			img.src = '/img/' + src;
 			this.max++;
 		});

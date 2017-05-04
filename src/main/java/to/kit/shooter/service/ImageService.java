@@ -23,21 +23,13 @@ public class ImageService {
 	@Autowired
 	private ImageShortRepository imageShortRepository;
 
-	public Specification<ImageShort> nameContains(String name) {
-		if (name == null) {
-			return null;
-		}
-		Specification<ImageShort> spec = (root, query, cb) -> {
-			return cb.like(root.get("name"), "%" + name + "%");
-		};
-		return spec;
-	}
-
-	public List<ImageShort> list(String name, int type) {
+	public List<ImageShort> list(String keyword, int type) {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		Specification<ImageShort> nameSpec = Specifications.where(nameContains(name));
-		Specification<ImageShort> spec = Specifications.where(nameContains(name)).and((root, query, cb) -> {
-			return type == 0 ? null : cb.equal(root.get("type"), Integer.valueOf(type));
+		Specification<ImageShort> nameSpec = Specifications.where((root, query, cb) -> {
+			return cb.like(root.get("name"), "%" + keyword + "%");
+		});
+		Specification<ImageShort> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+			return cb.equal(root.get("type"), Integer.valueOf(type));
 		});
 		return this.imageShortRepository.findAll(spec, sort);
 	}

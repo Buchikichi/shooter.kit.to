@@ -163,7 +163,7 @@ class TitanBone extends Enemy {
 }
 
 //-----------------------------------------------------------------------------
-ImageManager.Instance.reserve([
+ImageManager.Instance.reserve(
 	'boss/titan/head.png',
 	'boss/titan/lclavicle.png',
 	'boss/titan/lfemur.png',
@@ -193,5 +193,5 @@ ImageManager.Instance.reserve([
 	'boss/titan/rwrist.png',
 	'boss/titan/thorax.png',
 	'boss/titan/upperback.png',
-	'boss/titan/upperneck.png',
-]);
+	'boss/titan/upperneck.png'
+);

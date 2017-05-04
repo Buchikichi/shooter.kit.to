@@ -18,4 +18,6 @@ public final class ImageForm {
 	private String description;
 	private MultipartFile image;
 	private MultipartFile thumb;
+
+	private String keyword;
 }

@@ -151,4 +151,4 @@ class TentacleHead extends TentacleJoint {
 }
 TentacleHead.TRIGGER_CYCLE = 10;
 TentacleHead.DEG_STEP = Math.PI / 100;
-ImageManager.Instance.reserve(['enemy/tentacle.png', 'enemy/tentacleHead.png']);
+ImageManager.Instance.reserve('enemy/tentacle.png', 'enemy/tentacleHead.png');

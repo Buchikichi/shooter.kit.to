@@ -9,3 +9,4 @@ spring:
 multipart:
   maxFileSize: 4MB
   maxRequestSize: 4MB
+logging.level.org.hibernate: DEBUG

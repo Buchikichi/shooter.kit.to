@@ -166,26 +166,40 @@ Stage.CHECK_POINT = [0, 660, 1440];
  * Foreground and Background.
  */
 class StageView {
-	constructor(img, speed, dir, blink) {
-		this.ready = false;
-		this.pattern = null;
-		this.repeatX = 2;
-		this.img = new Image();
-		this.img.onload = ()=> {
-			this.width = this.img.width;
-			this.height = this.img.height;
-			this.w2 = this.img.width * this.repeatX;
-			this.h2 = this.img.height * 2;
-			this.ready = true;
-		};
-		this.img.src = '/img/' + img;
+	constructor(imageId, speed, dir, blink) {
+		this.imageId = imageId;
 		this.speed = speed;
 		this.dir = dir;
 		this.blink = blink;
-		this.reset();
+		this.ready = false;
+		this.pattern = null;
+		this.repeatX = 2;
+		this.repeatY = 2;
+//		this.img = new Image();
+//		this.img.onload = ()=> {
+//			this.width = this.img.width;
+//			this.height = this.img.height;
+//			this.w2 = this.img.width * this.repeatX;
+//			this.h2 = this.img.height * 2;
+//			this.ready = true;
+//		};
+//		this.img.src = '/img/' + img;
+		ImageManager.Instance.reserve(imageId);
+	}
+
+	get img() {
+		return ImageManager.Instance.dic[this.imageId];
 	}
 
 	reset(checkPoint) {
+		if (!this.width) {
+			let img = this.img;
+
+			this.width = img.width;
+			this.height = img.height;
+			this.w2 = img.width * this.repeatX;
+			this.h2 = img.height * this.repeatY;
+		}
 		this.x = checkPoint % this.width;
 		this.y = 0;
 		this.effectH = 0;
@@ -219,9 +233,9 @@ class StageView {
 		}
 	}
 
-	getPattern(ctx, img) {
-		if (!this.pattern && this.ready) {
-			this.pattern = ctx.createPattern(img, 'repeat');
+	getPattern(ctx) {
+		if (!this.pattern) {
+			this.pattern = ctx.createPattern(this.img, 'repeat');
 		}
 		return this.pattern;
 	}
@@ -231,7 +245,7 @@ class StageView {
 		ctx.globalAlpha = this.alpha;
 		ctx.translate(-this.x, -this.y);
 		ctx.beginPath();
-		ctx.fillStyle = this.getPattern(ctx, this.img);
+		ctx.fillStyle = this.getPattern(ctx);
 		ctx.rect(0, 0, this.w2, this.h2);
 		ctx.fill();
 		ctx.restore();
@@ -242,10 +256,9 @@ class StageView {
  * Foreground information.
  */
 class StageFg extends StageView {
-	constructor(img, speed = .5, dir = 0, blink = 0) {
-		super(img, speed, dir, blink);
+	constructor(imageId, speed = .5, dir = 0, blink = 0) {
+		super(imageId, speed, dir, blink);
 		this.repeatX = 1;
-		this.bmp = this.img;
 	}
 
 	createCanvas() {
@@ -260,15 +273,12 @@ class StageFg extends StageView {
 	}
 
 	reset(checkPoint) {
-		let fg = this;
-
 		super.reset(checkPoint);
 		if (checkPoint == 0) {
 			this.x = -Field.Instance.width;
 		}
 		if (this.ready) {
 			this.canvas = this.createCanvas();
-
 			this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
 		}
 	}
@@ -288,7 +298,7 @@ class StageFg extends StageView {
  * Background information.
  */
 class StageBg extends StageView {
-	constructor(img, speed = .5, dir = 0, blink = 0) {
-		super(img, speed, dir, blink);
+	constructor(imageId, speed = .5, dir = 0, blink = 0) {
+		super(imageId, speed, dir, blink);
 	}
 }

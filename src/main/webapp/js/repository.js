@@ -28,25 +28,25 @@ class AppMain {
 			plusButton.setAttribute('href', '#stagePanel');
 			this.manager = this.stageManager;
 			this.manager.list();
-			$('#type-checkbox').hide();
+			$('#type-radio').hide();
 		});
 		actorButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#actorPanel');
 			this.manager = this.actorManager;
 			this.manager.list();
-			$('#type-checkbox').hide();
+			$('#type-radio').hide();
 		});
 		imageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#imagePanel');
 			this.manager = this.imageManager;
 			this.manager.list();
-			$('#type-checkbox').show();
+			$('#type-radio').show();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
 			this.manager = this.audioManager;
 			this.manager.list();
-			$('#type-checkbox').hide();
+			$('#type-radio').hide();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
@@ -137,8 +137,14 @@ class RepositoryManager {
 		}
 	}
 
+	createParameter() {
+		let type = $('#type-radio [name="type"]:checked').val();
+
+		return {keyword: '', type: type};
+	}
+
 	list() {
-		let param = {keyword: ''};
+		let param = this.createParameter();
 
 		this.listView.textContent = 'Loadling...';
 		this.entity.list(param).then(data => {
@@ -264,6 +270,13 @@ class ImageManager extends RepositoryManager {
 		this.setupPanel();
 	}
 
+	setupPanel() {
+		super.setupPanel();
+		$('#type-radio [name="type"]').click(()=> {
+			this.list();
+		});
+	}
+
 	createRow(rec) {
 		let dic = {0:'Other', 1:'Act', 2:'Back', 3:'Fore'};
 		rec['count'] = dic[rec.type];
@@ -363,7 +376,7 @@ class ImageChooser {
 	}
 
 	list(button, type) {
-		let param = {type: type};
+		let param = {keyword: '', type: type};
 
 		this.listView.textContent = 'Loadling...';
 		this.entity.list(param).then(data => {

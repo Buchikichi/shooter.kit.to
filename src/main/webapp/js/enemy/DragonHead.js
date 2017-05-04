@@ -81,4 +81,4 @@ class DragonHead extends Enemy {
 }
 DragonHead.CNT_OF_BODY = 10;
 DragonHead.STP_OF_BODY = 32;
-ImageManager.Instance.reserve(['enemy/dragonHead.png', 'enemy/dragonBody.png']);
+ImageManager.Instance.reserve('enemy/dragonHead.png', 'enemy/dragonBody.png');
