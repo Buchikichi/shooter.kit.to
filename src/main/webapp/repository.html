@@ -58,6 +58,16 @@
         <h4>Images</h4>
         <div class="imageButtons"></div>
       </div>
+      <div data-role="collapsible" data-mini="true">
+        <h4>Audio</h4>
+        <div class="audioButtons">
+<fieldset>
+  <legend>Theme:</legend>
+  <a href="#audioChooser" data-target="theme" data-filter="BGM" data-rel="popup" class="ui-btn ui-mini ui-corner-all ui-shadow ui-btn-icon-left ui-icon-audio">Choose...</a>
+  <input type="hidden" name="theme"/>
+</fieldset>
+        </div>
+      </div>
       <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-edit">Edit map</button>
       <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
       <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Cancel</button>
@@ -127,10 +137,6 @@
   <div id="audioChooser" data-role="popup">
     <ul data-role="listview" data-inset="true" data-filter="true">
       <li data-role="list-divider">Choose an audio</li>
-      <li><a href="#" data-rel="close">View details<p>説明せつめい説明せつめい説明せつめい説明せつめい説明せつめい</p><p>ひと</p></a></li>
-      <li><a href="#">Edit</a></li>
-      <li><a href="#">Disable</a></li>
-      <li><a href="#">Delete</a></li>
     </ul>
   </div>
 </div>

@@ -3,3 +3,7 @@ class AudioEntity extends EntityBase {
 		super('audio');
 	}
 }
+AudioEntity.Type = {
+	FX: 0,
+	BGM: 1,
+};

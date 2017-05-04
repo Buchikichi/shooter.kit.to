@@ -11,6 +11,7 @@ class AppMain {
 		this.imageManager = new ImageManager();
 		this.audioManager = new AudioManager();
 		this.imageChooser = new ImageChooser();
+		this.audioChooser = new AudioChooser();
 		this.setupPanel();
 		this.checkCustomer();
 		AppMain.Instance = this;
@@ -183,18 +184,22 @@ class StageManager extends RepositoryManager {
 	}
 
 	setupPanel() {
+		super.setupPanel();
+		// Image selection
 		let imageButtons = this.form.querySelector('.imageButtons');
 
-		super.setupPanel();
 		this.buttonMap = {};
 		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
-			let filter = name.indexOf('B') != -1 ? 'back' : 'fore';
+			let filter = name.indexOf('B') != -1 ? 'BACK' : 'FORE';
 			let button = new ImageSelectionButton(name, filter);
 			let field = button.hidden.getAttribute('name');
 
 			this.buttonMap[field] = button;
 			imageButtons.append(button.fieldset);
 		});
+		// Audio selection
+		let audioButtons = this.form.querySelector('.audioButtons');
+
 		// edit map
 		let editButton = this.form.querySelector('.ui-icon-edit');
 
@@ -245,7 +250,7 @@ class ActorManager extends RepositoryManager {
 		super.setupPanel();
 		this.buttonMap = {};
 		['ImageId'].forEach(name => {
-			let button = new ImageSelectionButton(name, 'act');
+			let button = new ImageSelectionButton(name, 'ACT');
 			let field = button.hidden.getAttribute('name');
 
 			this.buttonMap[field] = button;
@@ -349,55 +354,99 @@ class AudioManager extends RepositoryManager {
 }
 
 /**
- * イメージ選択ダイアログ.
+ * リソース選択(基底クラス).
  */
-class ImageChooser {
-	constructor() {
-		this.listView = document.querySelector('#imageChooser > ul');
-		this.entity = new ImageEntity();
+class ResourceChooser {
+	constructor(id) {
+		this.id = '#' + id;
+		this.setupEvents();
+	}
 
-		let filterOptions = {'act':1, 'back':2, 'fore':3, 'other':0};
-		let anchorList = document.querySelectorAll('[href="#imageChooser"]');
+	get filterOptions() {
+		return {};
+	}
+
+	setupEvents() {
+		let anchorList = document.querySelectorAll('[href="' + this.id + '"]');
 
 		anchorList.forEach(anchor => {
+			let fieldset = $(anchor).parents('fieldset')[0];
+
 			anchor.addEventListener('click', ()=> {
 				let target = anchor.getAttribute('data-target');
 				let filter = anchor.getAttribute('data-filter');
-				let button = this.manager.buttonMap[target];
-				let type = filterOptions[filter];
+				let hidden = fieldset.querySelector('[name="' + target + '"]');
+				let type = this.filterOptions[filter];
 
-				this.list(button, type);
+				this.list(hidden, type);
 			});
 		});
 	}
 
-	get manager() {
-		return AppMain.Instance.manager;
+	createRow(rec) {
+		return new ListviewRow(rec);
 	}
 
-	list(button, type) {
+	list(hidden, type) {
 		let param = {keyword: '', type: type};
 
+		this.listView = document.querySelector(this.id + ' > ul');
 		this.listView.textContent = 'Loadling...';
 		this.entity.list(param).then(data => {
 			this.listView.textContent = null;
 			data.forEach(rec => {
-				let listviewRow = new ListviewRow(rec, '/image/src?id=' + rec.id);
+				let listviewRow = this.createRow(rec);
 
 				this.listView.append(listviewRow.li);
 				listviewRow.anchor.addEventListener('click', ()=> {
-					this.embedId(button, rec.id);
+					this.embedId(hidden, rec.id);
 				});
 			});
 			$(this.listView).listview('refresh');
 		});
 	}
 
-	embedId(button, id) {
-		let hiden = button.hidden;
+	embedId(hidden, id) {
+		hidden.value = id;
+		hidden.dispatchEvent(ResourceChooser.ValueChangedEvent);
+		$(this.id).popup('close');
+	}
+}
+ResourceChooser.ValueChangedEvent = new Event('valueChanged');
 
-		hiden.value = id;
-		hiden.dispatchEvent(this.manager.valueChangedevent);
-		$('#imageChooser').popup('close');
+/**
+ * イメージ選択ダイアログ.
+ */
+class ImageChooser extends ResourceChooser {
+	constructor() {
+		super('imageChooser');
+		this.entity = new ImageEntity();
+	}
+
+	get filterOptions() {
+		return ImageEntity.Type;
+	}
+}
+
+/**
+ * オーディオ選択ダイアログ.
+ */
+class AudioChooser extends ResourceChooser {
+	constructor() {
+		super('audioChooser');
+		this.entity = new AudioEntity();
+	}
+
+	get filterOptions() {
+		return AudioEntity.Type;
+	}
+
+	createRow(rec) {
+		let listviewRow = super.createRow(rec);
+		let anchor = listviewRow.anchor;
+		let img = listviewRow.img;
+
+		anchor.removeChild(img);
+		return listviewRow;
 	}
 }

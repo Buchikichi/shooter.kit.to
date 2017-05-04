@@ -42,8 +42,8 @@ public class AudioController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<AudioView> list() {
-		return this.audioService.list();
+	public List<AudioView> list(AudioForm form) {
+		return this.audioService.list(form.getKeyword(), form.getType());
 	}
 
 	/**

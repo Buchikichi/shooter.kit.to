@@ -8,8 +8,8 @@ CREATE OR REPLACE VIEW audio_view AS
     audio.access,
     audio.type,
     audio.name,
-    length(audio.webm) AS webmlen,
-    length(audio.audio) AS audiolen,
+    LENGTH(COALESCE(audio.webm, '')) AS webmlen,
+    LENGTH(COALESCE(audio.audio, '')) AS audiolen,
     audio.created,
     audio.updated
   FROM audio

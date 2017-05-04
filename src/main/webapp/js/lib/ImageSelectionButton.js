@@ -8,7 +8,7 @@ class ImageSelectionButton {
 	//	  <input type="hidden" name="bg1"/>
 	//	  <img id="bg1.thumbnail"/>
 	//	</fieldset>
-	constructor(name, filter = 'other') {
+	constructor(name, filter = 'OTHER') {
 		let legend = document.createElement('legend');
 		let anchor = document.createElement('a');
 		let hidden = document.createElement('input');
@@ -21,7 +21,7 @@ class ImageSelectionButton {
 		anchor.setAttribute('data-target', attrName);
 		anchor.setAttribute('data-filter', filter);
 		anchor.setAttribute('data-rel', 'popup');
-		anchor.className = 'ui-btn ui-corner-all ui-shadow ui-icon-heart ui-btn-icon-left ui-btn-a';
+		anchor.className = 'ui-btn ui-mini ui-corner-all ui-shadow ui-btn-icon-left ui-icon-heart';
 		anchor.textContent = 'Choose...';
 		hidden.setAttribute('type', 'hidden');
 		hidden.setAttribute('name', attrName);

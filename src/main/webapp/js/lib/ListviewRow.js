@@ -25,6 +25,7 @@ class ListviewRow {
 			anchor.append(count);
 		}
 		li.append(anchor);
+		this.img = img;
 		this.anchor = anchor;
 		this.li = li;
 	}

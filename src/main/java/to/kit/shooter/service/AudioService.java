@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Audio;
@@ -21,9 +23,15 @@ public class AudioService {
 	@Autowired
 	private AudioViewRepository audioViewRepository;
 
-	public List<AudioView> list() {
+	public List<AudioView> list(String keyword, int type) {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		return this.audioViewRepository.findAll(sort);
+		Specification<AudioView> nameSpec = Specifications.where((root, query, cb) -> {
+			return cb.like(root.get("name"), "%" + keyword + "%");
+		});
+		Specification<AudioView> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+			return cb.equal(root.get("type"), Integer.valueOf(type));
+		});
+		return this.audioViewRepository.findAll(spec, sort);
 	}
 
 	public AudioView detail(String id) {
