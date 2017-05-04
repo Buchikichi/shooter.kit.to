@@ -4,19 +4,29 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title th:text="${product.name}"></title>
+<link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
+<link rel="stylesheet" href="/css/default.css"/>
+<script type="text/javascript" src="/js/implementor-min.js"></script>
 <script type="text/javascript" src="/js/play.js"></script>
-<style type="text/css">
-* {
-	margin: 0;
-	padding: 0;
-}
-</style>
 </head>
 
 <body>
-<div><canvas id="canvas"></canvas></div>
-<input id="productId" type="hidden" th:value="${product.id}"/>
-<input id="width" type="hidden" th:value="${product.width}"/>
-<input id="height" type="hidden" th:value="${product.height}"/>
+  <div id="view">
+    <div id="gameOver">
+      <div>GAME OVER</div>
+      <div>Hit space key to start.</div>
+    </div>
+    <div id="gameInfo">
+      <div id="score">
+        <div><div>1P</div><div>0</div></div>
+        <div><div>HI</div><div>0</div></div>
+        <div></div>
+      </div>
+      <div id="remain"><div><div></div></div></div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="loading"></div>
+  </div>
+  <input id="productId" type="hidden" th:value="${product.id}"/>
 </body>
 </html>

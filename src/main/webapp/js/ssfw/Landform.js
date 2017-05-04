@@ -35,7 +35,7 @@ class Landform {
 			}
 		}
 		this.reverse = new Image();
-		this.reverse.src = './img/reverse.png';
+		this.reverse.src = '/img/reverse.png';
 		this.touch = false;
 	}
 }
@@ -85,7 +85,7 @@ Landform.prototype.loadStage = function(stage) {
 	let fg = stage.getFg();
 
 	this.stage = stage;
-	this.loadMapData('./img/' + stage.map);
+	this.loadMapData('/img/' + stage.map);
 	this.img.src = fg.img.src;
 	this.reset();
 };

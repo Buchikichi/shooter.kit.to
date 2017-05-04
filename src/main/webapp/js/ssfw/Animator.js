@@ -35,7 +35,7 @@ ImageManager.Instance.reserve([src]);
 			actor.height = this.height;
 			actor.recalculation();
 		};
-		this.img.src = 'img/' + src;
+		this.img.src = '/img/' + src;
 	}
 
 	next(dir) {

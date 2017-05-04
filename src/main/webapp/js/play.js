@@ -1,118 +1,159 @@
+/**
+ * Shooterメイン処理.
+ */
 document.addEventListener('DOMContentLoaded', ()=> {
-	let productId = document.getElementById('productId');
-
-	new Controller();
-	Field.load(productId.value, field => {
-		Field.Instance = field;
-	});
+	new ShooterMain();
 });
 
-class Controller {
+class ShooterMain {
 	constructor() {
-		new KeyPool();
-		this.activate();
+		this.loadProduct();
 	}
 
-	activate() {
-		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-		let activation = tm => {
-			if (Field.Instance) {
-				Field.Instance.draw(tm);
+	loadProduct() {
+		let productId = document.getElementById('productId').value;
+		let product = new ProductEntity();
+
+		product.select(productId).then(rec => {
+			this.field = new Field(rec.width, rec.height);
+			this.setupStage(rec);
+			this.setupActors(rec);
+			this.checkLoading();
+		});
+	}
+
+	setupStage(rec) {
+		rec.detailList.forEach(detail => {
+console.log(detail);
+		});
+		Stage.LIST = [
+		/*	new Stage(Stage.SCROLL.LOOP, 'g1.2.map.png', [
+					new StageBg('stage01bg0.png', .5), new StageBg('stage01bg1.png', .4), new StageFg('g1.2.png'),
+				]).setBgm('g1.2', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.OFF, 'g1.4.map.png', [
+					new StageBg('stage01bg0.png', .5), new StageBg('stage01bg1.png', .4), new StageFg('g1.4.png'),
+				]).setBgm('g1.4', 'bgm-edo-omega-zero'),
+		//*/
+			new Stage(Stage.SCROLL.ON, 'stage00map.png', [
+					new StageBg('stage01bg0.png', .3), new StageBg('stage01bg1.png', .4, 0, .02), new StageFg('stage00bg.png'),
+				]).setBgm('bgm-edo-beth'),
+			new Stage(Stage.SCROLL.ON, 'stage01map.png', [
+					new StageBg('stage01bg1.png', .3, 0, .02), new StageBg('stage01bg0.png', .3), new StageFg('stage01bg.png', .6),
+				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.LOOP, 'stage00map.png', [
+					new StageBg('stage01bg0.png', .3), new StageBg('stage01bg1.png', .4, 0, .02), new StageFg('stage00bg.png'),
+				]).setBgm('bgm-edo-beth'),
+			new Stage(Stage.SCROLL.ON, 'stage02map.png', [
+					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage02bg.png'),
+				]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+			//*/
+
+//			new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
+//				new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage-bg.png'),
+//			]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.ON, 'stage1.map.png', [
+					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage1.1.0.png', .6),
+				]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
+					new StageBg('stage2.1.1.png', .3), new StageBg('stage01bg1.png', 1, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
+				]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.ON, 'stage3.map.png', [
+					new StageBg('stage01bg1.png', .3), new StageFg('stage3.1.1.png', .5, 0, .02), new StageFg('stage3.1.0.png'),
+				]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
+			new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
+					new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .3),
+				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+		];
+	}
+
+	setupActors(rec) {
+		Enemy.LIST = [
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Battery', type:Battery, img:'enemy/battery.png'},
+			{name:'Bouncer', type:Bouncer, img:'enemy/bouncer.png'},
+			{name:'Hanker', type:Hanker, img:'enemy/hanker.png'},
+			{name:'Jerky', type:Jerky, img:'enemy/jerky.png'},
+			{name:'Juno', type:Juno, img:'enemy/juno.png'},
+			{name:'Crab', type:Crab, img:'enemy/crab.png'},
+			{name:'Hatch', type:Hatch, img:'enemy/hatch.png', h:16},
+			{name:'Charger', type:Charger, img:'enemy/charger.png', h:16},
+			{name:'Twister', type:Twister, img:'enemy/twister.png', h:16},
+			{name:'Slur', type:Slur, img:'enemy/slur.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
+
+			{name:'Tentacle', type:Tentacle, img:'enemy/tentacle.png'},
+			{name:'Dragon', type:DragonHead, img:'enemy/dragonHead.png'},
+			{name:'Waver(formation)', type:Waver, img:'enemy/waver.png', h:16, formation: true},
+//			{name:'Twister(formation)', type:Twister, img:'enemy/waver.png', h:16, formation: true},
+
+			{name:'Molten', type:Molten, img:'boss/molten.png'},
+			{name:'Winding', type:Winding, img:'boss/winding.png'},
+			{name:'Titan', type:Titan, img:'boss/titan.icon.png'},
+			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
+			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
+		];
+	}
+
+	checkLoading() {
+		let loading = document.getElementById('loading');
+		let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
+		let checkLoading = ()=> {
+			let loaded = 0;
+			let max = 0;
+			let isComplete = true;
+
+			repositories.forEach(repo => {
+				loaded += repo.loaded;
+				max += repo.max;
+				isComplete &= repo.isComplete();
+			});
+			let msg = loaded + '/' + max;
+
+			loading.innerHTML = msg;
+			if (isComplete) {
+				loading.parentNode.removeChild(loading);
+				this.start();
+				return;
 			}
-			requestAnimationFrame(activation);
+			setTimeout(checkLoading, 125);
 		};
-		requestAnimationFrame(activation);
+		checkLoading();
 	}
-}
 
-class KeyPool {
-	constructor() {
-		KeyPool.Instance = this;
-		this.keys = {};
+	start() {
+		let controller = new Controller();
+		let activate = ()=> {
+			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+			this.field.move();
+			this.field.draw();
+			requestAnimationFrame(activate);
+		};
+		let gameOverPanel = document.getElementById('gameOver');
+		let startGame = ()=> {
+			this.field.startGame();
+			gameOverPanel.classList.add('hidden');
+		};
+
+		gameOverPanel.addEventListener('mousedown', event => {
+			startGame();
+		});
 		window.addEventListener('keydown', event => {
-			if (event.key) {
-console.log('key[' + event.key + ']');
-				this.keys[event.key] = true;
-			} else {
-				this.keys['k' + event.keyCode] = true;
+			let isGameOver = !gameOverPanel.classList.contains('hidden');
+			let keys = controller.keys;
+
+			if (isGameOver && (keys[' '] || keys['k32'])) {
+				startGame();
 			}
 		});
-		window.addEventListener('keyup', event => {
-			if (event.key) {
-				delete this.keys[event.key];
-			} else {
-				delete this.keys['k' + event.keyCode];
-			}
-		});
-	}
-}
-
-class Field {
-	constructor(width, height) {
-		let canvas = document.getElementById('canvas');
-
-		this.width = width;
-		this.height = height;
-		this.ctx = canvas.getContext('2d');
-		this.last = 0;
-		this.x = 0;
-		Field.Instance = this;
-		window.addEventListener('resize', ()=>this.resize());
-	}
-
-	resize() {
-		let canvas = document.getElementById('canvas');
-		let winW = window.innerWidth - 4;
-		let winH = window.innerHeight - 4;
-		let scaleH = winW / this.width;
-		let scaleV = winH / this.height;
-
-		this.scale = Math.min(scaleH, scaleV);
-		canvas.width = this.width * this.scale;
-		canvas.height = this.height * this.scale;
-	}
-
-	draw(tm) {
-		this.ctx.save();
-		this.ctx.scale(this.scale, this.scale);
-		this.ctx.clearRect(0, 0, this.width, this.height);
-
-		this.ctx.save();
-		this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.2)';
-		this.ctx.strokeRect(0, 0, this.width - 1, this.height - 1);
-		this.ctx.restore();
-
-		this.ctx.save();
-		this.ctx.fillStyle = 'rgba(128, 255, 128, 0.3)';
-		this.ctx.fillRect(0, 0, this.x, 8);
-		this.ctx.restore();
-		this.x++;
-		if (60 < this.x) {
-			let diff = tm - this.last;
-
-//console.log('diff:' + diff);
-			this.x = 0;
-			this.last = tm;
-		}
-		this.ctx.restore();
-	}
-
-	static load(id, callback) {
-		let req = new XMLHttpRequest();
-		let uri = 'select?id=' + id;
-
-		Field.Instance = null;
-		req.addEventListener("loadend", evt => {
-//console.log(req.response);
-			let rec = JSON.parse(req.response);
-			let field = new Field(rec.width, rec.height);
-
-			if (callback) {
-				callback(field);
-			}
-			field.resize();
-		}, true);
-		req.open('GET', uri, true);
-		req.send();
+		activate();
 	}
 }

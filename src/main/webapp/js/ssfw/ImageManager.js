@@ -22,7 +22,7 @@ class ImageManager {
 				this.dic[src] = img;
 				this.loaded++;
 			};
-			img.src = 'img/' + src;
+			img.src = '/img/' + src;
 			this.max++;
 		});
 	}

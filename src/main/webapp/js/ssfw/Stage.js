@@ -178,7 +178,7 @@ class StageView {
 			this.h2 = this.img.height * 2;
 			this.ready = true;
 		};
-		this.img.src = './img/' + img;
+		this.img.src = '/img/' + img;
 		this.speed = speed;
 		this.dir = dir;
 		this.blink = blink;
