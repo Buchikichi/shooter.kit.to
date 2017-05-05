@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,10 +72,26 @@ public class AudioController {
 	 * @param id オーディオID
 	 * @return WebMデータ
 	 */
-	@RequestMapping(value = "/webm", produces = "audio/webm")
+	@RequestMapping(value = "/webm/{id}", produces = "audio/webm")
 	@ResponseBody
-	public Resource webm(@RequestParam String id) {
+	public Resource webm(@PathVariable("id") String id) {
 		Audio audio = this.audioService.findOne(id);
+
+		if (audio == null) {
+			return null;
+		}
+		return decodeAudio(audio.getWebm());
+	}
+
+	/**
+	 * WebM取得.
+	 * @param id オーディオID
+	 * @return WebMデータ
+	 */
+	@RequestMapping(value = "/webmName/{name}", produces = "audio/webm")
+	@ResponseBody
+	public Resource webmName(@PathVariable("name") String name) {
+		Audio audio = this.audioService.findByName(name);
 
 		if (audio == null) {
 			return null;
@@ -87,10 +104,26 @@ public class AudioController {
 	 * @param id オーディオID
 	 * @return WebMデータ
 	 */
-	@RequestMapping(value = "/audio", produces = "audio/mpeg")
+	@RequestMapping(value = "/audio/{id}", produces = "audio/mpeg")
 	@ResponseBody
-	public Resource audio(@RequestParam String id) {
+	public Resource audio(@PathVariable("id") String id) {
 		Audio audio = this.audioService.findOne(id);
+
+		if (audio == null) {
+			return null;
+		}
+		return decodeAudio(audio.getAudio());
+	}
+
+	/**
+	 * Audio取得.
+	 * @param id オーディオID
+	 * @return WebMデータ
+	 */
+	@RequestMapping(value = "/audioName/{name}", produces = "audio/mpeg")
+	@ResponseBody
+	public Resource audioName(@PathVariable("name") String name) {
+		Audio audio = this.audioService.findByName(name);
 
 		if (audio == null) {
 			return null;

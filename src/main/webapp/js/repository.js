@@ -336,7 +336,7 @@ class AudioManager extends RepositoryManager {
 			if (audio.webmlen) {
 				$(webmFile).hide();
 				$(webmAnchor).show();
-				webmAnchor.setAttribute('href', '/audio/webm?id=' + rec.id);
+				webmAnchor.setAttribute('href', '/audio/webm/' + rec.id);
 			} else {
 				$(webmFile).show();
 				$(webmAnchor).hide();
@@ -344,7 +344,7 @@ class AudioManager extends RepositoryManager {
 			if (audio.audiolen) {
 				$(audioFile).hide();
 				$(audioAnchor).show();
-				audioAnchor.setAttribute('href', '/audio/audio?id=' + rec.id);
+				audioAnchor.setAttribute('href', '/audio/audio/' + rec.id);
 			} else {
 				$(audioFile).show();
 				$(audioAnchor).hide();

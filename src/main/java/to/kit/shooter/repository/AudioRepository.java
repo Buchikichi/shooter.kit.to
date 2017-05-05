@@ -8,5 +8,5 @@ import to.kit.shooter.entity.Audio;
  * @author H.Sasai
  */
 public interface AudioRepository extends JpaRepository<Audio, String> {
-	// nop
+	Audio findByName(String name);
 }

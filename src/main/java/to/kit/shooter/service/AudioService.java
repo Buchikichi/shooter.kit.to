@@ -42,6 +42,10 @@ public class AudioService {
 		return this.audioRepository.findOne(id);
 	}
 
+	public Audio findByName(String name) {
+		return this.audioRepository.findByName(name);
+	}
+
 	public Audio save(Audio entity) {
 		String id = entity.getId();
 		Audio prev = null;
