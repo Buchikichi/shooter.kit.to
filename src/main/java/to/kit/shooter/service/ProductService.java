@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Product;
+import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.repository.ProductRepository;
 
 @Service
@@ -28,7 +29,11 @@ public class ProductService {
 	}
 
 	public Product detail(String id) {
-		return this.productRepository.findOne(id);
+		Product product = this.productRepository.findOne(id);
+		List<ProductDetail> detailList = product.getDetailList();
+
+		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
+		return product;
 	}
 
 	public Product save(Product entity) {

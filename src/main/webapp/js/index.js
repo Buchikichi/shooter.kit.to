@@ -84,9 +84,9 @@ class AppMain {
 
 	fillDetailInfo(rec) {
 		let updated = rec.updated ? new Date(rec.updated).toISOString() : '';
-		let playUri = rec.id ? '/product/play?id=' + rec.id : '';
+		let playUri = rec.id ? '/product/play/' + rec.id : '';
 		let playButton = document.getElementById('playButton');
-		let editUri = rec.id ? '/product/detail?id=' + rec.id : '';
+		let editUri = rec.id ? '/product/detail/' + rec.id : '';
 		let editButton = document.getElementById('editButton');
 
 		document.getElementById('productName').value = rec.name;

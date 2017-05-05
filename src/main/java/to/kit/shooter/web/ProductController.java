@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,16 +70,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return product;
 	}
 
-	@RequestMapping("/detail")
-	public String detail(Model model, ProductForm form) {
-		Product product = this.productService.detail(form.getId());
+	@RequestMapping("/detail/{id}")
+	public String detail(Model model, @PathVariable("id") String id) {
+		Product product = this.productService.detail(id);
 
 		if (product == null) {
 			return "error";
 		}
-		List<ProductDetail> detailList = product.getDetailList();
-
-		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
 		model.addAttribute("product", product);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		return "detail";
@@ -126,10 +124,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return result;
 	}
 
-	@RequestMapping("/play")
-	public String play(Model model, ProductForm form) {
-		Product product = this.productService.detail(form.getId());
+	@RequestMapping("/play/{id}")
+	public String play(Model model, @PathVariable("id") String id) {
+		Product product = this.productService.detail(id);
 
+		if (product == null) {
+			return "error";
+		}
 		model.addAttribute("product", product);
 		return "play";
 	}

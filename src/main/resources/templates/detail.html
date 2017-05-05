@@ -97,8 +97,10 @@
   <div data-role="footer" data-position="fixed">
     <div id="footerNav" data-role="navbar">
       <ul>
-        <li><a data-icon="action" th:href="'play?id='+${product.id}" target="_blank">Play</a></li>
+        <li><a data-icon="action" th:href="'../play/'+${product.id}" target="_blank">Play</a></li>
+<!--
         <li><a data-icon="bullets" href="/edit.html" target="_blank" class="ui-state-disabled">Stages</a></li>
+-->
         <li><a data-icon="grid" href="/repository.html" target="_blank" class="ui-state-disabled">Repository</a></li>
       </ul>
     </div>

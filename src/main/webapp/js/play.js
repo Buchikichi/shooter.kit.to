@@ -81,8 +81,8 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 		];
 		let testMap = {
 			A:['stage00map.png', 'stage01map.png', 'stage00map.png', 'stage02map.png'],
-			B:['stage1.map.png', 'stage2.map.png', 'stage3.map.png', 'stage4.map.png'],
-			C:['stage-map.png'],
+			B:['stage00map.png', 'stage1.map.png', 'stage2.map.png', 'stage3.map.png', 'stage4.map.png'],
+			C:['stage00map.png', 'stage-map.png'],
 		};
 		let type = rec.name.substr(-1);
 		let map = testMap[type];
