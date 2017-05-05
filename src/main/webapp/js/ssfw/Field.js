@@ -67,13 +67,15 @@ class Field extends Matter {
 	endGame() {
 		let gameOver = document.getElementById('gameOver');
 
-		gameOver.classList.remove('hidden');
+		if (gameOver) {
+			gameOver.classList.remove('hidden');
+		}
 	}
 
 	isGameOver() {
 		let gameOver = document.getElementById('gameOver');
 
-		return !gameOver.classList.contains('hidden');
+		return gameOver && !gameOver.classList.contains('hidden');
 	}
 
 	calcPan(x) {

@@ -82,10 +82,12 @@ Landform.prototype.loadMapData = function(file) {
 };
 
 Landform.prototype.loadStage = function(stage) {
-	let fg = stage.getFg();
+	let fg = stage.fg;
 
 	this.stage = stage;
-	this.loadMapData('/img/' + stage.map);
+	if (stage.map) {
+		this.loadMapData('/img/' + stage.map);
+	}
 	this.img.src = fg.img.src;
 	this.reset();
 };
@@ -115,7 +117,7 @@ Landform.prototype.effect = function(target) {
 		target.x -= this.effectH;
 	}
 	if (target.effectV && this.next == Landform.NEXT.NONE) {
-		let speed = this.stage.getFg().speed;
+		let speed = this.stage.fg.speed;
 
 		target.y += this.stage.effectV * speed;
 	}
@@ -155,7 +157,7 @@ Landform.prototype.forward = function(target) {
 	if (!this.width) {
 		return Landform.NEXT.NONE;
 	}
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 
 	if (this.next != Landform.NEXT.ARRIV) {
 		this.stage.scrollV(target);
@@ -197,7 +199,7 @@ Landform.prototype.scanEnemy = function() {
 		return result;
 	}
 	let field = Field.Instance;
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 	let gx = fg.x;
 	let gy = fg.y;
 	// right
@@ -248,7 +250,7 @@ Landform.prototype.hitTest = function(target) {
 };
 
 Landform.prototype.smashWall = function(target) {
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 
 	fg.smashWall(target);
 	this.putBrick(target, 2, 0);
@@ -311,7 +313,7 @@ Landform.prototype.getHorizontalAngle = function(target) {
 };
 
 Landform.prototype.getBrickIndex = function(target) {
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 	let gx = fg.x;
 	let gy = fg.y;
 	let tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
@@ -339,7 +341,7 @@ Landform.prototype.getBrick = function(target, c) {
  * for edit
  */
 Landform.prototype.wheel = function(delta) {
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 
 	if (delta < 0){
 		fg.y += Landform.BRICK_WIDTH * 2;
@@ -457,7 +459,7 @@ Landform.prototype.drawBrick = function() {
 		return;
 	}
 	let field = Field.Instance;
-	let fg = this.stage.getFg();
+	let fg = this.stage.fg;
 	let gx = fg.x;
 	let gy = fg.y;
 	let ctx = this.ctx;

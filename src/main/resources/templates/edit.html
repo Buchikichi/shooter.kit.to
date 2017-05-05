@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title th:text="${stage.name}"></title>
+<link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -16,8 +17,6 @@
 }
 #view {
 	position: relative;
-	width: 256px;
-	height: 224px;
 	overflow: hidden;
 	z-index: 0;
 	transform-origin: 0px 0px;
@@ -40,12 +39,35 @@
 
 <body>
   <div data-role="page">
-    <div id="view"><canvas id="canvas"></canvas></div>
-    <input id="stageId" type="hidden" th:value="${stage.id}"/>
+    <div id="view">
+      <canvas id="canvas"></canvas>
+      <div id="loading"></div>
+    </div>
     <div data-role="footer"  data-position="fixed">
       <div id="panel">
-        <input type="range" value="0" min="0" max="1024"/>
+        <input id="slider" type="range" value="0" min="0" max="0"/>
+        <fieldset data-role="controlgroup" data-type="horizontal">
+          <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
+          <button data-icon="check" class="ui-btn ui-btn-b">Save</button>
+        </fieldset>
+        <input id="mapFile" type="file"/>
       </div>
+    </div>
+    <div id="attrPanel" data-role="panel" data-position="right" data-display="overlay">
+      <form id="attrForm" enctype="multipart/form-data">
+        <input id="stageId" type="hidden" th:value="${stage.id}"/>
+        <div id="inputBox"></div>
+<!--
+        <fieldset data-role="controlgroup" data-mini="true">
+          <legend>BG1:</legend>
+          <input type="number" name="bg1speed" min="0" max="1" step="0.1"/>
+          <input type="number" name="bg1dir"/>
+          <input type="number" name="bg1blink"/>
+        </fieldset>
+-->
+        <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Close</button>
+      </form>
+      <div class="message"></div>
     </div>
   </div>
 </body>

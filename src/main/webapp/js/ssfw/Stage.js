@@ -4,12 +4,14 @@ class Stage {
 		this.scrollSv = scroll;
 		this.map = map;
 		this.view = view;
-		this.fg = null;
+		this.foreground = null;
 		this.bgm = null;
 		this.boss = null;
 		this.checkPoint = 0;
+		this.viewDic = {};
 		this.view.forEach(ground => {
 			ground.stage = this;
+			this.viewDic[ground.viewId] = ground;
 		});
 		this.effectH = 0;
 		this.effectV = 0;
@@ -29,9 +31,9 @@ class Stage {
 		}
 	}
 
-	getFg() {
-		if (this.fg) {
-			return this.fg;
+	get fg() {
+		if (this.foreground) {
+			return this.foreground;
 		}
 		let fg;
 
@@ -40,8 +42,12 @@ class Stage {
 				fg = ground;
 			}
 		});
-		this.fg = fg;
+		this.foreground = fg;
 		return fg;
+	}
+
+	getGround(id) {
+		return this.viewDic[id];
 	}
 
 	reset() {
@@ -59,6 +65,20 @@ class Stage {
 		this.playBgm();
 	}
 
+	moveH(x) {
+		if (this.fg.speed == 0) {
+			return;
+		}
+		let step = x / this.fg.speed;
+
+//console.log('moveH:' + x);
+//console.log(step + '/' + this.fg.speed);
+		this.view.forEach(ground => {
+			ground.x = step * ground.speed % ground.width;
+//console.log(ground.viewId + ':' + ground.x);
+		});
+	}
+
 	scrollV(target) {
 		this.effectV = 0;
 		if (this.scroll == Stage.SCROLL.OFF) {
@@ -66,7 +86,7 @@ class Stage {
 		}
 		let field = Field.Instance;
 		let diff = field.hH - target.y;
-		let fg = this.getFg();
+		let fg = this.fg;
 
 		if (this.scroll == Stage.SCROLL.TOP) {
 			diff = fg.speed * 5;
@@ -103,7 +123,7 @@ class Stage {
 		this.view.forEach(ground => {
 			ground.forward(landform);
 		});
-		let fgX = this.getFg().x;
+		let fgX = this.fg.x;
 
 		Stage.CHECK_POINT.forEach(cp => {
 			if (cp <= fgX && this.checkPoint < fgX) {
@@ -134,7 +154,7 @@ class Stage {
 		if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
 			return;
 		}
-		let fg = this.getFg();
+		let fg = this.fg;
 
 		if (fg.y < fg.height / 2) {
 			this.scroll = Stage.SCROLL.TOP;
@@ -159,8 +179,37 @@ Stage.SCROLL = {
 	TOP: 4,
 	BOTTOM: 8
 };
+Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.LIST = [];
 Stage.CHECK_POINT = [0, 660, 1440];
+/**
+ * レコードからステージを生成.
+ */
+Stage.createViewList = rec => {
+	let list = [];
+
+	Stage.VIEWS.forEach(key => {
+		let imageId = rec[key];
+
+		if (!imageId || imageId.length == 0) {
+			return;
+		}
+		let speed = rec[key + 'speed'];
+		let dir = rec[key + 'dir'];
+		let blink = rec[key + 'blink'];
+		let view;
+		// (img, speed = .5, dir = 0, blink = 0)
+		if (key.startsWith('b')) {
+			view = new StageBg(imageId, speed, dir, blink);
+		} else {
+			view = new StageFg(imageId, speed, dir, blink);
+		}
+		view.viewId = key;
+		list.push(view);
+	});
+	return list;
+} 
+
 
 /**
  * Foreground and Background.
@@ -225,12 +274,6 @@ class StageView {
 		if (this.height < this.y) {
 			this.y -= this.height;
 		}
-		if (this.blink) {
-			this.alpha += this.blinkDir * this.blink;
-			if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
-				this.blinkDir *= -1;
-			}
-		}
 	}
 
 	getPattern(ctx) {
@@ -241,6 +284,12 @@ class StageView {
 	}
 
 	draw(ctx) {
+		if (this.blink) {
+			this.alpha += this.blinkDir * this.blink;
+			if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
+				this.blinkDir *= -1;
+			}
+		}
 		ctx.save();
 		ctx.globalAlpha = this.alpha;
 		ctx.translate(-this.x, -this.y);

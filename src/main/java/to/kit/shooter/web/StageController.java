@@ -25,20 +25,24 @@ import to.kit.shooter.web.form.StageForm;
 @Controller
 @RequestMapping("/stage")
 @SessionAttributes(types = LoginInfo.class)
-public class StageController {
+public class StageController implements BasicControllerInterface<Stage> {
 	@Autowired
 	private StageService stageService;
 	@Autowired
 	private LoginInfo loginInfo;
 
-	/**
-	 * 一覧取得.
-	 * @return 一覧
-	 */
 	@RequestMapping("/list")
 	@ResponseBody
+	@Override
 	public List<Stage> list() {
 		return this.stageService.list();
+	}
+
+	@RequestMapping("/select")
+	@ResponseBody
+	@Override
+	public Stage select(@RequestParam String id) {
+		return this.stageService.detail(id);
 	}
 
 	/**
