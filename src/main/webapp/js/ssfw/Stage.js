@@ -20,7 +20,7 @@ class Stage {
 	setBgm(bgm, boss = null) {
 		this.bgm = bgm;
 		this.boss = boss;
-		AudioMixer.INSTANCE.reserve([this.bgm, this.boss]);
+		AudioMixer.INSTANCE.reserve(this.bgm, this.boss);
 		return this;
 	}
 

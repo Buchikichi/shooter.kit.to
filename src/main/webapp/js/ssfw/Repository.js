@@ -15,7 +15,7 @@ Repository.prototype.isComplete = function() {
 	return 0 < this.max && this.max == this.loaded;
 };
 
-Repository.prototype.reserve = function(list) {
+Repository.prototype.reserve = function(...list) {
 	var repository = this;
 
 	list.forEach(function(key) {

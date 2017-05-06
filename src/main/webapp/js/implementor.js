@@ -1,3 +1,1 @@
-AudioMixer.INSTANCE.reserve([
-	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
-]);
+AudioMixer.INSTANCE.reserve('sfx-fire', 'sfx-explosion', 'sfx-absorb');
