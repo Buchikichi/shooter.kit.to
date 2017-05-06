@@ -13,9 +13,8 @@ class EditMain {
 	}
 
 	loadStage(stageId) {
-		let stageEntity = new StageEntity();
-
-		stageEntity.select(stageId).then(rec => {
+		this.stageEntity = new StageEntity();
+		this.stageEntity.select(stageId).then(rec => {
 			this.field = new Field(512, 224);
 			this.setupStage(rec);
 //			this.setupActors(rec);
@@ -48,13 +47,14 @@ class EditMain {
 				let attr = propList[prop];
 				let name = key + prop;
 				let input = document.createElement('input');
+				let value = rec[name].toFixed(2);
 
 				input.setAttribute('type', 'number');
 				input.setAttribute('name', name);
 				Object.keys(attr).forEach(attrName => {
 					input.setAttribute(attrName, attr[attrName]);
 				});
-				input.value = rec[name];
+				input.value = value;
 				input.addEventListener('change', ()=> {
 					let ground = this.stage.getGround(key);
 
@@ -96,7 +96,6 @@ class EditMain {
 
 	start() {
 		let view = FlexibleView.Instance;
-		let controller = new Controller();
 		let landform = this.field.landform;
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -107,6 +106,7 @@ class EditMain {
 		};
 
 //console.log('start!:' + landform.stage.fg.width);
+		this.controller = new Controller();
 		landform.isEdit = true;
 		landform.loadStage(this.stage);
 		activate();
@@ -116,14 +116,63 @@ class EditMain {
 	setupEvents() {
 		let slider = $('#slider');
 		let landform = this.field.landform;
+		let max = landform.stage.fg.width / Landform.BRICK_WIDTH - 1;
 
 		slider.change(()=> {
 			let x = slider.val() * Landform.BRICK_WIDTH;
 
 			landform.stage.moveH(x);
 		});
-		slider.attr('max', landform.stage.fg.width / Landform.BRICK_WIDTH);
+		slider.attr('max', max);
 		slider.slider('refresh');
+		landform.stage.moveH(0);
+
+		// saveButton
+		let saveButton = document.getElementById('saveButton');
+
+		saveButton.addEventListener('click', ()=> {
+			this.saveMap();
+		});
+		// mapFile
+		let mapFile = document.getElementById('mapFile');
+
+		mapFile.addEventListener('change', ()=> {
+			let file = mapFile.files[0];
+			let url = window.URL.createObjectURL(file);
+
+			landform.loadMapData(url);
+		});
+		//
+		this.setupPointingDevice();
+	}
+
+	setupPointingDevice() {
+		let canvas = document.getElementById('canvas');
+
+		canvas.addEventListener('mousemove', event => {
+		});
+	}
+
+	saveMap() {
+		let stageId = document.getElementById('stageId').value;
+		let attrForm = document.getElementById('attrForm');
+		let formData = new FormData(attrForm);
+		let landform = this.field.landform;
+		let messagePopup = document.getElementById('messagePopup');
+		let content = messagePopup.querySelector('p');
+
+		formData.append('id', stageId);
+		formData.append('map', landform.mapImage);
+		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		this.stageEntity.saveMap(formData).then(data => {
+			$.mobile.loading('hide');
+			if (data.ok) {
+				content.textContent = 'Stage saved.';
+			} else {
+				content.textContent = 'Save failed.';
+			}
+			$(messagePopup).popup('open', {});
+		});
 	}
 }
 

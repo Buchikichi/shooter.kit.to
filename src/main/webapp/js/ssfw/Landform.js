@@ -38,6 +38,32 @@ class Landform {
 		this.reverse.src = '/img/reverse.png';
 		this.touch = false;
 	}
+
+	get mapImage() {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+
+		canvas.width = this.brick.width;
+		canvas.height = this.brick.height;
+		ctx.putImageData(this.brick, 0, 0);
+		return canvas.toDataURL('image/png');
+	}
+
+	loadMapData(mapImage) {
+		let img = new Image();
+
+		img.onload = ()=> {
+			let canvas = document.createElement('canvas');
+			let ctx = canvas.getContext('2d');
+
+			canvas.width = img.width;
+			canvas.height = img.height;
+			ctx.drawImage(img, 0, 0);
+			this.brick = ctx.getImageData(0, 0, img.width, img.height);
+			this.touch = true;
+		}
+		img.src = mapImage;
+	}
 }
 Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
@@ -60,33 +86,12 @@ Landform.prototype.load = function(file) {
 	}
 };
 
-Landform.prototype.loadMapData = function(file) {
-	let landform = this;
-	let img = new Image();
-
-	img.onload = function() {
-		let canvas = document.createElement('canvas');
-		let ctx = canvas.getContext('2d');
-
-		canvas.width = this.width;
-		canvas.height = this.height;
-		ctx.drawImage(img, 0, 0);
-		landform.brick = ctx.getImageData(0, 0, this.width, this.height);
-		landform.touch = true;
-	}
-	if (file instanceof File) {
-		img.src = window.URL.createObjectURL(file);
-	} else {
-		img.src = file;
-	}
-};
-
 Landform.prototype.loadStage = function(stage) {
 	let fg = stage.fg;
 
 	this.stage = stage;
 	if (stage.map) {
-		this.loadMapData('/img/' + stage.map);
+		this.loadMapData(stage.map);
 	}
 	this.img.src = fg.img.src;
 	this.reset();
@@ -106,7 +111,7 @@ Landform.prototype.retry = function() {
 	this.next = Landform.NEXT.NONE;
 	if (this.stage) {
 		this.stage.retry();
-		this.loadMapData('/img/' + this.stage.map);
+		this.loadMapData(this.stage.map);
 	}
 };
 
@@ -370,13 +375,14 @@ Landform.prototype.drawEnemy = function(num, x, y) {
 	let reverse = Enemy.MAX_TYPE < num;
 	let ix = reverse ? num - Enemy.MAX_TYPE : num;
 	let obj = Enemy.LIST[ix - 1];
+
+	if (!obj || !obj.instance) {
+		return null;
+	}
 	let cnt = obj.formation ? 3 : 1;
 	let enemy = obj.instance;
 	let ctx = this.ctx;
 
-	if (!obj.instance) {
-		return null;
-	}
 	enemy.x = x + enemy.hW;
 	enemy.y = y + enemy.hH;
 	while (cnt--) {

@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,6 +32,15 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@Autowired
 	private LoginInfo loginInfo;
 
+	private String getCustomerId() {
+		Customer customer = this.loginInfo.getCustomer();
+
+		if (customer == null) {
+			return null;
+		}
+		return customer.getId();
+	}
+
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
@@ -54,27 +64,42 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@ResponseBody
 	public ResultForm save(StageForm form) {
 		ResultForm result = new ResultForm();
-		Customer customer = this.loginInfo.getCustomer();
+		String customerId = getCustomerId();
 
-		if (customer == null) {
+		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		String loginId = customer.getId();
+		Stage stage = new Stage();
+		BeanUtils.copyProperties(form, stage);
+		stage.setOwner(customerId);
+		Stage saved = this.stageService.save(stage);
 
-		if (loginId != null && !loginId.isEmpty()) {
-			Stage stage = new Stage();
-			BeanUtils.copyProperties(form, stage);
-			stage.setOwner(loginId);
-			Stage saved = this.stageService.save(stage);
-
-			result.setInfo(saved);
-			result.setOk(true);
-		}
+		result.setInfo(saved);
+		result.setOk(true);
 		return result;
 	}
 
-	@RequestMapping("/edit")
-	public String play(Model model, @RequestParam String id) {
+	@RequestMapping("/saveMap")
+	@ResponseBody
+	public ResultForm saveMap(StageForm form) {
+		ResultForm result = new ResultForm();
+		String customerId = getCustomerId();
+
+		if (customerId == null || customerId.isEmpty()) {
+			return result;
+		}
+		Stage stage = new Stage();
+		BeanUtils.copyProperties(form, stage);
+		stage.setOwner(customerId);
+		Stage saved = this.stageService.saveMap(stage);
+
+		result.setInfo(saved);
+		result.setOk(true);
+		return result;
+	}
+
+	@RequestMapping("/edit/{id}")
+	public String edit(Model model, @PathVariable("id") String id) {
 		Stage stage = this.stageService.detail(id);
 
 		model.addAttribute("stage", stage);

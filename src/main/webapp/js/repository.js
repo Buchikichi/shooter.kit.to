@@ -215,7 +215,7 @@ class StageManager extends RepositoryManager {
 			let hidden = this.form.querySelector('[name="id"]');
 			let id = hidden.value;
 
-			window.open('/stage/edit?id=' + id);
+			window.open('/stage/edit/' + id);
 		});
 	}
 

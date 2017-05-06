@@ -12,85 +12,25 @@ class ShooterMain {
 
 	loadProduct() {
 		let productId = document.getElementById('productId').value;
-		let product = new ProductEntity();
+		let productController = new ProductEntity();
 
-		product.select(productId).then(rec => {
-			this.field = new Field(rec.width, rec.height);
-			this.setupStage(rec);
-			this.setupActors(rec);
+		productController.select(productId).then(product => {
+			this.field = new Field(product.width, product.height);
+			this.setupStage(product);
+			this.setupActors(product);
 			this.checkLoading();
 		});
 	}
 
-	createViewList(stage) {
-		let list = [];
-let speedList = [.3, .4, .2, .5, .5, .5];
-let blinkList = [0, .2, 0, 0, 0, 0];
-
-		['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'].forEach((key, ix) => {
-			let imageId = stage[key];
-
-			if (!imageId || imageId.length == 0) {
-				return;
-			}
-			let speed = speedList[ix]; // TODO 仮のため、正しく設定する
-			let dir = 0; // TODO 仮のため、正しく設定する
-			let blink = blinkList[ix]; // TODO 仮のため、正しく設定する
-			// (img, speed = .5, dir = 0, blink = 0)
-			if (key.startsWith('b')) {
-				list.push(new StageBg(imageId, speed, dir, blink));
-			} else {
-				list.push(new StageFg(imageId, speed, dir, blink));
-			}
-		});
-		return list;
-	}
-
-	setupStage(rec) {
-		Stage.LIST = [
-/*			new Stage(Stage.SCROLL.ON, 'stage00map.png', [
-					new StageBg('stage01bg0.png', .3), new StageBg('stage01bg1.png', .4, 0, .02), new StageFg('stage00bg.png'),
-				]).setBgm('bgm-edo-beth'),
-			new Stage(Stage.SCROLL.ON, 'stage01map.png', [
-					new StageBg('stage01bg1.png', .3, 0, .02), new StageBg('stage01bg0.png', .3), new StageFg('stage01bg.png', .6),
-				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.LOOP, 'stage00map.png', [
-					new StageBg('stage01bg0.png', .3), new StageBg('stage01bg1.png', .4, 0, .02), new StageFg('stage00bg.png'),
-				]).setBgm('bgm-edo-beth'),
-			new Stage(Stage.SCROLL.ON, 'stage02map.png', [
-					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage02bg.png'),
-				]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
-//*/
-
-//			new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
-//				new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage-bg.png'),
-//			]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
-/*			new Stage(Stage.SCROLL.ON, 'stage1.map.png', [
-					new StageBg('stage01bg1.png', .3), new StageBg('stage01bg0.png', .4), new StageFg('stage1.1.0.png', .6),
-				]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
-					new StageBg('stage2.1.1.png', .3), new StageBg('stage01bg1.png', 1, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
-				]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.ON, 'stage3.map.png', [
-					new StageBg('stage01bg1.png', .3), new StageFg('stage3.1.1.png', .5, 0, .02), new StageFg('stage3.1.0.png'),
-				]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
-			new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
-					new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .3),
-				]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
-//*/
-		];
-		let testMap = {
-			A:['stage00map.png', 'stage01map.png', 'stage00map.png', 'stage02map.png'],
-			B:['stage00map.png', 'stage1.map.png', 'stage2.map.png', 'stage3.map.png', 'stage4.map.png'],
-			C:['stage00map.png', 'stage-map.png'],
-		};
-		let type = rec.name.substr(-1);
-		let map = testMap[type];
+	setupStage(product) {
+		let type = product.name.substr(-1);
 		let stageList = [];
 
-		rec.detailList.forEach((detail, ix) => {
-			let view = this.createViewList(detail.stage);
-			let stage = new Stage(detail.roll, map[ix], view).setBgm(detail.stage.theme, detail.stage.boss);
+		product.detailList.forEach(detail => {
+			let entity = detail.stage;
+			let view = Stage.createViewList(entity);
+			let mapURL = entity.map;
+			let stage = new Stage(detail.roll, entity.map, view).setBgm(entity.theme, entity.boss);
 
 //console.log(stage);
 			stageList.push(stage);
@@ -98,7 +38,7 @@ let blinkList = [0, .2, 0, 0, 0, 0];
 		Stage.LIST = stageList;
 	}
 
-	setupActors(rec) {
+	setupActors(product) {
 		Enemy.LIST = [
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
 			{name:'Battery', type:Battery, img:'enemy/battery.png'},
