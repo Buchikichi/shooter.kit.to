@@ -6,7 +6,8 @@ spring:
     password: ${DB_PASS}
     driverClassName: org.postgresql.Driver
     maxTotal: 10
-multipart:
-  maxFileSize: 4MB
-  maxRequestSize: 4MB
+  http:
+    multipart:
+      maxFileSize: 4MB
+      maxRequestSize: 4MB
 logging.level.org.hibernate: DEBUG

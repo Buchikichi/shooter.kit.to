@@ -50,7 +50,7 @@ class ImageSelectionButton {
 		let id = this.hidden.value;
 
 		if (id) {
-			this.img.setAttribute('src', '/image/src?id=' + id);
+			this.img.setAttribute('src', '/image/src/' + id);
 			$(this.img).show();
 			$(this.button).hide();
 		} else {

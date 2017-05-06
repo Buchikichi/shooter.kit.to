@@ -8,5 +8,5 @@ import to.kit.shooter.entity.Image;
  * @author H.Sasai
  */
 public interface ImageRepository extends JpaRepository<Image, String> {
-	// nop
+	Image findByName(String name);
 }

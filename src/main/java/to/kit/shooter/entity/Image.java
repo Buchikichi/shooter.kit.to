@@ -26,7 +26,7 @@ public class Image {
 	private String name;
 	private String description;
 	private String image;
-	private String thumb;
+	private String contentType;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

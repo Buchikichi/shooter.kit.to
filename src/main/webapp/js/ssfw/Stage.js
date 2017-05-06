@@ -220,19 +220,9 @@ class StageView {
 		this.speed = speed;
 		this.dir = dir;
 		this.blink = blink;
-		this.ready = false;
 		this.pattern = null;
 		this.repeatX = 2;
 		this.repeatY = 2;
-//		this.img = new Image();
-//		this.img.onload = ()=> {
-//			this.width = this.img.width;
-//			this.height = this.img.height;
-//			this.w2 = this.img.width * this.repeatX;
-//			this.h2 = this.img.height * 2;
-//			this.ready = true;
-//		};
-//		this.img.src = '/img/' + img;
 		ImageManager.Instance.reserve(imageId);
 	}
 
@@ -326,10 +316,8 @@ class StageFg extends StageView {
 		if (checkPoint == 0) {
 			this.x = -Field.Instance.width;
 		}
-		if (this.ready) {
-			this.canvas = this.createCanvas();
-			this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
-		}
+		this.canvas = this.createCanvas();
+		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
 	}
 
 	smashWall(target) {

@@ -232,7 +232,7 @@ class StageManager extends RepositoryManager {
 		if (imageId == null) {
 			return '/img/icon.listview.png';
 		}
-		return '/image/src?id=' + imageId;
+		return '/image/src/' + imageId;
 	}
 
 	createRow(rec) {
@@ -264,7 +264,7 @@ class ActorManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		return super.createRow(rec, '/image/src?id=' + rec.imageid);
+		return super.createRow(rec, '/image/src/' + rec.imageid);
 	}
 }
 
@@ -289,8 +289,10 @@ class ImageManager extends RepositoryManager {
 
 	createRow(rec) {
 		let dic = {0:'Other', 1:'Act', 2:'Back', 3:'Fore'};
+		let imgsrc = rec.contentType.startsWith('image') ? '/image/src/' + rec.id : '/img/icon.listview.png';
+
 		rec['count'] = dic[rec.type];
-		return super.createRow(rec, '/image/src?id=' + rec.id);
+		return super.createRow(rec, imgsrc);
 	}
 
 	resetPanel(rec = {}) {
@@ -298,7 +300,7 @@ class ImageManager extends RepositoryManager {
 		let img = document.getElementById('image.thumbnail');
 
 		if (rec.id) {
-			img.setAttribute('src', '/image/src?id=' + rec.id);
+			img.setAttribute('src', '/image/src/' + rec.id);
 		} else {
 			img.removeAttribute('src');
 		}
@@ -381,7 +383,7 @@ class ImageChooser extends ResourceChooser {
 	}
 
 	createRow(rec) {
-		return super.createRow(rec, '/image/src?id=' + rec.id);
+		return super.createRow(rec, '/image/src/' + rec.id);
 	}
 }
 

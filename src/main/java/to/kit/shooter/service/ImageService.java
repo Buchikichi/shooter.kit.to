@@ -12,30 +12,38 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Image;
-import to.kit.shooter.entity.ImageShort;
+import to.kit.shooter.entity.ImageView;
 import to.kit.shooter.repository.ImageRepository;
-import to.kit.shooter.repository.ImageShortRepository;
+import to.kit.shooter.repository.ImageViewRepository;
 
 @Service
 public class ImageService {
 	@Autowired
 	private ImageRepository imageRepository;
 	@Autowired
-	private ImageShortRepository imageShortRepository;
+	private ImageViewRepository imageViewRepository;
 
-	public List<ImageShort> list(String keyword, int type) {
+	public List<ImageView> list(String keyword, int type) {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		Specification<ImageShort> nameSpec = Specifications.where((root, query, cb) -> {
+		Specification<ImageView> nameSpec = Specifications.where((root, query, cb) -> {
 			return cb.like(root.get("name"), "%" + keyword + "%");
 		});
-		Specification<ImageShort> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+		Specification<ImageView> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
 			return cb.equal(root.get("type"), Integer.valueOf(type));
 		});
-		return this.imageShortRepository.findAll(spec, sort);
+		return this.imageViewRepository.findAll(spec, sort);
 	}
 
-	public Image detail(String id) {
+	public ImageView detail(String id) {
+		return this.imageViewRepository.findOne(id);
+	}
+
+	public Image findOne(String id) {
 		return this.imageRepository.findOne(id);
+	}
+
+	public Image findByName(String name) {
+		return this.imageRepository.findByName(name);
 	}
 
 	public Image save(Image entity) {

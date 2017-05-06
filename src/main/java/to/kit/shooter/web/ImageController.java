@@ -8,8 +8,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -17,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Image;
-import to.kit.shooter.entity.ImageShort;
+import to.kit.shooter.entity.ImageView;
 import to.kit.shooter.service.ImageService;
 import to.kit.shooter.web.form.ImageForm;
 import to.kit.shooter.web.form.LoginInfo;
@@ -36,69 +40,52 @@ public class ImageController {
 	@Autowired
 	private LoginInfo loginInfo;
 
+	private String getCustomerId() {
+		Customer customer = this.loginInfo.getCustomer();
+
+		if (customer == null) {
+			return null;
+		}
+		return customer.getId();
+	}
+
 	/**
 	 * 一覧取得.
 	 * @return 一覧
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<ImageShort> list(ImageForm form) {
+	public List<ImageView> list(ImageForm form) {
 		return this.imageService.list(form.getKeyword(), form.getType());
 	}
 
-	@RequestMapping(value = "/src", produces = MediaType.IMAGE_PNG_VALUE)
-	@ResponseBody
-	public Resource src(ImageForm form) {
-		Image image = this.imageService.detail(form.getId());
+	private ResponseEntity<Resource> createResponseEntity(Image image) {
+		HttpHeaders headers = new HttpHeaders();
 		byte[] bytes = Base64.decodeBase64(image.getImage());
+		Resource resource = new ByteArrayResource(bytes);
 
-		return new ByteArrayResource(bytes);
+		headers.setContentType(MediaType.valueOf(image.getContentType()));
+		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 
-/*	private String getImageString(MultipartFile file) {
-		BufferedImage image = null;
+	@RequestMapping(value = "/src/{id}")
+	@ResponseBody
+	public ResponseEntity<Resource> src(@PathVariable("id") String id) {
+		Image image = this.imageService.findOne(id);
 
-		if (file == null || file.isEmpty()) {
-			return null;
-		}
-		String[] types = file.getContentType().split("/");
-
-		if (!"image".equals(types[0])) {
-			return null;
-		}
-		try(InputStream in = file.getInputStream()) {
-			image = ImageIO.read(in);
-		} catch (@SuppressWarnings("unused") IOException e) {
-			// nop
-		}
-		if (image == null) {
-			return null;
-		}
-		//
-		byte[] bytes = null;
-
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-				BufferedOutputStream buff = new BufferedOutputStream(out)) {
-			ImageIO.write(image, "png", buff);
-			buff.flush();
-			bytes = out.toByteArray();
-		} catch (@SuppressWarnings("unused") IOException e) {
-			// nop
-		}
-		if (bytes == null) {
-			return null;
-		}
-		return Base64.encodeBase64String(bytes);
+		return createResponseEntity(image);
 	}
-	//*/
+
+	@RequestMapping(value = "/name/{name:.+}")
+	@ResponseBody
+	public ResponseEntity<Resource> res(@PathVariable("name") String name) {
+		Image image = this.imageService.findByName(name);
+
+		return createResponseEntity(image);
+	}
 
 	private String getImageString(MultipartFile file) {
 		if (file == null || file.isEmpty()) {
-			return null;
-		}
-		String contentType = file.getContentType();
-
-		if (!"image/png".equals(contentType)) {
 			return null;
 		}
 		byte[] bytes = null;
@@ -117,21 +104,18 @@ public class ImageController {
 	@ResponseBody
 	public ResultForm save(ImageForm form) {
 		ResultForm result = new ResultForm();
-		Customer customer = this.loginInfo.getCustomer();
+		String customerId = getCustomerId();
 
-		if (customer == null) {
+		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		String loginId = customer.getId();
-
-		if (loginId == null || loginId.isEmpty()) {
-			return result;
-		}
+		MultipartFile imageFile = form.getImage();
+		String contentType = imageFile.getContentType();
 		Image entity = new Image();
 		BeanUtils.copyProperties(form, entity);
-		entity.setImage(getImageString(form.getImage()));
-		entity.setThumb(getImageString(form.getThumb()));
-		entity.setOwner(loginId);
+		entity.setImage(getImageString(imageFile));
+		entity.setContentType(contentType);
+		entity.setOwner(customerId);
 		Image saved = this.imageService.save(entity);
 
 		result.setInfo(saved);

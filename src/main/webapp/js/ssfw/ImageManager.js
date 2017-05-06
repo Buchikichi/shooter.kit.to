@@ -24,7 +24,7 @@ class ImageManager {
 			};
 // TODO いずれIDのみに修正する予定
 if (src.length == 36)
-			img.src = '/image/src?id=' + src;
+			img.src = '/image/src/' + src;
 else
 			img.src = '/img/' + src;
 			this.max++;

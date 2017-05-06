@@ -11,12 +11,12 @@ import javax.persistence.Id;
 import lombok.Data;
 
 /**
- * Image.
+ * ImageView.
  * @author H.Sasai
  */
-@Entity(name = "image")
+@Entity()
 @Data
-public class ImageShort {
+public class ImageView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
@@ -25,6 +25,8 @@ public class ImageShort {
 	private int type;
 	private String name;
 	private String description;
+	private int imagelen;
+	private String contentType;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
