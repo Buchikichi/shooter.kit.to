@@ -9,7 +9,7 @@ class Juno extends Enemy {
 		this.speed = 1;
 		this.hitPoint = 16; // 2016-7-5
 		this.score = 7500;
-		this.anim = new Animator(this, 'enemy/juno.png');
+		this.anim = new Animator('enemy.juno');
 		this.routine = [
 			new Movement(200).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO),
 			new Movement(Number.MAX_VALUE).add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)

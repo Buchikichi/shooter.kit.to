@@ -3,8 +3,6 @@ class Matter {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.w = 0;
-		this.h = 0;
 		this.dy = 0;
 		this.dir = null;
 		this.radian = 0;
@@ -12,20 +10,11 @@ class Matter {
 		this.speed = 1;
 	}
 
-	get width() {
-		return this.w;
-	}
-	set width(val) {
-		this.w = val;
-		this.hW = val / 2;
-	}
-
-	get height() {
-		return this.h;
-	}
-	set height(val) {
-		this.h = val;
-		this.hH = val / 2;
+	setRect(width, height) {
+		this.width = width;
+		this.hW = width / 2;
+		this.height = height;
+		this.hH = height / 2;
 	}
 }
 
@@ -36,8 +25,7 @@ class Actor extends Matter {
 	constructor(x, y, z = 0) {
 		super(x, y, z);
 		this.region = new Region(this);
-		this.width = 16;
-		this.height = 16;
+		this.setRect(16, 16);
 		this.animList = [];
 		this.chamberList = [];
 		this.hasBounds = true;
@@ -49,12 +37,12 @@ class Actor extends Matter {
 		this.score = 0;
 		this.walled = false;
 		this.recalculation();
-		this.img = new Image();
-		this.img.addEventListener('load', ()=> {
-			this.width = this.img.width;
-			this.height = this.img.height;
-			this.recalculation();
-		});
+//		this.img = new Image();
+//		this.img.addEventListener('load', ()=> {
+//			this.width = this.img.width;
+//			this.height = this.img.height;
+//			this.recalculation();
+//		});
 		this.fillStyle = null;
 		this.sfx = 'sfx-explosion';
 		this.sfxAbsorb = 'sfx-absorb';
@@ -67,20 +55,26 @@ class Actor extends Matter {
 		} else {
 			this.animList = [val];
 		}
+		let width = this.width;
+		let height = this.height;
+
+		this.animList.forEach(anim => {
+			anim.actor = this;
+			width = Math.max(width, anim.width);
+			height = Math.max(height, anim.height);
+		});
+		this.setRect(width, height);
+		this.recalculation();
 	}
 
 	recalculation() {
 		let field = Field.Instance;
+		let margin = this.hasBounds ? 0 : field.width;
 
-		if (field) {
-			let margin = this.hasBounds ? 0 : field.width;
-
-			this.minX = -this.width - margin;
-			this.minY = -this.height - margin;
-			this.maxX = field.width + this.width + margin;
-			this.maxY = field.height + this.height + margin;
-//console.log('recalculation:' + margin);
-		}
+		this.minX = -this.width - margin;
+		this.minY = -this.height - margin;
+		this.maxX = field.width + this.width + margin;
+		this.maxY = field.height + this.height + margin;
 	}
 
 	enter() {
@@ -208,7 +202,7 @@ class Actor extends Matter {
 		ctx.save();
 		ctx.beginPath();
 		ctx.fillStyle = this.fillStyle;
-		ctx.arc(0, 0, this.width, 0, Math.PI * 2, false);
+		ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
 		ctx.fill();
 		ctx.restore();
 	}

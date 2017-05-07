@@ -8,7 +8,7 @@ class Tentacle extends Chain {
 		this.speed = .1;
 		this.hitPoint = 16;
 		this.appears = false;
-		this.anim = new Animator(this, 'enemy/tentacle.png');
+		this.anim = new Animator('enemy.tentacle');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO).add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE, Tentacle.DEG_STEP)
 		];
@@ -74,7 +74,7 @@ class TentacleJoint extends Chain {
 		this.radius = 4;
 		this.radian = 0;
 		this.speed = speed;
-		this.anim = new Animator(this, 'enemy/tentacleJoint.png');
+		this.anim = new Animator('enemy.tentacleJoint');
 	}
 
 	calcRadian() {
@@ -124,8 +124,8 @@ class TentacleBullet extends Bullet {
 	constructor(x, y) {
 		super(x, y);
 		this.region = new Region(this, 1);
+		this.radius = 1;
 		this.speed = .5;
-		this.width = 2;
 		this.fillStyle = 'rgba(255, 200, 200, 0.7)';
 	}
 }
@@ -136,7 +136,7 @@ class TentacleBullet extends Bullet {
 class TentacleHead extends TentacleJoint {
 	constructor(speed) {
 		super(speed);
-		this.anim = new Animator(this, 'enemy/tentacleHead.png');
+		this.anim = new Animator('enemy.tentacleHead');
 		this.chamberList = [new Chamber(TentacleBullet, TentacleHead.TRIGGER_CYCLE)];
 	}
 
@@ -151,4 +151,3 @@ class TentacleHead extends TentacleJoint {
 }
 TentacleHead.TRIGGER_CYCLE = 10;
 TentacleHead.DEG_STEP = Math.PI / 100;
-ImageManager.Instance.reserve('enemy/tentacle.png', 'enemy/tentacleHead.png');

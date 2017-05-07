@@ -1,7 +1,7 @@
 class Cascade extends Chain {
 	constructor(x, y) {
 		super(x, y);
-		this.anim = new Animator(this, 'material/cascade.png');
+		this.anim = new Animator('material.cascade');
 		this.radian = Math.SQ;
 		this.radius = Cascade.RADIUS;
 		this.appears = false;

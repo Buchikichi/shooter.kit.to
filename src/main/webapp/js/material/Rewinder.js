@@ -8,23 +8,23 @@ class Rewinder extends Chain {
 		this.hasBounds = false;
 		this.ratio = Rewinder.RATIO_MAX;
 		this.delta = -.8;
-		this.anim = new Animator(this, 'material/cascade.png');
+		this.anim = new Animator('material.cascade');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 		];
 		this.appears = false;
-		for (var cnt = 0; cnt < Rewinder.MAX_JOINT; cnt++) {
+		for (let cnt = 0; cnt < Rewinder.MAX_JOINT; cnt++) {
 			this.push(new RewinderChild(x, y));
 		}
 	}
 
 	move(target) {
-		var result = [];
-		var rad = Math.trim(this.radian + Math.SQ / 2);
+		let result = [];
+		let rad = Math.trim(this.radian + Math.SQ / 2);
 
 		super.move(target);
 		if (this.appears) {
-			var joint = this.next;
+			let joint = this.next;
 
 			while (joint) {
 				rad -= Rewinder.RADIAN_STEP * this.ratio / 100;
@@ -40,7 +40,7 @@ class Rewinder extends Chain {
 			return result;
 		}
 		this.appears = true;
-		var joint = this.next;
+		let joint = this.next;
 
 		while (joint) {
 			result.push(joint);
@@ -67,12 +67,12 @@ class RewinderChild extends Chain {
 		this.effectH = false;
 		this.effectV = false;
 		this.radius = RewinderChild.RADIUS;
-		this.anim = new Animator(this, 'boss/winding.joint.png');
+		this.anim = new Animator('boss.winding.joint');
 	}
 
 	move(target) {
-		var prev = this.prev;
-		var dist = this.radius + prev.radius;
+		let prev = this.prev;
+		let dist = this.radius + prev.radius;
 
 		this.x = prev.x + Math.cos(this.radian) * dist;
 		this.y = prev.y + Math.sin(this.radian) * dist;

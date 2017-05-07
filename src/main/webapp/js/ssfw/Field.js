@@ -5,10 +5,7 @@ class Field extends Matter {
 	constructor(width, height) {
 		super(0, 0);
 		this.view = new FlexibleView(width, height);
-		this.width = width;
-		this.height = height;
-		this.ship = new Ship(-100, 100);
-		this.ship.isGone = true;
+		this.setRect(width, height);
 		this.shipRemain = 0;
 		this.actorList = [];
 		this.score = 0;
@@ -37,9 +34,8 @@ class Field extends Matter {
 
 	_reset() {
 		this.phase = Field.PHASE.NORMAL;
+		this.ship = new Ship(100, 100);
 		this.ship.reset();
-		this.ship.x = 100;
-		this.ship.y = 100;
 		this.ship.enter();
 		this.actorList = [this.ship];
 		this.hibernate = Field.MAX_HIBERNATE;

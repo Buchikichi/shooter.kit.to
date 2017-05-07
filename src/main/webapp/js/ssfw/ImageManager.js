@@ -22,11 +22,11 @@ class ImageManager {
 				this.dic[src] = img;
 				this.loaded++;
 			};
-// TODO いずれIDのみに修正する予定
-if (src.length == 36)
-			img.src = '/image/src/' + src;
-else
-			img.src = '/img/' + src;
+			if (src.length == 36) {
+				img.src = '/image/src/' + src;
+			} else {
+				img.src = '/image/name/' + src;
+			}
 			this.max++;
 		});
 	}

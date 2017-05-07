@@ -47,14 +47,14 @@ AudioMixer.prototype.play = function(key) {
 	if (this.ctx === null || !this.dic[key]) {
 		return;
 	}
-	var mixer = this;
-	var len = arguments.length;
-	var volume = 1 < len ? arguments[1] : 1;
-	var isBgm = 2 < len ? arguments[2] : false;
-	var pan = 3 < len ? arguments[3] : 0;
-	var offset = 4 < len ? arguments[4] : 0;
-	var buff = this.dic[key];
-	var element = new AudioElement(this.ctx, buff, offset);
+	let mixer = this;
+	let len = arguments.length;
+	let volume = 1 < len ? arguments[1] : 1;
+	let isBgm = 2 < len ? arguments[2] : false;
+	let pan = 3 < len ? arguments[3] : 0;
+	let offset = 4 < len ? arguments[4] : 0;
+	let buff = this.dic[key];
+	let element = new AudioElement(this.ctx, buff, offset);
 
 	if (isBgm) {
 //console.log('d:' + buff.duration);
@@ -89,7 +89,7 @@ AudioMixer.prototype.stop = function() {
 
 AudioMixer.prototype.getCurrentTime = function() {
 	if (0 < this.bgm.length) {
-		var validList = [];
+		let validList = [];
 	
 		this.bgm.forEach(function(element) {
 			if (!element.done) {
@@ -117,7 +117,7 @@ AudioMixer.prototype.setCurrentTime = function(time) {
  * AudioElement.
  */
 function AudioElement(ctx, buff, offset) {
-	var element = this;
+	let element = this;
 
 	this.done = false;
 	this.source = ctx.createBufferSource();
@@ -145,10 +145,10 @@ AudioElement.prototype.setPan = function(panValue) {
 };
 
 AudioElement.prototype.fade = function() {
-	var element = this;
-	var gain = this.gainNode.gain;
-	var val = gain.value;
-	var fading = function() {
+	let element = this;
+	let gain = this.gainNode.gain;
+	let val = gain.value;
+	let fading = function() {
 		if (Math.floor(val * 100) == 0) {
 			element.stop();
 			return;

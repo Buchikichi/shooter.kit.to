@@ -1,41 +1,18 @@
-class Animator {
-	constructor(actor, src, type = Animator.TYPE.ROTATION, numX = 1, numY = 1) {
-		this.actor = actor;
+class Animator extends Matter {
+	constructor(imgsrc, type = Animator.TYPE.ROTATION, numX = 1, numY = 1) {
+		super(0, 0);
 		this.type = type;
 		this.numX = numX;
 		this.numY = numY;
 		this.patNum = 0;
-		this.loadImage(actor, src);
+		this.setupImage(imgsrc);
 	}
 
-	loadImage(actor, src) {
-		let imgs = ImageManager.Instance;
-
-		this.img = imgs.dic[src];
-		if (this.img) {
-			this.width = this.img.width / this.numX;
-			this.height = this.img.height / this.numY;
-			this.hW = this.width / 2;
-			this.hH = this.height / 2;
-			actor.width = this.width;
-			actor.height = this.height;
-			actor.recalculation();
-			return;
-		}
-		// TODO 仮実装なので直す
-ImageManager.Instance.reserve([src]);
-		this.img = new Image();
-		this.img.onload = ()=> {
-			this.width = this.img.width / this.numX;
-			this.height = this.img.height / this.numY;
-			this.hW = this.width / 2;
-			this.hH = this.height / 2;
-//console.log('loadImage:' + src);
-			actor.width = this.width;
-			actor.height = this.height;
-			actor.recalculation();
-		};
-		this.img.src = '/img/' + src;
+	setupImage(imgsrc) {
+		this.img = ImageManager.Instance.dic[imgsrc];
+		let width = this.img.width / this.numX;
+		let height = this.img.height / this.numY;
+		this.setRect(width, height);
 	}
 
 	next(dir) {

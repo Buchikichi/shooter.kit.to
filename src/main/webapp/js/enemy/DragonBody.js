@@ -10,7 +10,7 @@ class DragonBody extends Enemy {
 		this.effectV = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.score = 0;
-		this.anim = new Animator(this, 'enemy/dragonBody.png');
+		this.anim = new Animator('enemy.dragonBody');
 	}
 
 	get triggered() {

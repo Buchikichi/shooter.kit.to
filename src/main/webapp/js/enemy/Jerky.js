@@ -7,7 +7,7 @@ class Jerky extends Enemy {
 		this.speed = 1;
 		this.hitPoint = 1;
 		this.score = 10;
-		this.anim = new Animator(this, 'enemy/jerky.png');
+		this.anim = new Animator('enemy.jerky');
 		this.routine = [
 			new Movement(Movement.COND.X).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_X).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_X),
 			new Movement(Movement.COND.Y).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_Y).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_Y)

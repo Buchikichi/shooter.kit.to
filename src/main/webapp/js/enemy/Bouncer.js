@@ -11,7 +11,7 @@ class Bouncer extends Enemy {
 		this.hitPoint = 3;
 		this.score = 500;
 		this.shuttle = 2;
-		this.img.src = '/img/enemy/bouncer.png';
+		this.anim = new Animator('enemy.bouncer', Animator.TYPE.NONE);
 	}
 
 	move(target) {
@@ -25,17 +25,5 @@ class Bouncer extends Enemy {
 			this.y = this.svY;
 		}
 		return super.move(target);
-	}
-
-	drawNormal(ctx) {
-		var ay = Math.abs(this.dy);
-		var sy = ay < 5 ? .75 + ay / 20 : 1;
-		var ty = this.y / sy;
-
-		ctx.save();
-		ctx.scale(1, sy);
-		ctx.drawImage(this.img, -this.hW, -this.hH);
-		ctx.restore();
-		super.drawNormal(ctx);
 	}
 }

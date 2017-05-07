@@ -5,8 +5,8 @@ class Missile extends Actor {
 	constructor(x, y, opt) {
 		super(x, y);
 		this.dir = opt.dir;
+		this.radius = 2;
 		this.speed = 3;
-		this.width = 2.5;
 		this.gravity = opt.gravity;
 		this.recalculation();
 		this.shuttle = 3;

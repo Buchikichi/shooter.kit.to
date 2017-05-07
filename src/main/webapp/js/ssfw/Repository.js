@@ -16,7 +16,7 @@ Repository.prototype.isComplete = function() {
 };
 
 Repository.prototype.reserve = function(...list) {
-	var repository = this;
+	let repository = this;
 
 	list.forEach(function(key) {
 		if (key == null || key.length == 0) {
@@ -36,15 +36,15 @@ Repository.prototype.makeName = function(key) {
 };
 
 Repository.prototype.load = function(key) {
-	var repository = this;
-	var request = new XMLHttpRequest();
-	var name = this.makeName(key);
+	let repository = this;
+	let request = new XMLHttpRequest();
+	let name = this.makeName(key);
 
 	this.max++;
 	request.open('GET', name, true);
 	request.responseType = this.type;
 	request.addEventListener('loadend', function() {
-		var data = request.response;
+		let data = request.response;
 
 		repository.dic[key] = data;
 		repository.onload(key, name, data);

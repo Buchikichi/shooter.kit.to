@@ -8,7 +8,7 @@ class TitanShot extends Enemy {
 		this.radian = this.dir;
 		this.speed = 7;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
-		this.anim = new Animator(this, 'boss/titan/titan.shot.png');
+		this.anim = new Animator('boss.titan.titan.shot');
 	}
 }
 

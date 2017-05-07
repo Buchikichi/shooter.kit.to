@@ -1,7 +1,7 @@
 class MissileCapsule extends Capsule {
 	constructor(target) {
 		super(target);
-		this.anim = new Animator(this, 'capsule/missileCapsule.png', Animator.TYPE.Y);
+		this.anim = new Animator('capsule.missileCapsule', Animator.TYPE.Y);
 	}
 
 	fate(target) {

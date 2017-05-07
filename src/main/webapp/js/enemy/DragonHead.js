@@ -17,7 +17,7 @@ class DragonHead extends Enemy {
 		this.score = 10000;
 		this.radian = Math.PI;
 		this.appears = false;
-		this.anim = new Animator(this, 'enemy/dragonHead.png');
+		this.anim = new Animator('enemy.dragonHead');
 
 		this.locus = [];
 		this.body = [];
@@ -81,4 +81,3 @@ class DragonHead extends Enemy {
 }
 DragonHead.CNT_OF_BODY = 10;
 DragonHead.STP_OF_BODY = 32;
-ImageManager.Instance.reserve('enemy/dragonHead.png', 'enemy/dragonBody.png');

@@ -14,7 +14,7 @@ function Skeleton(data) {
 }
 
 Skeleton.prototype.init = function() {
-	var root = Object.assign(new Bone(), this.data.root);
+	let root = Object.assign(new Bone(), this.data.root);
 
 	this.data.root = root;
 	this.prepare(root);
@@ -22,8 +22,8 @@ Skeleton.prototype.init = function() {
 };
 
 Skeleton.prototype.prepare = function(node) {
-	var skeleton = this;
-	var children = [];
+	let skeleton = this;
+	let children = [];
 
 	node.prepare();
 	node.joint.forEach(function(child) {
@@ -39,7 +39,7 @@ Skeleton.prototype.prepare = function(node) {
 };
 
 Skeleton.prototype.calcRotationMatrix = function() {
-	var mh = Matrix.rotateY(this.rotationH);
+	let mh = Matrix.rotateY(this.rotationH);
 
 	this.rotationMatrix = Matrix.rotateX(this.rotationV).multiply(mh);
 };
@@ -57,23 +57,23 @@ Skeleton.prototype.rotateV = function(diff) {
 };
 
 Skeleton.prototype.shift = function(motionList, direction) {
-	var skeleton = this;
+	let skeleton = this;
 
 	motionList.forEach(function(motion) {
-		var r = motion.r;
-		var bone = skeleton.map[motion.name];
-		var rx = Matrix.rotateX(r.x);
-		var ry = Matrix.rotateY(r.y);
-		var rz = Matrix.rotateZ(r.z);
+		let r = motion.r;
+		let bone = skeleton.map[motion.name];
+		let rx = Matrix.rotateX(r.x);
+		let ry = Matrix.rotateY(r.y);
+		let rz = Matrix.rotateZ(r.z);
 
 		bone.motionMatrix = rz.multiply(ry).multiply(rx);
 		if (motion.p) {
 			// root
-			var p = motion.p;
-			var prev = bone.pt;
-			var x = skeleton.offsetX + prev.x + p.x * direction;
-			var y = skeleton.offsetY + prev.y + p.y * direction;
-			var z = prev.z + p.z * direction;
+			let p = motion.p;
+			let prev = bone.pt;
+			let x = skeleton.offsetX + prev.x + p.x * direction;
+			let y = skeleton.offsetY + prev.y + p.y * direction;
+			let z = prev.z + p.z * direction;
 
 			bone.translateMatrix = new Matrix([[1,0,0,x],[0,1,0,y],[0,0,1,z],[0,0,0,1]]);
 		}
@@ -98,19 +98,19 @@ function Bone() {
 }
 
 Bone.prototype.prepare = function() {
-	var t = this.translate;
-	var mx = Matrix.rotateX(this.axis.x);
-	var my = Matrix.rotateY(this.axis.y);
-	var mz = Matrix.rotateZ(this.axis.z);
-	var am = mz.multiply(my).multiply(mx);
+	let t = this.translate;
+	let mx = Matrix.rotateX(this.axis.x);
+	let my = Matrix.rotateY(this.axis.y);
+	let mz = Matrix.rotateZ(this.axis.z);
+	let am = mz.multiply(my).multiply(mx);
 
 	this.translateMatrix = new Matrix([[1,0,0,t.x],[0,1,0,t.y],[0,0,1,t.z],[0,0,0,1]]);
 	if (this.parent) {
-		var parent = this.parent;
-		var rx = Matrix.rotateX(-parent.axis.x);
-		var ry = Matrix.rotateY(-parent.axis.y);
-		var rz = Matrix.rotateZ(-parent.axis.z);
-		var pm = rx.multiply(ry).multiply(rz);
+		let parent = this.parent;
+		let rx = Matrix.rotateX(-parent.axis.x);
+		let ry = Matrix.rotateY(-parent.axis.y);
+		let rz = Matrix.rotateZ(-parent.axis.z);
+		let pm = rx.multiply(ry).multiply(rz);
 
 		this.axisMatrix = pm.multiply(am);
 	} else {
@@ -121,7 +121,7 @@ Bone.prototype.prepare = function() {
 
 Bone.prototype.getAccum = function() {
 	if (this.parent) {
-		var mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
+		let mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
 
 		return this.parent.getAccum().multiply(mat);
 	}
@@ -139,18 +139,18 @@ Bone.prototype.calculate = function(isSimple) {
 };
 
 Bone.prototype.drawLine = function(ctx) {
-	var prevPt = this.parent.pt;
-	var nextPt = this.pt;
-	var mx = this.skeleton.rotationMatrix;
+	let prevPt = this.parent.pt;
+	let nextPt = this.pt;
+	let mx = this.skeleton.rotationMatrix;
 
 	prevPt = mx.affine(prevPt.x, prevPt.y, prevPt.z);
 	nextPt = mx.affine(nextPt.x, nextPt.y, nextPt.z);
-	var nextX = nextPt.x;
-	var nextY = -nextPt.y;
-	var prevX = prevPt.x;
-	var prevY = -prevPt.y;
-	var dx = nextX - prevX;
-	var dy = nextY - prevY;
+	let nextX = nextPt.x;
+	let nextY = -nextPt.y;
+	let prevX = prevPt.x;
+	let prevY = -prevPt.y;
+	let dx = nextX - prevX;
+	let dy = nextY - prevY;
 
 	this.cx = prevX + dx / 2;
 	this.cy = prevY + dy / 2;

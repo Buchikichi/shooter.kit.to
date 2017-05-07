@@ -7,7 +7,7 @@ class Hanker extends Enemy {
 		this.speed = .7;
 		this.hitPoint = 2;
 		this.score = 50;
-		this.anim = new Animator(this, 'enemy/hanker.png');
+		this.anim = new Animator('enemy.hanker');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO)
 		];

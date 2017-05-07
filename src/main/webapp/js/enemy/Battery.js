@@ -8,8 +8,8 @@ class Battery extends Enemy {
 		this.hitPoint = 1;
 		this.score = 10;
 		this.anim = [
-			new Animator(this, 'enemy/battery.png'),
-			new Animator(this, 'enemy/batteryBase.png', Animator.TYPE.NONE)
+			new Animator('enemy.battery'),
+			new Animator('enemy.batteryBase', Animator.TYPE.NONE)
 		];
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)

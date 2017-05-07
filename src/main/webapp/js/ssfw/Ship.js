@@ -5,7 +5,7 @@ class Ship extends Actor {
 	constructor(x, y) {
 		super(x, y);
 		this.effectH = false;
-		this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
+		this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		this.reset();
 	}
 

@@ -8,7 +8,7 @@ Math.SQ = Math.SQ || Math.PI / 2;
  * @return the range of -pi to pi.
  */
 Math.trim = Math.trim || function(radian) {
-	var rad = radian;
+	let rad = radian;
 
 	while (Math.PI < rad) {
 		rad -= Math.PI2;
@@ -23,7 +23,7 @@ Math.trim = Math.trim || function(radian) {
  * close.
  */
 Math.close = Math.close || function(src, target, pitch) {
-	var diff = Math.trim(src - target);
+	let diff = Math.trim(src - target);
 
 	if (Math.abs(diff) <= pitch) {
 		return src;

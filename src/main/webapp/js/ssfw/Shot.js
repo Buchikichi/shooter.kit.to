@@ -5,7 +5,7 @@ class Shot extends Actor {
 	constructor(x, y) {
 		super(x, y);
 		this.dir = 0;
-		this.width = 2;
+		this.radius = 2;
 		this.speed = 6;
 //		this.effectH = false;
 		this.size = 2;
