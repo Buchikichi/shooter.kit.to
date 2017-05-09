@@ -161,7 +161,7 @@ class RepositoryManager {
 				anchor.addEventListener('click', ()=> {
 					this.resetPanel(this.select(rec));
 				});
-				this.listView.append(li);
+				this.listView.appendChild(li);
 			});
 			$(this.listView).listview('refresh');
 		});
@@ -196,7 +196,7 @@ class StageManager extends RepositoryManager {
 			let filter = name.indexOf('B') != -1 ? ImageEntity.Type.BACK : ImageEntity.Type.FORE;
 			let button = new ImageSelectionButton(name, filter);
 
-			imageButtons.append(button.fieldset);
+			imageButtons.appendChild(button.fieldset);
 		});
 
 		// Audio selection
@@ -205,7 +205,7 @@ class StageManager extends RepositoryManager {
 		['theme', 'boss'].forEach(name => {
 			let button = new AudioSelectionButton(name, AudioEntity.Type.BGM);
 
-			audioButtons.append(button.fieldset);
+			audioButtons.appendChild(button.fieldset);
 		});
 
 		// edit map
@@ -259,7 +259,7 @@ class ActorManager extends RepositoryManager {
 		['ImageId'].forEach(name => {
 			let button = new ImageSelectionButton(name, ImageEntity.Type.ACT);
 
-			imageButtons.append(button.fieldset);
+			imageButtons.appendChild(button.fieldset);
 		});
 	}
 

@@ -37,7 +37,7 @@ class ResourceChooser {
 			data.forEach(rec => {
 				let listviewRow = this.createRow(rec);
 
-				this.listView.append(listviewRow.li);
+				this.listView.appendChild(listviewRow.li);
 				listviewRow.anchor.addEventListener('click', ()=> {
 					this.embedId(hidden, rec.id);
 				});

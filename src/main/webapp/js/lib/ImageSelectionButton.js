@@ -35,10 +35,10 @@ class ImageSelectionButton {
 			hidden.value = '';
 			this.resetImage();
 		});
-		fieldset.append(legend);
-		fieldset.append(anchor);
-		fieldset.append(hidden);
-		fieldset.append(img);
+		fieldset.appendChild(legend);
+		fieldset.appendChild(anchor);
+		fieldset.appendChild(hidden);
+		fieldset.appendChild(img);
 		//
 		this.fieldset = fieldset;
 		this.button = anchor;

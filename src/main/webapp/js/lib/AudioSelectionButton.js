@@ -57,13 +57,13 @@ class AudioSelectionButton {
 			hidden.value = '';
 			this.resetImage();
 		});
-		controlgroup.append(webmButton);
-		controlgroup.append(audioButton);
-		controlgroup.append(deleteButton);
-		fieldset.append(legend);
-		fieldset.append(anchor);
-		fieldset.append(hidden);
-		fieldset.append(controlgroup);
+		controlgroup.appendChild(webmButton);
+		controlgroup.appendChild(audioButton);
+		controlgroup.appendChild(deleteButton);
+		fieldset.appendChild(legend);
+		fieldset.appendChild(anchor);
+		fieldset.appendChild(hidden);
+		fieldset.appendChild(controlgroup);
 		$(controlgroup).controlgroup({type: 'horizontal', mini: true});
 		//
 		this.fieldset = fieldset;

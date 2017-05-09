@@ -23,13 +23,13 @@ class AccessibleRange {
 			input.setAttribute('value', key);
 			label.setAttribute('for', id);
 			label.textContent = AccessibleRange.List[key];
-			fieldset.append(input);
-			fieldset.append(label);
+			fieldset.appendChild(input);
+			fieldset.appendChild(label);
 		});
 		fieldset.setAttribute('data-role', 'controlgroup');
 		fieldset.setAttribute('data-type', 'horizontal');
 		fieldset.setAttribute('data-mini', 'true');
-		fieldset.append(legend);
+		fieldset.appendChild(legend);
 		$(fieldset).parents('form').trigger('create');
 	}
 }

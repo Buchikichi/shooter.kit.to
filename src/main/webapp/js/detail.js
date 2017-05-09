@@ -69,7 +69,7 @@ class AppMain {
 
 		anchor.setAttribute('data-id', stageId);
 		anchor.setAttribute('data-roll', 0);
-		this.productStageView.append(li);
+		this.productStageView.appendChild(li);
 		$(this.productStageView).listview('refresh');
 		return true;
 	}
@@ -186,7 +186,7 @@ class StagePanel {
 				let li = listviewRow.li;
 				let anchor = li.querySelector('a');
 
-				this.stageView.append(li);
+				this.stageView.appendChild(li);
 				anchor.addEventListener('click', ()=> {
 					if (!callBack(rec)) {
 console.log('Already exists.');

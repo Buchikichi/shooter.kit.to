@@ -60,7 +60,7 @@ class AppMain {
 			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
 
 			//console.log('name:' + rec.name);
-			listView.append(listviewRow.li);
+			listView.appendChild(listviewRow.li);
 			listviewRow.anchor.addEventListener('click', e => {
 				e.preventDefault();
 				this.clearDetailInfo();

@@ -14,17 +14,17 @@ class ListviewRow {
 		if (rec.href) {
 			anchor.setAttribute('href', rec.href);
 		}
-		anchor.append(img);
-		anchor.append(name);
-		anchor.append(description);
+		anchor.appendChild(img);
+		anchor.appendChild(name);
+		anchor.appendChild(description);
 		if (rec.count) {
 			let count = document.createElement('span');
 
 			count.classList.add('ui-li-count');
 			count.textContent = rec.count;
-			anchor.append(count);
+			anchor.appendChild(count);
 		}
-		li.append(anchor);
+		li.appendChild(anchor);
 		this.img = img;
 		this.anchor = anchor;
 		this.li = li;

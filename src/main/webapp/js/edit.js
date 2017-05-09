@@ -42,7 +42,7 @@ class EditMain {
 			let legend = document.createElement('legend');
 
 			legend.textContent = key.toUpperCase() + ':';
-			fieldset.append(legend);
+			fieldset.appendChild(legend);
 			Object.keys(propList).forEach(prop => {
 				let attr = propList[prop];
 				let name = key + prop;
@@ -60,10 +60,10 @@ class EditMain {
 
 					ground[prop] = input.value;
 				});
-				fieldset.append(input);
+				fieldset.appendChild(input);
 				$(input).textinput();
 			});
-			form.append(fieldset);
+			form.appendChild(fieldset);
 			$(fieldset).controlgroup({mini: true});
 		})
 	}
@@ -242,8 +242,8 @@ function setupActorList(landform) {
 			img.attr('height', rec.h);
 		}
 		rec.instance = new rec.type(landform);
-		container.append(input);
-		container.append(label.prepend(img));
+		container.appendChild(input);
+		container.appendChild(label.prepend(img));
 	});
 	actorList.parent().trigger('create');
 	actorList.find('input').click(function() {
