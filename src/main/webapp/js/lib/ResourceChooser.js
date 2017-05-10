@@ -28,11 +28,13 @@ class ResourceChooser {
 	}
 
 	list(hidden, type) {
-		let param = {keyword: '', type: type};
+		let formData = new FormData();
 
+		formData.append('keyword', '');
+		formData.append('type', type);
 		this.listView = document.querySelector(this.id + ' > ul');
 		this.listView.textContent = 'Loadling...';
-		this.entity.list(param).then(data => {
+		this.entity.list(formData).then(data => {
 			this.listView.textContent = null;
 			data.forEach(rec => {
 				let listviewRow = this.createRow(rec);

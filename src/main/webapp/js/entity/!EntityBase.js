@@ -7,43 +7,34 @@ class EntityBase {
 	 * 一覧取得.
 	 */
 	list(data = {}) {
-		return $.ajax({
-			type: 'post',
-			url: '/' + this.base + '/list',
-			dataType: 'json',
-			data: data,
-		});
+		return AjaxUtils.post('/' + this.base + '/list', data);
+//		return $.ajax({
+//			type: 'post',
+//			url: '/' + this.base + '/list',
+//			dataType: 'json',
+//			data: data,
+//		});
 	}
 
 	/**
 	 * レコード取得.
 	 */
 	select(id) {
-		let data = new FormData();
+		let formData = new FormData();
 
-		data.append('id', id);
-		return fetch('/' + this.base + '/select', {
-			method: 'post',
-			body: data,
-		}).then(res => {
-			return res.json();
-		});
-//		return $.ajax({
-//			type: 'post',
-//			url: '/' + this.base + '/select',
-//			dataType: 'json',
-//			data: data,
-//		});
+		formData.append('id', id);
+		return AjaxUtils.post('/' + this.base + '/select', formData);
 	}
 
 	save(formData) {
-		return $.ajax({
-			type: 'post',
-			url: '/' + this.base + '/save',
-			dataType: 'json',
-			data: formData,
-			processData : false,
-			contentType: false,
-		});
+		return AjaxUtils.post('/' + this.base + '/save', formData);
+//		return $.ajax({
+//			type: 'post',
+//			url: '/' + this.base + '/save',
+//			dataType: 'json',
+//			data: formData,
+//			processData : false,
+//			contentType: false,
+//		});
 	}
 }

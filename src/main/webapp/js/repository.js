@@ -144,8 +144,11 @@ class RepositoryManager {
 
 	createParameter() {
 		let type = $('#type-radio [name="type"]:checked').val();
+		let formData = new FormData();
 
-		return {keyword: '', type: type};
+		formData.append('keyword', '');
+		formData.append('type', type);
+		return formData;
 	}
 
 	list() {
@@ -358,8 +361,11 @@ class AudioManager extends RepositoryManager {
 
 	createParameter() {
 		let type = $('#audioType [name="audioType"]:checked').val();
+		let formData = new FormData();
 
-		return {keyword: '', type: type};
+		formData.append('keyword', '');
+		formData.append('type', type);
+		return formData;
 	}
 
 	createRow(rec) {
