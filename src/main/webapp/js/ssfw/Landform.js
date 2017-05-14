@@ -349,7 +349,7 @@ Landform.prototype.wheel = function(delta) {
 	let fg = this.stage.fg;
 
 	if (delta < 0){
-		fg.y += Landform.BRICK_WIDTH * 2;
+		fg.y += Landform.BRICK_WIDTH;
 		if (this.height <= fg.y) {
 			fg.y = 0;
 		}
@@ -357,7 +357,7 @@ Landform.prototype.wheel = function(delta) {
 		if (fg.y == 0) {
 			fg.y = this.height;
 		}
-		fg.y -= Landform.BRICK_WIDTH * 2;
+		fg.y -= Landform.BRICK_WIDTH;
 	}
 };
 

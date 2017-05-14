@@ -99,7 +99,11 @@ class EditMain {
 		let landform = this.field.landform;
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+			let delta = this.controller.delta;
 
+			if (delta) {
+				this.moveLandform(delta);
+			}
 			view.clear();
 			this.field.draw();
 			requestAnimationFrame(activate);
@@ -146,6 +150,35 @@ class EditMain {
 		this.setupPointingDevice();
 	}
 
+	moveLandform(delta) {
+		let landform = this.field.landform;
+		let dx = parseInt(delta.x / Landform.BRICK_WIDTH);
+		let dy = parseInt(delta.y / Landform.BRICK_WIDTH);
+
+		if (dx != 0) {
+			let slider = $('#slider');
+			let min = parseInt(slider.attr('min'));
+			let max = parseInt(slider.attr('max'));
+			let val = parseInt(slider.val()) - dx;
+
+//console.log('delta:' + delta.x + ' dx:' + dx + ' val:' + val + '(' + max + '/' + min + ')');
+			if (val < min) {
+				val = min;
+			}
+			if (max < val) {
+				val = max;
+			}
+			let h = val * Landform.BRICK_WIDTH;
+
+			slider.val(val).slider('refresh');
+			landform.stage.moveH(h);
+		}
+		if (dy != 0) {
+			landform.wheel(dy);
+		}
+		this.controller.decPoint(dx * Landform.BRICK_WIDTH, dy * Landform.BRICK_WIDTH);
+	}
+
 	setupPointingDevice() {
 		let canvas = document.getElementById('canvas');
 
@@ -179,7 +212,7 @@ class EditMain {
 
 
 // ↓古い
-(function() {
+/*(function() {
 	let canvas = document.getElementById('canvas');
 	let ctx = canvas.getContext('2d');
 	let slider = $('#slider');
@@ -225,6 +258,7 @@ landform.loadStage(new Stage(Stage.SCROLL.LOOP, 'stage1.map.png', [ new StageFg(
 	};
 	activate();
 });
+//*/
 
 function setupActorList(landform) {
 	let actorList = $('#actorList');

@@ -168,7 +168,7 @@ class Field extends Matter {
 		this.landform.draw();
 		this.score += score;
 		this.showScore();
-		if (!this.isGameOver() && ship.isGone) {
+		if (!this.isGameOver() && ship && ship.isGone) {
 			AudioMixer.INSTANCE.stop();
 			if (0 < --this.hibernate) {
 				return;

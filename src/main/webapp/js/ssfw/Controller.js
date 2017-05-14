@@ -43,16 +43,24 @@ class Controller {
 		let end = ()=> {
 			this.touch = false;
 			this.point = null;
+			this.prev = null;
+			this.delta = null;
 //console.log('end');
 		};
 
 		canvas.addEventListener('mousedown', event => {
 			this.touch = true;
 			this.point = FlexibleView.Instance.convert(event.clientX, event.clientY);
+			this.prev = this.point;
+			this.delta = null;
 		});
 		canvas.addEventListener('mousemove', event => {
 			if (this.touch) {
 				this.point = FlexibleView.Instance.convert(event.clientX, event.clientY);
+
+				let dx = this.point.x - this.prev.x;
+				let dy = this.point.y - this.prev.y;
+				this.delta = {x:dx, y:dy};
 			}
 		});
 		canvas.addEventListener('mouseup', ()=> end());
@@ -75,5 +83,10 @@ class Controller {
 //console.log('touchmove:' + this.point);
 		});
 		canvas.addEventListener('touchend', ()=> end());
+	}
+
+	decPoint(x, y) {
+		this.prev.x += x;
+		this.prev.y += y;
 	}
 }

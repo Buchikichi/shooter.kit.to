@@ -4,12 +4,13 @@ class StageEntity extends EntityBase {
 	}
 
 	saveMap(formData) {
-		return fetch('/' + this.base + '/saveMap', {
-			method: 'post',
-			body: formData,
-			credentials: 'include',
-		}).then(res => {
-			return res.json();
-		});
+		return AjaxUtils.post('/' + this.base + '/saveMap', formData);
+//		return fetch('/' + this.base + '/saveMap', {
+//			method: 'post',
+//			body: formData,
+//			credentials: 'include',
+//		}).then(res => {
+//			return res.json();
+//		});
 	}
 }
