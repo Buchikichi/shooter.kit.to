@@ -39,13 +39,20 @@ Repository.prototype.load = function(key) {
 	let repository = this;
 	let request = new XMLHttpRequest();
 	let name = this.makeName(key);
+	let isJson = this.type == 'json';
 
 	this.max++;
 	request.open('GET', name, true);
-	request.responseType = this.type;
-	request.addEventListener('loadend', function() {
+	if (!isJson) {
+//console.log(name + '::' + this.type);
+		request.responseType = this.type;
+	}
+	request.addEventListener('loadend', ()=> {
 		let data = request.response;
 
+		if (isJson) {
+			data = JSON.parse(data);
+		}
 		repository.dic[key] = data;
 		repository.onload(key, name, data);
 //		console.log('load:' + key);

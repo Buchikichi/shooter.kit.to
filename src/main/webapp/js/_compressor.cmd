@@ -17,5 +17,8 @@ java -jar %COMP% %COMP_OPT% --js repository-all.js --js_output_file repository-m
 type %LIBS% edit.js > edit-all.js 2> nul
 java -jar %COMP% %COMP_OPT% --js edit-all.js --js_output_file edit-min.js
 
+type %LIBS% play.js > play-all.js 2> nul
+java -jar %COMP% %COMP_OPT% --js play-all.js --js_output_file play-min.js
+
 del *-all.js
 pause
