@@ -12,6 +12,14 @@ class EditMain {
 		this.loadStage(stageId);
 	}
 
+	get isMove() {
+		return $('[name="behavior"]:checked').val() == 'm';
+	}
+
+	get isBrick() {
+		return $('[name="behavior"]:checked').val() == 'b';
+	}
+
 	loadStage(stageId) {
 		this.stageEntity = new StageEntity();
 		this.stageEntity.select(stageId).then(rec => {
@@ -100,9 +108,22 @@ class EditMain {
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 			let delta = this.controller.delta;
+			let move = this.controller.move;
+			let point = this.controller.point;
 
+			landform.target = null;
+			landform.which = false;
+			if (move) {
+				landform.target = move;
+			}
 			if (delta) {
-				this.moveLandform(delta);
+				if (this.isMove) {
+					landform.selection = '0';
+					this.moveLandform(delta);
+				}
+				if (this.isBrick) {
+					landform.which = true;
+				}
 			}
 			view.clear();
 			this.field.draw();
@@ -111,6 +132,8 @@ class EditMain {
 
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
+		this.brickPanel = new BrickPanel(this.field);
+		this.enemyPanel = new EnemyPanel(this.field);
 		landform.isEdit = true;
 		landform.loadStage(this.stage);
 		activate();
@@ -131,6 +154,14 @@ class EditMain {
 		slider.slider('refresh');
 		landform.stage.moveH(0);
 
+		// Brick
+		$('[name="behavior"]:eq(1)').click(() => {
+			this.brickPanel.open();
+		});
+		// Enemy
+		$('[name="behavior"]:eq(2)').click(() => {
+			this.enemyPanel.open();
+		});
 		// saveButton
 		let saveButton = document.getElementById('saveButton');
 
@@ -208,6 +239,35 @@ class EditMain {
 		});
 	}
 }
+
+class BrickPanel {
+	constructor(field) {
+		this.field = field;
+		this.panel = document.getElementById('brickPanel');
+		$('[name="brick"]').click(()=> {
+			let val = $('[name="brick"]:checked').val();
+			let landform = this.field.landform;
+
+			landform.selection = val;
+		});
+	}
+
+	open() {
+		$(this.panel).panel('open');
+	}
+}
+
+class EnemyPanel {
+	constructor(field) {
+		this.field = field;
+		this.panel = document.getElementById('enemyPanel');
+	}
+
+	open() {
+		$(this.panel).panel('open');
+	}
+}
+
 
 
 

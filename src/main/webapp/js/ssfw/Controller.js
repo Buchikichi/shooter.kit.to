@@ -44,6 +44,7 @@ class Controller {
 			this.touch = false;
 			this.point = null;
 			this.prev = null;
+			this.move = null;
 			this.delta = null;
 //console.log('end');
 		};
@@ -52,11 +53,13 @@ class Controller {
 			this.touch = true;
 			this.point = FlexibleView.Instance.convert(event.clientX, event.clientY);
 			this.prev = this.point;
+			this.move = null;
 			this.delta = null;
 		});
 		canvas.addEventListener('mousemove', event => {
+			this.move = FlexibleView.Instance.convert(event.clientX, event.clientY);
 			if (this.touch) {
-				this.point = FlexibleView.Instance.convert(event.clientX, event.clientY);
+				this.point = this.move;
 
 				let dx = this.point.x - this.prev.x;
 				let dy = this.point.y - this.prev.y;
