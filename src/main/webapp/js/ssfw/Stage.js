@@ -171,6 +171,34 @@ class Stage {
 //			this.scroll = Stage.SCROLL.ON;
 //		}
 	}
+
+	/**
+	 * レコードからステージを生成.
+	 */
+	static createViewList(rec) {
+		let list = [];
+
+		Stage.VIEWS.forEach(key => {
+			let imageId = rec[key];
+
+			if (!imageId || imageId.length == 0) {
+				return;
+			}
+			let speed = rec[key + 'speed'];
+			let dir = rec[key + 'dir'];
+			let blink = rec[key + 'blink'];
+			let view;
+			// (img, speed = .5, dir = 0, blink = 0)
+			if (key.startsWith('b')) {
+				view = new StageBg(imageId, speed, dir, blink);
+			} else {
+				view = new StageFg(imageId, speed, dir, blink);
+			}
+			view.viewId = key;
+			list.push(view);
+		});
+		return list;
+	} 
 }
 Stage.SCROLL = {
 	OFF: 0,
@@ -182,33 +210,6 @@ Stage.SCROLL = {
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.LIST = [];
 Stage.CHECK_POINT = [0, 660, 1440];
-/**
- * レコードからステージを生成.
- */
-Stage.createViewList = rec => {
-	let list = [];
-
-	Stage.VIEWS.forEach(key => {
-		let imageId = rec[key];
-
-		if (!imageId || imageId.length == 0) {
-			return;
-		}
-		let speed = rec[key + 'speed'];
-		let dir = rec[key + 'dir'];
-		let blink = rec[key + 'blink'];
-		let view;
-		// (img, speed = .5, dir = 0, blink = 0)
-		if (key.startsWith('b')) {
-			view = new StageBg(imageId, speed, dir, blink);
-		} else {
-			view = new StageFg(imageId, speed, dir, blink);
-		}
-		view.viewId = key;
-		list.push(view);
-	});
-	return list;
-} 
 
 
 /**

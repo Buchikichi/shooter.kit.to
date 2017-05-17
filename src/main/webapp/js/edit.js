@@ -7,9 +7,14 @@ class EditMain {
 	 * インスタンス生成.
 	 */
 	constructor() {
-		let stageId = document.getElementById('stageId').value;
-
-		this.loadStage(stageId);
+		this.stageId = document.getElementById('stageId').value;
+		this.detailId = document.getElementById('detailId').value;
+		this.isDetail = 0 < this.detailId.length;
+		if (this.isDetail) {
+			this.loadDetail();
+			return;
+		}
+		this.loadStage();
 	}
 
 	get isMove() {
@@ -20,17 +25,30 @@ class EditMain {
 		return $('[name="behavior"]:checked').val() == 'b';
 	}
 
-	loadStage(stageId) {
+	loadStage() {
 		this.stageEntity = new StageEntity();
-		this.stageEntity.select(stageId).then(rec => {
+		this.stageEntity.select(this.stageId).then(rec => {
 			this.field = new Field(512, 224);
-			this.setupStage(rec);
+			this.setupStage(rec, rec.map);
 //			this.setupActors(rec);
 			this.checkLoading();
 		});
 	}
 
-	setupStage(rec) {
+	loadDetail() {
+		this.productEntity = new ProductEntity();
+		this.productEntity.detail(this.detailId).then(rec => {
+			let stage = rec.stage;
+			let map = rec.map ? rec.map : stage.map;
+
+			this.field = new Field(512, 224);
+			this.setupStage(stage, map);
+//			this.setupActors(rec);
+			this.checkLoading();
+		});
+	}
+
+	setupStage(rec, map) {
 		let form = document.getElementById('inputBox');
 		let view = Stage.createViewList(rec);
 		let propList = {
@@ -39,7 +57,7 @@ class EditMain {
 			'blink':{min:0, max:1, step:0.01},
 		}
 
-		this.stage = new Stage(Stage.SCROLL.LOOP, rec.map, view);
+		this.stage = new Stage(Stage.SCROLL.LOOP, map, view);
 		Stage.VIEWS.forEach(key => {
 			let imageId = rec[key];
 
@@ -218,17 +236,12 @@ class EditMain {
 	}
 
 	saveMap() {
-		let stageId = document.getElementById('stageId').value;
-		let attrForm = document.getElementById('attrForm');
-		let formData = new FormData(attrForm);
-		let landform = this.field.landform;
+		let save = this.isDetail ? this.saveDetailMap() : this.saveStageMap();
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
-		formData.append('id', stageId);
-		formData.append('map', landform.mapImage);
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-		this.stageEntity.saveMap(formData).then(data => {
+		save.then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Stage saved.';
@@ -237,6 +250,25 @@ class EditMain {
 			}
 			$(messagePopup).popup('open', {});
 		});
+	}
+
+	saveStageMap() {
+		let attrForm = document.getElementById('attrForm');
+		let formData = new FormData(attrForm);
+		let landform = this.field.landform;
+
+		formData.append('id', this.stageId);
+		formData.append('map', landform.mapImage);
+		return this.stageEntity.saveMap(formData);
+	}
+
+	saveDetailMap() {
+		let formData = new FormData();
+		let landform = this.field.landform;
+
+		formData.append('id', this.detailId);
+		formData.append('map', landform.mapImage);
+		return this.productEntity.saveMap(formData);
 	}
 }
 

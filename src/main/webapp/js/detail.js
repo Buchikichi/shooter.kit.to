@@ -27,14 +27,9 @@ class AppMain {
 		//
 		let stageButtonList = this.productStageView.querySelectorAll('a');
 
-		stageButtonList.forEach(stageButton => {
-			stageButton.addEventListener('click', ()=> {
-				let stageId = stageButton.getAttribute('data-id');
-				let roll = stageButton.getAttribute('data-roll');
-				let rec = {
-					stageId: stageId,
-					roll: roll,
-				};
+		stageButtonList.forEach(anchor => {
+			anchor.addEventListener('click', ()=> {
+				let rec = this.getRec(anchor);
 
 				this.editStagePanel.open(rec);
 			});
@@ -45,6 +40,19 @@ class AppMain {
 		saveButton.addEventListener('click', ()=> {
 			this.saveProduct();
 		});
+		$(saveButton).addClass('ui-state-disabled');
+	}
+
+	getRec(anchor) {
+		let id = anchor.getAttribute('data-id');
+		let stageId = anchor.getAttribute('data-stage');
+		let roll = anchor.getAttribute('data-roll');
+
+		return {
+			id: id,
+			stageId: stageId,
+			roll: roll,
+		};
 	}
 
 	addStage(rec) {
@@ -110,11 +118,12 @@ class AppMain {
 	}
 
 	checkCustomer() {
+		let saveButton = document.getElementById('saveButton');
+
 		this.customer.check().then(data => {
 			if (data.ok) {
+				$(saveButton).removeClass('ui-state-disabled');
 				$('#footerNav a:eq(1)').removeClass('ui-state-disabled');
-				$('#footerNav a:eq(2)').removeClass('ui-state-disabled');
-				$('#footerNav').navbar('refresh');
 			}
 		});
 	}
@@ -125,14 +134,9 @@ class AppMain {
 
 		stageList.forEach((li, ix) => {
 			let anchor = li.querySelector('a');
-			let stageId = anchor.getAttribute('data-id');
-			let roll = anchor.getAttribute('data-roll');
-			let rec = {
-				stageId: stageId,
-				seq: ix,
-				roll: roll,
-			};
+			let rec = this.getRec(anchor);
 
+			rec.seq = ix;
 			list.push(rec);
 		});
 		return list;
@@ -213,7 +217,13 @@ class EditStagePanel {
 		this.roll.addEventListener('change', ()=> {
 			this.rec.roll = this.roll.value;
 		});
-		//
+		// edit map
+		let editButton = this.panel.querySelector('.ui-icon-edit');
+
+		editButton.addEventListener('click', ()=> {
+			window.open('/detail/edit/' + this.rec.id);
+		});
+		// remove map
 		let deleteButton = this.panel.querySelector('.ui-icon-delete');
 
 		deleteButton.addEventListener('click', ()=> {

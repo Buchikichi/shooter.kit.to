@@ -14,22 +14,21 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.ProductDetail;
-import to.kit.shooter.entity.Stage;
-import to.kit.shooter.service.StageService;
+import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.web.form.LoginInfo;
+import to.kit.shooter.web.form.ProductDetailForm;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.StageForm;
 
 /**
- * ステージ.
+ * プロダクト詳細.
  * @author H.Sasai
  */
 @Controller
-@RequestMapping("/stage")
+@RequestMapping("/detail")
 @SessionAttributes(types = LoginInfo.class)
-public class StageController implements BasicControllerInterface<Stage> {
+public class DetailController implements BasicControllerInterface<ProductDetail> {
 	@Autowired
-	private StageService stageService;
+	private ProductDetailService productDetailService;
 	@Autowired
 	private LoginInfo loginInfo;
 
@@ -45,54 +44,29 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public List<Stage> list() {
-		return this.stageService.list();
+	public List<ProductDetail> list() {
+		return this.productDetailService.list();
 	}
 
 	@RequestMapping("/select")
 	@ResponseBody
 	@Override
-	public Stage select(@RequestParam String id) {
-		return this.stageService.detail(id);
+	public ProductDetail select(@RequestParam String id) {
+		return this.productDetailService.detail(id);
 	}
 
-	/**
-	 * パネルでの保存.
-	 * @param form フォーム
-	 * @return 結果
-	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(StageForm form) {
+	public ResultForm save(ProductDetailForm form) {
 		ResultForm result = new ResultForm();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		Stage stage = new Stage();
-		BeanUtils.copyProperties(form, stage);
-		stage.setOwner(customerId);
-		Stage saved = this.stageService.save(stage);
-
-		result.setInfo(saved);
-		result.setOk(true);
-		return result;
-	}
-
-	@RequestMapping("/saveMap")
-	@ResponseBody
-	public ResultForm saveMap(StageForm form) {
-		ResultForm result = new ResultForm();
-		String customerId = getCustomerId();
-
-		if (customerId == null || customerId.isEmpty()) {
-			return result;
-		}
-		Stage stage = new Stage();
-		BeanUtils.copyProperties(form, stage);
-		stage.setOwner(customerId);
-		Stage saved = this.stageService.saveMap(stage);
+		ProductDetail detail = new ProductDetail();
+		BeanUtils.copyProperties(form, detail);
+		ProductDetail saved = this.productDetailService.saveMap(detail);
 
 		result.setInfo(saved);
 		result.setOk(true);
@@ -101,10 +75,10 @@ public class StageController implements BasicControllerInterface<Stage> {
 
 	@RequestMapping("/edit/{id}")
 	public String edit(Model model, @PathVariable("id") String id) {
-		Stage stage = this.stageService.detail(id);
+		ProductDetail detail = this.productDetailService.detail(id);
 
-		model.addAttribute("stage", stage);
-		model.addAttribute("detail", new ProductDetail());
+		model.addAttribute("detail", detail);
+		model.addAttribute("stage", detail.getStage());
 		return "edit";
 	}
 }

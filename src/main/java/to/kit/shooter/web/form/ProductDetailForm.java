@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class ProductDetailForm {
+	private String id;
 	private String stageId;
 	private int seq;
 	private int roll;
