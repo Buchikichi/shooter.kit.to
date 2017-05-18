@@ -13,6 +13,7 @@ class AppMain {
 		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
 		this.editStagePanel = new EditStagePanel(this);
+		this.productActorPanel = new ProductActorPanel(this);
 		this.setupButton();
 		this.checkCustomer();
 		$(this.productStageView).sortable();
@@ -61,7 +62,8 @@ class AppMain {
 		let exists = false;
 
 		elements.forEach(li => {
-			let dataId = li.getAttribute('data-id');
+			let anchor = li.querySelector('a');
+			let dataId = anchor.getAttribute('data-stage');
 
 			if (dataId == stageId) {
 				exists = true;
@@ -75,7 +77,7 @@ class AppMain {
 		let li = listviewRow.li;
 		let anchor = listviewRow.anchor;
 
-		anchor.setAttribute('data-id', stageId);
+		anchor.setAttribute('data-stage', stageId);
 		anchor.setAttribute('data-roll', 0);
 		this.productStageView.appendChild(li);
 		$(this.productStageView).listview('refresh');
@@ -88,7 +90,7 @@ class AppMain {
 
 		stageList.forEach(li => {
 			let anchor = li.querySelector('a');
-			let dataId = anchor.getAttribute('data-id');
+			let dataId = anchor.getAttribute('data-stage');
 
 			if (dataId == stageId) {
 				target = li;
@@ -169,75 +171,5 @@ console.log(data);
 			}
 			$(messagePopup).popup('open', {});
 		});
-	}
-}
-
-class StagePanel {
-	constructor() {
-		this.panel = document.getElementById('stagePanel');
-		this.stageView = document.getElementById('stageView');
-		this.stage = new StageEntity();
-	}
-
-	open(callBack) {
-		let keyword = '';
-
-		this.stageView.textContent = 'Loading...';
-		this.stage.list(keyword).then(data => {
-			this.stageView.textContent = null;
-			data.forEach(rec => {
-				let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
-				let li = listviewRow.li;
-				let anchor = li.querySelector('a');
-
-				this.stageView.appendChild(li);
-				anchor.addEventListener('click', ()=> {
-					if (!callBack(rec)) {
-console.log('Already exists.');
-						return;
-					}
-					$(this.stagePanel).panel('close');
-				});
-			});
-			$(this.stageView).listview('refresh');
-		});
-	}
-}
-
-class EditStagePanel {
-	constructor(appMain) {
-		this.appMain = appMain;
-		this.panel = document.getElementById('editStagePanel');
-		this.roll = this.panel.querySelector('select');
-		this.rec = {};
-		this.setupEvent();
-	}
-
-	setupEvent() {
-		this.roll.addEventListener('change', ()=> {
-			this.rec.roll = this.roll.value;
-		});
-		// edit map
-		let editButton = this.panel.querySelector('.ui-icon-edit');
-
-		editButton.addEventListener('click', ()=> {
-			window.open('/detail/edit/' + this.rec.id);
-		});
-		// remove map
-		let deleteButton = this.panel.querySelector('.ui-icon-delete');
-
-		deleteButton.addEventListener('click', ()=> {
-			this.appMain.removeStage(this.rec.stageId);
-			$(this.panel).panel('close');
-		});
-		//
-		$(this.panel).on('panelclose', ()=> {
-			this.appMain.updateStage(this.rec);
-		});
-	}
-
-	open(rec) {
-		this.rec = rec;
-		$(this.roll).val([rec.roll]).selectmenu('refresh');
 	}
 }
