@@ -316,3 +316,15 @@ class Actor extends Matter {
 }
 Actor.MAX_EXPLOSION = 12;
 Actor.DEG_STEP = Math.PI / 180;
+Actor.Type = {
+	None: 0,
+	Ship: 1,
+	Shot: 16,
+	Missile: 32,
+	Capsule: 48,
+	Bullet: 64,
+	Material: 80,
+	Enemy: 128,
+	Formation: 192,
+	Boss: 224,
+}

@@ -25,6 +25,7 @@ public class Actor {
 	private String name;
 	private String description;
 	private String imageid;
+	private int type;
 	private String anim;
 	private String properties;
 	private String routine;

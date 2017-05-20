@@ -9,6 +9,7 @@ CREATE TABLE actor(
 	name text NOT NULL,
 	description text NOT NULL,
 	imageId varchar(36) NOT NULL,
+	type integer  NOT NULL DEFAULT 0,
 	anim text,
 	properties text,
 	routine text,
@@ -24,6 +25,7 @@ COMMENT ON COLUMN actor.access IS 'アクセスレベル{0:private, 1:public}';
 COMMENT ON COLUMN actor.name IS '名前';
 COMMENT ON COLUMN actor.description IS '説明';
 COMMENT ON COLUMN actor.imageId IS 'Image ID';
+COMMENT ON COLUMN actor.type IS '種類';
 COMMENT ON COLUMN actor.anim IS 'anim';
 COMMENT ON COLUMN actor.properties IS 'プロパティ';
 COMMENT ON COLUMN actor.routine IS 'routine';

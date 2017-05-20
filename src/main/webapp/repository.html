@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/default.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="js/ssfw-min.js"></script>
 <script type="text/javascript" src="js/repository-min.js"></script>
 </head>
 
@@ -29,6 +30,10 @@
       <label for="radio-choice-h-2d">Own</label>
     </fieldset>
 -->
+    <fieldset id="actorType-select" data-role="controlgroup" data-type="horizontal" data-mini="true">
+      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+      <select name="actorType"></select>
+    </fieldset>
     <fieldset id="type-radio" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
       <label>Act<input type="radio" name="type" value="1" checked="checked"/></label>
@@ -80,6 +85,7 @@
       <label for="actorName">Name:</label><input type="text" id="actorName" name="name" required="required"/>
       <label for="actorDescription">Description:</label><textarea id="actorDescription" name="description" required="required"></textarea>
       <fieldset class="access"></fieldset>
+      <label for="actorType">Type:</label><select id="actorType" name="type" required="required"></select>
       <div class="imageButtons"></div>
 <!--
       <a href="#imageChooser" data-target="imageid" data-filter="act" data-rel="popup" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-heart ui-btn-icon-left ui-btn-a">Image...</a>

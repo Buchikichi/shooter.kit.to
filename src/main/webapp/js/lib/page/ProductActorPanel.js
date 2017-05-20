@@ -22,7 +22,7 @@ class ProductActorPanel {
 		this.entity.list().then(list => {
 			ul.textContent = null;
 			list.forEach(rec => {
-				let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
+				let listviewRow = new ListviewRow(rec, '/image/src/' + rec.imageid);
 				let li = listviewRow.li;
 				let anchor = li.querySelector('a');
 

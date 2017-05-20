@@ -31,12 +31,13 @@ public class ActorController {
 
 	/**
 	 * 一覧取得.
+	 * @param form フォーム
 	 * @return 一覧
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<Actor> list() {
-		return this.actorService.list();
+	public List<Actor> list(ActorForm form) {
+		return this.actorService.list(form.getKeyword(), form.getType());
 	}
 
 	@RequestMapping("/save")

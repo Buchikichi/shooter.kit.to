@@ -26,7 +26,8 @@
     <form id="productForm">
       <input type="hidden" name="id" th:value="${product.id}"/>
       <div class="ui-field-contain">
-        <label>Name:<input id="name" name="name" type="text" required="required" th:value="${product.name}"/></label>
+        <label for="name">Name:</label>
+        <input id="name" name="name" type="text" required="required" th:value="${product.name}"/>
       </div>
       <div class="ui-field-contain">
         <label for="description">Description:</label>
@@ -119,6 +120,29 @@
     <a data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
     <h1>Actors in product</h1>
     <a href="#ActorPanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
+  </div>
+  <div data-role="main">
+    <ul id="enemyView" data-role="listview" class="actorList">
+      <li data-role="list-divider" class="divider">Enemy</li>
+      <li><img src="/img/icon.listview.png"/><span>AAA</span><p>aaa</p></li>
+      <li><img src="/img/icon.listview.png"/><span>BBB</span><p>bbb</p></li>
+    </ul>
+    <ul id="bossView" data-role="listview" class="actorList">
+      <li data-role="list-divider" class="divider">Boss</li>
+      <li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
+      <li><img src="/img/icon.listview.png"/><span>DDD</span><p>ddd</p></li>
+    </ul>
+    <ul id="materialView" data-role="listview" class="actorList">
+      <li data-role="list-divider" class="divider">Material</li>
+    </ul>
+    <ul data-role="listview"><li data-role="list-divider">Bullet</li></ul>
+    <ul id="bulletView" data-role="listview" class="actorList"></ul>
+    <ul data-role="listview"><li data-role="list-divider">Capsule</li></ul>
+    <ul id="capsuleView" data-role="listview" class="actorList"></ul>
+    <ul data-role="listview"><li data-role="list-divider">Shot</li></ul>
+    <ul id="shotView" data-role="listview" class="actorList"></ul>
+    <ul data-role="listview"><li data-role="list-divider">Missile</li></ul>
+    <ul data-role="listview"><li data-role="list-divider">Ship</li></ul>
   </div>
   <div id="ActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
     <span>Choose an actor.</span>

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
@@ -17,9 +19,21 @@ public class ActorService {
 	@Autowired
 	private ActorRepository actorRepository;
 
-	public List<Actor> list() {
+	/**
+	 * 一覧取得.
+	 * @param keyword キーワード
+	 * @param type 種類
+	 * @return 一覧
+	 */
+	public List<Actor> list(String keyword, int type) {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		return this.actorRepository.findAll(sort);
+		Specification<Actor> nameSpec = Specifications.where((root, query, cb) -> {
+			return cb.like(root.get("name"), "%" + keyword + "%");
+		});
+		Specification<Actor> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+			return cb.equal(root.get("type"), Integer.valueOf(type));
+		});
+		return this.actorRepository.findAll(spec, sort);
 	}
 
 	public Actor detail(String id) {

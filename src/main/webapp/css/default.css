@@ -15,6 +15,11 @@ div[data-role=header] {
 	font-weight: bold;
 }
 
+.actorList {
+	min-height: 3em;
+	background-color: #ffff80;
+}
+
 /** Image. */
 #listView img {
 	background-color: black;

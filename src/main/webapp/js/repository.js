@@ -29,34 +29,39 @@ class AppMain {
 			plusButton.setAttribute('href', '#stagePanel');
 			this.manager = this.stageManager;
 			this.manager.list();
-			$('#type-radio').hide();
-			$('#audioType').hide();
+			this.hideFilter();
 		});
 		actorButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#actorPanel');
 			this.manager = this.actorManager;
 			this.manager.list();
-			$('#type-radio').hide();
-			$('#audioType').hide();
+			this.hideFilter();
+			$('#actorType-select').show();
 		});
 		imageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#imagePanel');
 			this.manager = this.imageManager;
 			this.manager.list();
+			this.hideFilter();
 			$('#type-radio').show();
-			$('#audioType').hide();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
 			this.manager = this.audioManager;
 			this.manager.list();
-			$('#type-radio').hide();
+			this.hideFilter();
 			$('#audioType').show();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
 		});
 		stageButton.click();
+	}
+
+	hideFilter() {
+		$('#actorType-select').hide();
+		$('#type-radio').hide();
+		$('#audioType').hide();
 	}
 
 	checkCustomer() {
@@ -250,20 +255,61 @@ class ActorManager extends RepositoryManager {
 	constructor() {
 		super();
 		this.panel = document.getElementById('actorPanel');
-		this.form = document.getElementById('actorForm');
+		this.form = this.panel.querySelector('form');
 		this.entity = new ActorEntity();
 		this.setupPanel();
+	}
+
+	setupActorType() {
+		let fieldset = document.getElementById('actorType-select');
+		let select = fieldset.querySelector('select');
+		let actorType = document.getElementById('actorType');
+
+		Object.keys(Actor.Type).forEach(key => {
+			let value = Actor.Type[key];
+
+			if (value == 0 || key == 'Formation') {
+				return;
+			}
+			// (filter)
+			let option = document.createElement('option');
+			option.setAttribute('value', value);
+			if (key == 'Enemy') {
+				option.setAttribute('selected', 'selected');
+			}
+			option.textContent = key;
+			select.appendChild(option);
+			// option
+			let actorTypeOption = document.createElement('option');
+			actorTypeOption.setAttribute('value', value);
+			actorTypeOption.textContent = key;
+			actorType.appendChild(actorTypeOption);
+		});
+		select.addEventListener('change', ()=> {
+			this.list();
+		});
+		$(select).selectmenu('refresh', true);
 	}
 
 	setupPanel() {
 		let imageButtons = this.form.querySelector('.imageButtons');
 
+		this.setupActorType();
 		super.setupPanel();
 		['ImageId'].forEach(name => {
 			let button = new ImageSelectionButton(name, ImageEntity.Type.ACT);
 
 			imageButtons.appendChild(button.fieldset);
 		});
+	}
+
+	createParameter() {
+		let type = $('#actorType-select [name="actorType"]').val();
+		let formData = new FormData();
+
+		formData.append('keyword', '');
+		formData.append('type', type);
+		return formData;
 	}
 
 	createRow(rec) {

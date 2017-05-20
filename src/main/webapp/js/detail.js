@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', ()=> {
 	new AppMain();
+	new ProductActorPage();
 	new TitleBg();
 });
 
@@ -170,6 +171,16 @@ console.log(data);
 				content.textContent = 'Save failed.';
 			}
 			$(messagePopup).popup('open', {});
+		});
+	}
+}
+
+class ProductActorPage {
+	constructor() {
+		this.page = document.getElementById('productActor');
+		$(this.page).find('.actorList').sortable({
+			connectWith: '.actorList',
+			items: 'li:not(.divider)',
 		});
 	}
 }
