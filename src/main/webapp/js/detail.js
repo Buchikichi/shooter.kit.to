@@ -14,7 +14,6 @@ class AppMain {
 		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
 		this.editStagePanel = new EditStagePanel(this);
-		this.productActorPanel = new ProductActorPanel(this);
 		this.setupButton();
 		this.checkCustomer();
 		$(this.productStageView).sortable();
@@ -163,7 +162,6 @@ class AppMain {
 			let messagePopup = document.getElementById('messagePopup');
 			let content = messagePopup.querySelector('p');
 
-console.log(data);
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Saved.';
@@ -178,9 +176,65 @@ console.log(data);
 class ProductActorPage {
 	constructor() {
 		this.page = document.getElementById('productActor');
-		$(this.page).find('.actorList').sortable({
+		this.actorList = $(this.page).find('.actorList');
+		this.actorList.sortable({
 			connectWith: '.actorList',
 			items: 'li:not(.divider)',
+			stop: (event, ui)=> {
+				// ソート終了時
+				this.actorList.each((ix, ul) => {
+					this.refreshCounter(ul);
+				});
+			}
 		});
+		this.productActorPanel = new ProductActorPanel(this);
+		this.setupActorType();
+	}
+
+	setupActorType() {
+		this.typeMap = {};
+		Array.prototype.forEach.call(this.actorList, li => {
+			let type = this.getActorType(li.id);
+
+			if (0 < type) {
+				this.typeMap[type] = li.id;
+			}
+		});
+	}
+
+	getActorType(id) {
+		let type = 0;
+
+		Object.keys(Actor.Type).forEach(key => {
+			if (id.startsWith(key.toLowerCase())) {
+				type = Actor.Type[key];
+			}
+		});
+		return type;
+	}
+
+	refreshCounter(ul) {
+		let liAll = ul.querySelectorAll('li');
+		let span = ul.querySelector('.ui-li-count');
+
+		span.textContent = liAll.length - 1;
+	}
+
+	appendActor(rec) {
+		let id = this.typeMap[rec.type];
+		let ul = document.getElementById(id);
+//		//<li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
+		let row = new ListviewRow(rec, '/image/src/' + rec.imageid);
+		let li = row.li;
+		let deleteButton = document.createElement('a');
+
+		li.appendChild(deleteButton);
+		deleteButton.addEventListener('click', ()=> {
+			li.parentNode.removeChild(li);
+			this.refreshCounter(ul);
+		});
+		ul.appendChild(li);
+		$(ul).listview('refresh');
+		this.refreshCounter(ul);
 	}
 }

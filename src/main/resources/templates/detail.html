@@ -10,6 +10,7 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="/js/ssfw-min.js"></script>
 <script type="text/javascript" src="/js/detail-min.js"></script>
 </head>
 
@@ -122,30 +123,37 @@
     <a href="#ActorPanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
   </div>
   <div data-role="main">
-    <ul id="enemyView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Enemy</li>
-      <li><img src="/img/icon.listview.png"/><span>AAA</span><p>aaa</p></li>
-      <li><img src="/img/icon.listview.png"/><span>BBB</span><p>bbb</p></li>
+    <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Enemy<span class="ui-li-count">0</span></li>
+    </ul>
+    <ul id="formationView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Formation<span class="ui-li-count">0</span></li>
     </ul>
     <ul id="bossView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Boss</li>
-      <li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
-      <li><img src="/img/icon.listview.png"/><span>DDD</span><p>ddd</p></li>
+      <li data-role="list-divider" class="divider">Boss<span class="ui-li-count">0</span></li>
     </ul>
-    <ul id="materialView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Material</li>
+    <ul id="materialView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Material<span class="ui-li-count">0</span></li>
     </ul>
-    <ul data-role="listview"><li data-role="list-divider">Bullet</li></ul>
-    <ul id="bulletView" data-role="listview" class="actorList"></ul>
-    <ul data-role="listview"><li data-role="list-divider">Capsule</li></ul>
-    <ul id="capsuleView" data-role="listview" class="actorList"></ul>
-    <ul data-role="listview"><li data-role="list-divider">Shot</li></ul>
-    <ul id="shotView" data-role="listview" class="actorList"></ul>
-    <ul data-role="listview"><li data-role="list-divider">Missile</li></ul>
-    <ul data-role="listview"><li data-role="list-divider">Ship</li></ul>
+    <ul id="bulletView" data-role="listview" class="actorList">
+      <li data-role="list-divider" class="divider">Bullet<span class="ui-li-count">0</span></li>
+    </ul>
+    <ul id="capsuleView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Capsule<span class="ui-li-count">0</span></li>
+    </ul>
+    <ul id="shotView" data-role="listview" class="actorList">
+      <li data-role="list-divider" class="divider">Shot<span class="ui-li-count">0</span></li>
+    </ul>
+    <ul id="missileView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Missile<span class="ui-li-count">0</span></li>
+    </ul>
+    <ul id="shipView" data-role="listview" data-split-icon="delete" class="actorList">
+      <li data-role="list-divider" class="divider">Ship<span class="ui-li-count">0</span></li>
+    </ul>
   </div>
   <div id="ActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
     <span>Choose an actor.</span>
+    <select name="actorType"></select>
     <ul data-role="listview" data-filter="true"></ul>
   </div>
 </div>

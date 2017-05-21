@@ -1,7 +1,8 @@
 class ProductActorPanel {
-	constructor(appMain) {
-		this.appMain = appMain;
+	constructor(page) {
+		this.page = page;
 		this.panel = document.getElementById('ActorPanel');
+		this.actorType = this.panel.querySelector('select');
 		this.listView = this.panel.querySelector('ul');
 		this.entity = new ActorEntity();
 		this.setupEvent();
@@ -13,13 +14,45 @@ class ProductActorPanel {
 		actorButton.addEventListener('click', ()=> {
 			this.listActor();
 		});
+		this.setupActorType();
 	}
 
-	listActor(keyword = '') {
+	setupActorType() {
+		Object.keys(Actor.Type).forEach(key => {
+			let value = Actor.Type[key];
+
+			if (value == 0 || key == 'Formation') {
+				return;
+			}
+			// (filter)
+			let option = document.createElement('option');
+			option.setAttribute('value', value);
+			if (key == 'Enemy') {
+				option.setAttribute('selected', 'selected');
+			}
+			option.textContent = key;
+			this.actorType.appendChild(option);
+		});
+		this.actorType.addEventListener('change', ()=> {
+			this.listActor();
+		});
+	}
+
+	createParameter() {
+		let input = this.panel.querySelector('input');
+		let formData = new FormData();
+
+		formData.append('keyword', input.value);
+		formData.append('type', this.actorType.value);
+		return formData;
+	}
+
+	listActor() {
+		let formData = this.createParameter();
 		let ul = this.listView;
 
 		ul.textContent = 'Loading...';
-		this.entity.list().then(list => {
+		this.entity.list(formData).then(list => {
 			ul.textContent = null;
 			list.forEach(rec => {
 				let listviewRow = new ListviewRow(rec, '/image/src/' + rec.imageid);
@@ -28,11 +61,7 @@ class ProductActorPanel {
 
 				ul.appendChild(li);
 				anchor.addEventListener('click', ()=> {
-console.log('click');
-//					if (!callBack(rec)) {
-//console.log('Already exists.');
-//						return;
-//					}
+					this.page.appendActor(rec);
 				});
 			});
 			$(ul).listview('refresh');
