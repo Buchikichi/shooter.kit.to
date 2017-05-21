@@ -17,4 +17,5 @@ public class ProductForm {
 	private int width;
 	private int height;
 	private List<ProductDetailForm> detail;
+	private List<ProductActorForm> actorList;
 }

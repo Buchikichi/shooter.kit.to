@@ -8,7 +8,7 @@ CREATE TABLE product_actor(
 	actor_id varchar(36) NOT NULL,
 	type integer  NOT NULL DEFAULT 0,
 	seq integer  NOT NULL DEFAULT 0,
-	imageId varchar(36) NOT NULL,
+	imageId varchar(36),
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)

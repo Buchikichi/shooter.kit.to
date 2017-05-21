@@ -56,29 +56,29 @@
     <ul data-role="listview"><li data-role="list-divider">Stage</li></ul>
     <ul id="productStageView" data-role="listview">
       <li th:each="detail:${product.detailList}">
-        <a th:with="stage=${detail.stage}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${detail.stageId}, data-roll=${detail.roll}">
+        <a th:with="stage=${detail.stage}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${stage.id}, data-roll=${detail.roll}">
           <img src="/img/icon.listview.png"/>
           <span th:text="${stage.name}"></span>
           <p th:text="${stage.description}"></p>
         </a>
       </li>
     </ul>
-      <fieldset class="ui-grid-a">
-        <div class="ui-block-a">
-          <div class="ui-field-contain">
-            <span>Created:</span>
-            <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
-          </div>
+    <fieldset class="ui-grid-a">
+      <div class="ui-block-a">
+        <div class="ui-field-contain">
+          <span>Created:</span>
+          <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
         </div>
-        <div class="ui-block-b">
-          <div class="ui-field-contain">
-            <span>Updated:</span>
-            <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
-          </div>
+      </div>
+      <div class="ui-block-b">
+        <div class="ui-field-contain">
+          <span>Updated:</span>
+          <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
         </div>
-      </fieldset>
-      <a href="#productActor" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Actors in product</a>
-      <button id="saveButton" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      </div>
+    </fieldset>
+    <a href="#productActor" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Actors in product</a>
+    <button id="saveButton" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
     <div id="message"></div>
   </div>
   <div id="stagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
@@ -125,6 +125,14 @@
   <div data-role="main">
     <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList">
       <li data-role="list-divider" class="divider">Enemy<span class="ui-li-count">0</span></li>
+<li th:each="productActor:${product.ActorList}">
+  <a th:with="actor=${productActor.actor}" href="#" th:attr="data-id=${productActor.id}, data-actor=${actor.id}">
+    <img src="/img/icon.listview.png" th:src="'/image/src/'+${actor.imageid}"/>
+    <span th:text="${actor.name}"></span>
+    <p th:text="${actor.description}"></p>
+  </a>
+  <a class="deleteButton"></a>
+</li>
     </ul>
     <ul id="formationView" data-role="listview" data-split-icon="delete" class="actorList">
       <li data-role="list-divider" class="divider">Formation<span class="ui-li-count">0</span></li>

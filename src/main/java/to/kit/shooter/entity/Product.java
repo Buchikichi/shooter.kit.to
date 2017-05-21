@@ -36,6 +36,9 @@ public class Product {
 	@Column(insertable = false)
 	private Date updated;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", targetEntity = ProductDetail.class)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
 	private List<ProductDetail> detailList;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+	private List<ProductActor> actorList;
 }

@@ -14,18 +14,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
- * ProductDetail.
+ * ProductActor.
  * @author H.Sasai
  */
 @Entity
 @Data
-public class ProductDetail {
+public class ProductActor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+	private int type;
 	private int seq;
-	private int roll;
-	private String map;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
@@ -36,5 +35,5 @@ public class ProductDetail {
 	private Product product;
 
 	@ManyToOne
-	private Stage stage;
+	private Actor actor;
 }

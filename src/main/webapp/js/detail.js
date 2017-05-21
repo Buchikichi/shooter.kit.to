@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', ()=> {
 	new AppMain();
-	new ProductActorPage();
 	new TitleBg();
 });
 
@@ -14,6 +13,7 @@ class AppMain {
 		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
 		this.editStagePanel = new EditStagePanel(this);
+		this.productActorPage = new ProductActorPage();
 		this.setupButton();
 		this.checkCustomer();
 		$(this.productStageView).sortable();
@@ -148,14 +148,25 @@ class AppMain {
 		let form = document.getElementById('productForm');
 		let formData = new FormData(form);
 		let stageList = this.listStages();
+		let actorList = this.productActorPage.listActor();
 
 		stageList.forEach(rec => {
 			let prefix = 'detail[' + rec.seq + '].';
 
 //console.log(rec);
-			formData.append(prefix + 'stageId', rec.stageId);
+			formData.append(prefix + 'stage.id', rec.stageId);
 			formData.append(prefix + 'seq', rec.seq);
 			formData.append(prefix + 'roll', rec.roll);
+		});
+		actorList.forEach((rec, ix) => {
+			if (!rec) {
+				return;
+			}
+			let prefix = 'actorList[' + ix + '].';
+
+			formData.append(prefix + 'actor.id', rec.actorId);
+			formData.append(prefix + 'seq', ix);
+			formData.append(prefix + 'type', rec.productType);
 		});
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		this.product.save(formData).then(data => {
@@ -170,71 +181,5 @@ class AppMain {
 			}
 			$(messagePopup).popup('open', {});
 		});
-	}
-}
-
-class ProductActorPage {
-	constructor() {
-		this.page = document.getElementById('productActor');
-		this.actorList = $(this.page).find('.actorList');
-		this.actorList.sortable({
-			connectWith: '.actorList',
-			items: 'li:not(.divider)',
-			stop: (event, ui)=> {
-				// ソート終了時
-				this.actorList.each((ix, ul) => {
-					this.refreshCounter(ul);
-				});
-			}
-		});
-		this.productActorPanel = new ProductActorPanel(this);
-		this.setupActorType();
-	}
-
-	setupActorType() {
-		this.typeMap = {};
-		Array.prototype.forEach.call(this.actorList, li => {
-			let type = this.getActorType(li.id);
-
-			if (0 < type) {
-				this.typeMap[type] = li.id;
-			}
-		});
-	}
-
-	getActorType(id) {
-		let type = 0;
-
-		Object.keys(Actor.Type).forEach(key => {
-			if (id.startsWith(key.toLowerCase())) {
-				type = Actor.Type[key];
-			}
-		});
-		return type;
-	}
-
-	refreshCounter(ul) {
-		let liAll = ul.querySelectorAll('li');
-		let span = ul.querySelector('.ui-li-count');
-
-		span.textContent = liAll.length - 1;
-	}
-
-	appendActor(rec) {
-		let id = this.typeMap[rec.type];
-		let ul = document.getElementById(id);
-//		//<li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
-		let row = new ListviewRow(rec, '/image/src/' + rec.imageid);
-		let li = row.li;
-		let deleteButton = document.createElement('a');
-
-		li.appendChild(deleteButton);
-		deleteButton.addEventListener('click', ()=> {
-			li.parentNode.removeChild(li);
-			this.refreshCounter(ul);
-		});
-		ul.appendChild(li);
-		$(ul).listview('refresh');
-		this.refreshCounter(ul);
 	}
 }

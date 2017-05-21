@@ -35,11 +35,10 @@ public class ProductDetailService {
 
 	public boolean save(Product product, List<ProductDetail> list) {
 		boolean result = true;
-		String productId = product.getId();
 
-		deleteByProductId(productId);
+		deleteByProductId(product.getId());
 		for (ProductDetail entity : list) {
-			entity.setProductId(productId);
+			entity.setProduct(product);
 			entity.setUpdated(new Date());
 			ProductDetail productDetail = this.productDetailRepository.saveAndFlush(entity);
 			if (productDetail == null) {
