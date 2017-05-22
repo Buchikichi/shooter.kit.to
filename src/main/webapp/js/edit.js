@@ -195,6 +195,13 @@ class EditMain {
 
 			landform.loadMapData(url);
 		});
+		// generateButton
+		let generateButton = document.getElementById('generateButton');
+		generateButton.addEventListener('click', ()=> {
+			let ctx = FlexibleView.Instance.ctx;
+
+			landform.generateBrick(ctx);
+		});
 		//
 		this.setupPointingDevice();
 	}
