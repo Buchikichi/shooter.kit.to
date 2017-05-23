@@ -32,7 +32,7 @@ class ProductActorPage {
 		let type = 0;
 
 		Object.keys(Actor.Type).forEach(key => {
-			if (id.startsWith(key.toLowerCase())) {
+			if (id.startsWith(key)) {
 				type = Actor.Type[key];
 			}
 		});

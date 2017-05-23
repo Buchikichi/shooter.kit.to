@@ -122,18 +122,21 @@
     <h1>Actors in product</h1>
     <a href="#ActorPanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
   </div>
-  <div data-role="main">
-    <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Enemy<span class="ui-li-count">0</span></li>
-<li th:each="productActor:${product.ActorList}">
-  <a th:with="actor=${productActor.actor}" href="#" th:attr="data-id=${productActor.id}, data-actor=${actor.id}">
-    <img src="/img/icon.listview.png" th:src="'/image/src/'+${actor.imageid}"/>
-    <span th:text="${actor.name}"></span>
-    <p th:text="${actor.description}"></p>
-  </a>
-  <a class="deleteButton"></a>
-</li>
-    </ul>
+  <div data-role="main" th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
+    <div th:each="e:${list}">
+      <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
+        <li data-role="list-divider" class="divider"><span th:text="${e}"></span><span class="ui-li-count">0</span></li>
+        <li th:each="productActor:${typeMap.get(e)}">
+          <a th:with="actor=${productActor.actor}" href="#" th:attr="data-id=${productActor.id}, data-actor=${actor.id}">
+            <img src="/img/icon.listview.png" th:src="'/image/src/'+${actor.imageid}"/>
+            <span th:text="${actor.name}"></span>
+            <p th:text="${actor.description}"></p>
+          </a>
+          <a class="deleteButton"></a>
+        </li>
+      </ul>
+    </div>
+<!--
     <ul id="formationView" data-role="listview" data-split-icon="delete" class="actorList">
       <li data-role="list-divider" class="divider">Formation<span class="ui-li-count">0</span></li>
     </ul>
@@ -158,6 +161,7 @@
     <ul id="shipView" data-role="listview" data-split-icon="delete" class="actorList">
       <li data-role="list-divider" class="divider">Ship<span class="ui-li-count">0</span></li>
     </ul>
+-->
   </div>
   <div id="ActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
     <span>Choose an actor.</span>

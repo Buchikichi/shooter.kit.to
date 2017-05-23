@@ -2,6 +2,7 @@ package to.kit.shooter.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.ActorType;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
@@ -74,6 +76,22 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return product;
 	}
 
+	private Map<ActorType, List<ProductActor>> makeTypeMap(List<ProductActor> actorList) {
+		Map<ActorType, List<ProductActor>> map = new HashMap<>();
+
+		for (ProductActor productActor : actorList) {
+			ActorType type = ActorType.getType(productActor.getType());
+			List<ProductActor> list = map.get(type);
+
+			if (list == null) {
+				list = new ArrayList<>();
+				map.put(type, list);
+			}
+			list.add(productActor);
+		}
+		return map;
+	}
+
 	@RequestMapping("/detail/{id}")
 	public String detail(Model model, @PathVariable("id") String id) {
 		Product product = this.productService.detail(id);
@@ -81,7 +99,9 @@ public class ProductController implements BasicControllerInterface<Product> {
 		if (product == null) {
 			return "error";
 		}
+		Map<ActorType, List<ProductActor>> typeMap = makeTypeMap(product.getActorList());
 		model.addAttribute("product", product);
+		model.addAttribute("typeMap", typeMap);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		return "detail";
 	}
