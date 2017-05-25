@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 /**
@@ -37,8 +39,10 @@ public class Product {
 	private Date updated;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+	@JsonManagedReference
 	private List<ProductDetail> detailList;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+	@JsonManagedReference
 	private List<ProductActor> actorList;
 }

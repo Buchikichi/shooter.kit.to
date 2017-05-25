@@ -76,6 +76,15 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return product;
 	}
 
+	@RequestMapping("/selectDetail")
+	@ResponseBody
+	public Product selectDetail(@RequestParam String id) {
+		ProductDetail detail = this.productDetailService.detail(id);
+		Product product = detail.getProduct();
+
+		return product;
+	}
+
 	private Map<ActorType, List<ProductActor>> makeTypeMap(List<ProductActor> actorList) {
 		Map<ActorType, List<ProductActor>> map = new HashMap<>();
 

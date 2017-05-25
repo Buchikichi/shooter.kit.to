@@ -328,3 +328,16 @@ Actor.Type = {
 	Formation: 192,
 	Boss: 224,
 }
+//List = { Enemy, Formation, Boss, Material, Bullet, Capsule, Shot, Missile, Ship };
+Actor.TypeList = [
+	'None',
+	'Enemy',
+	'Formation',
+	'Boss',
+	'Material',
+	'Bullet',
+	'Capsule',
+	'Shot',
+	'Missile',
+	'Ship',
+];

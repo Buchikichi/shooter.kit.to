@@ -13,7 +13,7 @@ class ProductEntity extends EntityBase {
 		let formData = new FormData();
 
 		formData.append('id', id);
-		return AjaxUtils.post('/detail/select', formData);
+		return AjaxUtils.post('/product/selectDetail', formData);
 	}
 
 	saveMap(formData) {

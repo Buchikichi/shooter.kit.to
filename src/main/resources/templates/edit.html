@@ -34,6 +34,12 @@
 	height: 100%;
 	z-index: 1000;
 }
+#actorPanel img {
+	min-width: 1em;
+	max-width: 2em;
+	min-height: 1em;
+	max-height: 2em;
+}
 </style>
 </head>
 
@@ -50,7 +56,7 @@
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
           <label>Move<input type="radio" name="behavior" value="m" checked="checked"/></label>
           <label>Brick<input type="radio" name="behavior" value="b"/></label>
-          <label>Enemy<input type="radio" name="behavior" value="e"/></label>
+          <label>Actor<input type="radio" name="behavior" value="a" disabled="disabled"/></label>
           <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
       </div>
@@ -84,13 +90,8 @@
         <label>Rebirth<input type="radio" name="brick" value="b2"/></label>
       </fieldset>
     </div>
-    <div id="enemyPanel" data-role="panel" data-position="right" data-display="overlay">
-      <fieldset data-role="controlgroup" data-mini="true">
-        <button class="ui-btn ui-btn-b" disabled="disabled">Enemies</button>
-        <label>Brick<input type="radio" name="actor" value="0" checked="checked"/></label>
-        <label>Plate<input type="radio" name="actor" value="1"/></label>
-        <label>Rebirth<input type="radio" name="actor" value="2"/></label>
-      </fieldset>
+    <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
+      <div data-role="controlgroup" data-filter="true"></div>
     </div>
     <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>

@@ -38,12 +38,21 @@ class EditMain {
 	loadDetail() {
 		this.productEntity = new ProductEntity();
 		this.productEntity.detail(this.detailId).then(rec => {
-			let stage = rec.stage;
-			let map = rec.map ? rec.map : stage.map;
+			let detailList = rec.detailList;
+			let detail = null;
+
+			this.product = rec;
+			detailList.forEach(productDetail => {
+				if (productDetail.id != this.detailId) {
+					return;
+				}
+				detail = productDetail;
+			});
+			let stage = detail.stage;
+			let map = detail.map ? detail.map : detail.map;
 
 			this.field = new Field(512, 224);
 			this.setupStage(stage, map);
-//			this.setupActors(rec);
 			this.checkLoading();
 		});
 	}
@@ -151,7 +160,11 @@ class EditMain {
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
 		this.brickPanel = new BrickPanel(this.field);
-		this.enemyPanel = new EnemyPanel(this.field);
+		if (this.isDetail) {
+			this.actorPanel = new ActorPanel(this.field);
+			this.actorPanel.setupActors(this.product.actorList);
+			$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
+		}
 		landform.isEdit = true;
 		landform.loadStage(this.stage);
 		activate();
@@ -176,9 +189,9 @@ class EditMain {
 		$('[name="behavior"]:eq(1)').click(() => {
 			this.brickPanel.open();
 		});
-		// Enemy
+		// Actor
 		$('[name="behavior"]:eq(2)').click(() => {
-			this.enemyPanel.open();
+			this.actorPanel.open();
 		});
 		// saveButton
 		let saveButton = document.getElementById('saveButton');
@@ -296,10 +309,73 @@ class BrickPanel {
 	}
 }
 
-class EnemyPanel {
+class ActorPanel {
 	constructor(field) {
 		this.field = field;
-		this.panel = document.getElementById('enemyPanel');
+		this.panel = document.getElementById('actorPanel');
+	}
+
+	setupActors(actorList) {
+		let typeMap = {};
+
+		actorList.forEach(productActor => {
+			let type = productActor.type;
+			let list = typeMap[type];
+
+			if (!list) {
+				list = [];
+				typeMap[type] = list;
+			}
+			list.push(productActor);
+		});
+		//
+		let listView = this.panel.querySelector('[data-role="controlgroup"] > div');
+
+		Actor.TypeList.forEach(typeName => {
+			let type = Actor.Type[typeName];
+			let list = typeMap[type];
+
+			if (!list) {
+				return;
+			}
+			// <button data-filtertext="Enemy Cats Dogs" class="ui-btn ui-btn-b" disabled="disabled">Enemy</button>
+			let enemyType = document.createElement('button');
+			let textList = [];
+
+			enemyType.textContent = typeName;
+			enemyType.setAttribute('disabled', 'disabled');
+			enemyType.classList.add('ui-btn');
+			enemyType.classList.add('ui-btn-b');
+			enemyType.classList.add('ui-mini');
+			textList.push(typeName);
+			listView.appendChild(enemyType);
+			list.forEach(productActor => {
+				let actor = productActor.actor;
+				// <div data-filtertext="Enemy Cats"><label>Cats<input type="radio" name="actor" value="1"/></label></div>
+				let div = document.createElement('div');
+				let label = document.createElement('label');
+				let radio = document.createElement('input');
+				let img = document.createElement('img');
+				let name = actor.name;
+
+//console.log(productActor);
+//console.log(actor);
+				img.setAttribute('src', '/image/src/' + actor.imageid);
+				radio.setAttribute('type', 'radio');
+				radio.setAttribute('name', 'actor');
+				radio.setAttribute('value', productActor.seq);
+				label.appendChild(img);
+				label.appendChild(document.createTextNode(name));
+				label.appendChild(radio);
+				div.classList.add('ui-radio');
+				div.setAttribute('data-filtertext', [typeName, name].join(' '));
+				div.appendChild(label);
+				listView.appendChild(div);
+				textList.push(name);
+			});
+			enemyType.setAttribute('data-filtertext', textList.join(' '));
+		});
+		$(listView).parent().trigger('create');
 	}
 
 	open() {
