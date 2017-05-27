@@ -12,6 +12,7 @@ class ProductActorPage {
 				});
 			}
 		});
+		this.productActorChoicePanel = new ProductActorChoicePanel(this);
 		this.productActorPanel = new ProductActorPanel(this);
 		this.setupActorType();
 		this.setupEvent();
@@ -44,8 +45,12 @@ class ProductActorPage {
 			let liList = ul.querySelectorAll('li:not(.divider)');
 
 			Array.prototype.forEach.call(liList, li => {
+				let anchor = li.querySelector('a');
 				let deleteButton = li.querySelector('a.deleteButton');
 
+				anchor.addEventListener('click', ()=> {
+					this.productActorPanel.open(li);
+				});
 				deleteButton.addEventListener('click', ()=> {
 					li.parentNode.removeChild(li);
 					this.refreshCounter(ul);
@@ -62,6 +67,27 @@ class ProductActorPage {
 		span.textContent = liList.length;
 	}
 
+	createClassName(rec) {
+		let str = rec.name;
+		let name = '';
+		let upper = true;
+
+		for (let ix = 0; ix < str.length; ix++) {
+			let ch = str.charAt(ix);
+
+			if (!ch.match(/[0-9A-Za-z]/)) {
+				upper = true;
+				continue;
+			}
+			if (upper) {
+				ch = ch.toUpperCase();
+				upper = false;
+			}
+			name += ch;
+		}
+		return name;
+	}
+
 	appendActor(rec) {
 		let ul = this.typeMap[rec.type];
 //		//<li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
@@ -75,7 +101,12 @@ class ProductActorPage {
 			li.parentNode.removeChild(li);
 			this.refreshCounter(ul);
 		});
+		anchor.addEventListener('click', ()=> {
+			this.productActorPanel.open(li);
+		});
+		anchor.setAttribute('href', '#ProductActorPanel');
 		anchor.setAttribute('data-actor', rec.id);
+		anchor.setAttribute('data-class', this.createClassName(rec));
 		ul.appendChild(li);
 		$(ul).listview('refresh');
 		this.refreshCounter(ul);
@@ -100,10 +131,12 @@ class ProductActorPage {
 			Array.prototype.forEach.call(liList, li => {
 				let anchor = li.querySelector('a');
 				let actorId = anchor.getAttribute('data-actor');
+				let className = anchor.getAttribute('data-class');
 
 				list[ix] = {
 					actorId: actorId,
 					productType: type,
+					className: className,
 				};
 				ix++;
 			});

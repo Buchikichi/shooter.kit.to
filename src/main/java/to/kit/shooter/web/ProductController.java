@@ -76,6 +76,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		ProductDetail detail = this.productDetailService.detail(id);
 		Product product = detail.getProduct();
 
+		product.getActorList().sort((a, b) -> a.getSeq() - b.getSeq());
 		return product;
 	}
 

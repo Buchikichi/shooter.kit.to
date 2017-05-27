@@ -38,8 +38,10 @@ public class ProductService {
 	public Product detail(String id) {
 		Product product = this.productRepository.findOne(id);
 		List<ProductDetail> detailList = product.getDetailList();
+		List<ProductActor> actorList = product.getActorList();
 
 		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
+		actorList.sort((a, b) -> a.getSeq() - b.getSeq());
 		return product;
 	}
 

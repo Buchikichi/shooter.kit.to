@@ -25,6 +25,7 @@ public class ProductActor {
 	private String id;
 	private int type;
 	private int seq;
+	private String className;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

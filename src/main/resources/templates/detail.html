@@ -120,17 +120,21 @@
   <div data-role="header" data-theme="b" data-position="fixed">
     <a data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
     <h1>Actors in product</h1>
-    <a href="#ActorPanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
+    <a href="#ProductActorChoicePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
   </div>
   <div data-role="main" th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
     <div th:each="e:${list}">
       <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
         <li data-role="list-divider" class="divider"><span th:text="${e}"></span><span class="ui-li-count">0</span></li>
         <li th:each="productActor:${typeMap.get(e)}">
-          <a th:with="actor=${productActor.actor}" href="#" th:attr="data-id=${productActor.id}, data-actor=${actor.id}">
+          <a th:with="actor=${productActor.actor}" href="#ProductActorPanel"
+              th:attr="data-id=${productActor.id}, data-class=${productActor.className}, data-actor=${actor.id}">
             <img src="/img/icon.listview.png" th:src="'/image/src/'+${actor.imageid}"/>
             <span th:text="${actor.name}"></span>
-            <p th:text="${actor.description}"></p>
+            <p>
+              <span th:text="${productActor.className}" class="className"></span>
+              <span th:text="${actor.description}"></span>
+            </p>
           </a>
           <a class="deleteButton"></a>
         </li>
@@ -163,10 +167,17 @@
     </ul>
 -->
   </div>
-  <div id="ActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
+  <div id="ProductActorChoicePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
     <span>Choose an actor.</span>
     <select name="actorType"></select>
     <ul data-role="listview" data-filter="true"></ul>
+  </div>
+  <div id="ProductActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
+    <form>
+      <input type="text" name="actorName" disabled="disabled"/>
+      <label>Class name:<input type="text" name="className" required="required"/></label>
+      <button type="button" data-rel="close">OK</button>
+    </form>
   </div>
 </div>
 </body>

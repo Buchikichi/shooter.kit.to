@@ -20,6 +20,11 @@ div[data-role=header] {
 	background-color: #ffff80;
 }
 
+span.className {
+	border: 2px lightgray solid;
+	border-radius: .3em;
+}
+
 /** Image. */
 #listView img {
 	background-color: black;

@@ -167,6 +167,7 @@ class AppMain {
 			formData.append(prefix + 'actor.id', rec.actorId);
 			formData.append(prefix + 'seq', ix);
 			formData.append(prefix + 'type', rec.productType);
+			formData.append(prefix + 'className', rec.className);
 		});
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		this.product.save(formData).then(data => {
