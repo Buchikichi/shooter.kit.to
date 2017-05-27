@@ -151,7 +151,7 @@ class AppMain {
 		let actorList = this.productActorPage.listActor();
 
 		stageList.forEach(rec => {
-			let prefix = 'detail[' + rec.seq + '].';
+			let prefix = 'detailList[' + rec.seq + '].';
 
 //console.log(rec);
 			formData.append(prefix + 'stage.id', rec.stageId);

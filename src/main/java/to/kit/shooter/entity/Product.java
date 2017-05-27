@@ -3,6 +3,7 @@ package to.kit.shooter.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,11 +39,11 @@ public class Product {
 	@Column(insertable = false)
 	private Date updated;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<ProductDetail> detailList;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<ProductActor> actorList;
 }

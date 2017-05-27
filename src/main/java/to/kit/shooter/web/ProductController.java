@@ -17,18 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.ActorType;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.ProductDetail;
-import to.kit.shooter.service.ProductActorService;
 import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.LoginInfo;
-import to.kit.shooter.web.form.ProductActorForm;
-import to.kit.shooter.web.form.ProductDetailForm;
 import to.kit.shooter.web.form.ProductForm;
 import to.kit.shooter.web.form.ResultForm;
 
@@ -57,8 +53,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private ProductService productService;
 	@Autowired
 	private ProductDetailService productDetailService;
-	@Autowired
-	private ProductActorService productActorService;
 
 	@RequestMapping("/list")
 	@ResponseBody
@@ -115,34 +109,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return "detail";
 	}
 
-	private boolean saveDetail(Product product, List<ProductDetailForm> detailList) {
-		List<ProductDetail> list = new ArrayList<>();
-
-		for (ProductDetailForm form : detailList) {
-			ProductDetail entity = new ProductDetail();
-
-			BeanUtils.copyProperties(form, entity);
-			list.add(entity);
-		}
-		return this.productDetailService.save(product, list);
-	}
-
-	private boolean saveActorList(Product product, List<ProductActorForm> actorList) {
-		List<ProductActor> list = new ArrayList<>();
-
-		for (ProductActorForm form : actorList) {
-			Actor actor = form.getActor();
-			if (actor == null) {
-				continue;
-			}
-			ProductActor entity = new ProductActor();
-
-			BeanUtils.copyProperties(form, entity);
-			list.add(entity);
-		}
-		return this.productActorService.save(product, list);
-	}
-
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm save(ProductForm form) {
@@ -160,18 +126,16 @@ public class ProductController implements BasicControllerInterface<Product> {
 		Product product = new Product();
 
 		BeanUtils.copyProperties(form, product);
-		product.setDetailList(new ArrayList<>());
-		product.setActorList(new ArrayList<>());
+		if (product.getDetailList() == null) {
+			product.setDetailList(new ArrayList<>());
+		}
+		if (product.getActorList() == null) {
+			product.setActorList(new ArrayList<>());
+		}
 		product.setOwner(loginId);
 		Product saved = this.productService.save(product);
 
 		if (saved == null) {
-			return result;
-		}
-		if (!saveDetail(saved, form.getDetail())) {
-			return result;
-		}
-		if (!saveActorList(saved, form.getActorList())) {
 			return result;
 		}
 		result.setInfo(saved);

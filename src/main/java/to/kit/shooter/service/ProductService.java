@@ -10,13 +10,20 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Product;
+import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.repository.ProductActorRepository;
+import to.kit.shooter.repository.ProductDetailRepository;
 import to.kit.shooter.repository.ProductRepository;
 
 @Service
 public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
+	@Autowired
+	private ProductDetailRepository productDetailRepository;
+	@Autowired
+	private ProductActorRepository productActorRepository;
 
 	public List<Product> list() {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
@@ -36,11 +43,40 @@ public class ProductService {
 		return product;
 	}
 
+	public void deleteDetailByProductId(String productId) {
+		List<ProductDetail> list = this.productDetailRepository.findByProductId(productId);
+
+		this.productDetailRepository.deleteInBatch(list);
+	}
+
+	private void deleteActorByProductId(String productId) {
+		List<ProductActor> list = this.productActorRepository.findByProductId(productId);
+
+		this.productActorRepository.deleteInBatch(list);
+	}
+
 	public Product save(Product entity) {
 		String id = entity.getId();
 
 		if (!this.productRepository.exists(id)) {
+			id = null;
 			entity.setId(null);
+		}
+		if (id != null && !id.isEmpty()) {
+			deleteDetailByProductId(id);
+			deleteActorByProductId(id);
+		}
+		for (ProductDetail detail : entity.getDetailList()) {
+			detail.setProduct(entity);
+			detail.setUpdated(new Date());
+		}
+		List<ProductActor> actorList = entity.getActorList();
+		actorList.removeIf(a -> {
+			return a.getActor() == null;
+		});
+		for (ProductActor actor : actorList) {
+			actor.setProduct(entity);
+			actor.setUpdated(new Date());
 		}
 		entity.setUpdated(new Date());
 		return this.productRepository.saveAndFlush(entity);
