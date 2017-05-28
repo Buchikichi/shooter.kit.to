@@ -13,12 +13,16 @@ class Field extends Matter {
 		this.enemyCycle = 0;
 		this.stage = Stage.LIST[0];
 		this.stageNum = 0;
-		this.landform = new Landform(this.view.canvas);
+		this.setupLandform();
 		Field.Instance = this;
 	}
 
 	get ctx() {
 		return this.view.ctx;
+	}
+
+	setupLandform() {
+		this.landform = new Landform(this.view.canvas);
 	}
 
 	nextStage() {

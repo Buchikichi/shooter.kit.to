@@ -25,10 +25,14 @@ class EditMain {
 		return $('[name="behavior"]:checked').val() == 'b';
 	}
 
+	get isActor() {
+		return $('[name="behavior"]:checked').val() == 'a';
+	}
+
 	loadStage() {
 		this.stageEntity = new StageEntity();
 		this.stageEntity.select(this.stageId).then(rec => {
-			this.field = new Field(512, 224);
+			this.field = new FieldEditor(512, 224);
 			this.setupStage(rec, rec.map);
 //			this.setupActors(rec);
 			this.checkLoading();
@@ -51,7 +55,7 @@ class EditMain {
 			let stage = detail.stage;
 			let map = detail.map ? detail.map : stage.map;
 
-			this.field = new Field(512, 224);
+			this.field = new FieldEditor(512, 224);
 			this.setupStage(stage, map);
 			this.checkLoading();
 		});
@@ -148,7 +152,7 @@ class EditMain {
 					landform.selection = '0';
 					this.moveLandform(delta);
 				}
-				if (this.isBrick) {
+				if (this.isBrick || this.isActor) {
 					landform.which = true;
 				}
 			}
@@ -423,7 +427,17 @@ class ActorPanel {
 			});
 			enemyType.setAttribute('data-filtertext', textList.join(' '));
 		});
+		this.setupEvent();
 		$(listView).parent().trigger('create');
+	}
+
+	setupEvent() {
+		$('[name="actor"]').click(()=> {
+			let val = $('[name="actor"]:checked').val();
+			let landform = this.field.landform;
+
+			landform.selection = val;
+		});
 	}
 
 	open() {

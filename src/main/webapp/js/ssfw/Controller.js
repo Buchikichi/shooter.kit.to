@@ -53,8 +53,8 @@ class Controller {
 			this.touch = true;
 			this.point = FlexibleView.Instance.convert(event.clientX, event.clientY);
 			this.prev = this.point;
-			this.move = null;
-			this.delta = null;
+			this.move = this.point;
+			this.delta = {x:0, y:0};
 		});
 		canvas.addEventListener('mousemove', event => {
 			this.move = FlexibleView.Instance.convert(event.clientX, event.clientY);
