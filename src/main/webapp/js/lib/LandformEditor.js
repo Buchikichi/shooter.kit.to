@@ -134,24 +134,28 @@ class LandformEditor extends Landform {
 			let reverse = brick - Enemy.MAX_TYPE;
 
 			if (!brick || (brick != selection && reverse != selection)) {
-				this.putBrick(this.target, 1, selection);
+				this.putEnemy(this.target, selection);
 			} else if (brick == selection) {
-				this.putBrick(this.target, 1, selection + Enemy.MAX_TYPE);
+				this.putEnemy(this.target, selection + Enemy.MAX_TYPE);
 			} else {
-				this.putBrick(this.target, 1, 0);
+				this.putEnemy(this.target, 0);
 			}
 		} else {
-			let brick = this.getBrick(this.target, 2);
+			let brick = this.getBrick(this.target);
 
 			selection = this.selection.substr(1);
 			if (this.brickVal == null) {
 				this.brickVal = 0 < brick ? 0 : 255 - selection;
 			}
-			this.putBrick(this.target, 2, this.brickVal);
+			this.putBrick(this.target, this.brickVal);
 		}
 		this.touch = true;
 		this.tx = tx;
 		this.ty = ty;
+	}
+
+	putEnemy(target, val) {
+		this.putBrick(target, val, Landform.BRICK_LAYER.ENEMY);
 	}
 
 	draw() {
@@ -180,5 +184,61 @@ class LandformEditor extends Landform {
 			ctx.putImageData(this.brick, 0, 0);
 			mapImage.setAttribute('src', canvas.toDataURL('image/png'));
 		}
+	}
+
+	getImageData() {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+
+		canvas.width = this.width;
+		canvas.height = this.height;
+		ctx.drawImage(this.img, 0, 0);
+		return ctx.getImageData(0, 0, this.width, this.height);
+	}
+
+	getBrickData(ctx) {
+		if (this.brick != null) {
+			return this.brick;
+		}
+		let bw = this.width / Landform.BRICK_WIDTH;
+		let bh = this.height / Landform.BRICK_WIDTH;
+		return ctx.createImageData(bw, bh);
+	}
+
+	generateBrick(ctx) {
+		if (!this.img.src || !this.img.complete) {
+			return;
+		}
+		let img = this.getImageData();
+		let bw = this.width / Landform.BRICK_WIDTH;
+		let bh = this.height / Landform.BRICK_WIDTH;
+		let brick = this.getBrickData(ctx);
+		let dst = brick.data;
+		let sx = this.width * Landform.BRICK_HALF + Landform.BRICK_HALF * 4;
+		let ix = 0;
+
+console.log(this.width + ' x ' + this.height + ' | ' + (this.width * this.height * 4));
+console.log(bw + ' x ' + bh + ' | ' + dst.length);
+		for (let y = 0; y < bh; y++) {
+			for (let x = 0; x < bw; x++) {
+				let dot = false;
+
+				for (let c = 0; c < 4; c++) {
+					if (img.data[sx + c]) {
+						dot = true;
+					}
+				}
+				let val = dot ? 255 : 0;
+				dst[ix + 2] = val;
+				dst[ix + 3] = val;
+				sx += Landform.BRICK_WIDTH * 4;
+				ix += 4;
+			}
+			sx += this.width * (Landform.BRICK_WIDTH - 1) * 4;
+		}
+console.log('ix:' + ix);
+console.log('sx:' + sx);
+		this.brick = brick;
+		this.touch = true;
 	}
 }

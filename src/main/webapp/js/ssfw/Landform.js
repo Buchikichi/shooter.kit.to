@@ -63,9 +63,87 @@ class Landform {
 		}
 		img.src = mapImage;
 	}
+
+	reset() {
+		this.next = Landform.NEXT.NONE;
+		if (this.stage) {
+			this.stage.reset();
+		}
+	}
+
+	retry() {
+		this.next = Landform.NEXT.NONE;
+		if (this.stage) {
+			this.stage.retry();
+			this.loadMapData(this.stage.map);
+		}
+	}
+
+	getBrickIndex(target) {
+		let fg = this.stage.fg;
+		let gx = fg.x;
+		let gy = fg.y;
+		let tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+		if (tx < 0 || this.bw < tx) {
+			return -1;
+		}
+		let ty = Math.round((gy + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+		ty %= this.bh;
+		return ty * this.bw * 4 + tx * 4;
+	}
+
+	getBrick(target, c = Landform.BRICK_LAYER.BRICK) {
+		if (!this.brick) {
+			return null;
+		}
+		let ix = this.getBrickIndex(target);
+
+		if (ix < 0) {
+			return null;
+		}
+		return this.brick.data[ix + c];
+	}
+
+	putBrick(target, val, c = Landform.BRICK_LAYER.BRICK) {
+		let ix = this.getBrickIndex(target);
+
+		if (ix < 0) {
+			return;
+		}
+		this.brick.data[ix + c] = val;
+		this.brick.data[ix + 3] = val ? 255 : 0;
+	}
+
+	// draw
+	drawBg(ctx) {
+		if (!this.stage) {
+			return;
+		}
+		ctx.save();
+		ctx.scale(this.magni, this.magni);
+		this.stage.drawBg(ctx);
+		ctx.restore();
+	}
+
+	draw() {
+		if (!this.stage) {
+			return;
+		}
+		let ctx = this.ctx;
+
+		ctx.save();
+		ctx.scale(this.magni, this.magni);
+		this.stage.drawFg(ctx);
+		ctx.restore();
+	}
 }
 Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
+Landform.BRICK_LAYER = {
+	ATTR: 0,
+	ENEMY: 1,
+	BRICK: 2,
+};
 Landform.BRICK_TYPE = {
 	WALL: 255,
 	BRITTLE: 254,
@@ -99,21 +177,6 @@ Landform.prototype.loadStage = function(stage) {
 /*
  * for play.
  */
-Landform.prototype.reset = function() {
-	this.next = Landform.NEXT.NONE;
-	if (this.stage) {
-		this.stage.reset();
-	}
-};
-
-Landform.prototype.retry = function() {
-	this.next = Landform.NEXT.NONE;
-	if (this.stage) {
-		this.stage.retry();
-		this.loadMapData(this.stage.map);
-	}
-};
-
 Landform.prototype.effect = function(target) {
 	let maxX = Math.max(Field.Instance.width + target.width, target.maxX);
 
@@ -249,7 +312,7 @@ Landform.prototype.hitTest = function(target) {
 	if (!this.brick) {
 		return;
 	}
-	target.walled = this.getBrick(target, 2);
+	target.walled = this.getBrick(target);
 	this.target = target;
 };
 
@@ -257,7 +320,7 @@ Landform.prototype.smashWall = function(target) {
 	let fg = this.stage.fg;
 
 	fg.smashWall(target);
-	this.putBrick(target, 2, 0);
+	this.putBrick(target, 0);
 };
 
 Landform.prototype.scanFloor = function(target) {
@@ -265,7 +328,7 @@ Landform.prototype.scanFloor = function(target) {
 		return;
 	}
 	let y = target.y;
-	let brick = this.getBrick(target, 2);
+	let brick = this.getBrick(target);
 	let sign = target.gravity < 0 ? -1 : 1;
 
 	if (0 < brick) {
@@ -273,7 +336,7 @@ Landform.prototype.scanFloor = function(target) {
 		while (0 < brick) {
 			y -= Landform.BRICK_WIDTH * sign;
 			let temp = {x:target.x, y:y};
-			brick = this.getBrick(temp, 2);
+			brick = this.getBrick(temp);
 		}
 		y += Landform.BRICK_WIDTH * sign;
 	} else {
@@ -284,7 +347,7 @@ Landform.prototype.scanFloor = function(target) {
 				y -= Landform.BRICK_WIDTH;
 				let temp = {x:target.x, y:y};
 
-				brick = this.getBrick(temp, 2);
+				brick = this.getBrick(temp);
 			}
 			if (!brick) {
 				// abyss
@@ -296,7 +359,7 @@ Landform.prototype.scanFloor = function(target) {
 				y += Landform.BRICK_WIDTH;
 				let temp = {x:target.x, y:y};
 
-				brick = this.getBrick(temp, 2);
+				brick = this.getBrick(temp);
 			}
 			if (!brick) {
 				// abyss
@@ -316,31 +379,6 @@ Landform.prototype.getHorizontalAngle = function(target) {
 	return Math.atan2(rightY - leftY, target.width);
 };
 
-Landform.prototype.getBrickIndex = function(target) {
-	let fg = this.stage.fg;
-	let gx = fg.x;
-	let gy = fg.y;
-	let tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
-	if (tx < 0 || this.bw < tx) {
-		return -1;
-	}
-	let ty = Math.round((gy + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
-	ty %= this.bh;
-	return ty * this.bw * 4 + tx * 4;
-};
-
-Landform.prototype.getBrick = function(target, c) {
-	if (!this.brick) {
-		return null;
-	}
-	let ix = this.getBrickIndex(target);
-
-	if (ix < 0) {
-		return null;
-	}
-	return this.brick.data[ix + c];
-};
-
 /*
  * for edit
  */
@@ -358,93 +396,4 @@ Landform.prototype.wheel = function(delta) {
 		}
 		fg.y -= Landform.BRICK_WIDTH;
 	}
-};
-
-Landform.prototype.putBrick = function(target, c, val) {
-	let ix = this.getBrickIndex(target);
-
-	if (ix < 0) {
-		return;
-	}
-	this.brick.data[ix + c] = val;
-	this.brick.data[ix + 3] = val ? 255 : 0;
-};
-
-Landform.prototype.drawBg = function(ctx) {
-	if (!this.stage) {
-		return;
-	}
-	ctx.save();
-	ctx.scale(this.magni, this.magni);
-	this.stage.drawBg(ctx);
-	ctx.restore();
-};
-
-Landform.prototype.draw = function() {
-	if (!this.stage) {
-		return;
-	}
-	let landform = this;
-	let ctx = this.ctx;
-
-	ctx.save();
-	ctx.scale(this.magni, this.magni);
-	this.stage.drawFg(ctx);
-	ctx.restore();
-};
-
-Landform.prototype.getImageData = function() {
-	let canvas = document.createElement('canvas');
-	let ctx = canvas.getContext('2d');
-
-	canvas.width = this.width;
-	canvas.height = this.height;
-	ctx.drawImage(this.img, 0, 0);
-	return ctx.getImageData(0, 0, this.width, this.height);
-};
-
-Landform.prototype.getBrickData = function(ctx) {
-	if (this.brick != null) {
-		return this.brick;
-	}
-	let bw = this.width / Landform.BRICK_WIDTH;
-	let bh = this.height / Landform.BRICK_WIDTH;
-	return ctx.createImageData(bw, bh);
-};
-
-Landform.prototype.generateBrick = function(ctx) {
-	if (!this.img.src || !this.img.complete) {
-		return;
-	}
-	let img = this.getImageData();
-	let bw = this.width / Landform.BRICK_WIDTH;
-	let bh = this.height / Landform.BRICK_WIDTH;
-	let brick = this.getBrickData(ctx);
-	let dst = brick.data;
-	let sx = this.width * Landform.BRICK_HALF + Landform.BRICK_HALF * 4;
-	let ix = 0;
-
-console.log(this.width + ' x ' + this.height + ' | ' + (this.width * this.height * 4));
-console.log(bw + ' x ' + bh + ' | ' + dst.length);
-	for (let y = 0; y < bh; y++) {
-		for (let x = 0; x < bw; x++) {
-			let dot = false;
-
-			for (let c = 0; c < 4; c++) {
-				if (img.data[sx + c]) {
-					dot = true;
-				}
-			}
-			let val = dot ? 255 : 0;
-			dst[ix + 2] = val;
-			dst[ix + 3] = val;
-			sx += Landform.BRICK_WIDTH * 4;
-			ix += 4;
-		}
-		sx += this.width * (Landform.BRICK_WIDTH - 1) * 4;
-	}
-console.log('ix:' + ix);
-console.log('sx:' + sx);
-	this.brick = brick;
-	this.touch = true;
 };
