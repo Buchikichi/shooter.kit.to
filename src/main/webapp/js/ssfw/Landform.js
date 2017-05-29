@@ -104,6 +104,14 @@ class Landform {
 		return this.brick.data[ix + c];
 	}
 
+	getAttr(target) {
+		return this.getBrick(target, Landform.BRICK_LAYER.ATTR);
+	}
+
+	getActor(target) {
+		return this.getBrick(target, Landform.BRICK_LAYER.ACTOR);
+	}
+
 	putBrick(target, val, c = Landform.BRICK_LAYER.BRICK) {
 		let ix = this.getBrickIndex(target);
 
@@ -141,12 +149,16 @@ Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
 Landform.BRICK_LAYER = {
 	ATTR: 0,
-	ENEMY: 1,
+	ACTOR: 1,
 	BRICK: 2,
 };
 Landform.BRICK_TYPE = {
 	WALL: 255,
 	BRITTLE: 254,
+};
+Landform.ATTR = {
+	NONE: 0,
+	REVERSE: 1,
 };
 Landform.COL_MAX = 512;
 Landform.NEXT = {
@@ -282,12 +294,14 @@ Landform.prototype.scanEnemy = function() {
 	let x = field.width + Landform.BRICK_WIDTH;
 	for (let ty = 0; ty < this.bh; ty++) {
 		let ix = ty * this.bw * 4 + tx * 4;
-		let brick = this.brick.data[ix + 1];
+		let attr = this.brick.data[ix];
+		let actor = this.brick.data[ix + 1];
+		let reverse = attr & Landform.ATTR.REVERSE;
 
-		if (0 < brick && brick <= Enemy.MAX_TYPE) {
+		if (!reverse && 0 < actor) {
 			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
 
-			result.push(Enemy.assign(brick - 1, x, y));
+			result.push(Enemy.assign(actor, x, y));
 		}
 	}
 	// left
@@ -297,12 +311,14 @@ Landform.prototype.scanEnemy = function() {
 	}
 	for (let ty = 0; ty < this.bh; ty++) {
 		let ix = ty * this.bw * 4 + tx * 4;
-		let brick = this.brick.data[ix + 1];
+		let attr = this.brick.data[ix];
+		let actor = this.brick.data[ix + 1];
+		let reverse = attr & Landform.ATTR.REVERSE;
 
-		if (Enemy.MAX_TYPE < brick) {
+		if (reverse && 0 < actor) {
 			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
 
-			result.push(Enemy.assign(brick - 1 - Enemy.MAX_TYPE, 0, y));
+			result.push(Enemy.assign(actor, 0, y));
 		}
 	}
 	return result;

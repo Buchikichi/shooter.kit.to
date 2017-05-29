@@ -24,18 +24,20 @@ class Enemy extends Actor {
 		}
 		return result;
 	}
+
+	static assign(ix, x, y) {
+//console.log('Enemy.assign:' + ix + '/' + Enemy.LIST.length);
+		let enemy = Object.assign({}, Enemy.LIST[ix % Enemy.LIST.length]);
+
+		enemy.x = x;
+		enemy.y = y;
+		return enemy;
+	}
 }
 Enemy.TRIGGER_CYCLE = 50;
 Enemy.TRIGGER_ALLOWANCE = 100;
 Enemy.MAX_TYPE = 0x7f;
 Enemy.LIST = [];
-Enemy.assign = function(ix, x, y) {
-	let enemy = Object.assign({}, Enemy.LIST[ix % Enemy.LIST.length]);
-
-	enemy.x = x;
-	enemy.y = y;
-	return enemy;
-}
 
 /**
  * Chain.

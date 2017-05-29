@@ -179,6 +179,7 @@ class EditMain {
 	setupActors(actorList) {
 console.log('#setupActors');
 		Enemy.LIST = [
+			{name:'', type:Waver, img:''},
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
 			{name:'Battery', type:Battery, img:'enemy/battery.png'},
 			{name:'Bouncer', type:Bouncer, img:'enemy/bouncer.png'},
@@ -214,12 +215,17 @@ console.log('#setupActors');
 		actorList.forEach(productActor => {
 			let ix = productActor.seq;
 			let actor = productActor.actor;
+			let type = eval(productActor.className);
+			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
-console.log(ix + ':' + actor.name);
-			Enemy.LIST[ix] = {name:actor.name, type:Waver, h:16};
+console.log(ix + ':' + productActor.className + ':' + actor.name);
+//console.log(type);
+			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
 		});
-		Enemy.LIST.forEach(enemy => {
-			enemy.instance = new enemy.type();
+		Enemy.LIST.forEach(actor => {
+			let dummy = {x:0, y:0};
+
+			actor.instance = new actor.type(dummy);
 		});
 	}
 

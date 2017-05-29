@@ -3,17 +3,24 @@ class LandformEditor extends Landform {
 		super(canvas);
 	}
 
-	drawEnemy(num, x, y) {
-		let reverse = Enemy.MAX_TYPE < num;
-		let ix = reverse ? num - Enemy.MAX_TYPE : num;
-		let obj = Enemy.LIST[ix - 1];
+	drawEnemy(num, x, y, reverse = false) {
+		let ctx = this.ctx;
+//		let reverse = false; // TODO
+//		let ix = reverse ? num - Enemy.MAX_TYPE : num;
+		let obj = Enemy.LIST[num];
 
+		ctx.save();
+		ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+		ctx.beginPath();
+		ctx.arc(x, y, 4, 0, Math.PI2, false);
+		ctx.fill();
+		ctx.fillText(num, x, y);
+		ctx.restore();
 		if (!obj || !obj.instance) {
 			return null;
 		}
 		let cnt = obj.formation ? 3 : 1;
 		let enemy = obj.instance;
-		let ctx = this.ctx;
 
 		enemy.x = x + enemy.hW;
 		enemy.y = y + enemy.hH;
@@ -63,9 +70,12 @@ class LandformEditor extends Landform {
 				if (x < 0) {
 					continue;
 				}
+				let attr = bd[ix];
 				let enemyNum = bd[ix + 1];
 				if (enemyNum) {
-					this.drawEnemy(enemyNum, rx, ry);
+					let reverse = attr & Landform.ATTR.REVERSE;
+
+					this.drawEnemy(enemyNum, rx, ry, reverse);
 				}
 				let brickNum = bd[ix + 2];
 				if (brickNum == 255) {
@@ -130,15 +140,17 @@ class LandformEditor extends Landform {
 		let selection = parseInt(this.selection);
 		if (0 < selection) {
 			// enemy
-			let brick = this.getBrick(this.target, 1);
-			let reverse = brick - Enemy.MAX_TYPE;
+			let attr = this.getAttr(this.target);
+			let actor = this.getActor(this.target);
+			let reverse = attr & Landform.ATTR.REVERSE;
 
-			if (!brick || (brick != selection && reverse != selection)) {
-				this.putEnemy(this.target, selection);
-			} else if (brick == selection) {
-				this.putEnemy(this.target, selection + Enemy.MAX_TYPE);
+			if (!actor || (actor != selection && !reverse)) {
+				this.putActor(this.target, selection, attr);
+			} else if (actor == selection) {
+				attr |= Landform.ATTR.REVERSE;
+				this.putActor(this.target, selection, attr);
 			} else {
-				this.putEnemy(this.target, 0);
+				this.putActor(this.target, 0);
 			}
 		} else {
 			let brick = this.getBrick(this.target);
@@ -154,8 +166,11 @@ class LandformEditor extends Landform {
 		this.ty = ty;
 	}
 
-	putEnemy(target, val) {
-		this.putBrick(target, val, Landform.BRICK_LAYER.ENEMY);
+	putActor(target, val, attr = null) {
+		if (attr) {
+			this.putBrick(target, attr, Landform.BRICK_LAYER.ATTR);
+		}
+		this.putBrick(target, val, Landform.BRICK_LAYER.ACTOR);
 	}
 
 	draw() {

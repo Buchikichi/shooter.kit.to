@@ -29,8 +29,8 @@ class ShooterMain {
 		product.detailList.forEach(detail => {
 			let entity = detail.stage;
 			let view = Stage.createViewList(entity);
-			let mapURL = entity.map;
-			let stage = new Stage(detail.roll, entity.map, view).setBgm(entity.theme, entity.boss);
+			let map = detail.map ? detail.map : entity.map;
+			let stage = new Stage(detail.roll, map, view).setBgm(entity.theme, entity.boss);
 
 //console.log(stage);
 			stageList.push(stage);
@@ -39,7 +39,10 @@ class ShooterMain {
 	}
 
 	setupActors(product) {
+		let actorList = product.actorList;
+
 		Enemy.LIST = [
+			{name:'', type:Waver, img:''},
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
 			{name:'Battery', type:Battery, img:'enemy/battery.png'},
 			{name:'Bouncer', type:Bouncer, img:'enemy/bouncer.png'},
@@ -72,6 +75,14 @@ class ShooterMain {
 			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
 			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 		];
+		actorList.forEach(productActor => {
+			let ix = productActor.seq;
+			let actor = productActor.actor;
+			let type = eval(productActor.className);
+			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
+
+			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
+		});
 	}
 
 	checkLoading() {
