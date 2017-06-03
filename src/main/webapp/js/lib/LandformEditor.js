@@ -144,13 +144,14 @@ class LandformEditor extends Landform {
 			let actor = this.getActor(this.target);
 			let reverse = attr & Landform.ATTR.REVERSE;
 
-			if (!actor || (actor != selection && !reverse)) {
-				this.putActor(this.target, selection, attr);
+			if (actor == selection && reverse) {
+				this.putActor(this.target, 0, 0);
 			} else if (actor == selection) {
 				attr |= Landform.ATTR.REVERSE;
 				this.putActor(this.target, selection, attr);
 			} else {
-				this.putActor(this.target, 0);
+				attr &= ~Landform.ATTR.REVERSE;
+				this.putActor(this.target, selection, attr);
 			}
 		} else {
 			let brick = this.getBrick(this.target);
@@ -167,7 +168,7 @@ class LandformEditor extends Landform {
 	}
 
 	putActor(target, val, attr = null) {
-		if (attr) {
+		if (attr != null) {
 			this.putBrick(target, attr, Landform.BRICK_LAYER.ATTR);
 		}
 		this.putBrick(target, val, Landform.BRICK_LAYER.ACTOR);
