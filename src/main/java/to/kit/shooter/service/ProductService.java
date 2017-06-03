@@ -1,7 +1,9 @@
 package to.kit.shooter.service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -45,10 +47,34 @@ public class ProductService {
 		return product;
 	}
 
-	public void deleteDetailByProductId(String productId) {
-		List<ProductDetail> list = this.productDetailRepository.findByProductId(productId);
+	public void deleteUnusedStage(Product product) {
+		Set<String> valid = new HashSet<>();
+		List<ProductDetail> list = this.productDetailRepository.findByProductId(product.getId());
 
-		this.productDetailRepository.deleteInBatch(list);
+		for (ProductDetail detail : product.getDetailList()) {
+			valid.add(detail.getId());
+		}
+		for (ProductDetail detail : list) {
+			if (!valid.contains(detail.getId())) {
+				this.productDetailRepository.delete(detail);
+			}
+		}
+	}
+
+	private void prepareProductDetail(Product product) {
+		for (ProductDetail detail : product.getDetailList()) {
+			String id = detail.getId();
+
+			if (id != null) {
+				ProductDetail prev = this.productDetailRepository.findOne(id);
+
+				if (prev != null) {
+					detail.setMap(prev.getMap());
+					detail.setUpdated(new Date());
+				}
+			}
+			detail.setProduct(product);
+		}
 	}
 
 	private void deleteActorByProductId(String productId) {
@@ -65,13 +91,9 @@ public class ProductService {
 			entity.setId(null);
 		}
 		if (id != null && !id.isEmpty()) {
-			deleteDetailByProductId(id);
 			deleteActorByProductId(id);
 		}
-		for (ProductDetail detail : entity.getDetailList()) {
-			detail.setProduct(entity);
-			detail.setUpdated(new Date());
-		}
+		prepareProductDetail(entity);
 		List<ProductActor> actorList = entity.getActorList();
 		actorList.removeIf(a -> {
 			return a.getActor() == null;

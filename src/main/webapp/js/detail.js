@@ -154,6 +154,7 @@ class AppMain {
 			let prefix = 'detailList[' + rec.seq + '].';
 
 //console.log(rec);
+			formData.append(prefix + 'id', rec.id);
 			formData.append(prefix + 'stage.id', rec.stageId);
 			formData.append(prefix + 'seq', rec.seq);
 			formData.append(prefix + 'roll', rec.roll);

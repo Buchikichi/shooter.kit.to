@@ -139,6 +139,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		if (saved == null) {
 			return result;
 		}
+		this.productService.deleteUnusedStage(saved);
 		result.setInfo(saved);
 		result.setOk(true);
 		return result;

@@ -1,5 +1,6 @@
 package to.kit.shooter.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,9 +42,9 @@ public class Product {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
-	private List<ProductDetail> detailList;
+	private List<ProductDetail> detailList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
-	private List<ProductActor> actorList;
+	private List<ProductActor> actorList = new ArrayList<>();
 }
