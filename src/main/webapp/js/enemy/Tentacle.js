@@ -124,7 +124,7 @@ class TentacleBullet extends Bullet {
 	constructor(x, y) {
 		super(x, y);
 		this.region = new Region(this, 1);
-		this.radius = 1;
+		this.radius = 2;
 		this.speed = .5;
 		this.fillStyle = 'rgba(255, 200, 200, 0.7)';
 	}
@@ -146,8 +146,8 @@ class TentacleHead extends TentacleJoint {
 		let rad = Math.close(this.radian, Math.atan2(dy, dx), TentacleHead.DEG_STEP);
 
 		this.radian = rad;
-		return this.trigger(target);
+		return this.trigger(target, true);
 	}
 }
-TentacleHead.TRIGGER_CYCLE = 10;
+TentacleHead.TRIGGER_CYCLE = 120;
 TentacleHead.DEG_STEP = Math.PI / 100;

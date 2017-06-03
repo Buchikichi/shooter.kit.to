@@ -36,9 +36,12 @@ class Chamber {
 		let elem = new this.type(x, y, this.opt);
 
 		if (target) {
-			let dist = actor.calcDistance(target);
-			let fg = Field.Instance.stage.fg;
-			let estimation = dist / elem.speed * fg.speed;
+			let estimation = 0;
+			if (Field.Instance.isMoving) {
+				let dist = actor.calcDistance(target);
+				let fg = Field.Instance.stage.fg;
+				estimation = dist / elem.speed * fg.speed;
+			}
 			let dx = target.x - actor.x + estimation;
 			let dy = target.y - actor.y;
 

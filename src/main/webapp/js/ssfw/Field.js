@@ -21,6 +21,10 @@ class Field extends Matter {
 		return this.view.ctx;
 	}
 
+	get isMoving() {
+		return this.phase == Field.PHASE.NORMAL;
+	}
+
 	setupLandform() {
 		this.landform = new Landform(this.view.canvas);
 	}
