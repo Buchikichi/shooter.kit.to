@@ -7,7 +7,7 @@ class Stage {
 		this.foreground = null;
 		this.bgm = null;
 		this.boss = null;
-		this.checkPoint = 0;
+		this.checkPoint = Stage.CHECK_POINT[0];
 		this.viewDic = {};
 		this.view.forEach(ground => {
 			ground.stage = this;
@@ -126,7 +126,7 @@ class Stage {
 		let fgX = this.fg.x;
 
 		Stage.CHECK_POINT.forEach(cp => {
-			if (cp <= fgX && this.checkPoint < fgX) {
+			if (cp.x <= fgX && this.checkPoint.x < fgX) {
 				this.checkPoint = cp;
 			}
 		});
@@ -209,7 +209,7 @@ Stage.SCROLL = {
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.LIST = [];
-Stage.CHECK_POINT = [0, 660, 1440];
+Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
 
 
 /**
@@ -240,7 +240,7 @@ class StageView {
 			this.w2 = img.width * this.repeatX;
 			this.h2 = img.height * this.repeatY;
 		}
-		this.x = checkPoint % this.width;
+		this.x = checkPoint.x % this.width;
 		this.y = 0;
 		this.effectH = 0;
 		this.effectV = 0;
@@ -314,7 +314,7 @@ class StageFg extends StageView {
 
 	reset(checkPoint) {
 		super.reset(checkPoint);
-		if (checkPoint == 0) {
+		if (checkPoint.x == 0) {
 			this.x = -Field.Instance.width;
 		}
 		this.canvas = this.createCanvas();

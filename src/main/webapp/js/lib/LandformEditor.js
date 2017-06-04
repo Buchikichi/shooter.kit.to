@@ -5,12 +5,10 @@ class LandformEditor extends Landform {
 
 	drawEnemy(num, x, y, reverse = false) {
 		let ctx = this.ctx;
-//		let reverse = false; // TODO
-//		let ix = reverse ? num - Enemy.MAX_TYPE : num;
 		let obj = Enemy.LIST[num];
 
 		ctx.save();
-		ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+		ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
 		ctx.beginPath();
 		ctx.arc(x, y, 4, 0, Math.PI2, false);
 		ctx.fill();
@@ -19,11 +17,19 @@ class LandformEditor extends Landform {
 		if (!obj || !obj.instance) {
 			return null;
 		}
+		let fg = this.stage.fg;
+		let gx = fg.x;
+		let gy = fg.y;
 		let cnt = obj.formation ? 3 : 1;
 		let enemy = obj.instance;
+		let ex = x + enemy.hW;
+		let ey = y + enemy.hH;
 
-		enemy.x = x + enemy.hW;
-		enemy.y = y + enemy.hH;
+		enemy.x = ex - gx;
+		enemy.y = ey - gy;
+		enemy.checkInverse();
+		enemy.x = ex;
+		enemy.y = ey;
 		while (cnt--) {
 			enemy.draw(ctx);
 			enemy.x += 2;
@@ -256,5 +262,21 @@ console.log('ix:' + ix);
 console.log('sx:' + sx);
 		this.brick = brick;
 		this.touch = true;
+	}
+
+	wheel(delta) {
+		let fg = this.stage.fg;
+
+		if (delta < 0){
+			fg.y += Landform.BRICK_WIDTH;
+			if (this.height <= fg.y) {
+				fg.y = 0;
+			}
+		} else {
+			if (fg.y == 0) {
+				fg.y = this.height;
+			}
+			fg.y -= Landform.BRICK_WIDTH;
+		}
 	}
 }

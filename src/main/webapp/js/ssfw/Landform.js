@@ -19,20 +19,6 @@ class Landform {
 		this.brickVal = null;
 		this.lastScan = null;
 		this.touch = false;
-		this.img = new Image();
-		this.img.onload = ()=> {
-			let field = Field.Instance;
-
-			this.width = this.img.width;
-			this.height = this.img.height;
-			this.bw = this.img.width / Landform.BRICK_WIDTH;
-			this.bh = this.img.height / Landform.BRICK_WIDTH;
-			if (field) {
-				this.viewX = this.img.width - (field.hW * 1.5);
-				this.arrivX = this.img.width - field.width;
-				this.noticeX = this.arrivX - field.hW;
-			}
-		}
 		this.reverse = new Image();
 		this.reverse.src = '/img/reverse.png';
 		this.touch = false;
@@ -46,6 +32,25 @@ class Landform {
 		canvas.height = this.brick.height;
 		ctx.putImageData(this.brick, 0, 0);
 		return canvas.toDataURL('image/png');
+	}
+
+	loadStage(stage) {
+		let field = Field.Instance;
+		let fg = stage.fg;
+	
+		stage.reset();
+		this.stage = stage;
+		if (stage.map) {
+			this.loadMapData(stage.map);
+		}
+		this.width = fg.width;
+		this.height = fg.height;
+		this.bw = this.width / Landform.BRICK_WIDTH;
+		this.bh = this.height / Landform.BRICK_WIDTH;
+		this.viewX = this.width - (field.hW * 1.5);
+		this.arrivX = this.width - field.width;
+		this.noticeX = this.arrivX - field.hW;
+		this.reset();
 	}
 
 	loadMapData(mapImage) {
@@ -79,6 +84,7 @@ class Landform {
 		}
 	}
 
+	// brick
 	getBrickIndex(target) {
 		let fg = this.stage.fg;
 		let gx = fg.x;
@@ -120,6 +126,124 @@ class Landform {
 		}
 		this.brick.data[ix + c] = val;
 		this.brick.data[ix + 3] = val ? 255 : 0;
+	}
+
+	scanEnemy() {
+		let result = [];
+
+		if (!this.brick || this.next == Landform.NEXT.IDLE) {
+			return result;
+		}
+		let fg = this.stage.fg;
+		let gx = fg.x;
+		let gy = fg.y;
+		let scan = Math.round(gx / Landform.BRICK_WIDTH);
+
+		if (scan == this.lastScan) {
+			return result;
+		}
+		let field = Field.Instance;
+
+		[0, field.width].forEach((sx, nx) => {
+			let tx = Math.round((gx + sx) / Landform.BRICK_WIDTH);
+
+			if (tx < 0) {
+				return;
+			}
+			for (let ty = 0; ty < this.bh; ty++) {
+				let ix = ty * this.bw * 4 + tx * 4;
+				let actor = this.brick.data[ix + 1];
+
+				if (actor == 0) {
+					continue;
+				}
+				let attr = this.brick.data[ix];
+				let reverse = attr & Landform.ATTR.REVERSE;
+				let valid = nx == 0 && reverse || nx != 0 && !reverse;
+
+				if (!valid) {
+					continue;
+				}
+				let x = nx == 0 ? sx : sx + Landform.BRICK_WIDTH * 1.5;
+				let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
+				let reserve = Enemy.assign(actor, x, y);
+
+				result.push(reserve);
+			}
+		});
+		this.lastScan = scan;
+		return result;
+	}
+
+	hitTest(target) {
+		if (!this.brick) {
+			return;
+		}
+		target.walled = this.getBrick(target);
+		this.target = target;
+	}
+
+	smashWall(target) {
+		let fg = this.stage.fg;
+
+		fg.smashWall(target);
+		this.putBrick(target, 0);
+	}
+
+	scanFloor(target) {
+		if (!this.brick) {
+			return;
+		}
+		let y = target.y;
+		let brick = this.getBrick(target);
+		let sign = target.gravity < 0 ? -1 : 1;
+
+		if (0 < brick) {
+			y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+			while (0 < brick) {
+				y -= Landform.BRICK_WIDTH * sign;
+				let temp = {x:target.x, y:y};
+				brick = this.getBrick(temp);
+			}
+			y += Landform.BRICK_WIDTH * sign;
+		} else {
+			y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+			if (sign < 0) {
+				// top
+				while (0 < y && !brick) {
+					y -= Landform.BRICK_WIDTH;
+					let temp = {x:target.x, y:y};
+
+					brick = this.getBrick(temp);
+				}
+				if (!brick) {
+					// abyss
+					y = -target.height - Landform.BRICK_WIDTH;
+				}
+			} else {
+				// bottom
+				while (y < this.height && !brick) {
+					y += Landform.BRICK_WIDTH;
+					let temp = {x:target.x, y:y};
+
+					brick = this.getBrick(temp);
+				}
+				if (!brick) {
+					// abyss
+					y = this.height + target.height + Landform.BRICK_WIDTH;
+				}
+			}
+		}
+		return y;
+	}
+
+	getHorizontalAngle(target) {
+		let left = {x:target.x - Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+		let right = {x:target.x + Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+		let leftY = this.scanFloor(left);
+		let rightY = this.scanFloor(right);
+
+		return Math.atan2(rightY - leftY, target.width);
 	}
 
 	// draw
@@ -167,23 +291,6 @@ Landform.NEXT = {
 	ARRIV: 2,
 	IDLE: 3,
 	PAST: 4
-};
-
-Landform.prototype.load = function(file) {
-	if (file instanceof File) {
-		this.img.src = window.URL.createObjectURL(file);
-	}
-};
-
-Landform.prototype.loadStage = function(stage) {
-	let fg = stage.fg;
-
-	this.stage = stage;
-	if (stage.map) {
-		this.loadMapData(stage.map);
-	}
-	this.img.src = fg.img.src;
-	this.reset();
 };
 
 /*
@@ -269,147 +376,4 @@ Landform.prototype.forward = function(target) {
 		}
 	}
 	return Landform.NEXT.NONE;
-};
-
-Landform.prototype.scanEnemy = function() {
-	let result = [];
-
-	if (!this.brick || this.next == Landform.NEXT.IDLE) {
-		return result;
-	}
-	let field = Field.Instance;
-	let fg = this.stage.fg;
-	let gx = fg.x;
-	let gy = fg.y;
-	// right
-	let tx = Math.round((gx + field.width - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
-
-	if (tx < 0) {
-		return result;
-	}
-	if (tx === this.lastScan) {
-		return result;
-	}
-	this.lastScan = tx;
-	let x = field.width + Landform.BRICK_WIDTH;
-	for (let ty = 0; ty < this.bh; ty++) {
-		let ix = ty * this.bw * 4 + tx * 4;
-		let attr = this.brick.data[ix];
-		let actor = this.brick.data[ix + 1];
-		let reverse = attr & Landform.ATTR.REVERSE;
-
-		if (!reverse && 0 < actor) {
-			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
-
-			result.push(Enemy.assign(actor, x, y));
-		}
-	}
-	// left
-	tx = Math.round(gx / Landform.BRICK_WIDTH);
-	if (tx < 0) {
-		return result;
-	}
-	for (let ty = 0; ty < this.bh; ty++) {
-		let ix = ty * this.bw * 4 + tx * 4;
-		let attr = this.brick.data[ix];
-		let actor = this.brick.data[ix + 1];
-		let reverse = attr & Landform.ATTR.REVERSE;
-
-		if (reverse && 0 < actor) {
-			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
-
-			result.push(Enemy.assign(actor, 0, y));
-		}
-	}
-	return result;
-};
-
-Landform.prototype.hitTest = function(target) {
-	if (!this.brick) {
-		return;
-	}
-	target.walled = this.getBrick(target);
-	this.target = target;
-};
-
-Landform.prototype.smashWall = function(target) {
-	let fg = this.stage.fg;
-
-	fg.smashWall(target);
-	this.putBrick(target, 0);
-};
-
-Landform.prototype.scanFloor = function(target) {
-	if (!this.brick) {
-		return;
-	}
-	let y = target.y;
-	let brick = this.getBrick(target);
-	let sign = target.gravity < 0 ? -1 : 1;
-
-	if (0 < brick) {
-		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-		while (0 < brick) {
-			y -= Landform.BRICK_WIDTH * sign;
-			let temp = {x:target.x, y:y};
-			brick = this.getBrick(temp);
-		}
-		y += Landform.BRICK_WIDTH * sign;
-	} else {
-		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-		if (sign < 0) {
-			// top
-			while (0 < y && !brick) {
-				y -= Landform.BRICK_WIDTH;
-				let temp = {x:target.x, y:y};
-
-				brick = this.getBrick(temp);
-			}
-			if (!brick) {
-				// abyss
-				y = -target.height - Landform.BRICK_WIDTH;
-			}
-		} else {
-			// bottom
-			while (y < this.height && !brick) {
-				y += Landform.BRICK_WIDTH;
-				let temp = {x:target.x, y:y};
-
-				brick = this.getBrick(temp);
-			}
-			if (!brick) {
-				// abyss
-				y = this.height + target.height + Landform.BRICK_WIDTH;
-			}
-		}
-	}
-	return y;
-};
-
-Landform.prototype.getHorizontalAngle = function(target) {
-	let left = {x:target.x - Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
-	let right = {x:target.x + Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
-	let leftY = this.scanFloor(left);
-	let rightY = this.scanFloor(right);
-
-	return Math.atan2(rightY - leftY, target.width);
-};
-
-/*
- * for edit
- */
-Landform.prototype.wheel = function(delta) {
-	let fg = this.stage.fg;
-
-	if (delta < 0){
-		fg.y += Landform.BRICK_WIDTH;
-		if (this.height <= fg.y) {
-			fg.y = 0;
-		}
-	} else {
-		if (fg.y == 0) {
-			fg.y = this.height;
-		}
-		fg.y -= Landform.BRICK_WIDTH;
-	}
 };

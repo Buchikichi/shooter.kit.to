@@ -36,6 +36,7 @@ class Actor extends Matter {
 		this.absorbed = false;
 		this.score = 0;
 		this.walled = false;
+		this.isInverse = false;
 		this.recalculation();
 //		this.img = new Image();
 //		this.img.addEventListener('load', ()=> {
@@ -75,6 +76,10 @@ class Actor extends Matter {
 		this.minY = -this.height - margin;
 		this.maxX = field.width + this.width + margin;
 		this.maxY = field.height + this.height + margin;
+	}
+
+	checkInverse() {
+		// abstract
 	}
 
 	enter() {

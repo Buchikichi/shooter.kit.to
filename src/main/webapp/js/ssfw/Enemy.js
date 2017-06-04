@@ -27,7 +27,11 @@ class Enemy extends Actor {
 
 	static assign(ix, x, y) {
 //console.log('Enemy.assign:' + ix + '/' + Enemy.LIST.length);
-		let enemy = Object.assign({}, Enemy.LIST[ix % Enemy.LIST.length]);
+		let instance = Enemy.LIST[ix % Enemy.LIST.length];
+		if (!instance) {
+			return null;
+		}
+		let enemy = Object.assign({}, instance);
 
 		enemy.x = x;
 		enemy.y = y;
