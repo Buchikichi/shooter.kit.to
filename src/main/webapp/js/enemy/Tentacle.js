@@ -126,6 +126,7 @@ class TentacleBullet extends Bullet {
 		this.region = new Region(this, 1);
 		this.radius = 2;
 		this.speed = .5;
+		this.anim = [];
 		this.fillStyle = 'rgba(255, 200, 200, 0.7)';
 	}
 }

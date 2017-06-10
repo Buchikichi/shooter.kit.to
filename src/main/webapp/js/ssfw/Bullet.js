@@ -7,7 +7,7 @@ class Bullet extends Actor {
 		this.region = new Region(this, 2);
 		this.radius = 3;
 		this.speed = 2;
-		this.fillStyle = 'rgba(180, 200, 255, 0.7)';
+		this.anim = new Animator('bullet');
 		this.recalculation();
 	}
 
@@ -17,5 +17,7 @@ class Bullet extends Actor {
 			this.eject();
 			return;
 		}
+		this.radian += Bullet.RAD_STEP;
 	}
 }
+Bullet.RAD_STEP = Math.PI / 180;

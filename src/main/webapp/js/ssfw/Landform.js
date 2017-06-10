@@ -168,7 +168,9 @@ class Landform {
 				let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
 				let reserve = Enemy.assign(actor, x, y);
 
-				result.push(reserve);
+				if (reserve != null) {
+					result.push(reserve);
+				}
 			}
 		});
 		this.lastScan = scan;

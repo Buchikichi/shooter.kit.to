@@ -82,6 +82,7 @@ class ShooterMain {
 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
 			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
+			ImageManager.Instance.reserve(actor.name);
 		});
 	}
 
