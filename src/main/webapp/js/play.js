@@ -134,7 +134,7 @@ class ShooterMain {
 			let isGameOver = !gameOverPanel.classList.contains('hidden');
 			let keys = controller.keys;
 
-			if (isGameOver && (keys[' '] || keys['k32'])) {
+			if (isGameOver && (keys[' '] || keys['k32']|| keys['Enter'])) {
 				startGame();
 			}
 		});

@@ -1,6 +1,6 @@
 @echo off
 set CUR=%~dp0
-set COMP=c:\applications\closure-compiler-v20170423.jar
+set COMP=c:\application\closure-compiler-v20170626.jar
 set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
 set LIBS=lib\*.js lib\entity\*.js lib\page\*.js lib\util\*.js
 

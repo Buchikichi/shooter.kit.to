@@ -296,7 +296,7 @@ class ActorManager extends RepositoryManager {
 
 		this.setupActorType();
 		super.setupPanel();
-		['ImageId'].forEach(name => {
+		['ImageId', 'ImageId', 'ImageId'].forEach(name => {
 			let button = new ImageSelectionButton(name, ImageEntity.Type.ACT);
 
 			imageButtons.appendChild(button.fieldset);
