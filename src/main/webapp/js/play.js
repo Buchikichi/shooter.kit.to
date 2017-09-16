@@ -17,11 +17,18 @@ class ShooterMain {
 	loadProduct() {
 		this.productController = new ProductEntity();
 		this.productController.select(this.productId).then(product => {
-			this.field = new Field(product.width, product.height);
+			this.setupField(product);
 			this.setupStage(product);
 			this.setupActors(product);
 			this.checkLoading();
 		});
+	}
+
+	setupField(product) {
+		this.field = new Field(product.width, product.height);
+		if (0 < product.scoreList.length) {
+			this.field.hiscore = product.scoreList[0].score;
+		}
 	}
 
 	setupStage(product) {
@@ -116,25 +123,45 @@ class ShooterMain {
 
 	increase() {
 		this.productController.increase(this.productId).then(rec => {
-			console.log('increase:');
-			console.log(rec);
+			console.log('increase:' + rec.ok);
+		});
+	}
+
+	registerScore() {
+		let scoreController = new ScoreEntity();
+		let formData = new FormData();
+
+		formData.append('productId', this.productId);
+		formData.append('score', this.field.score);
+		formData.append('name', '');
+		scoreController.register(formData).then(rec => {
+			console.log('registerScore:' + rec.ok);
 		});
 	}
 
 	start() {
 		let controller = new Controller();
-		let activate = ()=> {
-			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-			this.field.move();
-			this.field.draw();
-			requestAnimationFrame(activate);
-		};
 		let gameOverPanel = document.getElementById('gameOver');
 		let startGame = ()=> {
 			this.increase();
 			this.field.startGame();
 			gameOverPanel.classList.add('hidden');
+		};
+		let endGame = ()=> {
+			if (gameOverPanel.classList.contains('hidden')) {
+				gameOverPanel.classList.remove('hidden');
+				this.registerScore();
+			}
+		}
+		let activate = ()=> {
+			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+			this.field.move();
+			this.field.draw();
+			if (this.field.isGameOver) {
+				endGame();
+			}
+			requestAnimationFrame(activate);
 		};
 
 		gameOverPanel.addEventListener('mousedown', event => {

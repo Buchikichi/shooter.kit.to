@@ -161,6 +161,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 	public ResultForm play(@RequestParam String id) {
 		ResultForm result = new ResultForm();
 
+		result.setOk(true);
 		this.productService.increase(id);
 		return result;
 	}

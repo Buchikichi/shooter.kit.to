@@ -51,6 +51,15 @@ class AppMain {
 		messageArea.textContent = msg;
 	}
 
+	getHighScore(rec) {
+		if (rec.scoreList.length == 0) {
+			return null;
+		}
+		let score = rec.scoreList[0].score;
+
+		return Number(score).toLocaleString();
+	}
+
 	setResult(list) {
 		// <li><a><img src="img/icon.listview.png"/><span>プロダクト</span><p>説明</p><span class="ui-li-count">22</span></a></li>
 		let listView = document.getElementById('listView');
@@ -58,8 +67,16 @@ class AppMain {
 		list.forEach(rec => {
 			rec['href'] = '#detailPopup';
 			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
+			let highScore = this.getHighScore(rec);
 
-			//console.log('name:' + rec.name);
+			if (highScore) {
+				// <p class="ui-li-aside"><strong>6:24</strong>PM</p>
+				let score = document.createElement('p');
+
+				score.textContent = 'High score: ' + highScore;
+				score.classList.add('ui-li-aside');
+				listviewRow.anchor.appendChild(score);
+			}
 			listView.appendChild(listviewRow.li);
 			listviewRow.anchor.addEventListener('click', e => {
 				e.preventDefault();

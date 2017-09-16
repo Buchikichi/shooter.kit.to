@@ -25,6 +25,10 @@ class Field extends Matter {
 		return this.phase == Field.PHASE.NORMAL;
 	}
 
+	get isGameOver() {
+		return this.shipRemain <= 0;
+	}
+
 	setupLandform() {
 		this.landform = new Landform(this.view.canvas);
 	}
@@ -68,20 +72,6 @@ class Field extends Matter {
 		this._reset();
 	}
 
-	endGame() {
-		let gameOver = document.getElementById('gameOver');
-
-		if (gameOver) {
-			gameOver.classList.remove('hidden');
-		}
-	}
-
-	isGameOver() {
-		let gameOver = document.getElementById('gameOver');
-
-		return gameOver && !gameOver.classList.contains('hidden');
-	}
-
 	calcPan(x) {
 		return (x - this.hW) / this.hW;
 	}
@@ -102,7 +92,7 @@ class Field extends Matter {
 		});
 		let next = this.landform.forward(this.ship);
 
-		if (this.isGameOver()) {
+		if (this.isGameOver) {
 			return;
 		}
 		if (next == Landform.NEXT.NOTICE) {
@@ -176,7 +166,7 @@ class Field extends Matter {
 		this.landform.draw();
 		this.score += score;
 		this.showScore();
-		if (!this.isGameOver() && ship && ship.isGone) {
+		if (!this.isGameOver && ship && ship.isGone) {
 			AudioMixer.INSTANCE.stop();
 			if (0 < --this.hibernate) {
 				return;
@@ -184,8 +174,6 @@ class Field extends Matter {
 			if (0 < --this.shipRemain) {
 				this.retry();
 //++this.shipRemain;
-			} else {
-				this.endGame();
 			}
 		}
 	}

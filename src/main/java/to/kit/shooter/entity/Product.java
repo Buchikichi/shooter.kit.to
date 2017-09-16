@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -49,6 +50,7 @@ public class Product {
 	private List<ProductActor> actorList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
+	@OrderBy("score DESC")
 	@JsonManagedReference
 	private List<Scores> scoreList = new ArrayList<>();
 }
