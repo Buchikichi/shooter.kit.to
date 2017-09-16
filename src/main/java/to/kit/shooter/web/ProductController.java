@@ -155,4 +155,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 		model.addAttribute("product", product);
 		return "play";
 	}
+
+	@RequestMapping("/increase")
+	@ResponseBody
+	public ResultForm play(@RequestParam String id) {
+		ResultForm result = new ResultForm();
+
+		this.productService.increase(id);
+		return result;
+	}
 }

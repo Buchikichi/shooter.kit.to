@@ -39,6 +39,7 @@ public class AudioController {
 
 	/**
 	 * 一覧取得.
+	 * @param form フォーム
 	 * @return 一覧
 	 */
 	@RequestMapping("/list")
@@ -85,7 +86,7 @@ public class AudioController {
 
 	/**
 	 * WebM取得.
-	 * @param id オーディオID
+	 * @param name WebM名
 	 * @return WebMデータ
 	 */
 	@RequestMapping(value = "/webmName/{name}", produces = "audio/webm")
@@ -117,7 +118,7 @@ public class AudioController {
 
 	/**
 	 * Audio取得.
-	 * @param id オーディオID
+	 * @param name オーディオ名
 	 * @return WebMデータ
 	 */
 	@RequestMapping(value = "/audioName/{name}", produces = "audio/mpeg")

@@ -47,4 +47,8 @@ public class Product {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<ProductActor> actorList = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<Scores> scoreList = new ArrayList<>();
 }

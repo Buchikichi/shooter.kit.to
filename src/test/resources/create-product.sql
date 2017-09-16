@@ -12,8 +12,8 @@ CREATE TABLE product(
 	width integer NOT NULL DEFAULT 256,
 	height integer NOT NULL DEFAULT 224,
 	count integer NOT NULL DEFAULT 0,
-	created date NOT NULL DEFAULT now(),
-	updated date NOT NULL DEFAULT now(),
+	created timestamp NOT NULL DEFAULT now(),
+	updated timestamp NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
 );
 COMMENT ON COLUMN product.id IS 'ID';

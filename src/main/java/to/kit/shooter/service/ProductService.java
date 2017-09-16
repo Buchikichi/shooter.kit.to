@@ -105,4 +105,19 @@ public class ProductService {
 		entity.setUpdated(new Date());
 		return this.productRepository.saveAndFlush(entity);
 	}
+
+	/**
+	 * プレイ回数加算.
+	 * @param id プロダクトID
+	 */
+	public void increase(String id) {
+		Product product = this.productRepository.findOne(id);
+
+		if (product != null) {
+			int next = product.getCount() + 1;
+
+			product.setCount(next);
+			this.productRepository.save(product);
+		}
+	}
 }

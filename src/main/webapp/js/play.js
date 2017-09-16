@@ -10,11 +10,13 @@ class ShooterMain {
 		this.loadProduct();
 	}
 
-	loadProduct() {
-		let productId = document.getElementById('productId').value;
-		let productController = new ProductEntity();
+	get productId() {
+		return document.getElementById('productId').value;
+	}
 
-		productController.select(productId).then(product => {
+	loadProduct() {
+		this.productController = new ProductEntity();
+		this.productController.select(this.productId).then(product => {
 			this.field = new Field(product.width, product.height);
 			this.setupStage(product);
 			this.setupActors(product);
@@ -112,6 +114,13 @@ class ShooterMain {
 		checkLoading();
 	}
 
+	increase() {
+		this.productController.increase(this.productId).then(rec => {
+			console.log('increase:');
+			console.log(rec);
+		});
+	}
+
 	start() {
 		let controller = new Controller();
 		let activate = ()=> {
@@ -123,6 +132,7 @@ class ShooterMain {
 		};
 		let gameOverPanel = document.getElementById('gameOver');
 		let startGame = ()=> {
+			this.increase();
 			this.field.startGame();
 			gameOverPanel.classList.add('hidden');
 		};
