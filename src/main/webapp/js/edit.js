@@ -52,6 +52,9 @@ class EditMain {
 				}
 				detail = productDetail;
 			});
+			rec.actorList.forEach(act => {
+				ImageManager.Instance.reserve(act.actor.name);
+			});
 			let stage = detail.stage;
 			let map = detail.map ? detail.map : stage.map;
 
