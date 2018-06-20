@@ -1,5 +1,8 @@
+# -Dspring.profiles.active=dev
 spring.thymeleaf.cache: false
 spring:
+  main:
+    banner-mode: "off"
   datasource:
     url: ${DB_URL}?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
     username: inyfdckdjiqsjy

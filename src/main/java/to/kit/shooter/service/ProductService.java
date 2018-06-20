@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Scores;
 import to.kit.shooter.repository.ProductActorRepository;
 import to.kit.shooter.repository.ProductDetailRepository;
 import to.kit.shooter.repository.ProductRepository;
@@ -41,9 +42,11 @@ public class ProductService {
 		Product product = this.productRepository.findOne(id);
 		List<ProductDetail> detailList = product.getDetailList();
 		List<ProductActor> actorList = product.getActorList();
+		List<Scores> scoreList = product.getScoreList();
 
 		detailList.sort((a, b) -> a.getSeq() - b.getSeq());
 		actorList.sort((a, b) -> a.getSeq() - b.getSeq());
+		scoreList.sort((a, b) -> b.getScore() - a.getScore());
 		return product;
 	}
 
