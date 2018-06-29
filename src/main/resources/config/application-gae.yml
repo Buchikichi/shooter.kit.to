@@ -1,0 +1,14 @@
+# -Dspring.profiles.active=gae
+spring:
+  main:
+    banner-mode: "off"
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driverClassName: org.postgresql.Driver
+    maxActive: 10
+  http:
+    multipart:
+      maxFileSize: 4MB
+      maxRequestSize: 4MB
