@@ -12,3 +12,7 @@ spring:
     multipart:
       maxFileSize: 4MB
       maxRequestSize: 4MB
+security:
+  require-ssl: true
+  basic:
+    enabled: false
