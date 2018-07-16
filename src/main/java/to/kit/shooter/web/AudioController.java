@@ -162,8 +162,8 @@ public class AudioController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(AudioForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Audio> save(AudioForm form) {
+		ResultForm<Audio> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
 		if (customer == null) {
@@ -181,7 +181,7 @@ public class AudioController {
 		entity.setOwner(loginId);
 		Audio saved = this.audioService.save(entity);
 
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}

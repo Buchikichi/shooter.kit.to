@@ -25,8 +25,8 @@ public class CustomerController {
 
 	@RequestMapping("/check")
 	@ResponseBody
-	public ResultForm check() {
-		ResultForm resultForm = new ResultForm();
+	public ResultForm<Customer> check() {
+		ResultForm<Customer> resultForm = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
 		if (customer != null) {
@@ -34,7 +34,7 @@ public class CustomerController {
 
 			if (id != null && !id.isEmpty()) {
 				resultForm.setOk(true);
-				resultForm.setInfo(customer);
+				resultForm.setResult(customer);
 			}
 		}
 		return resultForm;
@@ -42,8 +42,8 @@ public class CustomerController {
 
 	@RequestMapping("/signIn")
 	@ResponseBody
-	public ResultForm signIn(CustomerForm form) {
-		ResultForm resultForm = new ResultForm();
+	public ResultForm<Customer> signIn(CustomerForm form) {
+		ResultForm<Customer> resultForm = new ResultForm<>();
 		Customer customer = this.customerService.signIn(form.getUserid(), form.getPasswd());
 
 		if (customer != null) {

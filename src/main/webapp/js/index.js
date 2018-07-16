@@ -7,8 +7,10 @@ class AppMain {
 	constructor() {
 		this.selectedId = '';
 		this.product = new ProductEntity();
+		$.mobile.loading('show', {theme: 'b', text: 'Loading...', textVisible: true});
 		this.product.list().then(data => {
-			this.setResult(data);
+			this.setResult(data.result);
+			$.mobile.loading('hide');
 		});
 		// Customer
 		this.customer = new Customer();
@@ -51,15 +53,6 @@ class AppMain {
 		messageArea.textContent = msg;
 	}
 
-	getHighScore(rec) {
-		if (rec.scoreList.length == 0) {
-			return null;
-		}
-		let score = rec.scoreList[0].score;
-
-		return Number(score).toLocaleString();
-	}
-
 	setResult(list) {
 		// <li><a><img src="img/icon.listview.png"/><span>プロダクト</span><p>説明</p><span class="ui-li-count">22</span></a></li>
 		let listView = document.getElementById('listView');
@@ -67,7 +60,7 @@ class AppMain {
 		list.forEach(rec => {
 			rec['href'] = '#detailPopup';
 			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
-			let highScore = this.getHighScore(rec);
+			let highScore = Number(rec.aside).toLocaleString();
 
 			if (highScore) {
 				// <p class="ui-li-aside"><strong>6:24</strong>PM</p>

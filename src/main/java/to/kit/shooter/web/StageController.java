@@ -16,8 +16,10 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.entity.Stage;
 import to.kit.shooter.service.StageService;
+import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
+import to.kit.shooter.web.form.ResultListForm;
 import to.kit.shooter.web.form.StageForm;
 
 /**
@@ -45,8 +47,20 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public List<Stage> list() {
-		return this.stageService.list();
+	public ResultListForm list() {
+		ResultListForm form = new ResultListForm();
+		List<ListItem> resultList = form.getResult();
+		List<Stage> list = this.stageService.list();
+
+		for (Stage stage : list) {
+			ListItem item = new ListItem();
+
+			item.setId(stage.getId());
+			item.setName(stage.getName());
+			item.setDescription(stage.getDescription());
+			resultList.add(item);
+		}
+		return form;
 	}
 
 	@RequestMapping("/select")
@@ -63,8 +77,8 @@ public class StageController implements BasicControllerInterface<Stage> {
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(StageForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Stage> save(StageForm form) {
+		ResultForm<Stage> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
@@ -75,15 +89,15 @@ public class StageController implements BasicControllerInterface<Stage> {
 		stage.setOwner(customerId);
 		Stage saved = this.stageService.save(stage);
 
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}
 
 	@RequestMapping("/saveMap")
 	@ResponseBody
-	public ResultForm saveMap(StageForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Stage> saveMap(StageForm form) {
+		ResultForm<Stage> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
@@ -94,7 +108,7 @@ public class StageController implements BasicControllerInterface<Stage> {
 		stage.setOwner(customerId);
 		Stage saved = this.stageService.saveMap(stage);
 
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}

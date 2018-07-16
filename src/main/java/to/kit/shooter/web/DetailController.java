@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.service.ProductDetailService;
+import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ProductDetailForm;
 import to.kit.shooter.web.form.ResultForm;
+import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * プロダクト詳細.
@@ -44,8 +46,18 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public List<ProductDetail> list() {
-		return this.productDetailService.list();
+	public ResultListForm list() {
+		ResultListForm form = new ResultListForm();
+		List<ListItem> resultList = form.getResult();
+		List<ProductDetail> list = this.productDetailService.list();
+
+		for (ProductDetail detail : list) {
+			ListItem item = new ListItem();
+
+			item.setId(detail.getId());
+			resultList.add(item);
+		}
+		return form;
 	}
 
 	@RequestMapping("/select")
@@ -57,8 +69,8 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(ProductDetailForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<ProductDetail> save(ProductDetailForm form) {
+		ResultForm<ProductDetail> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
@@ -68,7 +80,7 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 		BeanUtils.copyProperties(form, detail);
 		ProductDetail saved = this.productDetailService.saveMap(detail);
 
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}

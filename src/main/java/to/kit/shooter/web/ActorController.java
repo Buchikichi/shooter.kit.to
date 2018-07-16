@@ -42,8 +42,8 @@ public class ActorController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(ActorForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Actor> save(ActorForm form) {
+		ResultForm<Actor> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
 		if (customer == null) {
@@ -57,7 +57,7 @@ public class ActorController {
 			actor.setOwner(loginId);
 			Actor saved = this.actorService.save(actor);
 
-			result.setInfo(saved);
+			result.setResult(saved);
 			result.setOk(true);
 		}
 		return result;

@@ -103,8 +103,8 @@ public class ImageController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(ImageForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Image> save(ImageForm form) {
+		ResultForm<Image> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
@@ -119,7 +119,7 @@ public class ImageController {
 		entity.setOwner(customerId);
 		Image saved = this.imageService.save(entity);
 
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}

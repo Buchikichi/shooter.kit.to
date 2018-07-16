@@ -22,11 +22,14 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Scores;
 import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
+import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ProductForm;
 import to.kit.shooter.web.form.ResultForm;
+import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * プロダクト.
@@ -57,8 +60,29 @@ public class ProductController implements BasicControllerInterface<Product> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public List<Product> list() {
-		return this.productService.list();
+	public ResultListForm list() {
+		ResultListForm form = new ResultListForm();
+		List<ListItem> resultList = form.getResult();
+		List<Product> list = this.productService.list();
+
+		for (Product product : list) {
+			ListItem item = new ListItem();
+			String count = String.valueOf(product.getCount());
+			List<Scores> scoreList = product.getScoreList();
+
+			item.setId(product.getId());
+			item.setName(product.getName());
+			item.setDescription(product.getDescription());
+			item.setCount(count);
+			if (0 < scoreList.size()) {
+				Scores score = scoreList.get(0);
+				String text = String.valueOf(score.getScore());
+
+				item.setAside(text);
+			}
+			resultList.add(item);
+		}
+		return form;
 	}
 
 	@RequestMapping("/select")
@@ -112,8 +136,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm save(ProductForm form) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Product> save(ProductForm form) {
+		ResultForm<Product> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
 		if (customer == null) {
@@ -140,7 +164,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 			return result;
 		}
 		this.productService.deleteUnusedStage(saved);
-		result.setInfo(saved);
+		result.setResult(saved);
 		result.setOk(true);
 		return result;
 	}
@@ -158,8 +182,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/increase")
 	@ResponseBody
-	public ResultForm play(@RequestParam String id) {
-		ResultForm result = new ResultForm();
+	public ResultForm<Object> play(@RequestParam String id) {
+		ResultForm<Object> result = new ResultForm<>();
 
 		result.setOk(true);
 		this.productService.increase(id);

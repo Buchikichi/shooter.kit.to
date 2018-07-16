@@ -1,6 +1,6 @@
 package to.kit.shooter.web;
 
-import java.util.List;
+import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * コントローラー基本機能.
@@ -12,7 +12,7 @@ public interface BasicControllerInterface<T> {
 	 * リスト取得.
 	 * @return リスト
 	 */
-	public List<T> list();
+	public ResultListForm list();
 
 	/**
 	 * レコード取得.
