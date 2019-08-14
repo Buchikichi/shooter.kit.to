@@ -161,8 +161,10 @@ class RepositoryManager {
 
 		this.listView.textContent = 'Loadling...';
 		this.entity.list(param).then(data => {
+			let list = Array.isArray(data) ? data : data.result;
+
 			this.listView.textContent = null;
-			data.forEach(rec => {
+			list.forEach(rec => {
 				let li = this.createRow(rec);
 				let anchor = li.querySelector('a');
 
@@ -370,7 +372,9 @@ class AudioManager extends RepositoryManager {
 
 	setupPanel() {
 		super.setupPanel();
-		$('#audioType [name="audioType"]').click(()=> {
+		this.audioType = document.querySelector('#audioType [name="audioType"]');
+		this.options = this.audioType.querySelectorAll('option');
+		this.audioType.addEventListener('change', ()=> {
 			this.list();
 		});
 	}
@@ -406,7 +410,7 @@ class AudioManager extends RepositoryManager {
 	}
 
 	createParameter() {
-		let type = $('#audioType [name="audioType"]:checked').val();
+		let type = this.options[this.audioType.selectedIndex].value;
 		let formData = new FormData();
 
 		formData.append('keyword', '');
@@ -415,7 +419,7 @@ class AudioManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		rec['count'] = rec.type == 1 ? 'FX' : 'BGM';
+		rec['count'] = this.options[rec.type - 1].textContent;
 		let li = super.createRow(rec);
 		let anchor = li.querySelector('a');
 		let img = li.querySelector('img');

@@ -1,6 +1,6 @@
 @echo off
 set CUR=%~dp0
-set COMP=c:\application\closure-compiler-v20180610.jar
+set COMP=c:\application\closure-compiler-v20190709.jar
 set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
 set SSFW=ssfw\*.js
 

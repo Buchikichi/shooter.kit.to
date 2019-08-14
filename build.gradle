@@ -20,6 +20,8 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
+sourceCompatibility = 1.8
+
 jar {
 	baseName = 'shooter'
 	version = '0.1.1'

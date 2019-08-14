@@ -24,7 +24,7 @@ public class AudioService {
 	private AudioViewRepository audioViewRepository;
 
 	public List<AudioView> list(String keyword, int type) {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
+		Sort sort = new Sort(new Order(Direction.ASC, "type"), new Order(Direction.ASC, "name"));
 		Specification<AudioView> nameSpec = Specifications.where((root, query, cb) -> {
 			return cb.like(root.get("name"), "%" + keyword + "%");
 		});

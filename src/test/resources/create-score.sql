@@ -14,7 +14,7 @@ CREATE TABLE scores(
 COMMENT ON COLUMN scores.id IS 'ID';
 COMMENT ON COLUMN scores.product_id IS 'プロダクトID';
 COMMENT ON COLUMN scores.score IS 'score';
-COMMENT ON COLUMN scores.class_name IS 'クラス名';
+COMMENT ON COLUMN scores.name IS '名前';
 COMMENT ON COLUMN scores.created IS '作成日';
 COMMENT ON COLUMN scores.updated IS '更新日';
 COMMENT ON TABLE scores IS '得点';

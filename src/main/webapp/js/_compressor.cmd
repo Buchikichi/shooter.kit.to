@@ -1,7 +1,7 @@
 @echo off
 set CUR=%~dp0
 set JAVA_HOME=C:\Program Files\Java\jdk-10.0.1
-set COMP=c:\application\closure-compiler-v20180610.jar
+set COMP=c:\application\closure-compiler-v20190709.jar
 set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
 set LIBS=lib\*.js lib\entity\*.js lib\page\*.js lib\util\*.js
 set PATH=%JAVA_HOME%\bin;%PATH%
