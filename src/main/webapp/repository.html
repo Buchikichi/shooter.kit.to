@@ -14,7 +14,7 @@
 </head>
 
 <body>
-<div data-role="page">
+<div id="repositoryPage" data-role="page">
   <div data-role="header" data-theme="b" data-position="fixed">
     <h1>Repository</h1>
     <a href="#stagePanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-notext ui-icon-plus"></a>
@@ -49,19 +49,26 @@
         <option value="3">notice</option>
         <option value="4">introduction</option>
         <option value="5">theme</option>
-        <option value="6">ending</option>
+        <option value="6">boss</option>
+        <option value="7">ending</option>
         <option value="0" selected="selected">All</option>
       </select>
     </fieldset>
     <ul id="listView" data-role="listview" data-filter="true"></ul>
   </div>
   <div data-role="footer" data-position="fixed">
-    <div data-role="navbar">
+    <div data-role="navbar" data-iconpos="left">
       <ul>
-        <li><a href="#" data-icon="star" class="ui-btn-active">Stage</a></li>
-        <li><a href="#" data-icon="bullets">Actor</a></li>
-        <li><a href="#" data-icon="heart">Image</a></li>
-        <li><a href="#" data-icon="audio">Audio</a></li>
+        <li><a id="stageButton" data-icon="star" class="ui-btn-active">Stage</a></li>
+        <li><a id="castingButton" data-icon="bullets">Casting</a></li>
+        <li><a id="imageSetButton" data-icon="grid">ImageSet</a></li>
+        <li><a id="audioSetButton" data-icon="grid">AudioSet</a></li>
+      </ul>
+      <ul>
+        <li><a id="mapButton" data-icon="location">Map</a></li>
+        <li><a id="actorButton" data-icon="user">Actor</a></li>
+        <li><a id="imageButton" data-icon="heart">Image</a></li>
+        <li><a id="audioButton" data-icon="audio">Audio</a></li>
       </ul>
     </div>
   </div>
@@ -136,11 +143,21 @@
           <option value="3">notice</option>
           <option value="4">introduction</option>
           <option value="5">theme</option>
-          <option value="6">ending</option>
+          <option value="6">boss</option>
+          <option value="7">ending</option>
         </select>
       </label>
       <label>WebM:<input type="file" name="webm"/><a id="webmAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>
       <label>Audio:<input type="file" name="audio"/><a id="audioAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>
+      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
+    </form>
+  </div>
+  <div id="audioSetPanel" data-role="panel" data-position="right" data-display="overlay">
+    <form id="audioSetForm" enctype="multipart/form-data">
+      <input type="hidden" name="id"/>
+      <label>Name:<input type="text" name="name" required="required"/></label>
+      <fieldset class="access"></fieldset>
       <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
       <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
     </form>

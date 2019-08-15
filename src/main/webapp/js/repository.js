@@ -10,6 +10,7 @@ class AppMain {
 		this.actorManager = new ActorManager();
 		this.imageManager = new ImageManager();
 		this.audioManager = new AudioManager();
+		this.audioSetManager = new AudioSetManager();
 		this.imageChooser = new ImageChooser();
 		this.audioChooser = new AudioChooser();
 		this.setupPanel();
@@ -20,10 +21,11 @@ class AppMain {
 	setupPanel() {
 //console.log('AppMain::setupPanel');
 		let plusButton = document.querySelector('[data-role="header"] a');
-		let stageButton = document.querySelector('[data-icon="star"]');
-		let actorButton = document.querySelector('[data-icon="bullets"]');
-		let imageButton = document.querySelector('[data-icon="heart"]');
-		let audioButton = document.querySelector('[data-icon="audio"]');
+		let stageButton = document.getElementById('stageButton');
+		let actorButton = document.getElementById('actorButton');
+		let imageButton = document.getElementById('imageButton');
+		let audioButton = document.getElementById('audioButton');
+		let audioSetButton = document.getElementById('audioSetButton');
 
 		stageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#stagePanel');
@@ -51,6 +53,12 @@ class AppMain {
 			this.manager.list();
 			this.hideFilter();
 			$('#audioType').show();
+		});
+		audioSetButton.addEventListener('click', ()=> {
+			plusButton.setAttribute('href', '');
+			this.manager = this.audioSetManager;
+			this.manager.list();
+			this.hideFilter();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
@@ -409,12 +417,83 @@ class AudioManager extends RepositoryManager {
 		return {};
 	}
 
+	resetPanel(rec = {}) {
+		super.resetPanel(rec);
+		let webmFile = this.form.querySelector('[name="webm"]');
+
+		$(webmFile).show();
+	}
+
 	createParameter() {
 		let type = this.options[this.audioType.selectedIndex].value;
 		let formData = new FormData();
 
 		formData.append('keyword', '');
 		formData.append('type', type);
+		return formData;
+	}
+
+	createRow(rec) {
+		rec['count'] = this.options[rec.type - 1].textContent;
+		let li = super.createRow(rec);
+		let anchor = li.querySelector('a');
+		let img = li.querySelector('img');
+
+		anchor.removeChild(img);
+		return li;
+	}
+}
+
+/**
+ * オーディオセット.
+ */
+class AudioSetManager extends RepositoryManager {
+	constructor() {
+		super();
+		this.panel = document.getElementById('audioSetPanel');
+		this.form = document.getElementById('audioSetForm');
+		this.entity = new AudioSetEntity();
+		this.setupPanel();
+	}
+
+	setupPanel() {
+		super.setupPanel();
+	}
+
+	select(rec) {
+		let webmFile = this.form.querySelector('[name="webm"]');
+		let webmAnchor = document.getElementById('webmAnchor');
+		let audioFile = this.form.querySelector('[name="audio"]');
+		let audioAnchor = document.getElementById('audioAnchor');
+
+		$.mobile.loading('show', {textVisible: true});
+		this.entity.select(rec.id).then(audio => {
+			this.resetPanel(audio);
+			if (audio.webmlen) {
+				$(webmFile).hide();
+				$(webmAnchor).show();
+				webmAnchor.setAttribute('href', '/audio/webm/' + rec.id);
+			} else {
+				$(webmFile).show();
+				$(webmAnchor).hide();
+			}
+			if (audio.audiolen) {
+				$(audioFile).hide();
+				$(audioAnchor).show();
+				audioAnchor.setAttribute('href', '/audio/audio/' + rec.id);
+			} else {
+				$(audioFile).show();
+				$(audioAnchor).hide();
+			}
+			$.mobile.loading('hide');
+		});
+		return {};
+	}
+
+	createParameter() {
+		let formData = new FormData();
+
+		formData.append('keyword', '');
 		return formData;
 	}
 
