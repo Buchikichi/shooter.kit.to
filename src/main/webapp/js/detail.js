@@ -20,7 +20,7 @@ class AppMain {
 	}
 
 	setupButton() {
-		let plusButton = document.querySelector('[data-role="header"] a');
+		let plusButton = document.querySelector('a[href="#stagePanel"]');
 
 		plusButton.addEventListener('click', ()=> {
 			this.stagePanel.open(this.addStage);

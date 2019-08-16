@@ -4,8 +4,9 @@ spring:
   main:
     banner-mode: "off"
   datasource:
-    url: ${DB_URL}?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
-    username: inyfdckdjiqsjy
+#    url: ${DB_URL}?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory
+    url: ${DB_URL}
+    username: ${DB_USER}
     password: ${DB_PASS}
     driverClassName: org.postgresql.Driver
     maxTotal: 10

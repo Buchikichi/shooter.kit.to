@@ -10,9 +10,9 @@ class StagePanel {
 		let keyword = '';
 
 		ul.textContent = 'Loading...';
-		this.stage.list(keyword).then(list => {
+		this.stage.list(keyword).then(data => {
 			ul.textContent = null;
-			list.forEach(rec => {
+			data.result.forEach(rec => {
 				let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
 				let li = listviewRow.li;
 				let anchor = li.querySelector('a');
