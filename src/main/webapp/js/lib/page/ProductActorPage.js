@@ -62,7 +62,7 @@ class ProductActorPage {
 
 	refreshCounter(ul) {
 		let liList = ul.querySelectorAll('li:not(.divider)');
-		let span = ul.querySelector('.ui-li-count');
+		let span = ul.previousElementSibling.querySelector('.ui-li-count');
 
 		span.textContent = liList.length;
 	}

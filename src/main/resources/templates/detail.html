@@ -20,13 +20,13 @@
 <!--
     <a href="/" data-ajax="false" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
 -->
-    <h1>Product</h1>
+    <h1 th:text="#{product}">Product</h1>
     <a href="#infoPanel" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-info">Info</a>
-    <a href="#stagePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Stage</a>
+    <a href="#stagePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{stage}">Stage</a>
   </div>
   <div data-role="main">
-    <div class="ui-bar ui-bar-a">Stage</div>
-    <ul id="productStageView" data-role="listview">
+    <div class="ui-bar ui-bar-a" th:text="#{stage}">Stage</div>
+    <ul id="productStageView" data-role="listview" data-split-icon="edit">
       <li th:each="detail:${product.detailList}">
         <a th:with="stage=${detail.stage}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${stage.id}, data-roll=${detail.roll}">
           <img src="/img/icon.listview.png"/>
@@ -35,20 +35,8 @@
         </a>
       </li>
     </ul>
-    <fieldset class="ui-grid-a">
-      <div class="ui-block-a">
-        <div class="ui-field-contain">
-          <span>Created:</span>
-          <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
-        </div>
-      </div>
-      <div class="ui-block-b">
-        <div class="ui-field-contain">
-          <span>Updated:</span>
-          <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
-        </div>
-      </div>
-    </fieldset>
+  </div>
+  <div data-role="content">
     <a href="#productActor" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Actors in product</a>
     <button id="saveButton" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
     <div id="message"></div>
@@ -77,6 +65,20 @@
           </label>
         </div>
       </fieldset>
+    <fieldset class="ui-grid-a">
+      <div class="ui-block-a">
+        <div class="ui-field-contain">
+          <span>Created:</span>
+          <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
+        </div>
+      </div>
+      <div class="ui-block-b">
+        <div class="ui-field-contain">
+          <span>Updated:</span>
+          <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
+        </div>
+      </div>
+    </fieldset>
     </form>
   </div>
   <div id="stagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
@@ -118,12 +120,14 @@
   <div data-role="header" data-theme="b" data-position="fixed">
     <a data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
     <h1>Actors in product</h1>
-    <a href="#ProductActorChoicePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus">Actor</a>
+    <a href="#ProductActorChoicePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{actor}">Actor</a>
   </div>
-  <div data-role="main" th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
-    <div th:each="e:${list}">
-      <ul id="enemyView" data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
-        <li data-role="list-divider" class="divider"><span th:text="${e}"></span><span class="ui-li-count">0</span></li>
+  <div class="ui-bar ui-bar-a" th:text="#{actor}">Actor</div>
+  <div data-role="content" style="padding-top:0"
+      th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
+    <div data-role="collapsible" data-inset="false" data-mini="true" th:each="e:${list}">
+      <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit">0</span></h4>
+      <ul data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
         <li th:each="productActor:${typeMap.get(e)}">
           <a th:with="actor=${productActor.actor}" href="#ProductActorPanel"
               th:attr="data-id=${productActor.id}, data-class=${productActor.className}, data-actor=${actor.id}">

@@ -2,6 +2,8 @@
 spring:
   main:
     banner-mode: "off"
+  messages:
+    basename: i18n/messages
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
