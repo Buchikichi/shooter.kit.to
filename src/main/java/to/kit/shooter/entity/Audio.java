@@ -20,12 +20,15 @@ public class Audio {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+	private String mediasetId;
 	private String owner;
 	private int access;
-	private int type;
+	private int audioType;
+	private int audioSeq;
 	private String name;
 	private String webm;
 	private String audio;
+	private String hash;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

@@ -11,9 +11,10 @@ import lombok.Data;
 @Data
 public final class AudioForm {
 	private String id;
+	private String mediasetId;
 	private String owner;
 	private int access;
-	private int type;
+	private int audioType;
 	private String name;
 	private MultipartFile webm;
 	private MultipartFile audio;

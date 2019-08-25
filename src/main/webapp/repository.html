@@ -44,14 +44,15 @@
     <fieldset id="audioType" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
       <select name="audioType">
-        <option value="1">action</option>
-        <option value="2">reaction</option>
+        <option value="0">action</option>
+        <option value="1">reaction</option>
+        <option value="2">explosion</option>
         <option value="3">notice</option>
         <option value="4">introduction</option>
         <option value="5">theme</option>
         <option value="6">boss</option>
         <option value="7">ending</option>
-        <option value="0" selected="selected">All</option>
+        <option value="-1" selected="selected">All</option>
       </select>
     </fieldset>
     <ul id="listView" data-role="listview" data-filter="true"></ul>
@@ -62,7 +63,7 @@
         <li><a id="stageButton" data-icon="star" class="ui-btn-active">Stage</a></li>
         <li><a id="castingButton" data-icon="bullets">Casting</a></li>
         <li><a id="imageSetButton" data-icon="grid">ImageSet</a></li>
-        <li><a id="audioSetButton" data-icon="grid">AudioSet</a></li>
+        <li></li>
       </ul>
       <ul>
         <li><a id="mapButton" data-icon="location">Map</a></li>
@@ -134,12 +135,14 @@
   <div id="audioPanel" data-role="panel" data-position="right" data-display="overlay">
     <form id="audioForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
+      <input type="hidden" name="mediasetId"/>
       <label>Name:<input type="text" name="name" required="required"/></label>
       <fieldset class="access"></fieldset>
       <label>Type:
-        <select id="imageType" name="type" required="required">
-          <option value="1" selected="selected">action</option>
-          <option value="2">reaction</option>
+        <select id="audioType" name="audioType" required="required">
+          <option value="0" selected="selected">action</option>
+          <option value="1">reaction</option>
+          <option value="2">explosion</option>
           <option value="3">notice</option>
           <option value="4">introduction</option>
           <option value="5">theme</option>
@@ -149,15 +152,6 @@
       </label>
       <label>WebM:<input type="file" name="webm"/><a id="webmAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>
       <label>Audio:<input type="file" name="audio"/><a id="audioAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>
-      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
-      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
-    </form>
-  </div>
-  <div id="audioSetPanel" data-role="panel" data-position="right" data-display="overlay">
-    <form id="audioSetForm" enctype="multipart/form-data">
-      <input type="hidden" name="id"/>
-      <label>Name:<input type="text" name="name" required="required"/></label>
-      <fieldset class="access"></fieldset>
       <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
       <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
     </form>

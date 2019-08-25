@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,7 +46,7 @@ public class AudioController {
 	@RequestMapping("/list")
 	@ResponseBody
 	public List<AudioView> list(AudioForm form) {
-		return this.audioService.list(form.getKeyword(), form.getType());
+		return this.audioService.list(form.getKeyword(), form.getAudioType());
 	}
 
 	/**
@@ -160,6 +161,19 @@ public class AudioController {
 		return Base64.encodeBase64String(bytes);
 	}
 
+	public String getHash(MultipartFile file) {
+		byte[] bytes = {};
+
+		if (file != null && file.isEmpty()) {
+			try {
+				bytes = file.getBytes();
+			} catch (@SuppressWarnings("unused") IOException e) {
+				// nop
+			}
+		}
+		return DigestUtils.sha1Hex(bytes);
+	}
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm<Audio> save(AudioForm form) {
@@ -178,6 +192,7 @@ public class AudioController {
 		BeanUtils.copyProperties(form, entity);
 		entity.setWebm(getAudioString(form.getWebm(), "webm"));
 		entity.setAudio(getAudioString(form.getAudio(), "audio"));
+		entity.setHash(getHash(form.getWebm()));
 		entity.setOwner(loginId);
 		Audio saved = this.audioService.save(entity);
 
