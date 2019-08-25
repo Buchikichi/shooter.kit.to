@@ -15,28 +15,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Customer;
-import to.kit.shooter.entity.Image;
-import to.kit.shooter.entity.ImageView;
-import to.kit.shooter.service.ImageService;
-import to.kit.shooter.web.form.ImageForm;
+import to.kit.shooter.entity.Visual;
+import to.kit.shooter.entity.VisualType;
+import to.kit.shooter.entity.VisualView;
+import to.kit.shooter.service.VisualService;
+import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
+import to.kit.shooter.web.form.ResultListForm;
+import to.kit.shooter.web.form.VisualForm;
 
 /**
  * イメージ.
  * @author H.Sasai
  */
 @Controller
-@RequestMapping("/image")
+@RequestMapping("/visual")
 @SessionAttributes(types = LoginInfo.class)
-public class ImageController {
+public class VisualController extends BasicMediaController {
 	@Autowired
-	private ImageService imageService;
+	private VisualService visualService;
 	@Autowired
 	private LoginInfo loginInfo;
 
@@ -56,33 +60,51 @@ public class ImageController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<ImageView> list(ImageForm form) {
-		return this.imageService.list(form.getKeyword(), form.getType());
+	public ResultListForm list(VisualForm form) {
+		ResultListForm result = new ResultListForm();
+		List<ListItem> resultList = result.getResult();
+
+		for (VisualView visual : this.visualService.list(form.getKeyword(), form.getVisualType())) {
+			ListItem item = new ListItem();
+			VisualType type = VisualType.getType(visual.getVisualType());
+
+			BeanUtils.copyProperties(visual, item);
+			item.setCount(type.name());
+			item.setAside(visual.getOrientation());
+			resultList.add(item);
+		}
+		return result;
 	}
 
-	private ResponseEntity<Resource> createResponseEntity(Image image) {
+	@RequestMapping("/select")
+	@ResponseBody
+	public VisualView select(@RequestParam String id) {
+		return this.visualService.detail(id);
+	}
+
+	private ResponseEntity<Resource> createResponseEntity(Visual visual) {
 		HttpHeaders headers = new HttpHeaders();
-		byte[] bytes = Base64.decodeBase64(image.getImage());
+		byte[] bytes = Base64.decodeBase64(visual.getImage());
 		Resource resource = new ByteArrayResource(bytes);
 
-		headers.setContentType(MediaType.valueOf(image.getContentType()));
+		headers.setContentType(MediaType.valueOf(visual.getContentType()));
 		return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/src/{id}")
 	@ResponseBody
 	public ResponseEntity<Resource> src(@PathVariable("id") String id) {
-		Image image = this.imageService.findOne(id);
+		Visual visual = this.visualService.findOne(id);
 
-		return createResponseEntity(image);
+		return createResponseEntity(visual);
 	}
 
 	@RequestMapping(value = "/name/{name:.+}")
 	@ResponseBody
 	public ResponseEntity<Resource> res(@PathVariable("name") String name) {
-		Image image = this.imageService.findByName(name);
+		Visual visual = this.visualService.findByName(name);
 
-		return createResponseEntity(image);
+		return createResponseEntity(visual);
 	}
 
 	private String getImageString(MultipartFile file) {
@@ -103,8 +125,8 @@ public class ImageController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Image> save(ImageForm form) {
-		ResultForm<Image> result = new ResultForm<>();
+	public ResultForm<Visual> save(VisualForm form) {
+		ResultForm<Visual> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
@@ -112,12 +134,13 @@ public class ImageController {
 		}
 		MultipartFile imageFile = form.getImage();
 		String contentType = imageFile.getContentType();
-		Image entity = new Image();
+		Visual entity = new Visual();
 		BeanUtils.copyProperties(form, entity);
 		entity.setImage(getImageString(imageFile));
+		entity.setHash(getHash(imageFile));
 		entity.setContentType(contentType);
 		entity.setOwner(customerId);
-		Image saved = this.imageService.save(entity);
+		Visual saved = this.visualService.save(entity);
 
 		result.setResult(saved);
 		result.setOk(true);

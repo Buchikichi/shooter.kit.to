@@ -131,7 +131,7 @@
         <li th:each="productActor:${typeMap.get(e)}">
           <a th:with="actor=${productActor.actor}" href="#ProductActorPanel"
               th:attr="data-id=${productActor.id}, data-class=${productActor.className}, data-actor=${actor.id}">
-            <img src="/img/icon.listview.png" th:src="'/image/src/'+${actor.imageid}"/>
+            <img src="/img/icon.listview.png" th:src="'/visual/src/'+${actor.imageid}"/>
             <span th:text="${actor.name}"></span>
             <p>
               <span th:text="${productActor.className}" class="className"></span>

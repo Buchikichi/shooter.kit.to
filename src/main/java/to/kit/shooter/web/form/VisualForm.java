@@ -5,17 +5,19 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 /**
- * Image form.
+ * Visual form.
  * @author H.Sasai
  */
 @Data
-public final class ImageForm {
+public final class VisualForm {
 	private String id;
+	private String mediasetId;
 	private String owner;
 	private int access;
-	private int type;
+	private int visualType;
+	private int visualSeq;
+	private String orientation;
 	private String name;
-	private String description;
 	private MultipartFile image;
 	private MultipartFile thumb;
 

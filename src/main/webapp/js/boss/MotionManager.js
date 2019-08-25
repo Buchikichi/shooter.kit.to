@@ -8,7 +8,7 @@ MotionManager.prototype = Object.create(Repository.prototype);
 MotionManager.INSTANCE = new MotionManager();
 
 MotionManager.prototype.makeName = key => {
-	return '/image/name/' + key + '.json';
+	return '/visual/name/' + key + '.json';
 };
 
 //-----------------------------------------------------------------------------

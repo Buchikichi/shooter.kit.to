@@ -23,9 +23,9 @@ class ImageManager {
 				this.loaded++;
 			};
 			if (src.length == 36) {
-				img.src = '/image/src/' + src;
+				img.src = '/visual/src/' + src;
 			} else {
-				img.src = '/image/name/' + src;
+				img.src = '/visual/name/' + src;
 			}
 			this.max++;
 		});

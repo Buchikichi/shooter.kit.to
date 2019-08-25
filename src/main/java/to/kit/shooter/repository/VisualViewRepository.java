@@ -3,12 +3,12 @@ package to.kit.shooter.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import to.kit.shooter.entity.ImageView;
+import to.kit.shooter.entity.VisualView;
 
 /**
- * ImageRepository.
+ * VisualViewRepository.
  * @author H.Sasai
  */
-public interface ImageViewRepository extends JpaRepository<ImageView, String>, JpaSpecificationExecutor<ImageView> {
+public interface VisualViewRepository extends JpaRepository<VisualView, String>, JpaSpecificationExecutor<VisualView> {
 	// nop
 }

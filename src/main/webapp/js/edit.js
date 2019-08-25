@@ -421,7 +421,7 @@ class ActorPanel {
 
 //console.log(productActor);
 //console.log(actor);
-				img.setAttribute('src', '/image/src/' + actor.imageid);
+				img.setAttribute('src', '/visual/src/' + actor.imageid);
 				radio.setAttribute('type', 'radio');
 				radio.setAttribute('name', 'actor');
 				radio.setAttribute('value', productActor.seq);

@@ -11,21 +11,24 @@ import javax.persistence.Id;
 import lombok.Data;
 
 /**
- * Image.
+ * Visual.
  * @author H.Sasai
  */
 @Entity
 @Data
-public class Image {
+public class Visual {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+	private String mediasetId;
 	private String owner;
 	private int access;
-	private int type;
+	private int visualType;
+	private int visualSeq;
+	private String orientation;
 	private String name;
-	private String description;
 	private String image;
+	private String hash;
 	private String contentType;
 	@Column(insertable = false, updatable = false)
 	private Date created;

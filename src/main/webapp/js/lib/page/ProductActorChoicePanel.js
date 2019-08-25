@@ -55,7 +55,7 @@ class ProductActorChoicePanel {
 		this.entity.list(formData).then(list => {
 			ul.textContent = null;
 			list.forEach(rec => {
-				let listviewRow = new ListviewRow(rec, '/image/src/' + rec.imageid);
+				let listviewRow = new ListviewRow(rec, '/visual/src/' + rec.imageid);
 				let li = listviewRow.li;
 				let anchor = li.querySelector('a');
 

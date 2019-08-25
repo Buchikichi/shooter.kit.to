@@ -11,20 +11,21 @@ import javax.persistence.Id;
 import lombok.Data;
 
 /**
- * ImageView.
+ * VisualView.
  * @author H.Sasai
  */
 @Entity()
 @Data
-public class ImageView {
+public class VisualView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
 	private String owner;
 	private int access;
-	private int type;
+	private int visualType;
+	private int visualSeq;
+	private String orientation;
 	private String name;
-	private String description;
 	private int imagelen;
 	private String contentType;
 	@Column(insertable = false, updatable = false)

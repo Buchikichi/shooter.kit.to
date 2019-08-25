@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -32,7 +31,7 @@ import to.kit.shooter.web.form.ResultForm;
 @Controller
 @RequestMapping("/audio")
 @SessionAttributes(types = LoginInfo.class)
-public class AudioController {
+public class AudioController extends BasicMediaController {
 	@Autowired
 	private AudioService audioService;
 	@Autowired
@@ -159,19 +158,6 @@ public class AudioController {
 			return null;
 		}
 		return Base64.encodeBase64String(bytes);
-	}
-
-	public String getHash(MultipartFile file) {
-		byte[] bytes = {};
-
-		if (file != null && file.isEmpty()) {
-			try {
-				bytes = file.getBytes();
-			} catch (@SuppressWarnings("unused") IOException e) {
-				// nop
-			}
-		}
-		return DigestUtils.sha1Hex(bytes);
 	}
 
 	@RequestMapping("/save")

@@ -43,7 +43,7 @@ class AppMain {
 			this.manager = this.imageManager;
 			this.manager.list();
 			this.hideFilter();
-			$('#type-radio').show();
+			$('#visualType').show();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
@@ -60,7 +60,7 @@ class AppMain {
 
 	hideFilter() {
 		$('#actorType-select').hide();
-		$('#type-radio').hide();
+		$('#visualType').hide();
 		$('#audioType').hide();
 	}
 
@@ -108,7 +108,12 @@ class RepositoryManager {
 	}
 
 	select(rec) {
-		return rec;
+		$.mobile.loading('show', {textVisible: true});
+		this.entity.select(rec.id).then(data => {
+			this.resetPanel(data);
+			$.mobile.loading('hide');
+		});
+		return {};
 	}
 
 	resetPanel(rec = {}) {
@@ -203,7 +208,7 @@ class StageManager extends RepositoryManager {
 		let imageButtons = this.form.querySelector('.imageButtons');
 
 		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
-			let filter = name.indexOf('B') != -1 ? ImageEntity.Type.BACK : ImageEntity.Type.FORE;
+			let filter = name.indexOf('B') != -1 ? VisualEntity.Type.BACK : VisualEntity.Type.FORE;
 			let button = new ImageSelectionButton(name, filter);
 
 			imageButtons.appendChild(button.fieldset);
@@ -242,7 +247,7 @@ class StageManager extends RepositoryManager {
 		if (imageId == null) {
 			return '/img/icon.listview.png';
 		}
-		return '/image/src/' + imageId;
+		return '/visual/src/' + imageId;
 	}
 
 	createRow(rec) {
@@ -299,7 +304,7 @@ class ActorManager extends RepositoryManager {
 		this.setupActorType();
 		super.setupPanel();
 		['ImageId', 'ImageId', 'ImageId'].forEach(name => {
-			let button = new ImageSelectionButton(name, ImageEntity.Type.ACT);
+			let button = new ImageSelectionButton(name, VisualEntity.Type.ACT);
 
 			imageButtons.appendChild(button.fieldset);
 		});
@@ -315,7 +320,7 @@ class ActorManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		return super.createRow(rec, '/image/src/' + rec.imageid);
+		return super.createRow(rec, '/visual/src/' + rec.imageid);
 	}
 }
 
@@ -327,23 +332,17 @@ class ImageManager extends RepositoryManager {
 		super();
 		this.panel = document.getElementById('imagePanel');
 		this.form = document.getElementById('imageForm');
-		this.entity = new ImageEntity();
+		this.entity = new VisualEntity();
 		this.setupPanel();
 	}
 
 	setupPanel() {
 		super.setupPanel();
-		$('#type-radio [name="type"]').click(()=> {
+		this.visualType = document.querySelector('#visualType [name="visualType"]');
+		this.options = this.visualType.querySelectorAll('option');
+		this.visualType.addEventListener('change', ()=> {
 			this.list();
 		});
-	}
-
-	createRow(rec) {
-		let dic = {0:'Other', 1:'Act', 2:'Back', 3:'Fore'};
-		let imgsrc = rec.contentType.startsWith('image') ? '/image/src/' + rec.id : '/img/icon.listview.png';
-
-		rec['count'] = dic[rec.type];
-		return super.createRow(rec, imgsrc);
 	}
 
 	resetPanel(rec = {}) {
@@ -351,10 +350,25 @@ class ImageManager extends RepositoryManager {
 		let img = document.getElementById('image.thumbnail');
 
 		if (rec.id) {
-			img.setAttribute('src', '/image/src/' + rec.id);
+			img.setAttribute('src', '/visual/src/' + rec.id);
 		} else {
 			img.removeAttribute('src');
 		}
+	}
+
+	createParameter() {
+		let type = this.options[this.visualType.selectedIndex].value;
+		let formData = new FormData();
+
+		formData.append('keyword', '');
+		formData.append('visualType', type);
+		return formData;
+	}
+
+	createRow(rec) {
+		let imgsrc = rec.contentType.startsWith('image') ? '/visual/src/' + rec.id : '/img/icon.listview.png';
+
+		return super.createRow(rec, imgsrc);
 	}
 }
 
@@ -429,9 +443,9 @@ class AudioManager extends RepositoryManager {
 		rec['count'] = this.options[rec.audioType].textContent;
 		let li = super.createRow(rec);
 		let anchor = li.querySelector('a');
-		let img = li.querySelector('img');
-
-		anchor.removeChild(img);
+//		let img = li.querySelector('img');
+//
+//		anchor.removeChild(img);
 		return li;
 	}
 }
@@ -442,11 +456,11 @@ class AudioManager extends RepositoryManager {
 class ImageChooser extends ResourceChooser {
 	constructor() {
 		super('imageChooser');
-		this.entity = new ImageEntity();
+		this.entity = new VisualEntity();
 	}
 
 	createRow(rec) {
-		return super.createRow(rec, '/image/src/' + rec.id);
+		return super.createRow(rec, '/visual/src/' + rec.id);
 	}
 }
 
@@ -462,9 +476,9 @@ class AudioChooser extends ResourceChooser {
 	createRow(rec) {
 		let listviewRow = super.createRow(rec);
 		let anchor = listviewRow.anchor;
-		let img = listviewRow.img;
-
-		anchor.removeChild(img);
+//		let img = listviewRow.img;
+//
+//		anchor.removeChild(img);
 		return listviewRow;
 	}
 }

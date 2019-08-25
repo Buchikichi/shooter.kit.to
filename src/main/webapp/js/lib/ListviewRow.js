@@ -6,15 +6,15 @@ class ListviewRow {
 		let anchor = document.createElement('a');
 		let li = document.createElement('li');
 
-		if (imgsrc != null) {
-			img.setAttribute('src', imgsrc);
-		}
 		name.textContent = rec.name;
 		description.textContent = rec.description;
 		if (rec.href) {
 			anchor.setAttribute('href', rec.href);
 		}
-		anchor.appendChild(img);
+		if (imgsrc != null) {
+			img.setAttribute('src', imgsrc);
+			anchor.appendChild(img);
+		}
 		anchor.appendChild(name);
 		anchor.appendChild(description);
 		if (rec.count) {
@@ -23,6 +23,13 @@ class ListviewRow {
 			count.classList.add('ui-li-count');
 			count.textContent = rec.count;
 			anchor.appendChild(count);
+		}
+		if (rec.aside) {
+			let aside = document.createElement('p');
+
+			aside.classList.add('ui-li-aside');
+			aside.textContent = rec.aside;
+			anchor.appendChild(aside);
 		}
 		li.appendChild(anchor);
 		this.img = img;

@@ -91,7 +91,7 @@ class ProductActorPage {
 	appendActor(rec) {
 		let ul = this.typeMap[rec.type];
 //		//<li><img src="/img/icon.listview.png"/><span>CCC</span><p>ccc</p></li>
-		let row = new ListviewRow(rec, '/image/src/' + rec.imageid);
+		let row = new ListviewRow(rec, '/visual/src/' + rec.imageid);
 		let li = row.li;
 		let anchor = row.anchor;
 		let deleteButton = document.createElement('a');
