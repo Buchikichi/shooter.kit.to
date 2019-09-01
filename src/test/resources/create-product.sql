@@ -12,6 +12,7 @@ CREATE TABLE product(
 	width integer NOT NULL DEFAULT 256,
 	height integer NOT NULL DEFAULT 224,
 	count integer NOT NULL DEFAULT 0,
+	mediaset_id varchar(36) NOT NULL,
 	created timestamp NOT NULL DEFAULT now(),
 	updated timestamp NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
@@ -25,5 +26,8 @@ COMMENT ON COLUMN product.icon IS 'アイコン';
 COMMENT ON COLUMN product.width IS '幅';
 COMMENT ON COLUMN product.height IS '高さ';
 COMMENT ON COLUMN product.count IS 'カウント';
+COMMENT ON COLUMN product.mediaset_id IS 'メディアセットID';
 COMMENT ON COLUMN product.created IS '作成日';
 COMMENT ON COLUMN product.updated IS '更新日';
+
+ALTER TABLE product ADD mediaset_id varchar(36) NOT NULL DEFAULT '';

@@ -60,16 +60,7 @@ class AppMain {
 		list.forEach(rec => {
 			rec['href'] = '#detailPopup';
 			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
-			let highScore = Number(rec.aside).toLocaleString();
 
-			if (highScore) {
-				// <p class="ui-li-aside"><strong>6:24</strong>PM</p>
-				let score = document.createElement('p');
-
-				score.textContent = 'High score: ' + highScore;
-				score.classList.add('ui-li-aside');
-				listviewRow.anchor.appendChild(score);
-			}
 			listView.appendChild(listviewRow.li);
 			listviewRow.anchor.addEventListener('click', e => {
 				e.preventDefault();

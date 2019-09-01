@@ -86,6 +86,7 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	}
 
 	@RequestMapping("/edit/{id}")
+	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		ProductDetail detail = this.productDetailService.detail(id);
 

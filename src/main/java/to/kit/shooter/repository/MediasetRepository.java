@@ -3,11 +3,11 @@ package to.kit.shooter.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import to.kit.shooter.entity.AudioSet;
+import to.kit.shooter.entity.Mediaset;
 
 /**
  * @author H.Sasai
  */
-public interface AudioSetRepository extends JpaRepository<AudioSet, String>, JpaSpecificationExecutor<AudioSet> {
+public interface MediasetRepository extends JpaRepository<Mediaset, String>, JpaSpecificationExecutor<Mediaset> {
 	// nop
 }

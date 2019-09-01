@@ -65,27 +65,20 @@
           </label>
         </div>
       </fieldset>
-      <fieldset>
-        <legend>Mediaset:</legend>
-        <select th:field="*{product.mediasetId}" data-native-menu="false" data-mini="true" class="filterable-select">
-          <option th:each="item:${mediasetList}" th:value="${item.id}" th:text="${item.name}"></option>
-        </select>
-        <button id="editMediasetButton" type="button" data-icon="edit" data-rel="close" data-mini="true">Edit mediaset</button>
-      </fieldset>
-      <fieldset class="ui-grid-a">
-        <div class="ui-block-a">
-          <div class="ui-field-contain">
-            <span>Created:</span>
-            <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
-          </div>
+    <fieldset class="ui-grid-a">
+      <div class="ui-block-a">
+        <div class="ui-field-contain">
+          <span>Created:</span>
+          <input type="text" th:value="${#dates.format(product.created,'yyyy-MM-dd')}" readonly="readonly"/>
         </div>
-        <div class="ui-block-b">
-          <div class="ui-field-contain">
-            <span>Updated:</span>
-            <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
-          </div>
+      </div>
+      <div class="ui-block-b">
+        <div class="ui-field-contain">
+          <span>Updated:</span>
+          <input type="text" th:value="${#dates.format(product.updated,'yyyy-MM-dd')}" readonly="readonly"/>
         </div>
-      </fieldset>
+      </div>
+    </fieldset>
     </form>
   </div>
   <div id="stagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">

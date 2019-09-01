@@ -1,5 +1,6 @@
 package to.kit.shooter.web;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.ActorType;
 import to.kit.shooter.entity.Customer;
+import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.entity.Scores;
+import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.ListItem;
@@ -56,6 +59,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private ProductService productService;
 	@Autowired
 	private ProductDetailService productDetailService;
+	@Autowired
+	private MediasetService mediasetService;
 
 	@RequestMapping("/list")
 	@ResponseBody
@@ -64,6 +69,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		ResultListForm form = new ResultListForm();
 		List<ListItem> resultList = form.getResult();
 		List<Product> list = this.productService.list();
+		NumberFormat formatter = NumberFormat.getNumberInstance(); 
 
 		for (Product product : list) {
 			ListItem item = new ListItem();
@@ -76,7 +82,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 			item.setCount(count);
 			if (0 < scoreList.size()) {
 				Scores score = scoreList.get(0);
-				String text = String.valueOf(score.getScore());
+				String text = formatter.format(Integer.valueOf(score.getScore()));
 
 				item.setAside(text);
 			}
@@ -121,16 +127,19 @@ public class ProductController implements BasicControllerInterface<Product> {
 	}
 
 	@RequestMapping("/detail/{id}")
-	public String detail(Model model, @PathVariable("id") String id) {
+	@Override
+	public String edit(Model model, @PathVariable("id") String id) {
 		Product product = this.productService.detail(id);
 
 		if (product == null) {
 			return "error";
 		}
 		Map<ActorType, List<ProductActor>> typeMap = makeTypeMap(product.getActorList());
+		List<Mediaset> mediasetList = this.mediasetService.list("");
 		model.addAttribute("product", product);
 		model.addAttribute("typeMap", typeMap);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
+		model.addAttribute("mediasetList", mediasetList);
 		return "detail";
 	}
 

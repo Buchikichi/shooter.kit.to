@@ -5,14 +5,16 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import to.kit.shooter.entity.AudioSet;
+import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Customer;
-import to.kit.shooter.service.AudioSetService;
+import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.web.form.AudioSetForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
@@ -20,15 +22,15 @@ import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
 
 /**
- * オーディオセット.
+ * メディアセット.
  * @author H.Sasai
  */
 @Controller
-@RequestMapping("/audioSet")
+@RequestMapping("/mediaset")
 @SessionAttributes(types = LoginInfo.class)
-public class AudioSetController implements BasicControllerInterface<AudioSet> {
+public class MediasetController implements BasicControllerInterface<Mediaset> {
 	@Autowired
-	private AudioSetService audioSetService;
+	private MediasetService mediasetService;
 	@Autowired
 	private LoginInfo loginInfo;
 
@@ -48,11 +50,10 @@ public class AudioSetController implements BasicControllerInterface<AudioSet> {
 		ResultListForm form = new ResultListForm();
 		List<ListItem> resultList = form.getResult();
 
-		for (AudioSet stage : this.audioSetService.list("")) {
+		for (Mediaset mediaset : this.mediasetService.list("")) {
 			ListItem item = new ListItem();
 
-			item.setId(stage.getId());
-			item.setName(stage.getName());
+			BeanUtils.copyProperties(mediaset, item);
 			resultList.add(item);
 		}
 		return form;
@@ -61,8 +62,14 @@ public class AudioSetController implements BasicControllerInterface<AudioSet> {
 	@RequestMapping("/select")
 	@ResponseBody
 	@Override
-	public AudioSet select(@RequestParam String id) {
-		return this.audioSetService.detail(id);
+	public Mediaset select(@RequestParam String id) {
+		return this.mediasetService.detail(id);
+	}
+
+	@RequestMapping("/edit/{id}")
+	@Override
+	public String edit(Model model, @PathVariable("id") String id) {
+		return "editMediaset";
 	}
 
 	/**
@@ -72,17 +79,17 @@ public class AudioSetController implements BasicControllerInterface<AudioSet> {
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<AudioSet> save(AudioSetForm form) {
-		ResultForm<AudioSet> result = new ResultForm<>();
+	public ResultForm<Mediaset> save(AudioSetForm form) {
+		ResultForm<Mediaset> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		AudioSet audioSet = new AudioSet();
+		Mediaset audioSet = new Mediaset();
 		BeanUtils.copyProperties(form, audioSet);
 		audioSet.setOwner(customerId);
-		AudioSet saved = this.audioSetService.save(audioSet);
+		Mediaset saved = this.mediasetService.save(audioSet);
 
 		result.setResult(saved);
 		result.setOk(true);

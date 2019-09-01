@@ -114,6 +114,7 @@ public class StageController implements BasicControllerInterface<Stage> {
 	}
 
 	@RequestMapping("/edit/{id}")
+	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		Stage stage = this.stageService.detail(id);
 

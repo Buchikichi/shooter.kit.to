@@ -11,37 +11,30 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.Audio;
-import to.kit.shooter.entity.AudioSet;
-import to.kit.shooter.repository.AudioRepository;
-import to.kit.shooter.repository.AudioSetRepository;
+import to.kit.shooter.entity.Mediaset;
+import to.kit.shooter.repository.MediasetRepository;
 
 @Service
-public class AudioSetService {
+public class MediasetService {
 	@Autowired
-	private AudioRepository audioRepository;
-	@Autowired
-	private AudioSetRepository audioSetRepository;
+	private MediasetRepository mediasetRepository;
 
-	public List<AudioSet> list(String keyword) {
+	public List<Mediaset> list(String keyword) {
 		Sort sort = new Sort(new Order(Direction.ASC, "updated"), new Order(Direction.ASC, "name"));
-		Specification<AudioSet> nameSpec = Specifications.where((root, query, cb) -> {
+		Specification<Mediaset> nameSpec = Specifications.where((root, query, cb) -> {
 			return cb.like(root.get("name"), "%" + keyword + "%");
 		});
-		return this.audioSetRepository.findAll(nameSpec, sort);
+		return this.mediasetRepository.findAll(nameSpec, sort);
 	}
 
-	public AudioSet detail(String id) {
-		return this.audioSetRepository.findOne(id);
+	public Mediaset detail(String id) {
+		return this.mediasetRepository.findOne(id);
 	}
 
-	public AudioSet save(AudioSet entity) {
+	public Mediaset save(Mediaset entity) {
 		String id = entity.getId();
-		Audio prev = null;
+		Mediaset prev = this.mediasetRepository.findOne(id);
 
-		if (id != null && !id.isEmpty()) {
-			prev = this.audioRepository.findOne(id);
-		}
 		if (prev != null) {
 //			String webm = entity.getWebm();
 //			String audio = entity.getAudio();
@@ -56,6 +49,6 @@ public class AudioSetService {
 			entity.setCreated(prev.getCreated());
 			entity.setUpdated(new Date());
 		}
-		return this.audioSetRepository.saveAndFlush(entity);
+		return this.mediasetRepository.saveAndFlush(entity);
 	}
 }

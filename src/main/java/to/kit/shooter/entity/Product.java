@@ -36,6 +36,7 @@ public class Product {
 	private int width;
 	private int height;
 	private int count;
+	private String mediasetId;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
