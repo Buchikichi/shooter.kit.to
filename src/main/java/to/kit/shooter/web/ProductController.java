@@ -28,6 +28,7 @@ import to.kit.shooter.entity.Scores;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
+import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ProductForm;
@@ -65,9 +66,9 @@ public class ProductController implements BasicControllerInterface<Product> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public ResultListForm list() {
-		ResultListForm form = new ResultListForm();
-		List<ListItem> resultList = form.getResult();
+	public ResultListForm list(FilteringForm form) {
+		ResultListForm result = new ResultListForm();
+		List<ListItem> resultList = result.getResult();
 		List<Product> list = this.productService.list();
 		NumberFormat formatter = NumberFormat.getNumberInstance(); 
 
@@ -88,7 +89,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 			}
 			resultList.add(item);
 		}
-		return form;
+		return result;
 	}
 
 	@RequestMapping("/select")

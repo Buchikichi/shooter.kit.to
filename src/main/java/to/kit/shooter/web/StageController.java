@@ -16,6 +16,7 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.entity.Stage;
 import to.kit.shooter.service.StageService;
+import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
@@ -47,9 +48,9 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public ResultListForm list() {
-		ResultListForm form = new ResultListForm();
-		List<ListItem> resultList = form.getResult();
+	public ResultListForm list(FilteringForm form) {
+		ResultListForm result = new ResultListForm();
+		List<ListItem> resultList = result.getResult();
 		List<Stage> list = this.stageService.list();
 
 		for (Stage stage : list) {
@@ -60,7 +61,7 @@ public class StageController implements BasicControllerInterface<Stage> {
 			item.setDescription(stage.getDescription());
 			resultList.add(item);
 		}
-		return form;
+		return result;
 	}
 
 	@RequestMapping("/select")

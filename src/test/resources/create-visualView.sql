@@ -4,6 +4,7 @@
 
 CREATE OR REPLACE VIEW visual_view AS 
   SELECT visual.id,
+    visual.mediaset_id,
     visual.owner,
     visual.access,
     visual.visual_type,

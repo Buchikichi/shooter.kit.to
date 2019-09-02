@@ -20,6 +20,7 @@ public class VisualView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+	private String mediasetId;
 	private String owner;
 	private int access;
 	private int visualType;

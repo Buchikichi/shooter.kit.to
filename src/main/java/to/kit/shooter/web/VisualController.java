@@ -25,6 +25,7 @@ import to.kit.shooter.entity.Visual;
 import to.kit.shooter.entity.VisualType;
 import to.kit.shooter.entity.VisualView;
 import to.kit.shooter.service.VisualService;
+import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
@@ -38,7 +39,7 @@ import to.kit.shooter.web.form.VisualForm;
 @Controller
 @RequestMapping("/visual")
 @SessionAttributes(types = LoginInfo.class)
-public class VisualController extends BasicMediaController {
+public class VisualController extends BasicMediaController implements BasicControllerInterface<VisualView> {
 	@Autowired
 	private VisualService visualService;
 	@Autowired
@@ -60,17 +61,19 @@ public class VisualController extends BasicMediaController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public ResultListForm list(VisualForm form) {
+	@Override
+	public ResultListForm list(FilteringForm form) {
 		ResultListForm result = new ResultListForm();
 		List<ListItem> resultList = result.getResult();
 
-		for (VisualView visual : this.visualService.list(form.getKeyword(), form.getVisualType())) {
+		for (VisualView visual : this.visualService.list(form.getMediasetId(), form.getType())) {
 			ListItem item = new ListItem();
 			VisualType type = VisualType.getType(visual.getVisualType());
 
 			BeanUtils.copyProperties(visual, item);
 			item.setCount(type.name());
 			item.setAside(visual.getOrientation());
+			item.setDescription(String.valueOf(visual.getVisualSeq()));
 			resultList.add(item);
 		}
 		return result;
@@ -78,6 +81,7 @@ public class VisualController extends BasicMediaController {
 
 	@RequestMapping("/select")
 	@ResponseBody
+	@Override
 	public VisualView select(@RequestParam String id) {
 		return this.visualService.detail(id);
 	}

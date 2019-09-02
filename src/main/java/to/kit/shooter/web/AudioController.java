@@ -17,12 +17,16 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Audio;
+import to.kit.shooter.entity.AudioType;
 import to.kit.shooter.entity.AudioView;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.AudioService;
 import to.kit.shooter.web.form.AudioForm;
+import to.kit.shooter.web.form.FilteringForm;
+import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
+import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * オーディオ.
@@ -31,7 +35,7 @@ import to.kit.shooter.web.form.ResultForm;
 @Controller
 @RequestMapping("/audio")
 @SessionAttributes(types = LoginInfo.class)
-public class AudioController extends BasicMediaController {
+public class AudioController extends BasicMediaController implements BasicControllerInterface<AudioView> {
 	@Autowired
 	private AudioService audioService;
 	@Autowired
@@ -44,8 +48,23 @@ public class AudioController extends BasicMediaController {
 	 */
 	@RequestMapping("/list")
 	@ResponseBody
-	public List<AudioView> list(AudioForm form) {
-		return this.audioService.list(form.getKeyword(), form.getAudioType());
+	@Override
+	public ResultListForm list(FilteringForm form) {
+		ResultListForm result = new ResultListForm();
+		List<ListItem> resultList = result.getResult();
+		List<AudioView> list = this.audioService.list(form.getMediasetId(), form.getType());
+
+		for (AudioView audio : list) {
+			ListItem item = new ListItem();
+			AudioType type = AudioType.getType(audio.getAudioType());
+
+			item.setId(audio.getId());
+			item.setName(audio.getName());
+			item.setCount(type.name());
+			item.setDescription(String.valueOf(audio.getAudioSeq()));
+			resultList.add(item);
+		}
+		return result;
 	}
 
 	/**
@@ -55,6 +74,7 @@ public class AudioController extends BasicMediaController {
 	 */
 	@RequestMapping("/select")
 	@ResponseBody
+	@Override
 	public AudioView select(@RequestParam String id) {
 		return this.audioService.detail(id);
 	}

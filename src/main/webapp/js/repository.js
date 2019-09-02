@@ -55,7 +55,7 @@ class AppMain {
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
 		});
-		stageButton.click();
+		audioButton.click();
 	}
 
 	hideFilter() {
@@ -75,8 +75,18 @@ class AppMain {
 
 class RepositoryManager {
 	constructor() {
+		this.mediasetId = document.querySelector('input[name="mediasetId"]').value;
+		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
 		this.listView = document.getElementById('listView');
 		this.valueChangedevent = new Event('valueChanged');
+		$(this.listView).sortable({
+			update: (event, ui)=> {
+console.log('item:');
+console.log(ui.item);
+console.log('position:');
+console.log(ui.position);
+			},
+		});
 	}
 
 	get panelId() {
@@ -153,10 +163,11 @@ class RepositoryManager {
 	}
 
 	createParameter() {
-		let type = $('#type-radio [name="type"]:checked').val();
 		let formData = new FormData();
+		let options = this.typeSelect.querySelectorAll('option');
+		let type = options[this.typeSelect.selectedIndex].value;
 
-		formData.append('keyword', '');
+		formData.append('mediasetId', this.mediasetId);
 		formData.append('type', type);
 		return formData;
 	}
@@ -330,19 +341,14 @@ class ActorManager extends RepositoryManager {
 class ImageManager extends RepositoryManager {
 	constructor() {
 		super();
+		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
+		this.typeSelect.addEventListener('change', ()=> {
+			this.list();
+		});
 		this.panel = document.getElementById('imagePanel');
 		this.form = document.getElementById('imageForm');
 		this.entity = new VisualEntity();
 		this.setupPanel();
-	}
-
-	setupPanel() {
-		super.setupPanel();
-		this.visualType = document.querySelector('#visualType [name="visualType"]');
-		this.options = this.visualType.querySelectorAll('option');
-		this.visualType.addEventListener('change', ()=> {
-			this.list();
-		});
 	}
 
 	resetPanel(rec = {}) {
@@ -354,15 +360,6 @@ class ImageManager extends RepositoryManager {
 		} else {
 			img.removeAttribute('src');
 		}
-	}
-
-	createParameter() {
-		let type = this.options[this.visualType.selectedIndex].value;
-		let formData = new FormData();
-
-		formData.append('keyword', '');
-		formData.append('visualType', type);
-		return formData;
 	}
 
 	createRow(rec) {
@@ -378,75 +375,33 @@ class ImageManager extends RepositoryManager {
 class AudioManager extends RepositoryManager {
 	constructor() {
 		super();
+		this.typeSelect = document.querySelector('#audioType [name="audioType"]');
+		this.typeSelect.addEventListener('change', ()=> {
+			this.list();
+		});
 		this.panel = document.getElementById('audioPanel');
 		this.form = document.getElementById('audioForm');
 		this.entity = new AudioEntity();
 		this.setupPanel();
 	}
 
-	setupPanel() {
-		super.setupPanel();
-		this.audioType = document.querySelector('#audioType [name="audioType"]');
-		this.options = this.audioType.querySelectorAll('option');
-		this.audioType.addEventListener('change', ()=> {
-			this.list();
-		});
-	}
-
-	select(rec) {
-		let webmFile = this.form.querySelector('[name="webm"]');
+	resetPanel(rec = {}) {
 		let webmAnchor = document.getElementById('webmAnchor');
-		let audioFile = this.form.querySelector('[name="audio"]');
 		let audioAnchor = document.getElementById('audioAnchor');
 
-		$.mobile.loading('show', {textVisible: true});
-		this.entity.select(rec.id).then(audio => {
-			this.resetPanel(audio);
-			if (audio.webmlen) {
-				$(webmFile).hide();
-				$(webmAnchor).show();
-				webmAnchor.setAttribute('href', '/audio/webm/' + rec.id);
-			} else {
-				$(webmFile).show();
-				$(webmAnchor).hide();
-			}
-			if (audio.audiolen) {
-				$(audioFile).hide();
-				$(audioAnchor).show();
-				audioAnchor.setAttribute('href', '/audio/audio/' + rec.id);
-			} else {
-				$(audioFile).show();
-				$(audioAnchor).hide();
-			}
-			$.mobile.loading('hide');
-		});
-		return {};
-	}
-
-	resetPanel(rec = {}) {
 		super.resetPanel(rec);
-		let webmFile = this.form.querySelector('[name="webm"]');
-
-		$(webmFile).show();
-	}
-
-	createParameter() {
-		let type = this.options[this.audioType.selectedIndex].value;
-		let formData = new FormData();
-
-		formData.append('keyword', '');
-		formData.append('audioType', type);
-		return formData;
-	}
-
-	createRow(rec) {
-		rec['count'] = this.options[rec.audioType].textContent;
-		let li = super.createRow(rec);
-		let anchor = li.querySelector('a');
-//		let img = li.querySelector('img');
-//
-//		anchor.removeChild(img);
-		return li;
+		if (rec.webmlen) {
+			$(webmAnchor).show();
+			webmAnchor.setAttribute('href', '/audio/webm/' + rec.id);
+		} else {
+			$(webmAnchor).hide();
+		}
+		if (rec.audiolen) {
+			$(audioAnchor).show();
+			audioAnchor.setAttribute('href', '/audio/audio/' + rec.id);
+		} else {
+			$(audioAnchor).hide();
+		}
 	}
 }
 

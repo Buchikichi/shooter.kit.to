@@ -4,6 +4,7 @@
 
 CREATE OR REPLACE VIEW audio_view AS 
   SELECT audio.id,
+    audio.mediaset_id,
     audio.owner,
     audio.access,
     audio.audio_type,

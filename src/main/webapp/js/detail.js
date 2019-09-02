@@ -21,9 +21,15 @@ class AppMain {
 
 	setupButton() {
 		let plusButton = document.querySelector('a[href="#stagePanel"]');
+		let editMediasetButton = document.getElementById('editMediasetButton');
 
 		plusButton.addEventListener('click', ()=> {
 			this.stagePanel.open(this.addStage);
+		});
+		editMediasetButton.addEventListener('click', ()=> {
+			let mediasetSelect = document.getElementById('mediasetId');
+
+			window.open('/mediaset/edit/' + mediasetSelect.value);
 		});
 		//
 		let stageButtonList = this.productStageView.querySelectorAll('a');

@@ -23,12 +23,12 @@ public class AudioService {
 	@Autowired
 	private AudioViewRepository audioViewRepository;
 
-	public List<AudioView> list(String keyword, int type) {
-		Sort sort = new Sort(new Order(Direction.ASC, "audioType"), new Order(Direction.ASC, "name"));
-		Specification<AudioView> nameSpec = Specifications.where((root, query, cb) -> {
-			return cb.like(root.get("name"), "%" + keyword + "%");
+	public List<AudioView> list(String mediasetId, int type) {
+		Sort sort = new Sort(new Order(Direction.ASC, "audioType"), new Order(Direction.ASC, "audioSeq"), new Order(Direction.ASC, "name"));
+		Specification<AudioView> mediasetIdSpec = Specifications.where((root, query, cb) -> {
+			return cb.like(root.get("mediasetId"), '%' + mediasetId);
 		});
-		Specification<AudioView> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+		Specification<AudioView> spec = Specifications.where(mediasetIdSpec).and((root, query, cb) -> {
 			return type == -1 ? null : cb.equal(root.get("audioType"), Integer.valueOf(type));
 		});
 		return this.audioViewRepository.findAll(spec, sort);

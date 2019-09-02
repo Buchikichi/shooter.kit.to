@@ -23,10 +23,10 @@ public class VisualService {
 	@Autowired
 	private VisualViewRepository visualViewRepository;
 
-	public List<VisualView> list(String keyword, int type) {
-		Sort sort = new Sort(new Order(Direction.ASC, "visualType"), new Order(Direction.ASC, "name"));
+	public List<VisualView> list(String mediasetId, int type) {
+		Sort sort = new Sort(new Order(Direction.ASC, "visualType"), new Order(Direction.ASC, "visualSeq"), new Order(Direction.ASC, "name"));
 		Specification<VisualView> nameSpec = Specifications.where((root, query, cb) -> {
-			return cb.like(root.get("name"), "%" + keyword + "%");
+			return cb.like(root.get("mediasetId"), '%' + mediasetId);
 		});
 		Specification<VisualView> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
 			return type == -1 ? null : cb.equal(root.get("visualType"), Integer.valueOf(type));

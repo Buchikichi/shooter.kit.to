@@ -16,6 +16,7 @@ import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.web.form.AudioSetForm;
+import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
@@ -46,9 +47,9 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 	@RequestMapping("/list")
 	@ResponseBody
 	@Override
-	public ResultListForm list() {
-		ResultListForm form = new ResultListForm();
-		List<ListItem> resultList = form.getResult();
+	public ResultListForm list(FilteringForm form) {
+		ResultListForm result = new ResultListForm();
+		List<ListItem> resultList = result.getResult();
 
 		for (Mediaset mediaset : this.mediasetService.list("")) {
 			ListItem item = new ListItem();
@@ -56,7 +57,7 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 			BeanUtils.copyProperties(mediaset, item);
 			resultList.add(item);
 		}
-		return form;
+		return result;
 	}
 
 	@RequestMapping("/select")
@@ -69,6 +70,9 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
+		Mediaset mediaset = this.mediasetService.detail(id);
+
+		model.addAttribute("mediaset", mediaset);
 		return "editMediaset";
 	}
 
