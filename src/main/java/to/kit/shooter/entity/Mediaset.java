@@ -1,12 +1,21 @@
 package to.kit.shooter.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -28,4 +37,18 @@ public class Mediaset {
 	private Date created;
 	@Column(insertable = false)
 	private Date updated;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
+	@JsonBackReference
+	private List<Product> productList = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
+	@OrderBy("audioType, audioSeq")
+	@JsonManagedReference
+	private List<AudioView> audioList = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
+	@OrderBy("visualType, visualSeq")
+	@JsonManagedReference
+	private List<VisualView> visualList = new ArrayList<>();
 }

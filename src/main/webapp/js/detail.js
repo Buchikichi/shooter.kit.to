@@ -27,7 +27,7 @@ class AppMain {
 			this.stagePanel.open(this.addStage);
 		});
 		editMediasetButton.addEventListener('click', ()=> {
-			let mediasetSelect = document.getElementById('mediasetId');
+			let mediasetSelect = document.getElementById('mediaset.id');
 
 			window.open('/mediaset/edit/' + mediasetSelect.value);
 		});

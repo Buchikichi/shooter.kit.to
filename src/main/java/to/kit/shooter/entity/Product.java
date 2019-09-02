@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -36,7 +37,6 @@ public class Product {
 	private int width;
 	private int height;
 	private int count;
-	private String mediasetId;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
@@ -54,4 +54,8 @@ public class Product {
 	@OrderBy("score DESC")
 	@JsonManagedReference
 	private List<Scores> scoreList = new ArrayList<>();
+
+	@ManyToOne
+	@JsonManagedReference
+	private Mediaset mediaset;
 }

@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 
@@ -20,7 +23,6 @@ public class AudioView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
-	private String mediasetId;
 	private String owner;
 	private int access;
 	private int audioType;
@@ -32,4 +34,8 @@ public class AudioView {
 	private Date created;
 	@Column(insertable = false)
 	private Date updated;
+
+	@ManyToOne
+	@JsonBackReference
+	private Mediaset mediaset;
 }

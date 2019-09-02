@@ -129,6 +129,7 @@ console.log(ui.position);
 	resetPanel(rec = {}) {
 		let id = '#' + this.panelId;
 
+		rec.mediasetId = this.mediasetId;
 		$(id + ' :input').each((ix, input) => {
 			let name = input.getAttribute('name');
 

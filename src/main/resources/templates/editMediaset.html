@@ -107,7 +107,7 @@
   <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
     <form id="actorForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
-      <input type="hidden" name="mediasetId" th:value="${mediaset.id}"/>
+      <input type="hidden" name="mediasetId"/>
       <label for="actorName">Name:</label><input type="text" id="actorName" name="name" required="required"/>
       <label for="actorDescription">Description:</label><textarea id="actorDescription" name="description" required="required"></textarea>
       <fieldset class="access"></fieldset>
@@ -125,7 +125,7 @@
     <div class="ui-bar ui-bar-b ui-corner-all">Visual</div>
     <form id="imageForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
-      <input type="hidden" name="mediasetId" th:value="${mediaset.id}"/>
+      <input type="hidden" name="mediasetId"/>
       <label for="imageName">Name:</label><input type="text" id="imageName" name="name" required="required"/>
       <fieldset class="access"></fieldset>
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -162,7 +162,7 @@
     <div class="ui-bar ui-bar-b ui-corner-all">Audio</div>
     <form id="audioForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
-      <input type="hidden" name="mediasetId" th:value="${mediaset.id}"/>
+      <input type="hidden" name="mediasetId"/>
       <label>Name:<input type="text" name="name" required="required"/></label>
       <fieldset class="access"></fieldset>
       <label>Type:
