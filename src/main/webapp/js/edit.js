@@ -53,7 +53,7 @@ class EditMain {
 				detail = productDetail;
 			});
 			rec.actorList.forEach(act => {
-				ImageManager.Instance.reserve(act.actor.name);
+				VisualManager.Instance.reserve(act.actor.name);
 			});
 			let stage = detail.stage;
 			let map = detail.map ? detail.map : stage.map;
@@ -112,7 +112,7 @@ class EditMain {
 
 	checkLoading() {
 		let loading = document.getElementById('loading');
-		let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
+		let repositories = [VisualManager.Instance, AudioMixer.INSTANCE];
 		let checkLoading = ()=> {
 			let loaded = 0;
 			let max = 0;

@@ -17,10 +17,20 @@ class ShooterMain {
 	loadProduct() {
 		this.productController = new ProductEntity();
 		this.productController.select(this.productId).then(product => {
+			this.setupMediaset(product.mediaset);
 			this.setupField(product);
 			this.setupStage(product);
 			this.setupActors(product);
 			this.checkLoading();
+		});
+	}
+
+	setupMediaset(mediaset) {
+		mediaset.audioList.forEach(audio => {
+			AudioMixer.INSTANCE.reserve(audio.id, audio.name);
+		});
+		mediaset.visualList.forEach(visual => {
+			VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
 		});
 	}
 
@@ -91,13 +101,12 @@ class ShooterMain {
 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
 			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
-			ImageManager.Instance.reserve(actor.name);
 		});
 	}
 
 	checkLoading() {
 		let loading = document.getElementById('loading');
-		let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
+		let repositories = [VisualManager.Instance, AudioMixer.INSTANCE];
 		let checkLoading = ()=> {
 			let loaded = 0;
 			let max = 0;

@@ -9,7 +9,7 @@ class Animator extends Matter {
 	}
 
 	setupImage(imgsrc) {
-		this.img = ImageManager.Instance.dic[imgsrc];
+		this.img = VisualManager.Instance.dic[imgsrc];
 		let width = this.img.width / this.numX;
 		let height = this.img.height / this.numY;
 		this.setRect(width, height);

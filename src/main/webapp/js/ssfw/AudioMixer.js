@@ -1,117 +1,122 @@
 /**
  * AudioMixer.
  */
-function AudioMixer() {
-	Repository.apply(this, arguments);
-	this.type = 'arraybuffer';
-	this.ctx = null;
-	if (window.AudioContext || window.webkitAudioContext) {
-		this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+class AudioMixer extends Repository {
+	constructor() {
+		super();
+		this.type = 'arraybuffer';
+		this.ctx = null;
+		if (window.AudioContext || window.webkitAudioContext) {
+			this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+		}
+		this.dic = [];
+		this.bgm = [];
+		this.lastKey = null;
+		this.lastTime = null;
 	}
-	this.dic = [];
-	this.bgm = [];
-	this.lastKey = null;
-	this.lastTime = null;
+
+	makeName(key) {
+		let ua = navigator.userAgent.toLowerCase();
+		let isId = key.length == 36;
+
+		if (ua.indexOf('edge') !== -1 || ua.indexOf('safari') !== -1) {
+			if (isId) {
+				return '/audio/audio/' + key;
+			}
+			return '/audio/audioName/' + key;
+		}
+		if (isId) {
+			return '/audio/webm/' + key;
+		}
+		return '/audio/webmName/' + key;
+	}
+
+	onload(key, name, data) {
+		if (this.ctx === null) {
+			this.done();
+			return;
+		}
+		this.ctx.decodeAudioData(data, (buff)=> {
+			this.dic[key] = buff;
+			if (name) {
+				this.dic[name] = buff;
+			}
+			this.done();
+		});
+	}
+
+	play(key) {
+		if (this.ctx === null || !this.dic[key]) {
+			return;
+		}
+		let mixer = this;
+		let len = arguments.length;
+		let volume = 1 < len ? arguments[1] : 1;
+		let isBgm = 2 < len ? arguments[2] : false;
+		let pan = 3 < len ? arguments[3] : 0;
+		let offset = 4 < len ? arguments[4] : 0;
+		let buff = this.dic[key];
+		let element = new AudioElement(this.ctx, buff, offset);
+
+		if (isBgm) {
+	//console.log('d:' + buff.duration);
+			element.source.loopEnd = buff.duration - .05;
+			element.source.loop = true;
+			this.bgm.push(element);
+			this.lastKey = key;
+		}
+	//console.log('offset:' + offset);
+		element.gainNode.gain.value = volume;
+		element.setPan(pan);
+		this.lastTime = this.ctx.currentTime - offset;
+	}
+
+	setPan(panValue) {
+		this.bgm.forEach(function(element) {
+			element.setPan(panValue);
+		});
+	}
+
+	fade() {
+		this.bgm.forEach(function(element) {
+			element.fade();
+		});
+	}
+
+	stop() {
+		this.bgm.forEach(function(element) {
+			element.stop();
+		});
+	}
+
+	getCurrentTime() {
+		if (0 < this.bgm.length) {
+			let validList = [];
+		
+			this.bgm.forEach(function(element) {
+				if (!element.done) {
+					validList.push(element);
+				}
+			});
+			this.bgm = validList;
+		}
+		if (!this.bgm.length) {
+			return null;
+		}
+		return this.ctx.currentTime - this.lastTime;
+	}
+
+	setCurrentTime(time) {
+		if (!this.bgm.length) {
+			return;
+		}
+	//console.log('setCurrentTime:' + time);
+		this.stop();
+		this.play(this.lastKey, 1, true, 0, time);
+	}
 }
-AudioMixer.prototype = Object.create(Repository.prototype);
 AudioMixer.INSTANCE = new AudioMixer();
 
-AudioMixer.prototype.makeName = function(key) {
-	let ua = navigator.userAgent.toLowerCase();
-	let isId = key.length == 36;
-
-	if (ua.indexOf('edge') !== -1 || ua.indexOf('safari') !== -1) {
-		if (isId) {
-			return '/audio/audio/' + key;
-		}
-		return '/audio/audioName/' + key;
-	}
-	if (isId) {
-		return '/audio/webm/' + key;
-	}
-	return '/audio/webmName/' + key;
-};
-
-AudioMixer.prototype.onload = function(key, name, data) {
-	if (this.ctx === null) {
-		this.done();
-		return;
-	}
-	this.ctx.decodeAudioData(data, (buff)=> {
-		this.dic[key] = buff;
-		this.done();
-	});
-};
-
-AudioMixer.prototype.play = function(key) {
-	if (this.ctx === null || !this.dic[key]) {
-		return;
-	}
-	let mixer = this;
-	let len = arguments.length;
-	let volume = 1 < len ? arguments[1] : 1;
-	let isBgm = 2 < len ? arguments[2] : false;
-	let pan = 3 < len ? arguments[3] : 0;
-	let offset = 4 < len ? arguments[4] : 0;
-	let buff = this.dic[key];
-	let element = new AudioElement(this.ctx, buff, offset);
-
-	if (isBgm) {
-//console.log('d:' + buff.duration);
-		element.source.loopEnd = buff.duration - .05;
-		element.source.loop = true;
-		this.bgm.push(element);
-		this.lastKey = key;
-	}
-//console.log('offset:' + offset);
-	element.gainNode.gain.value = volume;
-	element.setPan(pan);
-	this.lastTime = this.ctx.currentTime - offset;
-};
-
-AudioMixer.prototype.setPan = function(panValue) {
-	this.bgm.forEach(function(element) {
-		element.setPan(panValue);
-	});
-};
-
-AudioMixer.prototype.fade = function() {
-	this.bgm.forEach(function(element) {
-		element.fade();
-	});
-};
-
-AudioMixer.prototype.stop = function() {
-	this.bgm.forEach(function(element) {
-		element.stop();
-	});
-};
-
-AudioMixer.prototype.getCurrentTime = function() {
-	if (0 < this.bgm.length) {
-		let validList = [];
-	
-		this.bgm.forEach(function(element) {
-			if (!element.done) {
-				validList.push(element);
-			}
-		});
-		this.bgm = validList;
-	}
-	if (!this.bgm.length) {
-		return null;
-	}
-	return this.ctx.currentTime - this.lastTime;
-};
-
-AudioMixer.prototype.setCurrentTime = function(time) {
-	if (!this.bgm.length) {
-		return;
-	}
-//console.log('setCurrentTime:' + time);
-	this.stop();
-	this.play(this.lastKey, 1, true, 0, time);
-};
 
 /**
  * AudioElement.

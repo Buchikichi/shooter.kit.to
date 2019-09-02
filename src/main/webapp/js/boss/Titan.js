@@ -9,7 +9,7 @@ class Titan extends Enemy {
 		this.motionRoutine = Titan.ROUTINE;
 		this.motionRoutine.reset();
 		//
-		let asf = Object.assign({}, MotionManager.INSTANCE.dic['asf']);
+		let asf = Object.assign({}, VisualManager.Instance.dic['asf.json']);
 
 		this.skeleton = new Skeleton(asf);
 		this.setupBone();

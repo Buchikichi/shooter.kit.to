@@ -1,18 +1,4 @@
 /**
- * MotionManager.
- */
-function MotionManager() {
-	Repository.apply(this, arguments);
-}
-MotionManager.prototype = Object.create(Repository.prototype);
-MotionManager.INSTANCE = new MotionManager();
-
-MotionManager.prototype.makeName = key => {
-	return '/visual/name/' + key + '.json';
-};
-
-//-----------------------------------------------------------------------------
-/**
  * Motion.
  */
 class Motion {
@@ -29,7 +15,6 @@ class Motion {
 		this.reserve = null;
 		this.filling = null;
 		this.batter = 0;
-		MotionManager.INSTANCE.reserve(key);
 	}
 
 	rotateV(v) {
@@ -60,7 +45,7 @@ class Motion {
 	}
 
 	reset() {
-		this.mot = MotionManager.INSTANCE.dic[this.key];
+		this.mot = VisualManager.Instance.dic[this.key];
 		this.max = this.mot.length - 1;
 		this.ix = 0;
 		this.dir = 1;

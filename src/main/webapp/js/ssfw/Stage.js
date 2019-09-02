@@ -20,7 +20,6 @@ class Stage {
 	setBgm(bgm, boss = null) {
 		this.bgm = bgm;
 		this.boss = boss;
-		AudioMixer.INSTANCE.reserve(this.bgm, this.boss);
 		return this;
 	}
 
@@ -224,11 +223,10 @@ class StageView {
 		this.pattern = null;
 		this.repeatX = 2;
 		this.repeatY = 2;
-		ImageManager.Instance.reserve(imageId);
 	}
 
 	get img() {
-		return ImageManager.Instance.dic[this.imageId];
+		return VisualManager.Instance.dic[this.imageId];
 	}
 
 	reset(checkPoint) {
