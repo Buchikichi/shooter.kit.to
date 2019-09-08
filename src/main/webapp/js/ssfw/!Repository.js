@@ -16,7 +16,7 @@ class Repository {
 		return 0 < this.max && this.max == this.loaded;
 	}
 
-	reserve(key, name = null, contentType = null) {
+	reserve(key, name = null, contentType = '') {
 		if (key == null || key.length == 0) {
 			return;
 		}

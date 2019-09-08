@@ -52,19 +52,19 @@ class EditMain {
 				}
 				detail = productDetail;
 			});
-			rec.actorList.forEach(act => {
-				VisualManager.Instance.reserve(act.actor.name);
+			rec.mediaset.visualList.forEach(visual => {
+				VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
 			});
 			let stage = detail.stage;
 			let map = detail.map ? detail.map : stage.map;
 
 			this.field = new FieldEditor(512, 224);
-			this.setupStage(stage, map);
+			this.setupStage(stage, map, detail.scenarioList);
 			this.checkLoading();
 		});
 	}
 
-	setupStage(rec, map) {
+	setupStage(rec, map, scenarioList = []) {
 		let form = document.getElementById('inputBox');
 		let view = Stage.createViewList(rec);
 		let propList = {
@@ -74,6 +74,7 @@ class EditMain {
 		}
 
 		this.stage = new Stage(Stage.SCROLL.LOOP, map, view);
+this.stage.scenarioList = scenarioList;
 		Stage.VIEWS.forEach(key => {
 			let imageId = rec[key];
 
@@ -112,7 +113,7 @@ class EditMain {
 
 	checkLoading() {
 		let loading = document.getElementById('loading');
-		let repositories = [VisualManager.Instance, AudioMixer.INSTANCE];
+		let repositories = [VisualManager.Instance/*, AudioMixer.INSTANCE*/];
 		let checkLoading = ()=> {
 			let loaded = 0;
 			let max = 0;
@@ -317,6 +318,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	}
 
 	saveMap() {
+console.log('isDetail:' + this.isDetail);
 		let save = this.isDetail ? this.saveDetailMap() : this.saveStageMap();
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
@@ -346,9 +348,17 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	saveDetailMap() {
 		let formData = new FormData();
 		let landform = this.field.landform;
+		let prefix = 'scenarioList[';
+		let ix = 0;
 
 		formData.append('id', this.detailId);
 		formData.append('map', landform.mapImage);
+		landform.scenarioList.forEach(scenario => {
+			Object.keys(scenario).forEach(key => {
+				formData.append(prefix + ix + '].' + key, scenario[key]);
+			});
+			ix++;
+		});
 		return this.productEntity.saveMap(formData);
 	}
 }

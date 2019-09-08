@@ -1,13 +1,17 @@
 package to.kit.shooter.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -34,6 +38,10 @@ public class ProductDetail {
 	@ManyToOne
 	@JsonBackReference
 	private Product product;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productDetail", targetEntity = Scenario.class)
+	@OrderBy("v, h")
+	private List<Scenario> scenarioList;
 
 	@ManyToOne
 	private Stage stage;

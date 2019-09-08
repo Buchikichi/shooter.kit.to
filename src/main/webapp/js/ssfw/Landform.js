@@ -22,6 +22,7 @@ class Landform {
 		this.reverse = new Image();
 		this.reverse.src = '/img/reverse.png';
 		this.touch = false;
+		this.scenarioList = [];
 	}
 
 	get mapImage() {
@@ -64,9 +65,33 @@ class Landform {
 			canvas.height = img.height;
 			ctx.drawImage(img, 0, 0);
 			this.brick = ctx.getImageData(0, 0, img.width, img.height);
+			this.loadScenario();// TODO: 後で削除
 			this.touch = true;
 		}
 		img.src = mapImage;
+	}
+
+	// 仮
+	loadScenario() {
+console.log('loadScenario:');
+console.log(this.stage.scenarioList);
+		if (0 < this.stage.scenarioList.length) {
+			this.scenarioList = this.stage.scenarioList.concat();
+console.log('scenarioList exists.');
+			return;
+		}
+		for (let x = 0; x < this.brick.width; x++) {
+			for (let y = 0; y < this.brick.height; y++) {
+				let ix = x * 4 + this.brick.width * 4 * y;
+				let num = this.brick.data[ix + 1];
+
+				if (num == 0) {
+					continue;
+				}
+				this.scenarioList.push({v:x, h:y, target:'e', number:num, op:'spawn'});
+			}
+		}
+console.log('scenarioList created!!!');
 	}
 
 	reset() {

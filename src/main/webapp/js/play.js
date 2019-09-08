@@ -51,6 +51,7 @@ class ShooterMain {
 			let map = detail.map ? detail.map : entity.map;
 			let stage = new Stage(detail.roll, map, view).setBgm(entity.theme, entity.boss);
 
+stage.scenarioList = detail.scenarioList;
 //console.log(stage);
 			stageList.push(stage);
 		});
