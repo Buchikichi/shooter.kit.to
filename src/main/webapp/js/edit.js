@@ -32,6 +32,14 @@ class EditMain {
 	loadStage() {
 		this.stageEntity = new StageEntity();
 		this.stageEntity.select(this.stageId).then(rec => {
+			let visualList = [rec.bg1, rec.bg2, rec.bg3, rec.fg1, rec.fg2, rec.fg3];
+
+			visualList.forEach(visualId => {
+				if (visualId != null) {
+console.log(visualId);
+					VisualManager.Instance.reserve(visualId, null, 'image');
+				}
+			});
 			this.field = new FieldEditor(512, 224);
 			this.setupStage(rec, rec.map);
 //			this.setupActors(rec);
