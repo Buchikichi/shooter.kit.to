@@ -28,10 +28,10 @@
     <div class="ui-bar ui-bar-a" th:text="#{stage}">Stage</div>
     <ul id="productStageView" data-role="listview" data-split-icon="edit">
       <li th:each="detail:${product.detailList}">
-        <a th:with="stage=${detail.stage}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${stage.id}, data-roll=${detail.roll}">
+        <a th:with="map=${detail.map}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${map.id}, data-roll=${detail.roll}">
           <img src="/img/icon.listview.png"/>
-          <span th:text="${stage.name}"></span>
-          <p th:text="${stage.description}"></p>
+          <span th:text="${map.name}"></span>
+          <p th:text="${map.description}"></p>
         </a>
       </li>
     </ul>
@@ -104,7 +104,7 @@
         </select>
       </label>
       <button type="button" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-edit">Edit map</button>
-      <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">Remove stage</button>
+      <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">Remove map</button>
     </form>
   </div>
   <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">

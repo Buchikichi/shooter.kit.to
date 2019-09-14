@@ -16,12 +16,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
- * Stage.
+ * Map.
  * @author H.Sasai
  */
 @Entity
 @Data
-public class Stage {
+public class Map {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
@@ -61,7 +61,7 @@ public class Stage {
 	@Column(insertable = false)
 	private Date updated;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "stage", targetEntity = ProductDetail.class)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = ProductDetail.class)
 	@JsonIgnore
 	private List<ProductDetail> productDetailList;
 }

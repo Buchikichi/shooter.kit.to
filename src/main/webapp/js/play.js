@@ -46,9 +46,9 @@ class ShooterMain {
 		let stageList = [];
 
 		product.detailList.forEach(detail => {
-			let entity = detail.stage;
+			let entity = detail.map;
 			let view = Stage.createViewList(entity);
-			let map = detail.map ? detail.map : entity.map;
+			let map = detail.mapData ? detail.mapData : entity.map;
 			let stage = new Stage(detail.roll, map, view).setBgm(entity.theme, entity.boss);
 
 stage.scenarioList = detail.scenarioList;

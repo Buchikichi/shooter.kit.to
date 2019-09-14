@@ -1,6 +1,6 @@
-class StageEntity extends EntityBase {
+class MapEntity extends EntityBase {
 	constructor() {
-		super('stage');
+		super('map');
 	}
 
 	saveMap(formData) {

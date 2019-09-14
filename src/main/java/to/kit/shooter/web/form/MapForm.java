@@ -3,11 +3,11 @@ package to.kit.shooter.web.form;
 import lombok.Data;
 
 /**
- * Stage form.
+ * Map form.
  * @author H.Sasai
  */
 @Data
-public final class StageForm {
+public final class MapForm {
 	private String id;
 	private String owner;
 	private int access;

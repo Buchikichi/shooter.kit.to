@@ -29,7 +29,7 @@ public class ProductDetail {
 	private String id;
 	private int seq;
 	private int roll;
-	private String map;
+	private String mapData;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
@@ -44,5 +44,5 @@ public class ProductDetail {
 	private List<Scenario> scenarioList;
 
 	@ManyToOne
-	private Stage stage;
+	private Map map;
 }

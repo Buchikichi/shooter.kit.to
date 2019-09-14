@@ -2,7 +2,7 @@ class StagePanel {
 	constructor() {
 		this.panel = document.getElementById('stagePanel');
 		this.stageView = this.panel.querySelector('ul');
-		this.stage = new StageEntity();
+		this.map = new MapEntity();
 	}
 
 	open(callBack) {
@@ -10,7 +10,7 @@ class StagePanel {
 		let keyword = '';
 
 		ul.textContent = 'Loading...';
-		this.stage.list(keyword).then(data => {
+		this.map.list(keyword).then(data => {
 			ul.textContent = null;
 			data.result.forEach(rec => {
 				let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');

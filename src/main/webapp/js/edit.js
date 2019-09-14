@@ -7,7 +7,7 @@ class EditMain {
 	 * インスタンス生成.
 	 */
 	constructor() {
-		this.stageId = document.getElementById('stageId').value;
+		this.mapId = document.getElementById('mapId').value;
 		this.detailId = document.getElementById('detailId').value;
 		this.isDetail = 0 < this.detailId.length;
 		if (this.isDetail) {
@@ -30,8 +30,8 @@ class EditMain {
 	}
 
 	loadStage() {
-		this.stageEntity = new StageEntity();
-		this.stageEntity.select(this.stageId).then(rec => {
+		this.mapEntity = new MapEntity();
+		this.mapEntity.select(this.mapId).then(rec => {
 			let visualList = [rec.bg1, rec.bg2, rec.bg3, rec.fg1, rec.fg2, rec.fg3];
 
 			visualList.forEach(visualId => {
@@ -348,9 +348,9 @@ console.log('isDetail:' + this.isDetail);
 		let formData = new FormData(attrForm);
 		let landform = this.field.landform;
 
-		formData.append('id', this.stageId);
+		formData.append('id', this.mapId);
 		formData.append('map', landform.mapImage);
-		return this.stageEntity.saveMap(formData);
+		return this.mapEntity.saveMap(formData);
 	}
 
 	saveDetailMap() {

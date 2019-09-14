@@ -92,7 +92,7 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 		ProductDetail detail = this.productDetailService.detail(id);
 
 		model.addAttribute("detail", detail);
-		model.addAttribute("stage", detail.getStage());
+		model.addAttribute("stage", detail.getMap());
 		return "edit";
 	}
 }

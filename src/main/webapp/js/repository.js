@@ -210,7 +210,7 @@ class StageManager extends RepositoryManager {
 		super();
 		this.panel = document.getElementById('stagePanel');
 		this.form = document.getElementById('stageForm');
-		this.entity = new StageEntity();
+		this.entity = new MapEntity();
 		this.setupPanel();
 	}
 
@@ -242,7 +242,7 @@ class StageManager extends RepositoryManager {
 			let hidden = this.form.querySelector('[name="id"]');
 			let id = hidden.value;
 
-			window.open('/stage/edit/' + id);
+			window.open('/map/edit/' + id);
 		});
 	}
 

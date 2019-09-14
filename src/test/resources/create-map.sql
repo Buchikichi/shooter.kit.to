@@ -1,8 +1,8 @@
--- Table: stage
+-- Table: map
 
--- DROP TABLE stage;
+-- DROP TABLE map;
 
-CREATE TABLE stage(
+CREATE TABLE map(
 	id varchar(36) NOT NULL DEFAULT gen_random_uuid(),
 	owner varchar(36) NOT NULL,
 	access integer  NOT NULL DEFAULT 0,
@@ -39,19 +39,22 @@ CREATE TABLE stage(
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
 );
-COMMENT ON COLUMN stage.id IS 'ID';
-COMMENT ON COLUMN stage.owner IS '所有者';
-COMMENT ON COLUMN stage.access IS 'アクセスレベル{0:private, 1:protected, 2:public}';
-COMMENT ON COLUMN stage.name IS '名前';
-COMMENT ON COLUMN stage.description IS '説明';
-COMMENT ON COLUMN stage.map IS 'map';
-COMMENT ON COLUMN stage.theme IS 'theme';
-COMMENT ON COLUMN stage.boss IS 'boss';
-COMMENT ON COLUMN stage.bg1 IS 'bg1';
-COMMENT ON COLUMN stage.bg2 IS 'bg2';
-COMMENT ON COLUMN stage.bg3 IS 'bg3';
-COMMENT ON COLUMN stage.fg1 IS 'fg1';
-COMMENT ON COLUMN stage.fg2 IS 'fg2';
-COMMENT ON COLUMN stage.fg3 IS 'fg3';
-COMMENT ON COLUMN stage.created IS '作成日';
-COMMENT ON COLUMN stage.updated IS '更新日';
+COMMENT ON COLUMN map.id IS 'ID';
+COMMENT ON COLUMN map.owner IS '所有者';
+COMMENT ON COLUMN map.access IS 'アクセスレベル{0:private, 1:protected, 2:public}';
+COMMENT ON COLUMN map.name IS '名前';
+COMMENT ON COLUMN map.description IS '説明';
+COMMENT ON COLUMN map.map IS 'map';
+COMMENT ON COLUMN map.theme IS 'theme';
+COMMENT ON COLUMN map.boss IS 'boss';
+COMMENT ON COLUMN map.bg1 IS 'bg1';
+COMMENT ON COLUMN map.bg2 IS 'bg2';
+COMMENT ON COLUMN map.bg3 IS 'bg3';
+COMMENT ON COLUMN map.fg1 IS 'fg1';
+COMMENT ON COLUMN map.fg2 IS 'fg2';
+COMMENT ON COLUMN map.fg3 IS 'fg3';
+COMMENT ON COLUMN map.created IS '作成日';
+COMMENT ON COLUMN map.updated IS '更新日';
+
+
+ALTER TABLE stage RENAME TO map;

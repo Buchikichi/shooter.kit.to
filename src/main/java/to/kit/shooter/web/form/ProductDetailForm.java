@@ -4,7 +4,7 @@ import java.util.List;
 
 import lombok.Data;
 import to.kit.shooter.entity.Scenario;
-import to.kit.shooter.entity.Stage;
+import to.kit.shooter.entity.Map;
 
 /**
  * Product detail form.
@@ -15,8 +15,8 @@ public class ProductDetailForm {
 	private String id;
 	private int seq;
 	private int roll;
-	private String map;
+	private String mapData;
 	private List<Scenario> scenarioList;
 
-	private Stage stage;
+	private Map map;
 }

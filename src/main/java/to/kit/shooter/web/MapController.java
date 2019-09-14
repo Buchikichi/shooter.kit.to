@@ -14,25 +14,25 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.ProductDetail;
-import to.kit.shooter.entity.Stage;
-import to.kit.shooter.service.StageService;
+import to.kit.shooter.entity.Map;
+import to.kit.shooter.service.MapService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
-import to.kit.shooter.web.form.StageForm;
+import to.kit.shooter.web.form.MapForm;
 
 /**
- * ステージ.
+ * マップ.
  * @author H.Sasai
  */
 @Controller
-@RequestMapping("/stage")
+@RequestMapping("/map")
 @SessionAttributes(types = LoginInfo.class)
-public class StageController implements BasicControllerInterface<Stage> {
+public class MapController implements BasicControllerInterface<Map> {
 	@Autowired
-	private StageService stageService;
+	private MapService mapService;
 	@Autowired
 	private LoginInfo loginInfo;
 
@@ -51,14 +51,14 @@ public class StageController implements BasicControllerInterface<Stage> {
 	public ResultListForm list(FilteringForm form) {
 		ResultListForm result = new ResultListForm();
 		List<ListItem> resultList = result.getResult();
-		List<Stage> list = this.stageService.list();
+		List<Map> list = this.mapService.list();
 
-		for (Stage stage : list) {
+		for (Map map : list) {
 			ListItem item = new ListItem();
 
-			item.setId(stage.getId());
-			item.setName(stage.getName());
-			item.setDescription(stage.getDescription());
+			item.setId(map.getId());
+			item.setName(map.getName());
+			item.setDescription(map.getDescription());
 			resultList.add(item);
 		}
 		return result;
@@ -67,8 +67,8 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/select")
 	@ResponseBody
 	@Override
-	public Stage select(@RequestParam String id) {
-		return this.stageService.detail(id);
+	public Map select(@RequestParam String id) {
+		return this.mapService.detail(id);
 	}
 
 	/**
@@ -78,17 +78,17 @@ public class StageController implements BasicControllerInterface<Stage> {
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Stage> save(StageForm form) {
-		ResultForm<Stage> result = new ResultForm<>();
+	public ResultForm<Map> save(MapForm form) {
+		ResultForm<Map> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		Stage stage = new Stage();
-		BeanUtils.copyProperties(form, stage);
-		stage.setOwner(customerId);
-		Stage saved = this.stageService.save(stage);
+		Map map = new Map();
+		BeanUtils.copyProperties(form, map);
+		map.setOwner(customerId);
+		Map saved = this.mapService.save(map);
 
 		result.setResult(saved);
 		result.setOk(true);
@@ -97,17 +97,17 @@ public class StageController implements BasicControllerInterface<Stage> {
 
 	@RequestMapping("/saveMap")
 	@ResponseBody
-	public ResultForm<Stage> saveMap(StageForm form) {
-		ResultForm<Stage> result = new ResultForm<>();
+	public ResultForm<Map> saveMap(MapForm form) {
+		ResultForm<Map> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		Stage stage = new Stage();
-		BeanUtils.copyProperties(form, stage);
-		stage.setOwner(customerId);
-		Stage saved = this.stageService.saveMap(stage);
+		Map map = new Map();
+		BeanUtils.copyProperties(form, map);
+		map.setOwner(customerId);
+		Map saved = this.mapService.saveMap(map);
 
 		result.setResult(saved);
 		result.setOk(true);
@@ -117,10 +117,10 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		Stage stage = this.stageService.detail(id);
+		Map map = this.mapService.detail(id);
 
-		model.addAttribute("stage", stage);
+		model.addAttribute("map", map);
 		model.addAttribute("detail", new ProductDetail());
-		return "edit";
+		return "editMap";
 	}
 }

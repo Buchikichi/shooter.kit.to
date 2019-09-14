@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title th:text="${stage.name}"></title>
+<title th:text="${map.name}"></title>
 <link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -63,8 +63,7 @@
     </div>
     <div id="attrPanel" data-role="panel" data-position="right" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data">
-        <input id="stageId" type="hidden" th:value="${stage.id}"/>
-        <input id="mapId" type="hidden" th:value="${stage.id}"/>
+        <input id="mapId" type="hidden" th:value="${map.id}"/>
         <input id="detailId" type="hidden" th:value="${detail.id}"/>
         <div id="inputBox"></div>
 <!--
