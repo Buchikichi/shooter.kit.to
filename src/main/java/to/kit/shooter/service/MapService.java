@@ -3,6 +3,8 @@ package to.kit.shooter.service;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -10,12 +12,16 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Map;
+import to.kit.shooter.entity.MapVisual;
 import to.kit.shooter.repository.MapRepository;
+import to.kit.shooter.repository.MapVisualRepository;
 
 @Service
 public class MapService {
 	@Autowired
 	private MapRepository mapRepository;
+	@Autowired
+	private MapVisualRepository mapVisualRepository;
 
 	public List<Map> list() {
 		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
@@ -52,37 +58,34 @@ public class MapService {
 		return this.mapRepository.saveAndFlush(map);
 	}
 
+	@Transactional
 	public Map saveMap(Map map) {
 		String id = map.getId();
+		Map saved;
 
 		if (id == null || id.isEmpty()) {
-			return null;
-		}
-		Map entity = this.mapRepository.findOne(id);
+			// Create
+			saved = this.mapRepository.saveAndFlush(map);
+		} else {
+			// Update
+			Map entity = this.mapRepository.findOne(id);
 
-		if (entity == null) {
-			return null;
+			if (entity == null) {
+				return null;
+			}
+			entity.setName(map.getName());
+			entity.setMap(map.getMap());
+			entity.setMainSeq(map.getMainSeq());
+			entity.setBrickSize(map.getBrickSize());
+			entity.setUpdated(new Date());
+			saved = this.mapRepository.saveAndFlush(entity);
 		}
-		entity.setMap(map.getMap());
-		entity.setBg1speed(map.getBg1speed());
-		entity.setBg1dir(map.getBg1dir());
-		entity.setBg1blink(map.getBg1blink());
-		entity.setBg2speed(map.getBg2speed());
-		entity.setBg2dir(map.getBg2dir());
-		entity.setBg2blink(map.getBg2blink());
-		entity.setBg3speed(map.getBg3speed());
-		entity.setBg3dir(map.getBg3dir());
-		entity.setBg3blink(map.getBg3blink());
-		entity.setFg1speed(map.getFg1speed());
-		entity.setFg1dir(map.getFg1dir());
-		entity.setFg1blink(map.getFg1blink());
-		entity.setFg2speed(map.getFg2speed());
-		entity.setFg2dir(map.getFg2dir());
-		entity.setFg2blink(map.getFg2blink());
-		entity.setFg3speed(map.getFg3speed());
-		entity.setFg3dir(map.getFg3dir());
-		entity.setFg3blink(map.getFg3blink());
-		entity.setUpdated(new Date());
-		return this.mapRepository.saveAndFlush(entity);
+		// MapVisual
+		this.mapVisualRepository.deleteByMapId(id);
+		for (MapVisual mapVisual : map.getMapVisualList()) {
+			mapVisual.setMap(saved);
+			this.mapVisualRepository.saveAndFlush(mapVisual);
+		}
+		return saved;
 	}
 }

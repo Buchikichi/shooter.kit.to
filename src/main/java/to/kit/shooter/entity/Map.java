@@ -1,8 +1,10 @@
 package to.kit.shooter.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -30,6 +34,9 @@ public class Map {
 	private String name;
 	private String description;
 	private String map;
+	private int mainSeq;
+	private int brickSize;
+
 	private String theme;
 	private String boss;
 	private String bg1;
@@ -60,6 +67,11 @@ public class Map {
 	private Date created;
 	@Column(insertable = false)
 	private Date updated;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", cascade = CascadeType.ALL)
+	@OrderBy("seq")
+	@JsonManagedReference
+	private List<MapVisual> mapVisualList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = ProductDetail.class)
 	@JsonIgnore
