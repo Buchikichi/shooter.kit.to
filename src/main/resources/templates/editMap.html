@@ -17,8 +17,7 @@
 }
 #view {
 	position: relative;
-	height: 600px;
-	overflow: scroll;
+	overflow: auto;
 	z-index: 0;
 	transform-origin: 0px 0px;
 	color: white;
@@ -40,10 +39,14 @@
     <div data-role="footer"  data-position="fixed">
       <div id="panel">
         <fieldset data-role="controlgroup" data-type="horizontal">
+          <button disabled="disabled" data-theme="b">Scale</button>
+          <label>1<input type="radio" name="scale" value="1"/></label>
+          <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
+          <label>3<input type="radio" name="scale" value="3"/></label>
+          <label>4<input type="radio" name="scale" value="4"/></label>
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
           <label>Move<input type="radio" name="behavior" value="m" checked="checked"/></label>
           <label>Brick<input type="radio" name="behavior" value="b"/></label>
-          <label>Actor<input type="radio" name="behavior" value="a" disabled="disabled"/></label>
           <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
       </div>
@@ -72,9 +75,9 @@
     <div id="brickPanel" data-role="panel" data-position="right" data-display="overlay">
       <fieldset data-role="controlgroup" data-mini="true">
         <button class="ui-btn ui-btn-b" disabled="disabled">Brick</button>
-        <label>Brick<input type="radio" name="brick" value="b0" checked="checked"/></label>
-        <label>Plate<input type="radio" name="brick" value="b1"/></label>
-        <label>Rebirth<input type="radio" name="brick" value="b2"/></label>
+        <label>Brick<input type="radio" name="brick" value="255" checked="checked"/></label>
+        <label>Plate<input type="radio" name="brick" value="254"/></label>
+        <label>Rebirth<input type="radio" name="brick" value="253"/></label>
       </fieldset>
     </div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
