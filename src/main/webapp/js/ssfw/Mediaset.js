@@ -1,27 +1,31 @@
 class Mediaset {
 	constructor() {
-		this.mediaset = null;
+		this.audioDic = {};
 		this.visualDic = {};
 	}
 
-	selectEntity(meidasetId) {
-		return new MediasetEntity().select(meidasetId).then(mediaset => {
-			this.mediaset = mediaset;
+	loadAudio() {
+		this.audioList.forEach(audio => {
+			let key = audio.audioType + ':' + audio.audioSeq;
+
+			this.audioDic[key] = audio;
+			AudioMixer.INSTANCE.reserve(audio.id, audio.name);
 		});
+		return this;
 	}
 
-	loadVisual(meidasetId) {
-		return this.selectEntity(meidasetId).then(()=>{
-			this.mediaset.visualList.forEach(rec => {
-				let key = rec.visualType + ':' + rec.visualSeq;
+	loadVisual() {
+		this.visualList.forEach(visual => {
+			let key = visual.visualType + ':' + visual.visualSeq;
 
-				this.visualDic[key] = rec;
-				VisualManager.Instance.reserve(rec.id, rec.name, rec.contentType);
-			});
+			this.visualDic[key] = visual;
+			VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
 		});
+		return this;
 	}
 
-	load(meidasetId) {
+	load() {
+		return this.loadAudio().loadVisual();
 	}
 
 	getVisual(visualId) {
@@ -42,5 +46,15 @@ class Mediaset {
 
 		return VisualManager.Instance.dic[visual.id];
 	}
+
+	static create(obj) {
+		if ('string' == typeof obj) {
+			return new MediasetEntity().select(obj).then(mediaset => {
+				return Mediaset.create(mediaset);
+			});
+		}
+		Mediaset.Instance = Object.assign(new Mediaset(), obj);
+		return Mediaset.Instance;
+	}
 }
-Mediaset.Instance = new Mediaset();
+Mediaset.Instance = null;

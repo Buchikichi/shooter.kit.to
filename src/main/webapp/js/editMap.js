@@ -13,7 +13,8 @@ class EditMain {
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
-		Mediaset.Instance.loadVisual(meidasetId).then(()=> {
+		Mediaset.create(meidasetId).then(mediaset => {
+			mediaset.loadVisual();
 			FieldMapEditor.create(mapId).then(fieldMap => {
 				this.fieldMap = fieldMap;
 				this.checkLoading();

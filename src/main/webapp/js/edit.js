@@ -1,20 +1,14 @@
 document.addEventListener('DOMContentLoaded', ()=> {
-	new EditMain();
+	new EditStage();
 });
 
-class EditMain {
+class EditStage {
 	/**
 	 * インスタンス生成.
 	 */
 	constructor() {
-		this.mapId = document.getElementById('mapId').value;
 		this.detailId = document.getElementById('detailId').value;
-		this.isDetail = 0 < this.detailId.length;
-		if (this.isDetail) {
-			this.loadDetail();
-			return;
-		}
-		this.loadStage();
+		this.loadDetail();
 	}
 
 	get isMove() {
@@ -29,46 +23,27 @@ class EditMain {
 		return $('[name="behavior"]:checked').val() == 'a';
 	}
 
-	loadStage() {
-		this.mapEntity = new MapEntity();
-		this.mapEntity.select(this.mapId).then(rec => {
-			let visualList = [rec.bg1, rec.bg2, rec.bg3, rec.fg1, rec.fg2, rec.fg3];
-
-			visualList.forEach(visualId => {
-				if (visualId != null) {
-console.log(visualId);
-					VisualManager.Instance.reserve(visualId, null, 'image');
-				}
-			});
-			this.field = new FieldEditor(512, 224);
-			this.setupStage(rec, rec.map);
-//			this.setupActors(rec);
-			this.checkLoading();
-		});
-	}
-
 	loadDetail() {
-		this.productEntity = new ProductEntity();
-		this.productEntity.detail(this.detailId).then(rec => {
-			let detailList = rec.detailList;
-			let detail = null;
+		let mediasetId = document.getElementById('mediasetId').value;
 
-			this.product = rec;
-			detailList.forEach(productDetail => {
-				if (productDetail.id != this.detailId) {
-					return;
-				}
-				detail = productDetail;
-			});
-			rec.mediaset.visualList.forEach(visual => {
-				VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
-			});
-			let stage = detail.stage;
-			let map = detail.map ? detail.map : stage.map;
+		Mediaset.create(mediasetId).then(mediaset => {
+			mediaset.loadVisual();
+			this.productEntity = new ProductEntity();
+			this.productEntity.detail(this.detailId).then(rec => {
+				let detailList = rec.detailList;
+				let detail = null;
 
-			this.field = new FieldEditor(512, 224);
-			this.setupStage(stage, map, detail.scenarioList);
-			this.checkLoading();
+				this.product = rec;
+				detailList.forEach(productDetail => {
+					if (productDetail.id != this.detailId) {
+						return;
+					}
+					detail = productDetail;
+				});
+				this.field = new FieldEditor(512, 224);
+				this.setupStage(detail.map, detail.mapData, detail.scenarioList);
+				this.checkLoading();
+			});
 		});
 	}
 
@@ -176,12 +151,10 @@ this.stage.scenarioList = scenarioList;
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
 		this.brickPanel = new BrickPanel(this.field);
-		if (this.isDetail) {
-			this.actorPanel = new ActorPanel(this.field);
-			this.actorPanel.setupActors(this.product.actorList);
-			this.setupActors(this.product.actorList);
-			$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
-		}
+		this.actorPanel = new ActorPanel(this.field);
+		this.actorPanel.setupActors(this.product.actorList);
+		this.setupActors(this.product.actorList);
+		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		landform.isEdit = true;
 		landform.loadStage(this.stage);
 		activate();
@@ -326,8 +299,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	}
 
 	saveMap() {
-console.log('isDetail:' + this.isDetail);
-		let save = this.isDetail ? this.saveDetailMap() : this.saveStageMap();
+		let save = this.saveDetailMap();
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
@@ -341,16 +313,6 @@ console.log('isDetail:' + this.isDetail);
 			}
 			$(messagePopup).popup('open', {});
 		});
-	}
-
-	saveStageMap() {
-		let attrForm = document.getElementById('attrForm');
-		let formData = new FormData(attrForm);
-		let landform = this.field.landform;
-
-		formData.append('id', this.mapId);
-		formData.append('map', landform.mapImage);
-		return this.mapEntity.saveMap(formData);
 	}
 
 	saveDetailMap() {

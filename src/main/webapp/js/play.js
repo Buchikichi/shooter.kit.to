@@ -17,20 +17,11 @@ class ShooterMain {
 	loadProduct() {
 		this.productController = new ProductEntity();
 		this.productController.select(this.productId).then(product => {
-			this.setupMediaset(product.mediaset);
+			Mediaset.create(product.mediaset).load();
 			this.setupField(product);
 			this.setupStage(product);
 			this.setupActors(product);
 			this.checkLoading();
-		});
-	}
-
-	setupMediaset(mediaset) {
-		mediaset.audioList.forEach(audio => {
-			AudioMixer.INSTANCE.reserve(audio.id, audio.name);
-		});
-		mediaset.visualList.forEach(visual => {
-			VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
 		});
 	}
 
