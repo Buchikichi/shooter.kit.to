@@ -15,14 +15,6 @@ class EditStage {
 		return $('[name="behavior"]:checked').val() == 'm';
 	}
 
-	get isBrick() {
-		return $('[name="behavior"]:checked').val() == 'b';
-	}
-
-	get isActor() {
-		return $('[name="behavior"]:checked').val() == 'a';
-	}
-
 	loadDetail() {
 		let mediasetId = document.getElementById('mediasetId').value;
 
@@ -139,7 +131,7 @@ this.stage.scenarioList = scenarioList;
 					landform.selection = '0';
 					this.moveLandform(delta);
 				}
-				if (this.isBrick || this.isActor) {
+				if (this.isActor) {
 					landform.which = true;
 				}
 			}
@@ -150,7 +142,6 @@ this.stage.scenarioList = scenarioList;
 
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
-		this.brickPanel = new BrickPanel(this.field);
 		this.actorPanel = new ActorPanel(this.field);
 		this.actorPanel.setupActors(this.product.actorList);
 		this.setupActors(this.product.actorList);
@@ -228,20 +219,12 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		slider.slider('refresh');
 		landform.stage.moveH(0);
 
-		// Brick
-		$('[name="behavior"]:eq(1)').click(() => {
-			this.brickPanel.open();
-		});
 		// Actor
-		$('[name="behavior"]:eq(2)').click(() => {
-			this.actorPanel.open();
-		});
+		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
 		// saveButton
 		let saveButton = document.getElementById('saveButton');
 
-		saveButton.addEventListener('click', ()=> {
-			this.saveMap();
-		});
+		saveButton.addEventListener('click', ()=> this.saveMap());
 		// mapFile
 		let mapFile = document.getElementById('mapFile');
 
@@ -250,13 +233,6 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			let url = window.URL.createObjectURL(file);
 
 			landform.loadMapData(url);
-		});
-		// generateButton
-		let generateButton = document.getElementById('generateButton');
-		generateButton.addEventListener('click', ()=> {
-			let ctx = FlexibleView.Instance.ctx;
-
-			landform.generateBrick(ctx);
 		});
 		//
 		this.setupPointingDevice();
@@ -330,23 +306,6 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			ix++;
 		});
 		return this.productEntity.saveMap(formData);
-	}
-}
-
-class BrickPanel {
-	constructor(field) {
-		this.field = field;
-		this.panel = document.getElementById('brickPanel');
-		$('[name="brick"]').click(()=> {
-			let val = $('[name="brick"]:checked').val();
-			let landform = this.field.landform;
-
-			landform.selection = val;
-		});
-	}
-
-	open() {
-		$(this.panel).panel('open');
 	}
 }
 
@@ -434,58 +393,6 @@ class ActorPanel {
 	}
 }
 
-
-
-
-// ↓古い
-/*(function() {
-	let canvas = document.getElementById('canvas');
-	let ctx = canvas.getContext('2d');
-	let slider = $('#slider');
-	let field = new Field(512, 224);
-	let landform = new Landform(canvas, true);
-
-	new Controller(true);
-	$('#bg').change(function() {
-		let file = this.files[0];
-
-		landform.load(file);
-	});
-	$(landform.img).load(function() {
-		slider.val(0);
-		slider.attr('max', this.width / Landform.BRICK_WIDTH);
-		slider.slider('refresh');
-	});
-	slider.change(function() {
-		let fg = landform.stage.fg;
-
-		fg.x = slider.val() * Landform.BRICK_WIDTH;
-	});
-	$('#generateButton').click(function() {
-		landform.generateBrick(ctx);
-	});
-	$('#map').change(function() {
-		let file = this.files[0];
-
-		landform.loadMapData(file);
-	});
-	setupActorList(landform);
-	setupMouse(landform);
-	window.addEventListener('resize', ()=> {
-		field.resize();
-	});
-landform.loadStage(new Stage(Stage.SCROLL.LOOP, 'stage1.map.png', [ new StageFg('stage1.1.0.png') ]));
-	let activate = function() {
-		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		landform.draw();
-		requestAnimationFrame(activate);
-	};
-	activate();
-});
-//*/
-
 function setupActorList(landform) {
 	let actorList = $('#actorList');
 	let container = actorList.controlgroup('container');
@@ -508,34 +415,5 @@ function setupActorList(landform) {
 	actorList.parent().trigger('create');
 	actorList.find('input').click(function() {
 		landform.selection = this.value;
-	});
-}
-
-function setupMouse(landform) {
-	let canvas = $(landform.canvas);
-
-	canvas.mousedown(function(e) {
-		let magni = landform.magni;
-
-		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
-		landform.which = e.which;
-	});
-	canvas.mousemove(function(e) {
-		let magni = landform.magni;
-
-		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
-	});
-	canvas.mouseup(function() {
-		landform.which = null;
-	});
-	canvas.mouseleave(function() {
-		landform.target = null;
-	});
-	let mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
-	canvas.on(mousewheelevent,function(e){
-		e.preventDefault();
-		let delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
-
-		landform.wheel(delta);
 	});
 }

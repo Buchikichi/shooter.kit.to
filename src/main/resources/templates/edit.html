@@ -55,7 +55,6 @@
         <fieldset data-role="controlgroup" data-type="horizontal">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
           <label>Move<input type="radio" name="behavior" value="m" checked="checked"/></label>
-          <label>Brick<input type="radio" name="behavior" value="b"/></label>
           <label>Actor<input type="radio" name="behavior" value="a" disabled="disabled"/></label>
           <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
@@ -64,6 +63,8 @@
     <div id="attrPanel" data-role="panel" data-position="right" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data">
         <input id="productId" type="hidden" th:value="${detail.product.id}"/>
+        <input id="width" type="hidden" th:value="${detail.product.width}"/>
+        <input id="height" type="hidden" th:value="${detail.product.height}"/>
         <input id="mediasetId" type="hidden" th:value="${detail.product.mediaset.id}"/>
         <input id="detailId" type="hidden" th:value="${detail.id}"/>
         <div id="inputBox"></div>
@@ -79,17 +80,8 @@
         <fieldset data-role="collapsible" data-mini="true">
           <legend>Trial</legend>
           <input id="mapFile" type="file"/>
-          <button id="generateButton" type="button">Generate Brick</button>
         </fieldset>
       </form>
-    </div>
-    <div id="brickPanel" data-role="panel" data-position="right" data-display="overlay">
-      <fieldset data-role="controlgroup" data-mini="true">
-        <button class="ui-btn ui-btn-b" disabled="disabled">Brick</button>
-        <label>Brick<input type="radio" name="brick" value="b0" checked="checked"/></label>
-        <label>Plate<input type="radio" name="brick" value="b1"/></label>
-        <label>Rebirth<input type="radio" name="brick" value="b2"/></label>
-      </fieldset>
     </div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>
