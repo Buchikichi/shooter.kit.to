@@ -9,11 +9,11 @@ class ProductEntity extends EntityBase {
 	/**
 	 * プロダクト詳細取得.
 	 */
-	detail(id) {
+	listActors(id) {
 		let formData = new FormData();
 
 		formData.append('id', id);
-		return AjaxUtils.post('/product/selectDetail', formData);
+		return AjaxUtils.post('/product/listActors', formData);
 	}
 
 	saveMap(formData) {

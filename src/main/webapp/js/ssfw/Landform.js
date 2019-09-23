@@ -88,10 +88,15 @@ console.log('scenarioList exists.');
 				if (num == 0) {
 					continue;
 				}
-				this.scenarioList.push({v:x, h:y, target:'e', number:num, op:'spawn'});
+				let attr = this.brick.data[ix];
+				let reverse = attr & Landform.ATTR.REVERSE;
+				let op = reverse ? 'reverse' : 'spawn';
+
+				this.scenarioList.push({v:x, h:y, target:'e', number:num, op:op});
 			}
 		}
 console.log('scenarioList created!!!');
+console.log(this.scenarioList);
 	}
 
 	reset() {

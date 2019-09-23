@@ -16,30 +16,31 @@ class EditStage {
 	}
 
 	loadDetail() {
+		let productId = document.getElementById('productId').value;
 		let mediasetId = document.getElementById('mediasetId').value;
 
 		Mediaset.create(mediasetId).then(mediaset => {
 			mediaset.loadVisual();
-			this.productEntity = new ProductEntity();
-			this.productEntity.detail(this.detailId).then(rec => {
-				let detailList = rec.detailList;
-				let detail = null;
+			new ProductEntity().listActors(productId).then(list => {
+				this.actorList = list;
+				new ProductEntity().select(productId).then(rec => {
+					let detail = null;
 
-				this.product = rec;
-				detailList.forEach(productDetail => {
-					if (productDetail.id != this.detailId) {
-						return;
-					}
-					detail = productDetail;
+					rec.detailList.forEach(productDetail => {
+						if (productDetail.id != this.detailId) {
+							return;
+						}
+						detail = productDetail;
+					});
+					this.field = new FieldEditor(512, 224);
+					this.setupStage(detail.map, detail.mapData, detail.scenarioList);
+					this.checkLoading();
 				});
-				this.field = new FieldEditor(512, 224);
-				this.setupStage(detail.map, detail.mapData, detail.scenarioList);
-				this.checkLoading();
 			});
 		});
 	}
 
-	setupStage(rec, map, scenarioList = []) {
+	setupStage(rec, mapData, scenarioList = []) {
 		let form = document.getElementById('inputBox');
 		let view = Stage.createViewList(rec);
 		let propList = {
@@ -48,7 +49,7 @@ class EditStage {
 			'blink':{min:0, max:1, step:0.01},
 		}
 
-		this.stage = new Stage(Stage.SCROLL.LOOP, map, view);
+		this.stage = new Stage(Stage.SCROLL.LOOP, mapData, view);
 this.stage.scenarioList = scenarioList;
 		Stage.VIEWS.forEach(key => {
 			let imageId = rec[key];
@@ -143,8 +144,8 @@ this.stage.scenarioList = scenarioList;
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
 		this.actorPanel = new ActorPanel(this.field);
-		this.actorPanel.setupActors(this.product.actorList);
-		this.setupActors(this.product.actorList);
+		this.actorPanel.setupActors(this.actorList);
+		this.setupActors(this.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		landform.isEdit = true;
 		landform.loadStage(this.stage);
@@ -305,7 +306,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			});
 			ix++;
 		});
-		return this.productEntity.saveMap(formData);
+		return new ProductEntity().saveMap(formData);
 	}
 }
 

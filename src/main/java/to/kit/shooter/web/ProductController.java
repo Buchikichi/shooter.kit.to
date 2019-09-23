@@ -23,10 +23,8 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
-import to.kit.shooter.entity.ProductDetail;
 import to.kit.shooter.entity.Scores;
 import to.kit.shooter.service.MediasetService;
-import to.kit.shooter.service.ProductDetailService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
@@ -58,8 +56,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private LoginInfo loginInfo;
 	@Autowired
 	private ProductService productService;
-	@Autowired
-	private ProductDetailService productDetailService;
 	@Autowired
 	private MediasetService mediasetService;
 
@@ -101,16 +97,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return product;
 	}
 
-	@RequestMapping("/selectDetail")
-	@ResponseBody
-	public Product selectDetail(@RequestParam String id) {
-		ProductDetail detail = this.productDetailService.detail(id);
-		Product product = detail.getProduct();
-
-		product.getActorList().sort((a, b) -> a.getSeq() - b.getSeq());
-		return product;
-	}
-
 	private Map<ActorType, List<ProductActor>> makeTypeMap(List<ProductActor> actorList) {
 		Map<ActorType, List<ProductActor>> map = new HashMap<>();
 
@@ -142,6 +128,14 @@ public class ProductController implements BasicControllerInterface<Product> {
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		model.addAttribute("mediasetList", mediasetList);
 		return "detail";
+	}
+
+	@RequestMapping("/listActors")
+	@ResponseBody
+	public List<ProductActor> listActors(@RequestParam String id) {
+		Product product = this.productService.detail(id);
+
+		return product.getActorList();
 	}
 
 	@RequestMapping("/save")
