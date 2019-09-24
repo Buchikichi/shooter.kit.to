@@ -1,20 +1,24 @@
 class Stage {
-	constructor(scroll, map, view) {
-		this.scroll = scroll;
-		this.scrollSv = scroll;
-		this.map = map;
-		this.view = view;
+	constructor() {
 		this.foreground = null;
 		this.bgm = null;
 		this.boss = null;
 		this.checkPoint = Stage.CHECK_POINT[0];
 		this.viewDic = {};
+		this.effectH = 0;
+		this.effectV = 0;
+	}
+
+	init() {
+		this.view = Stage.createViewList(this.map);
 		this.view.forEach(ground => {
 			ground.stage = this;
 			this.viewDic[ground.viewId] = ground;
 		});
-		this.effectH = 0;
-		this.effectV = 0;
+		this.scroll = this.roll;
+		this.scrollSv = this.roll;
+		this.setBgm(this.map.theme, this.map.boss);
+		return this;
 	}
 
 	setBgm(bgm, boss = null) {
@@ -198,6 +202,10 @@ class Stage {
 		});
 		return list;
 	} 
+
+	static create(rec) {
+		return Object.assign(new Stage(), rec).init();
+	}
 }
 Stage.SCROLL = {
 	OFF: 0,
@@ -207,7 +215,6 @@ Stage.SCROLL = {
 	BOTTOM: 8
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
-Stage.LIST = [];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
 
 

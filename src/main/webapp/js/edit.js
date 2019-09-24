@@ -33,26 +33,24 @@ class EditStage {
 						detail = productDetail;
 					});
 					this.field = new FieldEditor(512, 224);
-					this.setupStage(detail.map, detail.mapData, detail.scenarioList);
+					this.setupStage(detail);
 					this.checkLoading();
 				});
 			});
 		});
 	}
 
-	setupStage(rec, mapData, scenarioList = []) {
+	setupStage(detail) {
 		let form = document.getElementById('inputBox');
-		let view = Stage.createViewList(rec);
 		let propList = {
 			'speed':{min:0, max:1, step:0.1},
 			'dir':{min:0, max:1, step:0.01},
 			'blink':{min:0, max:1, step:0.01},
 		}
 
-		this.stage = new Stage(Stage.SCROLL.LOOP, mapData, view);
-this.stage.scenarioList = scenarioList;
+		this.stage = Stage.create(detail);
 		Stage.VIEWS.forEach(key => {
-			let imageId = rec[key];
+			let imageId = detail[key];
 
 			if (!imageId || imageId.length == 0) {
 				return;
@@ -66,7 +64,7 @@ this.stage.scenarioList = scenarioList;
 				let attr = propList[prop];
 				let name = key + prop;
 				let input = document.createElement('input');
-				let value = rec[name].toFixed(2);
+				let value = detail[name].toFixed(2);
 
 				input.setAttribute('type', 'number');
 				input.setAttribute('name', name);

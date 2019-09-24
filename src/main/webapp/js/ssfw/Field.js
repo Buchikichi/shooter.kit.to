@@ -11,7 +11,7 @@ class Field extends Matter {
 		this.score = 0;
 		this.hiscore = 0;
 		this.enemyCycle = 0;
-		this.stage = Stage.LIST[0];
+		this.stage = Product.Instance.detailList[0];
 		this.stageNum = 0;
 		this.setupLandform();
 		Field.Instance = this;
@@ -34,12 +34,12 @@ class Field extends Matter {
 	}
 
 	nextStage() {
-		let stage = Stage.LIST[this.stageNum];
+		let stage = Product.Instance.detailList[this.stageNum];
 
 		this.stage = stage;
 		this.landform.loadStage(stage);
 		this.stageNum++;
-		if (Stage.LIST.length <= this.stageNum) {
+		if (Product.Instance.detailList.length <= this.stageNum) {
 			this.stageNum = 0;
 		}
 	}

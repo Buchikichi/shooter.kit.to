@@ -7,19 +7,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 class ShooterMain {
 	constructor() {
-		this.loadProduct();
-	}
+		let productId = document.getElementById('productId').value;
 
-	get productId() {
-		return document.getElementById('productId').value;
-	}
-
-	loadProduct() {
-		this.productController = new ProductEntity();
-		this.productController.select(this.productId).then(product => {
-			Mediaset.create(product.mediaset).load();
+		Product.create(productId).then(product => {
 			this.setupField(product);
-			this.setupStage(product);
 			this.setupActors(product);
 			this.checkLoading();
 		});
@@ -30,23 +21,6 @@ class ShooterMain {
 		if (0 < product.scoreList.length) {
 			this.field.hiscore = product.scoreList[0].score;
 		}
-	}
-
-	setupStage(product) {
-		let type = product.name.substr(-1);
-		let stageList = [];
-
-		product.detailList.forEach(detail => {
-			let entity = detail.map;
-			let view = Stage.createViewList(entity);
-			let map = detail.mapData ? detail.mapData : entity.map;
-			let stage = new Stage(detail.roll, map, view).setBgm(entity.theme, entity.boss);
-
-stage.scenarioList = detail.scenarioList;
-//console.log(stage);
-			stageList.push(stage);
-		});
-		Stage.LIST = stageList;
 	}
 
 	setupActors(product) {
@@ -122,17 +96,11 @@ stage.scenarioList = detail.scenarioList;
 		checkLoading();
 	}
 
-	increase() {
-		this.productController.increase(this.productId).then(rec => {
-			console.log('increase:' + rec.ok);
-		});
-	}
-
 	registerScore() {
 		let scoreController = new ScoreEntity();
 		let formData = new FormData();
 
-		formData.append('productId', this.productId);
+		formData.append('productId', Product.Instance.id);
 		formData.append('score', this.field.score);
 		formData.append('name', '');
 		scoreController.register(formData).then(rec => {
@@ -144,7 +112,7 @@ stage.scenarioList = detail.scenarioList;
 		let controller = new Controller();
 		let gameOverPanel = document.getElementById('gameOver');
 		let startGame = ()=> {
-			this.increase();
+			Product.Instance.increase();
 			this.field.startGame();
 			gameOverPanel.classList.add('hidden');
 		};

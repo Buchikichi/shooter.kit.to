@@ -36,13 +36,14 @@ class Landform {
 	}
 
 	loadStage(stage) {
+console.log('Landform#loadStage');
 		let field = Field.Instance;
 		let fg = stage.fg;
 	
 		stage.reset();
 		this.stage = stage;
-		if (stage.map) {
-			this.loadMapData(stage.map);
+		if (stage.mapData) {
+			this.loadMapData(stage.mapData);
 		}
 		this.width = fg.width;
 		this.height = fg.height;
@@ -110,7 +111,7 @@ console.log(this.scenarioList);
 		this.next = Landform.NEXT.NONE;
 		if (this.stage) {
 			this.stage.retry();
-			this.loadMapData(this.stage.map);
+			this.loadMapData(this.stage.mapData);
 		}
 	}
 
