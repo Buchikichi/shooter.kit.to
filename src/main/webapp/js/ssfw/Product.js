@@ -7,6 +7,7 @@ class Product {
 		this.shipRemain = 0;
 		this.score = 0;
 		this.hiscore = 0;
+		this.stageNum = 0;
 	}
 
 	get isGameOver() {

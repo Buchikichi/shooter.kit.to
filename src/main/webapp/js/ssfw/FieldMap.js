@@ -4,11 +4,44 @@
 class FieldMap extends Matter {
 	constructor() {
 		super();
-		this.visualList = [];
 	}
 
 	get mainVisual() {
-		return this.visualList[this.mainSeq];
+		return this.mapVisualList[this.mainSeq];
+	}
+
+	resetBricks() {
+		let img = new Image();
+
+		img.onload = ()=> {
+			let canvas = document.createElement('canvas');
+			let ctx = canvas.getContext('2d');
+
+			canvas.width = img.width;
+			canvas.height = img.height;
+			ctx.drawImage(img, 0, 0);
+			this.bricks = ctx.getImageData(0, 0, img.width, img.height);
+		};
+		img.src = this.map;
+	}
+
+	setProgress(progress, isEdit = false) {
+		this.mapVisualList.forEach(mapVisual => {
+			mapVisual.setProgress(progress);
+		});
+		if (isEdit) {
+			let mainX = this.mainVisual.x;
+			let mainY = this.mainVisual.y;
+
+			this.mapVisualList.forEach(mapVisual => {
+				mapVisual.x -= mainX;
+				mapVisual.y += mainY;
+			});
+		}
+	}
+
+	draw(ctx) {
+		this.mapVisualList.forEach(mapVisual => mapVisual.draw(ctx));
 	}
 
 	migrate() {
@@ -40,38 +73,26 @@ console.log('this.mapVisualList:' + this.mapVisualList.length);
 console.log('this.mainSeq:' + this.mainSeq);
 	}
 
-	resetBricks() {
-		let img = new Image();
-
-		img.onload = ()=> {
-			let canvas = document.createElement('canvas');
-			let ctx = canvas.getContext('2d');
-
-			canvas.width = img.width;
-			canvas.height = img.height;
-			ctx.drawImage(img, 0, 0);
-			this.bricks = ctx.getImageData(0, 0, img.width, img.height);
-		};
-		img.src = this.map;
-	}
-
 	init() {
+		let visualList = [];
+		let z = 0;
 		this.migrate();
 		this.resetBricks();
 		this.mapVisualList.forEach(mapVisual => {
-			this.visualList.push(Object.assign(new MapVisual(), mapVisual));
+			mapVisual.z = z++;
+			visualList.push(Object.assign(new MapVisual(), mapVisual));
 		});
+		this.mapVisualList = visualList;
 		return this;
 	}
 
-	draw(ctx) {
-		this.visualList.forEach(mapVisual => mapVisual.draw(ctx));
-	}
-
-	static create(mapId) {
-		return new MapEntity().select(mapId).then(map => {
-			return Object.assign(new FieldMap(), map).init();
-		});
+	static create(obj) {
+		if ('string' == typeof obj) {
+			return new MapEntity().select(obj).then(map => {
+				return FieldMap.create(map);
+			});
+		}
+		return Object.assign(new FieldMap(), obj).init();
 	}
 }
 
@@ -82,10 +103,17 @@ class MapVisual extends Matter {
 	constructor() {
 		super();
 		this.pattern = null;
+		this.alpha = 1;
+		this.blinkDir = -1;
 	}
 
 	get image() {
 		return Mediaset.Instance.getImage(this);
+	}
+
+	setProgress(progress) {
+		this.x = -progress * Math.cos(this.dir) * this.speed;
+		this.y = progress * Math.sin(this.dir) * this.speed;
 	}
 
 	getPattern(ctx) {
@@ -97,10 +125,18 @@ class MapVisual extends Matter {
 
 	draw(ctx) {
 		ctx.save();
+		ctx.globalAlpha = this.alpha;
+		ctx.translate(this.x, this.y);
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
 		ctx.rect(0, 0, ctx.width, ctx.height);
 		ctx.fill();
 		ctx.restore();
+		if (this.blink) {
+			this.alpha += this.blinkDir * this.blink;
+			if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
+				this.blinkDir *= -1;
+			}
+		}
 	}
 }

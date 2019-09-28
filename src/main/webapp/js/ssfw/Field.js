@@ -7,8 +7,6 @@ class Field extends Matter {
 		this.setRect(view.width, view.height);
 		this.actorList = [];
 		this.enemyCycle = 0;
-		this.stage = Product.Instance.detailList[0];
-		this.stageNum = 0;
 		this.setupLandform(view);
 		Field.Instance = this;
 	}
@@ -22,13 +20,13 @@ class Field extends Matter {
 	}
 
 	nextStage() {
-		let stage = Product.Instance.detailList[this.stageNum];
+		let stage = Product.Instance.detailList[Product.Instance.stageNum];
 
 		this.stage = stage;
 		this.landform.loadStage(stage);
-		this.stageNum++;
-		if (Product.Instance.detailList.length <= this.stageNum) {
-			this.stageNum = 0;
+		Product.Instance.stageNum++;
+		if (Product.Instance.detailList.length <= Product.Instance.stageNum) {
+			Product.Instance.stageNum = 0;
 		}
 	}
 
@@ -55,7 +53,7 @@ class Field extends Matter {
 		this.loosingRate = Field.MAX_LOOSING_RATE;
 		Product.Instance.score = 0;
 		Product.Instance.shipRemain = Product.Instance.maxShip;
-		this.stageNum = 0;
+		Product.Instance.stageNum = 0;
 		this.nextStage();
 		this._reset();
 	}
@@ -68,7 +66,10 @@ class Field extends Matter {
 		if (this.phase == Field.PHASE.BOSS) {
 			return;
 		}
-		this.landform.scanEnemy().forEach(obj=> {
+		if (!this.stage) {
+			return;
+		}
+		this.stage.scanEvent().forEach(obj=> {
 			let enemy;
 
 			if (obj.formation) {
@@ -150,15 +151,17 @@ class Field extends Matter {
 		}
 		this.actorList = validActors;
 		this.landform.draw();
-		Product.Instance.score += score;
-		if (!Product.Instance.isGameOver && ship && ship.isGone) {
-			AudioMixer.INSTANCE.stop();
-			if (0 < --this.hibernate) {
-				return;
-			}
-			if (0 < --Product.Instance.shipRemain) {
-				this.retry();
+		if (Product.Instance) {
+			Product.Instance.score += score;
+			if (!Product.Instance.isGameOver && ship && ship.isGone) {
+				AudioMixer.INSTANCE.stop();
+				if (0 < --this.hibernate) {
+					return;
+				}
+				if (0 < --Product.Instance.shipRemain) {
+					this.retry();
 //++Product.Instance.shipRemain;
+				}
 			}
 		}
 	}

@@ -17,7 +17,6 @@ class Landform {
 		this.which = null;
 		this.brick = null;
 		this.brickVal = null;
-		this.lastScan = null;
 		this.touch = false;
 		this.reverse = new Image();
 		this.reverse.src = '/img/reverse.png';
@@ -74,7 +73,7 @@ console.log('Landform#loadStage');
 
 	// 仮
 	loadScenario() {
-		if (0 < this.stage.scenarioList.length) {
+/*		if (0 < this.stage.scenarioList.length) {
 			this.scenarioList = this.stage.scenarioList.concat();
 console.log('scenarioList exists.');
 			return;
@@ -95,6 +94,7 @@ console.log('scenarioList exists.');
 			}
 		}
 console.log('scenarioList created!!!');
+//*/
 	}
 
 	reset() {
@@ -154,55 +154,6 @@ console.log('scenarioList created!!!');
 		}
 		this.brick.data[ix + c] = val;
 		this.brick.data[ix + 3] = val ? 255 : 0;
-	}
-
-	scanEnemy() {
-		let result = [];
-
-		if (!this.brick || this.next == Landform.NEXT.IDLE) {
-			return result;
-		}
-		let fg = this.stage.fg;
-		let gx = fg.x;
-		let gy = fg.y;
-		let scan = Math.round(gx / Landform.BRICK_WIDTH);
-
-		if (scan == this.lastScan) {
-			return result;
-		}
-		let field = Field.Instance;
-
-		[0, field.width].forEach((sx, nx) => {
-			let tx = Math.round((gx + sx) / Landform.BRICK_WIDTH);
-
-			if (tx < 0) {
-				return;
-			}
-			for (let ty = 0; ty < this.bh; ty++) {
-				let ix = ty * this.bw * 4 + tx * 4;
-				let actor = this.brick.data[ix + 1];
-
-				if (actor == 0) {
-					continue;
-				}
-				let attr = this.brick.data[ix];
-				let reverse = attr & Landform.ATTR.REVERSE;
-				let valid = nx == 0 && reverse || nx != 0 && !reverse;
-
-				if (!valid) {
-					continue;
-				}
-				let x = nx == 0 ? sx : sx + Landform.BRICK_WIDTH * 1.5;
-				let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
-				let reserve = Enemy.assign(actor, x, y);
-
-				if (reserve != null) {
-					result.push(reserve);
-				}
-			}
-		});
-		this.lastScan = scan;
-		return result;
 	}
 
 	hitTest(target) {

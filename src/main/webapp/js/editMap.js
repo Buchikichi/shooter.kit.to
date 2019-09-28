@@ -90,6 +90,7 @@ class EditMain {
 	}
 
 	setupEvents() {
+		this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft, true));
 		// Scale
 		$('[name="scale"]').click(()=> this.changeScale());
 		// Brick
@@ -99,7 +100,7 @@ class EditMain {
 		// mapFile
 		let mapFile = document.getElementById('mapFile');
 
-		mapFile.addEventListener('change', ()=> {
+		mapFile.addEventListener('change',()=> {
 			let file = mapFile.files[0];
 			let url = window.URL.createObjectURL(file);
 
@@ -107,7 +108,7 @@ class EditMain {
 		});
 		// generateButton
 		let generateButton = document.getElementById('generateButton');
-		generateButton.addEventListener('click', ()=> {
+		generateButton.addEventListener('click',()=> {
 			let ctx = FlexibleView.Instance.ctx;
 
 			landform.generateBrick(ctx);

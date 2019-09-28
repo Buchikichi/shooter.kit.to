@@ -31,7 +31,7 @@ class Mediaset {
 	getVisual(visualId) {
 		let result = null;
 
-		this.mediaset.visualList.forEach(visual => {
+		this.visualList.forEach(visual => {
 			if (visual.id == visualId) {
 				result = visual;
 			}

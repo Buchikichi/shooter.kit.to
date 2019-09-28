@@ -304,7 +304,7 @@ class Actor extends Matter {
 	 * やられ.
 	 */
 	fate(target) {
-		if (target.isGone || this.isGone || this.explosion) {
+		if (target != null && target.isGone || this.isGone || this.explosion) {
 			return;
 		}
 		this.hitPoint--;

@@ -7,9 +7,12 @@ class Stage {
 		this.viewDic = {};
 		this.effectH = 0;
 		this.effectV = 0;
+		this.eventList = [];
+		this.lastScan = null;
 	}
 
 	init() {
+		this.map = FieldMap.create(this.map);
 		this.view = Stage.createViewList(this.map);
 		this.view.forEach(ground => {
 			ground.stage = this;
@@ -65,6 +68,7 @@ class Stage {
 		this.view.forEach(ground => {
 			ground.reset(this.checkPoint);
 		});
+		this.eventList = this.scenarioList.concat();
 		this.playBgm();
 	}
 
@@ -120,6 +124,57 @@ class Stage {
 			}
 		}
 		this.effectV = dy;
+	}
+
+	scanEvent() {
+		let result = [];
+		let fg = this.fg;
+		let gx = fg.x;
+		let gy = fg.y;
+		let rear = Math.round(gx / Landform.BRICK_WIDTH);
+
+		if (rear == this.lastScan) {
+			return result;
+		}
+		//
+		let field = Field.Instance;
+		let front = Math.round((gx + field.width) / Landform.BRICK_WIDTH);
+		let newList = [];
+
+		this.eventList.forEach(rec => {
+			let spawn = false;
+			let isFront = rec.op == 'spawn';
+
+			if (isFront) {
+				if (rec.v < front) {
+					return;
+				}
+				if (rec.v == front) {
+					spawn = true;
+				}
+			} else if (rec.op == 'reverse') {
+				if (rec.v < rear) {
+					return;
+				}
+				if (rec.v == rear) {
+					spawn = true;
+				}
+			}
+			if (!spawn) {
+				newList.push(rec);
+				return;
+			}
+			let x = isFront ? field.width + Landform.BRICK_WIDTH * 1.5 : 0;
+			let y = -gy + (rec.h + 1) * Landform.BRICK_WIDTH;
+			let reserve = Enemy.assign(rec.number, x, y);
+
+			if (reserve != null) {
+				result.push(reserve);
+			}
+		});
+		this.eventList = newList;
+		this.lastScan = rear;
+		return result;
 	}
 
 	forward(landform) {

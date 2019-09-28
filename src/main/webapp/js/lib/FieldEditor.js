@@ -1,9 +1,10 @@
 class FieldEditor extends Field {
-	constructor(width, height) {
-		super(width, height);
+	constructor(view, stage) {
+		super(view);
+		this.stage = stage;
 	}
 
-	setupLandform() {
-		this.landform = new LandformEditor(this.view.canvas);
+	setupLandform(view) {
+		this.landform = new LandformEditor(view.canvas);
 	}
 }

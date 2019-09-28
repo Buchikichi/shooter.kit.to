@@ -33,7 +33,7 @@ class EditStage {
 						detail = productDetail;
 					});
 					this.view = new FlexibleView(512, 224);
-					this.field = new FieldEditor(this.view);
+					this.field = new FieldEditor(this.view, detail);
 					this.setupStage(detail);
 					this.checkLoading();
 				});
@@ -136,7 +136,7 @@ class EditStage {
 				}
 			}
 			view.clear();
-			this.field.draw();
+			this.field.draw(view.ctx);
 			requestAnimationFrame(activate);
 		};
 
@@ -298,7 +298,8 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let ix = 0;
 
 		formData.append('id', this.detailId);
-		formData.append('map', landform.mapImage);
+		formData.append('mapData', landform.mapImage);
+		formData.append('map.id', this.stage.map.id);
 		landform.scenarioList.forEach(scenario => {
 			Object.keys(scenario).forEach(key => {
 				formData.append(prefix + ix + '].' + key, scenario[key]);
