@@ -74,8 +74,6 @@ console.log('Landform#loadStage');
 
 	// 仮
 	loadScenario() {
-console.log('loadScenario:');
-console.log(this.stage.scenarioList);
 		if (0 < this.stage.scenarioList.length) {
 			this.scenarioList = this.stage.scenarioList.concat();
 console.log('scenarioList exists.');
@@ -97,7 +95,6 @@ console.log('scenarioList exists.');
 			}
 		}
 console.log('scenarioList created!!!');
-console.log(this.scenarioList);
 	}
 
 	reset() {

@@ -32,7 +32,8 @@ class EditStage {
 						}
 						detail = productDetail;
 					});
-					this.field = new FieldEditor(512, 224);
+					this.view = new FlexibleView(512, 224);
+					this.field = new FieldEditor(this.view);
 					this.setupStage(detail);
 					this.checkLoading();
 				});

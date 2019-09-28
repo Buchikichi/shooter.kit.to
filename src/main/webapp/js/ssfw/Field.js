@@ -2,35 +2,23 @@
  * Field.
  */
 class Field extends Matter {
-	constructor(width, height) {
+	constructor(view) {
 		super(0, 0);
-		this.view = new FlexibleView(width, height);
-		this.setRect(width, height);
-		this.shipRemain = 0;
+		this.setRect(view.width, view.height);
 		this.actorList = [];
-		this.score = 0;
-		this.hiscore = 0;
 		this.enemyCycle = 0;
 		this.stage = Product.Instance.detailList[0];
 		this.stageNum = 0;
-		this.setupLandform();
+		this.setupLandform(view);
 		Field.Instance = this;
-	}
-
-	get ctx() {
-		return this.view.ctx;
 	}
 
 	get isMoving() {
 		return this.phase == Field.PHASE.NORMAL;
 	}
 
-	get isGameOver() {
-		return this.shipRemain <= 0;
-	}
-
-	setupLandform() {
-		this.landform = new Landform(this.view.canvas);
+	setupLandform(view) {
+		this.landform = new Landform(view.canvas);
 	}
 
 	nextStage() {
@@ -65,8 +53,8 @@ class Field extends Matter {
 
 	startGame() {
 		this.loosingRate = Field.MAX_LOOSING_RATE;
-		this.score = 0;
-		this.shipRemain = Field.MAX_SHIP;
+		Product.Instance.score = 0;
+		Product.Instance.shipRemain = Product.Instance.maxShip;
 		this.stageNum = 0;
 		this.nextStage();
 		this._reset();
@@ -92,7 +80,7 @@ class Field extends Matter {
 		});
 		let next = this.landform.forward(this.ship);
 
-		if (this.isGameOver) {
+		if (Product.Instance.isGameOver) {
 			return;
 		}
 		if (next == Landform.NEXT.NOTICE) {
@@ -111,16 +99,14 @@ class Field extends Matter {
 		}
 	}
 
-	draw() {
+	draw(ctx) {
 		let field = this;
-		let ctx = this.ctx;
 		let ship = this.ship;
 		let shotList = [];
 		let enemyList = [];
 		let validActors = [];
 		let score = 0;
 
-		this.view.clear();
 //		ctx.clearRect(0, 0, this.width, this.height);
 		this.landform.drawBg(ctx);
 		this.actorList.sort(function(a, b) {
@@ -164,37 +150,16 @@ class Field extends Matter {
 		}
 		this.actorList = validActors;
 		this.landform.draw();
-		this.score += score;
-		this.showScore();
-		if (!this.isGameOver && ship && ship.isGone) {
+		Product.Instance.score += score;
+		if (!Product.Instance.isGameOver && ship && ship.isGone) {
 			AudioMixer.INSTANCE.stop();
 			if (0 < --this.hibernate) {
 				return;
 			}
-			if (0 < --this.shipRemain) {
+			if (0 < --Product.Instance.shipRemain) {
 				this.retry();
-//++this.shipRemain;
+//++Product.Instance.shipRemain;
 			}
-		}
-	}
-
-	showScore() {
-		if (this.hiscore < this.score) {
-			this.hiscore = this.score;
-		}
-		let scoreNode = document.querySelector('#score > div > div:nth-child(2)');
-		let hiscoreNode = document.querySelector('#score > div:nth-child(2) > div:nth-child(2)');
-		let debugNode = document.querySelector('#score > div:nth-child(3)');
-		let remainNode = document.querySelector('#remain > div > div:nth-child(1)');
-
-		if (!scoreNode) {
-			return;
-		}
-		scoreNode.innerHTML = this.score;
-		hiscoreNode.innerHTML = this.hiscore;
-//		debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
-		if (this.shipRemain) {
-			remainNode.style.width = (this.shipRemain - 1) * 16 + 'px';
 		}
 	}
 }
@@ -202,7 +167,6 @@ Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
 Field.MAX_LOOSING_RATE = 20000;
-Field.MAX_SHIP = 7;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 Field.PHASE = {
 	NORMAL: 0,

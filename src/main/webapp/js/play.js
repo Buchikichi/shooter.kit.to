@@ -10,17 +10,11 @@ class ShooterMain {
 		let productId = document.getElementById('productId').value;
 
 		Product.create(productId).then(product => {
-			this.setupField(product);
+			this.view = new FlexibleView(product.width, product.height);
+			this.field = new Field(this.view);
 			this.setupActors(product);
 			this.checkLoading();
 		});
-	}
-
-	setupField(product) {
-		this.field = new Field(product.width, product.height);
-		if (0 < product.scoreList.length) {
-			this.field.hiscore = product.scoreList[0].score;
-		}
 	}
 
 	setupActors(product) {
@@ -96,38 +90,29 @@ class ShooterMain {
 		checkLoading();
 	}
 
-	registerScore() {
-		let scoreController = new ScoreEntity();
-		let formData = new FormData();
-
-		formData.append('productId', Product.Instance.id);
-		formData.append('score', this.field.score);
-		formData.append('name', '');
-		scoreController.register(formData).then(rec => {
-			console.log('registerScore:' + rec.ok);
-		});
-	}
-
 	start() {
+		let product = Product.Instance;
 		let controller = new Controller();
 		let gameOverPanel = document.getElementById('gameOver');
 		let startGame = ()=> {
-			Product.Instance.increase();
+			product.increase();
 			this.field.startGame();
 			gameOverPanel.classList.add('hidden');
 		};
 		let endGame = ()=> {
 			if (gameOverPanel.classList.contains('hidden')) {
 				gameOverPanel.classList.remove('hidden');
-				this.registerScore();
+				product.registerScore();
 			}
 		}
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
+			this.view.clear();
 			this.field.move();
-			this.field.draw();
-			if (this.field.isGameOver) {
+			this.field.draw(this.view.ctx);
+			this.showScore(product);
+			if (product.isGameOver) {
 				endGame();
 			}
 			requestAnimationFrame(activate);
@@ -145,5 +130,25 @@ class ShooterMain {
 			}
 		});
 		activate();
+	}
+
+	showScore(product) {
+		if (product.hiscore < product.score) {
+			product.hiscore = product.score;
+		}
+		let scoreNode = document.querySelector('#score > div > div:nth-child(2)');
+		let hiscoreNode = document.querySelector('#score > div:nth-child(2) > div:nth-child(2)');
+		let debugNode = document.querySelector('#score > div:nth-child(3)');
+		let remainNode = document.querySelector('#remain > div > div:nth-child(1)');
+
+		if (!scoreNode) {
+			return;
+		}
+		scoreNode.innerHTML = product.score;
+		hiscoreNode.innerHTML = product.hiscore;
+//		debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
+		if (product.shipRemain) {
+			remainNode.style.width = (product.shipRemain - 1) * 16 + 'px';
+		}
 	}
 }

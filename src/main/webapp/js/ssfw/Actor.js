@@ -34,6 +34,7 @@ class Actor extends Matter {
 		this.effectV = true;
 		this.hitPoint = 1;
 		this.absorbed = false;
+		this.absorbedTarget = null;
 		this.score = 0;
 		this.walled = false;
 		this.isInverse = false;
@@ -89,7 +90,7 @@ class Actor extends Matter {
 
 	eject() {
 		this.isGone = true;
-		this.x = Number.MIN_SAFE_INTEGER;
+//		this.x = Number.MIN_SAFE_INTEGER;
 	}
 
 	aim(target) {
@@ -136,7 +137,7 @@ class Actor extends Matter {
 		let result = [];
 
 		this.chamberList.forEach(chamber => chamber.probe());
-		if (this.triggered || force) {
+		if ((target == null || !target.isGone) && (this.triggered || force)) {
 			this.triggered = false;
 			this.chamberList.forEach(chamber => {
 				let shot = chamber.fire(this, target);
@@ -232,6 +233,17 @@ class Actor extends Matter {
 //		this.region.draw(ctx);
 	}
 
+	drawAbsorb(ctx) {
+		ctx.fillStyle = 'rgba(255, 200, 0, 0.4)';
+		ctx.save();
+		ctx.translate(this.absorbedTarget.x, this.absorbedTarget.y);
+		ctx.beginPath();
+		ctx.arc(0, 0, 5, 0, Math.PI2);
+		ctx.fill();
+		ctx.restore();
+		this.absorbedTarget = null;
+	}
+
 	drawExplosion(ctx) {
 		let size = this.explosion;
 
@@ -259,6 +271,9 @@ class Actor extends Matter {
 			this.drawNormal(ctx);
 		}
 		ctx.restore();
+		if (this.absorbedTarget) {
+			this.drawAbsorb(ctx);
+		}
 	}
 
 	/**
@@ -289,7 +304,7 @@ class Actor extends Matter {
 	 * やられ.
 	 */
 	fate(target) {
-		if (this.isGone || this.explosion) {
+		if (target.isGone || this.isGone || this.explosion) {
 			return;
 		}
 		this.hitPoint--;
@@ -304,16 +319,8 @@ class Actor extends Matter {
 
 	absorb(target) {
 		this.absorbed = true;
+		this.absorbedTarget = target;
 		if (this.sfxAbsorb) {
-			let ctx = Field.Instance.ctx;
-
-			ctx.fillStyle = 'rgba(255, 200, 0, 0.4)';
-			ctx.save();
-			ctx.translate(target.x, target.y);
-			ctx.beginPath();
-			ctx.arc(0, 0, 5, 0, Math.PI2, false);
-			ctx.fill();
-			ctx.restore();
 			let pan = Field.Instance.calcPan(this.x);
 			AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 		}
