@@ -28,6 +28,9 @@ class Field extends Matter {
 		if (Product.Instance.detailList.length <= Product.Instance.stageNum) {
 			Product.Instance.stageNum = 0;
 		}
+		let actorList = this.actorList.filter(actor => !(actor instanceof MapVisual));
+		this.actorList = actorList;
+		this.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
 	}
 
 	_reset() {
@@ -37,6 +40,7 @@ class Field extends Matter {
 		this.ship.enter();
 		this.actorList = [this.ship];
 		this.hibernate = Field.MAX_HIBERNATE;
+		this.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
 	}
 
 	reset() {
@@ -109,7 +113,10 @@ class Field extends Matter {
 		let score = 0;
 
 //		ctx.clearRect(0, 0, this.width, this.height);
-		this.landform.drawBg(ctx);
+//		this.landform.drawBg(ctx);
+//		if (this.stage) {
+//			this.stage.drawBg(ctx);
+//		}
 		this.actorList.sort(function(a, b) {
 			return a.z - b.z;
 		});
@@ -150,7 +157,10 @@ class Field extends Matter {
 			AudioMixer.INSTANCE.fade();
 		}
 		this.actorList = validActors;
-		this.landform.draw();
+//		this.landform.draw(ctx);
+//		if (this.stage) {
+//			this.stage.drawFg(ctx);
+//		}
 		if (Product.Instance) {
 			Product.Instance.score += score;
 			if (!Product.Instance.isGameOver && ship && ship.isGone) {

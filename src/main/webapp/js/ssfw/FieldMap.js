@@ -48,7 +48,7 @@ class FieldMap extends Matter {
 		if (0 < this.mapVisualList.length) {
 			return;
 		}
-console.log('migrate()');
+console.log('FieldMap#migrate');
 		let seq = 0;
 		let groundList = [
 			{id:this.bg1, radian:this.bg1dir, speed:this.bg1speed, blink:this.bg1blink},
@@ -75,14 +75,24 @@ console.log('this.mainSeq:' + this.mainSeq);
 
 	init() {
 		let visualList = [];
-		let z = 0;
+		let countBG = 0;
+
 		this.migrate();
 		this.resetBricks();
 		this.mapVisualList.forEach(mapVisual => {
-			mapVisual.z = z++;
-			visualList.push(Object.assign(new MapVisual(), mapVisual));
+			if (mapVisual.visualType == Visual.TYPE.Background) {
+				countBG++;
+			}
+			visualList.push(MapVisual.create(mapVisual));
 		});
 		this.mapVisualList = visualList;
+		//
+		let z = -10000 * (countBG - 1) - 1;
+
+		this.mapVisualList.forEach(mapVisual => {
+			mapVisual.z = z;
+			z += 10000;
+		});
 		return this;
 	}
 
@@ -105,6 +115,9 @@ class MapVisual extends Matter {
 		this.pattern = null;
 		this.alpha = 1;
 		this.blinkDir = -1;
+// TODO: remove
+this.effectH = 0;
+this.effectV = 0;
 	}
 
 	get image() {
@@ -112,7 +125,7 @@ class MapVisual extends Matter {
 	}
 
 	setProgress(progress) {
-		this.x = -progress * Math.cos(this.dir) * this.speed;
+		this.x = progress * Math.cos(this.dir) * this.speed;
 		this.y = progress * Math.sin(this.dir) * this.speed;
 	}
 
@@ -126,10 +139,10 @@ class MapVisual extends Matter {
 	draw(ctx) {
 		ctx.save();
 		ctx.globalAlpha = this.alpha;
-		ctx.translate(this.x, this.y);
+		ctx.translate(-this.x, -this.y);
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
-		ctx.rect(0, 0, ctx.width, ctx.height);
+		ctx.rect(this.x, this.y, ctx.canvas.width, ctx.canvas.height);
 		ctx.fill();
 		ctx.restore();
 		if (this.blink) {
@@ -138,5 +151,9 @@ class MapVisual extends Matter {
 				this.blinkDir *= -1;
 			}
 		}
+	}
+
+	static create(mapVisual) {
+		return Object.assign(new MapVisual(), mapVisual);
 	}
 }

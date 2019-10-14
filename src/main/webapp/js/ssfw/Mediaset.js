@@ -58,3 +58,20 @@ class Mediaset {
 	}
 }
 Mediaset.Instance = null;
+/**
+ * Visual.
+ */
+class Visual {}
+Visual.TYPE = {
+	Player: 0,
+	Shot: 1,
+	Item: 2,
+	Aerial: 3,
+	Subaerial: 4,
+	Boss: 5,
+	Ornament: 6,
+	Explosion: 7,
+	Background: 8,
+	Foreground: 9,
+	Other: 10,
+};

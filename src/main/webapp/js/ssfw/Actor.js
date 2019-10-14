@@ -16,6 +16,8 @@ class Matter {
 		this.height = height;
 		this.hH = height / 2;
 	}
+
+	move(){};
 }
 
 /**

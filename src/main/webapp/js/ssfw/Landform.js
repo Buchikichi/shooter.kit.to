@@ -9,7 +9,6 @@ class Landform {
 		this.next = Landform.NEXT.NONE;
 		this.col = 0;
 		this.colDir = 1;
-		this.magni = 1;
 		this.target = null;
 		this.tx = 0;
 		this.ty = 0;
@@ -37,15 +36,15 @@ class Landform {
 	loadStage(stage) {
 console.log('Landform#loadStage');
 		let field = Field.Instance;
-		let fg = stage.fg;
-	
+		let fgImg = stage.fg.image;
+
 		stage.reset();
 		this.stage = stage;
 		if (stage.mapData) {
 			this.loadMapData(stage.mapData);
 		}
-		this.width = fg.width;
-		this.height = fg.height;
+		this.width = fgImg.width;
+		this.height = fgImg.height;
 		this.bw = this.width / Landform.BRICK_WIDTH;
 		this.bh = this.height / Landform.BRICK_WIDTH;
 		this.viewX = this.width - (field.hW * 1.5);
@@ -225,29 +224,6 @@ console.log('scenarioList created!!!');
 		let rightY = this.scanFloor(right);
 
 		return Math.atan2(rightY - leftY, target.width);
-	}
-
-	// draw
-	drawBg(ctx) {
-		if (!this.stage) {
-			return;
-		}
-		ctx.save();
-		ctx.scale(this.magni, this.magni);
-		this.stage.drawBg(ctx);
-		ctx.restore();
-	}
-
-	draw() {
-		if (!this.stage) {
-			return;
-		}
-		let ctx = this.ctx;
-
-		ctx.save();
-		ctx.scale(this.magni, this.magni);
-		this.stage.drawFg(ctx);
-		ctx.restore();
 	}
 }
 Landform.BRICK_WIDTH = 8;

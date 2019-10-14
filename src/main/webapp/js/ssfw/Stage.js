@@ -7,17 +7,18 @@ class Stage {
 		this.viewDic = {};
 		this.effectH = 0;
 		this.effectV = 0;
+		this.progress = 0;
 		this.eventList = [];
 		this.lastScan = null;
 	}
 
 	init() {
 		this.map = FieldMap.create(this.map);
-		this.view = Stage.createViewList(this.map);
-		this.view.forEach(ground => {
-			ground.stage = this;
-			this.viewDic[ground.viewId] = ground;
-		});
+this.view = [];//Stage.createViewList(this.map);
+this.view.forEach(ground => {
+	ground.stage = this;
+	this.viewDic[ground.viewId] = ground;
+});
 		this.scroll = this.roll;
 		this.scrollSv = this.roll;
 		this.setBgm(this.map.theme, this.map.boss);
@@ -38,18 +39,22 @@ class Stage {
 	}
 
 	get fg() {
-		if (this.foreground) {
-			return this.foreground;
+		if (!this.foreground) {
+			this.foreground = this.map.mainVisual;
 		}
-		let fg;
-
-		this.view.forEach(ground => {
-			if (ground instanceof StageFg) {
-				fg = ground;
-			}
-		});
-		this.foreground = fg;
-		return fg;
+		return this.foreground;
+//		if (this.foreground) {
+//			return this.foreground;
+//		}
+//		let fg;
+//
+//		this.view.forEach(ground => {
+//			if (ground instanceof StageFg) {
+//				fg = ground;
+//			}
+//		});
+//		this.foreground = fg;
+//		return fg;
 	}
 
 	getGround(id) {
@@ -65,6 +70,8 @@ class Stage {
 		this.scroll = this.scrollSv;
 		this.effectH = 0;
 		this.effectV = 0;
+		this.progress = -Product.Instance.width / this.map.mainVisual.speed;
+		this.map.setProgress(this.progress);
 		this.view.forEach(ground => {
 			ground.reset(this.checkPoint);
 		});
@@ -80,10 +87,10 @@ class Stage {
 
 //console.log('moveH:' + x);
 //console.log(step + '/' + this.fg.speed);
-		this.view.forEach(ground => {
-			ground.x = step * ground.speed % ground.width;
+//		this.view.forEach(ground => {
+//			ground.x = step * ground.speed % ground.width;
 //console.log(ground.viewId + ':' + ground.x);
-		});
+//		});
 	}
 
 	scrollV(target) {
@@ -104,7 +111,7 @@ class Stage {
 		}
 		let dy = diff / 3;
 		let nextY = fg.y - dy;
-		let fgViewY = fg.height - field.height;
+		let fgViewY = fg.image.height - field.height;
 
 		if (this.scroll == Stage.SCROLL.ON) {
 			if (nextY < 0 || fgViewY < nextY) {
@@ -117,7 +124,7 @@ class Stage {
 			return;
 		}
 		if (this.scroll == Stage.SCROLL.BOTTOM) {
-			console.log('nextY:' + nextY + '/' + fg.height);
+console.log('nextY:' + nextY + '/' + fg.image.height);
 			if (fgViewY < nextY) {
 				this.scroll = Stage.SCROLL.OFF;
 				return;
@@ -177,10 +184,11 @@ class Stage {
 		return result;
 	}
 
-	forward(landform) {
-		this.view.forEach(ground => {
-			ground.forward(landform);
-		});
+	forward() {
+		this.map.setProgress(this.progress++);
+//		this.view.forEach(ground => {
+//			ground.forward();
+//		});
 		let fgX = this.fg.x;
 
 		Stage.CHECK_POINT.forEach(cp => {
@@ -190,31 +198,13 @@ class Stage {
 		});
 	}
 
-	drawBg(ctx) {
-		this.view.forEach(ground => {
-			if (ground instanceof StageFg) {
-				return;
-			}
-			ground.draw(ctx);
-		});
-	}
-
-	drawFg(ctx) {
-		this.view.forEach(ground => {
-			if (ground instanceof StageBg) {
-				return;
-			}
-			ground.draw(ctx);
-		});
-	}
-
 	notice() {
 		if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
 			return;
 		}
 		let fg = this.fg;
 
-		if (fg.y < fg.height / 2) {
+		if (fg.y < fg.image.height / 2) {
 			this.scroll = Stage.SCROLL.TOP;
 		} else {
 			this.scroll = Stage.SCROLL.BOTTOM;
