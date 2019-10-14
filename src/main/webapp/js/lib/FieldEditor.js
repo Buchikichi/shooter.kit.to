@@ -1,7 +1,7 @@
 class FieldEditor extends Field {
 	constructor(view, stage) {
 		super(view);
-		this.stage = stage;
+		Product.Instance.stage = stage;
 	}
 
 	setupLandform(view) {

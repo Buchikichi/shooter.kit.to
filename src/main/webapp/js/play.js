@@ -95,8 +95,7 @@ class ShooterMain {
 		let controller = new Controller();
 		let gameOverPanel = document.getElementById('gameOver');
 		let startGame = ()=> {
-			product.increase();
-			this.field.startGame();
+			product.startGame();
 			gameOverPanel.classList.add('hidden');
 		};
 		let endGame = ()=> {

@@ -19,20 +19,6 @@ class Field extends Matter {
 		this.landform = new Landform(view.canvas);
 	}
 
-	nextStage() {
-		let stage = Product.Instance.detailList[Product.Instance.stageNum];
-
-		this.stage = stage;
-		this.landform.loadStage(stage);
-		Product.Instance.stageNum++;
-		if (Product.Instance.detailList.length <= Product.Instance.stageNum) {
-			Product.Instance.stageNum = 0;
-		}
-		let actorList = this.actorList.filter(actor => !(actor instanceof MapVisual));
-		this.actorList = actorList;
-		this.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
-	}
-
 	_reset() {
 		this.phase = Field.PHASE.NORMAL;
 		this.ship = new Ship(100, 100);
@@ -40,7 +26,7 @@ class Field extends Matter {
 		this.ship.enter();
 		this.actorList = [this.ship];
 		this.hibernate = Field.MAX_HIBERNATE;
-		this.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
+		Product.Instance.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
 	}
 
 	reset() {
@@ -53,15 +39,6 @@ class Field extends Matter {
 		this._reset();
 	}
 
-	startGame() {
-		this.loosingRate = Field.MAX_LOOSING_RATE;
-		Product.Instance.score = 0;
-		Product.Instance.shipRemain = Product.Instance.maxShip;
-		Product.Instance.stageNum = 0;
-		this.nextStage();
-		this._reset();
-	}
-
 	calcPan(x) {
 		return (x - this.hW) / this.hW;
 	}
@@ -70,10 +47,10 @@ class Field extends Matter {
 		if (this.phase == Field.PHASE.BOSS) {
 			return;
 		}
-		if (!this.stage) {
+		if (!Product.Instance.stage) {
 			return;
 		}
-		this.stage.scanEvent().forEach(obj=> {
+		Product.Instance.stage.scanEvent().forEach(obj=> {
 			let enemy;
 
 			if (obj.formation) {
@@ -90,12 +67,12 @@ class Field extends Matter {
 		}
 		if (next == Landform.NEXT.NOTICE) {
 			AudioMixer.INSTANCE.fade();
-			this.stage.notice();
+			Product.Instance.stage.notice();
 		} else if (next == Landform.NEXT.ARRIV) {
 			this.phase = Field.PHASE.BOSS;
-			this.stage.toBossMode();
+			Product.Instance.stage.toBossMode();
 		} else if (next == Landform.NEXT.PAST) {
-			this.nextStage();
+			Product.Instance.nextStage();
 		}
 		if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 			let step = this.loosingRate / 10000;
@@ -112,11 +89,6 @@ class Field extends Matter {
 		let validActors = [];
 		let score = 0;
 
-//		ctx.clearRect(0, 0, this.width, this.height);
-//		this.landform.drawBg(ctx);
-//		if (this.stage) {
-//			this.stage.drawBg(ctx);
-//		}
 		this.actorList.sort(function(a, b) {
 			return a.z - b.z;
 		});
@@ -157,10 +129,6 @@ class Field extends Matter {
 			AudioMixer.INSTANCE.fade();
 		}
 		this.actorList = validActors;
-//		this.landform.draw(ctx);
-//		if (this.stage) {
-//			this.stage.drawFg(ctx);
-//		}
 		if (Product.Instance) {
 			Product.Instance.score += score;
 			if (!Product.Instance.isGameOver && ship && ship.isGone) {

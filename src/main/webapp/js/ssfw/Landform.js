@@ -98,22 +98,22 @@ console.log('scenarioList created!!!');
 
 	reset() {
 		this.next = Landform.NEXT.NONE;
-		if (this.stage) {
-			this.stage.reset();
+		if (Product.Instance.stage) {
+			Product.Instance.stage.reset();
 		}
 	}
 
 	retry() {
 		this.next = Landform.NEXT.NONE;
-		if (this.stage) {
-			this.stage.retry();
-			this.loadMapData(this.stage.mapData);
+		if (Product.Instance.stage) {
+			Product.Instance.stage.retry();
+			this.loadMapData(Product.Instance.stage.mapData);
 		}
 	}
 
 	// brick
 	getBrickIndex(target) {
-		let fg = this.stage.fg;
+		let fg = Product.Instance.stage.fg;
 		let gx = fg.x;
 		let gy = fg.y;
 		let tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
@@ -164,7 +164,7 @@ console.log('scenarioList created!!!');
 	}
 
 	smashWall(target) {
-		let fg = this.stage.fg;
+		let fg = Product.Instance.stage.fg;
 
 		fg.smashWall(target);
 		this.putBrick(target, 0);
@@ -260,20 +260,20 @@ Landform.prototype.effect = function(target) {
 		target.x -= this.effectH;
 	}
 	if (target.effectV && this.next == Landform.NEXT.NONE) {
-		let speed = this.stage.fg.speed;
+		let speed = Product.Instance.stage.fg.speed;
 
-		target.y += this.stage.effectV * speed;
+		target.y += Product.Instance.stage.effectV * speed;
 	}
 	if (target.x < target.minX || maxX < target.x) {
 		target.eject();
 	}
-	if (this.stage.scroll == Stage.SCROLL.OFF) {
+	if (Product.Instance.stage.scroll == Stage.SCROLL.OFF) {
 		if (target.y < target.minY || target.maxY < target.y) {
 			target.eject();
 		}
 		return;
 	}
-	if (this.stage.scroll == Stage.SCROLL.ON) {
+	if (Product.Instance.stage.scroll == Stage.SCROLL.ON) {
 		if (target.y < -this.height || this.height + target.maxY < target.y) {
 			target.eject();
 		}
@@ -300,10 +300,10 @@ Landform.prototype.forward = function(target) {
 	if (!this.width) {
 		return Landform.NEXT.NONE;
 	}
-	let fg = this.stage.fg;
+	let fg = Product.Instance.stage.fg;
 
 	if (this.next != Landform.NEXT.ARRIV) {
-		this.stage.scrollV(target);
+		Product.Instance.stage.scrollV(target);
 	}
 	if (this.viewX <= fg.x) {
 		this.effectH = 0;
@@ -313,7 +313,7 @@ Landform.prototype.forward = function(target) {
 		}
 		return Landform.NEXT.NONE;
 	}
-	this.stage.forward();
+	Product.Instance.stage.forward();
 	this.effectH = fg.effectH;
 	if (this.arrivX <= fg.x) {
 		if (this.next == Landform.NEXT.NOTICE) {

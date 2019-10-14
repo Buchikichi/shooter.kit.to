@@ -17,7 +17,7 @@ class LandformEditor extends Landform {
 		if (!obj || !obj.instance) {
 			return null;
 		}
-		let fg = this.stage.fg;
+		let fg = Product.Instance.stage.fg;
 		let gx = fg.x;
 		let gy = fg.y;
 		let cnt = obj.formation ? 3 : 1;

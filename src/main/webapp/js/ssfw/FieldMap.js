@@ -40,6 +40,9 @@ class FieldMap extends Matter {
 		}
 	}
 
+	/**
+	 * Draw for edit.
+	 */
 	draw(ctx) {
 		this.mapVisualList.forEach(mapVisual => mapVisual.draw(ctx));
 	}
