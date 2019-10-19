@@ -12,17 +12,8 @@ class Stage {
 		this.lastScan = null;
 	}
 
-	init() {
-		this.map = FieldMap.create(this.map);
-this.view = [];//Stage.createViewList(this.map);
-this.view.forEach(ground => {
-	ground.stage = this;
-	this.viewDic[ground.viewId] = ground;
-});
-		this.scroll = this.roll;
-		this.scrollSv = this.roll;
-		this.setBgm(this.map.theme, this.map.boss);
-		return this;
+	get isMoving() {
+		return this.phase == Stage.PHASE.NORMAL;
 	}
 
 	setBgm(bgm, boss = null) {
@@ -70,6 +61,7 @@ this.view.forEach(ground => {
 		this.scroll = this.scrollSv;
 		this.effectH = 0;
 		this.effectV = 0;
+		this.phase = Stage.PHASE.NORMAL;
 		this.progress = -Product.Instance.width / this.map.mainVisual.speed;
 		this.map.setProgress(this.progress);
 		this.view.forEach(ground => {
@@ -98,8 +90,7 @@ this.view.forEach(ground => {
 		if (this.scroll == Stage.SCROLL.OFF) {
 			return;
 		}
-		let field = Field.Instance;
-		let diff = field.hH - target.y;
+		let diff = this.product.hH - target.y;
 		let fg = this.fg;
 
 		if (this.scroll == Stage.SCROLL.TOP) {
@@ -111,7 +102,7 @@ this.view.forEach(ground => {
 		}
 		let dy = diff / 3;
 		let nextY = fg.y - dy;
-		let fgViewY = fg.image.height - field.height;
+		let fgViewY = fg.image.height - this.product.height;
 
 		if (this.scroll == Stage.SCROLL.ON) {
 			if (nextY < 0 || fgViewY < nextY) {
@@ -144,8 +135,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			return result;
 		}
 		//
-		let field = Field.Instance;
-		let front = Math.round((gx + field.width) / Landform.BRICK_WIDTH);
+		let front = Math.round((gx + this.product.width) / Landform.BRICK_WIDTH);
 		let newList = [];
 
 		this.eventList.forEach(rec => {
@@ -171,7 +161,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				newList.push(rec);
 				return;
 			}
-			let x = isFront ? field.width + Landform.BRICK_WIDTH * 1.5 : 0;
+			let x = isFront ? this.product.width + Landform.BRICK_WIDTH * 1.5 : 0;
 			let y = -gy + (rec.h + 1) * Landform.BRICK_WIDTH;
 			let reserve = Enemy.assign(rec.number, x, y);
 
@@ -212,6 +202,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 	}
 
 	toBossMode() {
+		this.phase = Stage.PHASE.BOSS;
 		if (this.boss) {
 			AudioMixer.INSTANCE.play(this.boss, .7, true);
 		}
@@ -248,6 +239,19 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		return list;
 	} 
 
+	init() {
+		this.map = FieldMap.create(this.map);
+this.view = [];//Stage.createViewList(this.map);
+this.view.forEach(ground => {
+	ground.stage = this;
+	this.viewDic[ground.viewId] = ground;
+});
+		this.scroll = this.roll;
+		this.scrollSv = this.roll;
+		this.setBgm(this.map.theme, this.map.boss);
+		return this;
+	}
+
 	static create(rec) {
 		return Object.assign(new Stage(), rec).init();
 	}
@@ -258,6 +262,10 @@ Stage.SCROLL = {
 	LOOP: 2,
 	TOP: 4,
 	BOTTOM: 8
+};
+Stage.PHASE = {
+	NORMAL: 0,
+	BOSS: 1
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
@@ -365,7 +373,7 @@ class StageFg extends StageView {
 	reset(checkPoint) {
 		super.reset(checkPoint);
 		if (checkPoint.x == 0) {
-			this.x = -Field.Instance.width;
+			this.x = -Product.Instance.width;
 		}
 		this.canvas = this.createCanvas();
 		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');

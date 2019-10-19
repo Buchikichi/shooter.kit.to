@@ -1,8 +1,9 @@
 /**
  * Product.js
  */
-class Product {
+class Product extends Matter {
 	constructor() {
+		super();
 		this.maxShip = 7;
 		this.shipRemain = 0;
 		this.score = 0;
@@ -17,7 +18,7 @@ class Product {
 
 	startGame() {
 		this.increase();
-		Field.Instance.loosingRate = Field.MAX_LOOSING_RATE;
+		this.loosingRate = Product.MAX_LOOSING_RATE;
 		this.score = 0;
 		this.shipRemain = this.maxShip;
 		this.stageNum = 0;
@@ -34,8 +35,8 @@ class Product {
 	nextStage() {
 		let stage = this.detailList[this.stageNum];
 
-		this.stage = stage;
-		Field.Instance.landform.loadStage(stage);
+		this.stage = Object.assign(stage);
+		Field.Instance.landform.loadStage(this.stage);
 		this.stageNum++;
 		if (this.detailList.length <= this.stageNum) {
 			this.stageNum = 0;
@@ -59,7 +60,11 @@ class Product {
 	init() {
 		let stageList = [];
 
-		this.detailList.forEach(detail => stageList.push(Stage.create(detail)));
+		this.setRect(this.width, this.height);
+		this.detailList.forEach(stage => {
+			stage.product = this;
+			stageList.push(Stage.create(stage))
+		});
 		this.detailList = stageList;
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;
@@ -76,3 +81,5 @@ class Product {
 	}
 }
 Product.Instance = null;
+Product.MIN_LOOSING_RATE = 1;
+Product.MAX_LOOSING_RATE = 20000;

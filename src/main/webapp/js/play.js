@@ -126,7 +126,7 @@ class ShooterMain {
 		}
 		scoreNode.innerHTML = product.score;
 		hiscoreNode.innerHTML = product.hiscore;
-//		debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
+//		debugNode.innerHTML = this.actorList.length + ':' + parseInt(product.loosingRate);
 		if (product.shipRemain) {
 			remainNode.style.width = (product.shipRemain - 1) * 16 + 'px';
 		}

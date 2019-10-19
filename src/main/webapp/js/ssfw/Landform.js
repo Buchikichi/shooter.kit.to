@@ -254,7 +254,7 @@ Landform.NEXT = {
  * for play.
  */
 Landform.prototype.effect = function(target) {
-	let maxX = Math.max(Field.Instance.width + target.width, target.maxX);
+	let maxX = Math.max(Product.Instance.width + target.width, target.maxX);
 
 	if (target.effectH) {
 		target.x -= this.effectH;

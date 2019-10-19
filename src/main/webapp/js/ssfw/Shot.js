@@ -9,7 +9,7 @@ class Shot extends Actor {
 		this.speed = 6;
 //		this.effectH = false;
 		this.size = 2;
-		this.maxX = Field.Instance.width;
+		this.maxX = Product.Instance.width;
 		this.fillStyle = 'rgba(255, 255, 0, 0.7)';
 
 		let pan = Field.Instance.calcPan(this.x);

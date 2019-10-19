@@ -6,13 +6,8 @@ class Field extends Matter {
 		super(0, 0);
 		this.setRect(view.width, view.height);
 		this.actorList = [];
-		this.enemyCycle = 0;
 		this.setupLandform(view);
 		Field.Instance = this;
-	}
-
-	get isMoving() {
-		return this.phase == Field.PHASE.NORMAL;
 	}
 
 	setupLandform(view) {
@@ -20,18 +15,12 @@ class Field extends Matter {
 	}
 
 	_reset() {
-		this.phase = Field.PHASE.NORMAL;
 		this.ship = new Ship(100, 100);
 		this.ship.reset();
 		this.ship.enter();
 		this.actorList = [this.ship];
 		this.hibernate = Field.MAX_HIBERNATE;
 		Product.Instance.stage.map.mapVisualList.forEach(v => this.actorList.push(v));
-	}
-
-	reset() {
-		this.landform.reset();
-		this._reset();
 	}
 
 	retry() {
@@ -44,10 +33,10 @@ class Field extends Matter {
 	}
 
 	move() {
-		if (this.phase == Field.PHASE.BOSS) {
+		if (!Product.Instance.stage) {
 			return;
 		}
-		if (!Product.Instance.stage) {
+		if (Product.Instance.stage.phase == Stage.PHASE.BOSS) {
 			return;
 		}
 		Product.Instance.stage.scanEvent().forEach(obj=> {
@@ -69,38 +58,34 @@ class Field extends Matter {
 			AudioMixer.INSTANCE.fade();
 			Product.Instance.stage.notice();
 		} else if (next == Landform.NEXT.ARRIV) {
-			this.phase = Field.PHASE.BOSS;
 			Product.Instance.stage.toBossMode();
 		} else if (next == Landform.NEXT.PAST) {
 			Product.Instance.nextStage();
 		}
-		if (Field.MIN_LOOSING_RATE < this.loosingRate) {
-			let step = this.loosingRate / 10000;
+		if (Product.MIN_LOOSING_RATE < Product.Instance.loosingRate) {
+			let step = Product.Instance.loosingRate / 10000;
 
-			this.loosingRate -= step;
+			Product.Instance.loosingRate -= step;
 		}
 	}
 
 	draw(ctx) {
 		let field = this;
-		let ship = this.ship;
+		let shipList = this.actorList.filter(a => a instanceof Ship);
+		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
 		let shotList = [];
 		let enemyList = [];
 		let validActors = [];
 		let score = 0;
 
-		this.actorList.sort(function(a, b) {
-			return a.z - b.z;
-		});
+		this.actorList.sort((a, b) => a.z - b.z);
 		this.actorList.forEach(actor => {
 			if (actor.isGone) {
 				return;
 			}
 			if (actor instanceof Bullet) {
-				actor.isHit(ship);
+				shipList.forEach(s => actor.isHit(s));
 			} else if (actor instanceof Enemy) {
-				actor.triggered = parseInt(Math.random() * field.loosingRate / 10) == 0;
-				actor.isHit(ship);
 				enemyList.push(actor);
 			} else if (actor instanceof Shot || actor instanceof Missile) {
 				shotList.push(actor);
@@ -108,9 +93,7 @@ class Field extends Matter {
 			let child = actor.move(ship);
 
 			if (child instanceof Array) {
-				child.forEach(enemy => {
-					validActors.push(enemy);
-				});
+				child.forEach(enemy => validActors.push(enemy));
 			}
 			field.landform.effect(actor);
 			field.landform.hitTest(actor);
@@ -121,17 +104,19 @@ class Field extends Matter {
 				actor.score = 0;
 			}
 		});
-		shotList.forEach(shot => {
-			enemyList.forEach(enemy => enemy.isHit(shot));
+		enemyList.forEach(enemy => {
+			enemy.triggered = parseInt(Math.random() * Product.Instance.loosingRate / 10) == 0;
+			shipList.forEach(s => enemy.isHit(s));
+			shotList.forEach(s => enemy.isHit(s));
 		});
-		if (this.phase == Field.PHASE.BOSS && enemyList.length == 0) {
-			this.phase = Field.PHASE.NORMAL;
+		if (Product.Instance.stage && Product.Instance.stage.phase == Stage.PHASE.BOSS && enemyList.length == 0) {
+			Product.Instance.stage.phase = Stage.PHASE.NORMAL;
 			AudioMixer.INSTANCE.fade();
 		}
 		this.actorList = validActors;
 		if (Product.Instance) {
 			Product.Instance.score += score;
-			if (!Product.Instance.isGameOver && ship && ship.isGone) {
+			if (!Product.Instance.isGameOver && shipList.every(s => s.isGone)) {
 				AudioMixer.INSTANCE.stop();
 				if (0 < --this.hibernate) {
 					return;
@@ -146,10 +131,4 @@ class Field extends Matter {
 }
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
-Field.MIN_LOOSING_RATE = 1;
-Field.MAX_LOOSING_RATE = 20000;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
-Field.PHASE = {
-	NORMAL: 0,
-	BOSS: 1
-};

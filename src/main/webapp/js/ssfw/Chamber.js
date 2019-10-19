@@ -37,7 +37,7 @@ class Chamber {
 
 		if (target) {
 			let estimation = 0;
-			if (Field.Instance.isMoving) {
+			if (Product.Instance.stage.isMoving) {
 				let dist = actor.calcDistance(target);
 				let fg = Product.Instance.stage.fg;
 				estimation = dist / elem.speed * fg.speed;

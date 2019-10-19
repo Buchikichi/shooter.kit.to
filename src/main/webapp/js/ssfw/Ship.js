@@ -10,12 +10,12 @@ class Ship extends Actor {
 	}
 
 	recalculation() {
-		let field = Field.Instance;
+		let product = Product.Instance;
 
 		super.recalculation();
-		if (field) {
-			this.right = field.width - this.width * 2;
-			this.bottom = field.height - this.hH;
+		if (product) {
+			this.right = product.width - this.width * 2;
+			this.bottom = product.height - this.hH;
 		}
 	}
 

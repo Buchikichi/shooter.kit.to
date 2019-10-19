@@ -24,7 +24,7 @@ class Matter {
  * Actor.
  */
 class Actor extends Matter {
-	constructor(x, y, z = 0) {
+	constructor(x = 0, y = 0, z = 0) {
 		super(x, y, z);
 		this.region = new Region(this);
 		this.setRect(16, 16);

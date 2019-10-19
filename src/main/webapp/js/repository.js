@@ -20,12 +20,12 @@ class AppMain {
 	setupPanel() {
 //console.log('AppMain::setupPanel');
 		let plusButton = document.querySelector('[data-role="header"] a');
-		let stageButton = document.getElementById('stageButton');
+		let mapButton = document.getElementById('mapButton');
 		let actorButton = document.getElementById('actorButton');
 		let imageButton = document.getElementById('imageButton');
 		let audioButton = document.getElementById('audioButton');
 
-		stageButton.addEventListener('click', ()=> {
+		mapButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#stagePanel');
 			this.manager = this.stageManager;
 			this.manager.list();
@@ -55,7 +55,7 @@ class AppMain {
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
 		});
-		audioButton.click();
+		imageButton.click();
 	}
 
 	hideFilter() {
