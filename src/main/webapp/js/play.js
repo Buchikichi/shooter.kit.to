@@ -8,12 +8,20 @@ document.addEventListener('DOMContentLoaded', ()=> {
 class ShooterMain {
 	constructor() {
 		let productId = document.getElementById('productId').value;
+		let loading = document.getElementById('loading');
 
 		Product.create(productId).then(product => {
 			this.view = new FlexibleView(product.width, product.height);
 			this.field = new Field(this.view);
 			this.setupActors(product);
-			this.checkLoading();
+			return Mediaset.Instance.checkLoading((loaded, max) => {
+				let msg = loaded + '/' + max;
+
+				loading.innerHTML = msg;
+			});
+		}).then(()=> {
+			loading.parentNode.removeChild(loading);
+			this.start();
 		});
 	}
 
@@ -64,32 +72,6 @@ class ShooterMain {
 		});
 	}
 
-	checkLoading() {
-		let loading = document.getElementById('loading');
-		let repositories = [VisualManager.Instance, AudioMixer.INSTANCE];
-		let checkLoading = ()=> {
-			let loaded = 0;
-			let max = 0;
-			let isComplete = true;
-
-			repositories.forEach(repo => {
-				loaded += repo.loaded;
-				max += repo.max;
-				isComplete &= repo.isComplete();
-			});
-			let msg = loaded + '/' + max;
-
-			loading.innerHTML = msg;
-			if (isComplete) {
-				loading.parentNode.removeChild(loading);
-				this.start();
-				return;
-			}
-			setTimeout(checkLoading, 125);
-		};
-		checkLoading();
-	}
-
 	start() {
 		let product = Product.Instance;
 		let controller = new Controller();
@@ -104,9 +86,8 @@ class ShooterMain {
 				product.registerScore();
 			}
 		}
+		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 		let activate = ()=> {
-			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
 			this.view.clear();
 			this.field.move();
 			this.field.draw(this.view.ctx);

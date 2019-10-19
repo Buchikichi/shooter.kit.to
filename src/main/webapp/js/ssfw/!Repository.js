@@ -66,4 +66,18 @@ class Repository {
 	done() {
 		this.loaded++;
 	}
+
+	checkLoading(callback) {
+		return new Promise(resolve => {
+			let checkLoading = ()=> {
+				if (this.isComplete()) {
+					resolve();
+					return;
+				}
+				callback();
+				setTimeout(checkLoading, 30);
+			};
+			checkLoading();
+		});
+	}
 }
