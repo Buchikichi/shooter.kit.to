@@ -58,11 +58,13 @@ class Stage {
 	}
 
 	retry() {
+		this.phase = Stage.PHASE.NORMAL;
+		this.progress = -this.product.width / this.map.mainVisual.speed;
+		this.hibernate = this.product.maxHibernate;
+
 		this.scroll = this.scrollSv;
 		this.effectH = 0;
 		this.effectV = 0;
-		this.phase = Stage.PHASE.NORMAL;
-		this.progress = -Product.Instance.width / this.map.mainVisual.speed;
 		this.map.setProgress(this.progress);
 		this.view.forEach(ground => {
 			ground.reset(this.checkPoint);
@@ -373,7 +375,7 @@ class StageFg extends StageView {
 	reset(checkPoint) {
 		super.reset(checkPoint);
 		if (checkPoint.x == 0) {
-			this.x = -Product.Instance.width;
+			this.x = -this.product.width;
 		}
 		this.canvas = this.createCanvas();
 		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');

@@ -12,7 +12,7 @@ class Shot extends Actor {
 		this.maxX = Product.Instance.width;
 		this.fillStyle = 'rgba(255, 255, 0, 0.7)';
 
-		let pan = Field.Instance.calcPan(this.x);
+		let pan = Product.Instance.calcPan(this);
 		AudioMixer.INSTANCE.play('sfx-fire', .4, false, pan);
 	}
 

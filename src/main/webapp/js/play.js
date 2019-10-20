@@ -89,8 +89,8 @@ class ShooterMain {
 		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 		let activate = ()=> {
 			this.view.clear();
-			this.field.move();
-			this.field.draw(this.view.ctx);
+			product.move();
+			product.draw(this.view.ctx);
 			this.showScore(product);
 			if (product.isGameOver) {
 				endGame();

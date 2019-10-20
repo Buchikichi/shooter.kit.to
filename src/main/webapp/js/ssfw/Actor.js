@@ -72,13 +72,13 @@ class Actor extends Matter {
 	}
 
 	recalculation() {
-		let field = Field.Instance;
-		let margin = this.hasBounds ? 0 : field.width;
+		let product = Product.Instance;
+		let margin = this.hasBounds ? 0 : product.width;
 
 		this.minX = -this.width - margin;
 		this.minY = -this.height - margin;
-		this.maxX = field.width + this.width + margin;
-		this.maxY = field.height + this.height + margin;
+		this.maxX = product.width + this.width + margin;
+		this.maxY = product.height + this.height + margin;
 	}
 
 	checkInverse() {
@@ -315,7 +315,7 @@ class Actor extends Matter {
 			return;
 		}
 		this.explosion = Actor.MAX_EXPLOSION;
-		let pan = Field.Instance.calcPan(this.x);
+		let pan = Product.Instance.calcPan(this);
 		AudioMixer.INSTANCE.play(this.sfx, .2, false, pan);
 	}
 
@@ -323,7 +323,7 @@ class Actor extends Matter {
 		this.absorbed = true;
 		this.absorbedTarget = target;
 		if (this.sfxAbsorb) {
-			let pan = Field.Instance.calcPan(this.x);
+			let pan = Product.Instance.calcPan(this);
 			AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 		}
 	}
