@@ -40,6 +40,14 @@ class Product extends Matter {
 	}
 
 	nextStage() {
+		if (this.ship) {
+console.log('nextStage this.ship.x:' + this.ship.x);
+			let x = this.ship.x - this.stage.map.x;
+			let y = this.ship.y - this.stage.map.y;
+			this.ship.x = x;
+			this.ship.y = y;
+console.log('this.ship.x:' + x);
+		}
 		let stage = this.detailList[this.stageNum];
 
 		this.stage = Object.assign(stage);
@@ -55,6 +63,7 @@ class Product extends Matter {
 
 	_reset() {
 		this.ship = new Ship(-400, 100);
+		this.ship.stage = this.stage;
 		this.ship.reset();
 		this.ship.enter();
 		this.performersList = [this.ship];
@@ -157,7 +166,7 @@ class Product extends Matter {
 		ctx.translate(this.stage.fg.x, 0);
 		this.performersList.forEach(actor => actor.draw(ctx));
 		ctx.restore();
-//		this.drawForDebug(ctx);
+		this.drawForDebug(ctx);
 	}
 
 	drawForDebug(ctx) {

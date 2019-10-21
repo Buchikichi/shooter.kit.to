@@ -7,6 +7,7 @@ class Charger extends Enemy {
 		this.speed = 2.5;
 		this.hitPoint = 1;
 		this.score = 10;
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.anim = new Animator('enemy.charger');
 		this.routine = [
 			new Movement(Movement.COND.Y).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_Y).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_Y),

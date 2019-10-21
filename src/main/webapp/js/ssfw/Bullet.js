@@ -8,6 +8,7 @@ class Bullet extends Actor {
 		this.radius = 3;
 		this.speed = 2;
 		this.anim = new Animator('bullet');
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.recalculation();
 	}
 

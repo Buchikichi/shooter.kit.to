@@ -4,6 +4,7 @@
 class Ship extends Actor {
 	constructor(x, y) {
 		super(x, y);
+		this.activityAreaType = Actor.ActivityAreaType.RESTRICTION;
 		this.effectH = true;
 		this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		this.reset();
@@ -91,12 +92,6 @@ class Ship extends Actor {
 		if (this.walled) {
 			this.fate();
 			return;
-		}
-//		if (this.x < this.hW || this.right < this.x) {
-//			this.x = this.svX;
-//		}
-		if (this.y < this.hH || this.bottom < this.y) {
-			this.y = this.svY;
 		}
 		return result;
 	}

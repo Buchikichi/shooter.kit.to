@@ -35,6 +35,8 @@ class Actor extends Matter {
 		this.effectH = false;
 		this.effectV = false;
 		this.hitPoint = 1;
+		this.activityAreaType = Actor.ActivityAreaType.FREEDOM;
+
 		this.absorbed = false;
 		this.absorbedTarget = null;
 		this.score = 0;
@@ -152,6 +154,61 @@ class Actor extends Matter {
 		return result;
 	}
 
+	checkActivityArea() {
+		if (!this.stage) {
+			return;
+		}
+		let mapX = this.stage.map.x;
+		let mapY = this.stage.map.y;
+
+		if (this.activityAreaType == Actor.ActivityAreaType.RESTRICTION) {
+			let areaLeft = mapX + this.hW;
+			let areaRight = mapX + Product.Instance.width - this.hW;
+			let areaTop = mapY + this.hH;
+			let areaBottom = mapY + Product.Instance.height - this.hH;
+
+			if (this.x < areaLeft) {
+				this.x = areaLeft;
+			} else if (areaRight < this.x) {
+				this.x = areaRight;
+			}
+			if (this.y < areaTop) {
+				this.y = areaTop;
+			} else if (areaBottom < this.y) {
+				this.y = areaBottom;
+			}
+			return;
+		}
+		if (this.activityAreaType == Actor.ActivityAreaType.FREEDOM) {
+			let areaLeft = mapX - Product.Instance.width;
+			let areaRight = mapX + Product.Instance.width * 2;
+			let areaTop = mapY - Product.Instance.height;
+			let areaBottom = mapY + Product.Instance.height * 2;
+
+			if (this.x == 0 && this.y == 0) {
+//console.log(this.constructor.name + (this.id ? ':' + this.id : ''));
+//console.log(this.x + '/' + this.y);
+				return;
+			}
+			if (this.x < areaLeft || areaRight < this.x || this.y < areaTop || areaBottom < this.y) {
+//console.log('eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
+//console.log(this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
+				this.eject();
+			}
+			return;
+		}
+		if (this.activityAreaType == Actor.ActivityAreaType.EJECT) {
+			let areaLeft = mapX - this.width;
+			let areaRight = mapX + Product.Instance.width + this.width;
+			let areaTop = mapY - this.height;
+			let areaBottom = mapY + Product.Instance.height + this.height;
+
+			if (this.x < areaLeft || areaRight < this.x || this.y < areaTop || areaBottom < this.y) {
+				this.eject();
+			}
+		}
+	}
+
 	/**
 	 * Move.
 	 * @param target
@@ -203,6 +260,7 @@ class Actor extends Matter {
 		this.animList.forEach(anim => {
 			anim.next(this.dir);
 		});
+		this.checkActivityArea();
 		return this.trigger(target);
 	}
 
@@ -355,3 +413,8 @@ Actor.TypeList = [
 	'Missile',
 	'Ship',
 ];
+Actor.ActivityAreaType = {
+	FREEDOM: 0,
+	RESTRICTION: 1,
+	EJECT: 2,
+};

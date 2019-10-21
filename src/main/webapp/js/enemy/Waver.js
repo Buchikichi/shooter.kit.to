@@ -8,6 +8,7 @@ class Waver extends Enemy {
 		this.step = Math.PI / 60;
 		this.speed = 2.5;
 		this.score = 100;
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.anim = new Animator('enemy.waver', Animator.TYPE.Y, 1, 8);
 		this.routine = [
 			new Movement(Waver.RANGE).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_L),

@@ -8,6 +8,7 @@ class Missile extends Actor {
 		this.radius = 2;
 		this.speed = 3;
 		this.gravity = opt.gravity;
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.recalculation();
 		this.shuttle = 3;
 		this.fillStyle = 'rgba(200, 200, 255, 0.6)';

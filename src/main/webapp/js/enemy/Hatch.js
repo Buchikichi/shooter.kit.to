@@ -10,6 +10,7 @@ class Hatch extends Enemy {
 		this.score = 200;
 		this.count = 0;
 		this.children = 0;
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.anim = new Animator('enemy.hatch', Animator.TYPE.Y, 1, 2);
 		this.isInverse = false;
 		let field = Field.Instance;

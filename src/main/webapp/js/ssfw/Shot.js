@@ -8,7 +8,7 @@ class Shot extends Actor {
 		this.radius = 2;
 		this.speed = 6;
 		this.size = 2;
-		this.maxX = Product.Instance.width;
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.fillStyle = 'rgba(255, 255, 0, 0.7)';
 
 		let pan = Product.Instance.calcPan(this);
@@ -27,9 +27,6 @@ class Shot extends Actor {
 			}
 			this.fate();
 			return;
-		}
-		if (-this.stage.fg.x + this.maxX < this.x) {
-			this.fate();
 		}
 	}
 }
