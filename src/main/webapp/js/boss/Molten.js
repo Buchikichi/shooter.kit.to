@@ -8,7 +8,6 @@ class Molten extends Enemy {
 		this.hasBounds = false;
 		this.dir = 0;
 		this.speed = .4;
-		this.effectH = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.cycle = 0;
 		this.phase = Molten.PHASE.TARGET;

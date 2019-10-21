@@ -4,10 +4,15 @@
 class FieldMap extends Matter {
 	constructor() {
 		super();
+		this.mainVisual = null;
 	}
 
-	get mainVisual() {
-		return this.mapVisualList[this.mainSeq];
+	get x() {
+		return -this.mainVisual.x;
+	}
+
+	get y() {
+		return -this.mainVisual.y;
 	}
 
 	resetBricks() {
@@ -25,19 +30,10 @@ class FieldMap extends Matter {
 		img.src = this.map;
 	}
 
-	setProgress(progress, isEdit = false) {
+	setProgress(progress) {
 		this.mapVisualList.forEach(mapVisual => {
 			mapVisual.setProgress(progress);
 		});
-		if (isEdit) {
-			let mainX = this.mainVisual.x;
-			let mainY = this.mainVisual.y;
-
-			this.mapVisualList.forEach(mapVisual => {
-				mapVisual.x -= mainX;
-				mapVisual.y += mainY;
-			});
-		}
 	}
 
 	/**
@@ -82,13 +78,16 @@ console.log('this.mainSeq:' + this.mainSeq);
 
 		this.migrate();
 		this.resetBricks();
-		this.mapVisualList.forEach(mapVisual => {
+		this.mapVisualList.forEach((mapVisual, ix) => {
 			if (mapVisual.visualType == Visual.TYPE.Background) {
 				countBG++;
 			}
+			mapVisual.map = this;
+			mapVisual.isMain = (ix == this.mainSeq);
 			visualList.push(MapVisual.create(mapVisual));
 		});
 		this.mapVisualList = visualList;
+		this.mainVisual = this.mapVisualList[this.mainSeq];
 		//
 		let z = -10000 * (countBG - 1) - 1;
 
@@ -115,6 +114,7 @@ console.log('this.mainSeq:' + this.mainSeq);
 class MapVisual extends Matter {
 	constructor() {
 		super();
+		this.isMain = false;
 		this.pattern = null;
 		this.alpha = 1;
 		this.blinkDir = -1;
@@ -128,8 +128,8 @@ this.effectV = 0;
 	}
 
 	setProgress(progress) {
-		this.x = progress * Math.cos(this.dir) * this.speed;
-		this.y = progress * Math.sin(this.dir) * this.speed;
+		this.x = progress * Math.cos(this.radian) * this.speed;
+		this.y = progress * Math.sin(this.radian) * this.speed;
 	}
 
 	getPattern(ctx) {
@@ -141,12 +141,13 @@ this.effectV = 0;
 
 	draw(ctx) {
 		ctx.save();
+		ctx.translate(this.x + this.map.x, this.y + this.map.y);
 		ctx.globalAlpha = this.alpha;
-		ctx.translate(-this.x, -this.y);
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
-		ctx.rect(this.x, this.y, ctx.canvas.width, ctx.canvas.height);
+		ctx.rect(-this.x, -this.y, ctx.canvas.width, ctx.canvas.height);
 		ctx.fill();
+//		this.drawForDebug(ctx);
 		ctx.restore();
 		if (this.blink) {
 			this.alpha += this.blinkDir * this.blink;
@@ -154,6 +155,20 @@ this.effectV = 0;
 				this.blinkDir *= -1;
 			}
 		}
+	}
+
+	drawForDebug(ctx) {
+		let sx = -this.x;
+		let sy = this.seq * 10;
+
+		ctx.fillStyle = 'orange';
+		ctx.beginPath();
+		ctx.arc(sx, sy, 5, 0, Math.PI2);
+		ctx.fill();
+		ctx.fillStyle = 'pink';
+		ctx.beginPath();
+		ctx.arc(sx + ctx.canvas.width, sy, 5, 0, Math.PI2);
+		ctx.fill();
 	}
 
 	static create(mapVisual) {

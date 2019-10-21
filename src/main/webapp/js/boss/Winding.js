@@ -84,7 +84,6 @@ class WindingChild extends Chain {
 	constructor(x, y) {
 		super(x, y);
 		this.hasBounds = false;
-		this.effectH = false;
 		this.radius = WindingChild.RADIUS;
 		this.anim = new Animator('boss.winding.joint');
 	}

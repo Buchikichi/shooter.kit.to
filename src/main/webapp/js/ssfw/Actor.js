@@ -32,8 +32,8 @@ class Actor extends Matter {
 		this.chamberList = [];
 		this.hasBounds = true;
 		this.reaction = 0;
-		this.effectH = true;
-		this.effectV = true;
+		this.effectH = false;
+		this.effectV = false;
 		this.hitPoint = 1;
 		this.absorbed = false;
 		this.absorbedTarget = null;
@@ -305,7 +305,7 @@ class Actor extends Matter {
 	/**
 	 * やられ.
 	 */
-	fate(target) {
+	fate(target = null) {
 		if (target != null && target.isGone || this.isGone || this.explosion) {
 			return;
 		}

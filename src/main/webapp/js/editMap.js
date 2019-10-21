@@ -87,10 +87,11 @@ class EditMain {
 		this.canvas.height = mainVisual.image.height * this.scale;
 		this.ctx.width = this.canvas.width;
 		this.ctx.height = this.canvas.height;
+		this.fieldMap.scale = this.scale;
 	}
 
 	setupEvents() {
-		this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft, true));
+		this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
 		// Scale
 		$('[name="scale"]').click(()=> this.changeScale());
 		// Brick

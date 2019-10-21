@@ -64,8 +64,6 @@ class RewinderChild extends Chain {
 		super(x, y);
 		this.radian = 0;
 		this.hasBounds = false;
-		this.effectH = false;
-		this.effectV = false;
 		this.radius = RewinderChild.RADIUS;
 		this.anim = new Animator('boss.winding.joint');
 	}

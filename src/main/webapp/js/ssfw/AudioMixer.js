@@ -60,7 +60,7 @@ class AudioMixer extends Repository {
 
 		if (isBgm) {
 	//console.log('d:' + buff.duration);
-			element.source.loopEnd = buff.duration - .05;
+			element.source.loopEnd = buff.duration;
 			element.source.loop = true;
 			this.bgm.push(element);
 			this.lastKey = key;

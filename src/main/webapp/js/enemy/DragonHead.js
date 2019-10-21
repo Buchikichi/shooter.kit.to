@@ -12,7 +12,6 @@ class DragonHead extends Enemy {
 		}
 		this.hasBounds = false;
 		this.speed = .9;
-		this.effectH = false;
 		this.hitPoint = 200;
 		this.score = 10000;
 		this.radian = Math.PI;

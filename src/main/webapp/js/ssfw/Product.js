@@ -54,7 +54,7 @@ class Product extends Matter {
 	}
 
 	_reset() {
-		this.ship = new Ship(100, 100);
+		this.ship = new Ship(-400, 100);
 		this.ship.reset();
 		this.ship.enter();
 		this.performersList = [this.ship];
@@ -63,6 +63,7 @@ class Product extends Matter {
 
 	retry() {
 		Field.Instance.landform.retry();
+		this.stage.retry();
 		this._reset();
 	}
 
@@ -73,16 +74,7 @@ class Product extends Matter {
 		if (this.stage.phase == Stage.PHASE.BOSS) {
 			return;
 		}
-		this.stage.scanEvent().forEach(obj=> {
-			let enemy;
-
-			if (obj.formation) {
-				enemy = new Formation(obj.x, obj.y).setup(obj.type, 8);
-			} else {
-				enemy = new obj.type(obj.x, obj.y);
-			}
-			this.performersList.push(enemy);
-		});
+		this.stage.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		let next = Field.Instance.landform.forward(this.ship);
 
 		if (this.isGameOver) {
@@ -104,6 +96,9 @@ class Product extends Matter {
 	}
 
 	draw(ctx) {
+		if (!this.stage) {
+			return;
+		}
 		let shipList = this.performersList.filter(a => a instanceof Ship);
 		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
 		let shotList = [];
@@ -126,11 +121,11 @@ class Product extends Matter {
 			let child = actor.move(ship);
 
 			if (child instanceof Array) {
-				child.forEach(enemy => validActors.push(enemy));
+				child.forEach(c => {c.stage = this.stage; validActors.push(c);});
 			}
-			Field.Instance.landform.effect(actor);
-			Field.Instance.landform.hitTest(actor);
-			actor.draw(ctx);
+			this.stage.effect(actor);
+//			Field.Instance.landform.effect(actor);
+//			Field.Instance.landform.hitTest(actor);
 			validActors.push(actor);
 			if (actor.explosion && actor.score) {
 				score += actor.score;
@@ -142,7 +137,7 @@ class Product extends Matter {
 			shipList.forEach(s => enemy.isHit(s));
 			shotList.forEach(s => enemy.isHit(s));
 		});
-		if (this.stage && this.stage.phase == Stage.PHASE.BOSS && enemyList.length == 0) {
+		if (this.stage.phase == Stage.PHASE.BOSS && enemyList.length == 0) {
 			this.stage.phase = Stage.PHASE.NORMAL;
 			AudioMixer.INSTANCE.fade();
 		}
@@ -150,14 +145,30 @@ class Product extends Matter {
 		this.score += score;
 		if (!this.isGameOver && shipList.every(s => s.isGone)) {
 			AudioMixer.INSTANCE.stop();
-			if (0 < --this.stage.hibernate) {
-				return;
-			}
-			if (0 < --this.shipRemain) {
-				this.retry();
+			if (--this.stage.hibernate <= 0) {
+				if (0 < --this.shipRemain) {
+					this.retry();
 //++this.shipRemain;
+				}
 			}
 		}
+		// Draw
+		ctx.save();
+		ctx.translate(this.stage.fg.x, 0);
+		this.performersList.forEach(actor => actor.draw(ctx));
+		ctx.restore();
+//		this.drawForDebug(ctx);
+	}
+
+	drawForDebug(ctx) {
+		let y = 20;
+
+		ctx.save();
+		ctx.strokeStyle = 'white';
+		ctx.strokeText('progress:' + this.stage.progress, 10, y += 20);
+		ctx.strokeText('fg.x:' + this.stage.fg.x, 10, y += 20);
+		ctx.strokeText('ship.x:' + this.ship.x, 10, y += 20);
+		ctx.restore();
 	}
 
 	registerScore() {

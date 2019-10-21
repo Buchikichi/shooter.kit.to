@@ -38,7 +38,7 @@ console.log('Landform#loadStage');
 		let field = Field.Instance;
 		let fgImg = stage.fg.image;
 
-		stage.reset();
+///		stage.reset();
 		this.stage = stage;
 		if (stage.mapData) {
 			this.loadMapData(stage.mapData);
@@ -106,7 +106,6 @@ console.log('scenarioList created!!!');
 	retry() {
 		this.next = Landform.NEXT.NONE;
 		if (Product.Instance.stage) {
-			Product.Instance.stage.retry();
 			this.loadMapData(Product.Instance.stage.mapData);
 		}
 	}
@@ -297,15 +296,15 @@ Landform.prototype.effect = function(target) {
 };
 
 Landform.prototype.forward = function(target) {
-	if (!this.width) {
-		return Landform.NEXT.NONE;
-	}
-	let fg = Product.Instance.stage.fg;
+//	if (!this.width) {
+//		return Landform.NEXT.NONE;
+//	}
+	let map = Product.Instance.stage.map;
 
 	if (this.next != Landform.NEXT.ARRIV) {
 		Product.Instance.stage.scrollV(target);
 	}
-	if (this.viewX <= fg.x) {
+	if (this.viewX <= map.x) {
 		this.effectH = 0;
 		if (this.next != Landform.NEXT.PAST) {
 			this.next = Landform.NEXT.PAST;
@@ -314,19 +313,19 @@ Landform.prototype.forward = function(target) {
 		return Landform.NEXT.NONE;
 	}
 	Product.Instance.stage.forward();
-	this.effectH = fg.effectH;
-	if (this.arrivX <= fg.x) {
+//	this.effectH = map.effectH;
+	if (this.arrivX <= map.x) {
 		if (this.next == Landform.NEXT.NOTICE) {
-			fg.x = this.arrivX;
+//			map.x = this.arrivX;
 			this.effectH = 0;
 			this.next = Landform.NEXT.ARRIV;
 			return Landform.NEXT.ARRIV;
 		}
-		if (this.arrivX < fg.x) {
+		if (this.arrivX < map.x) {
 			this.next = Landform.NEXT.IDLE;
 			return Landform.NEXT.IDLE;
 		}
-	} else if (this.noticeX <= fg.x) {
+	} else if (this.noticeX <= map.x) {
 		if (this.next != Landform.NEXT.NOTICE) {
 			this.next = Landform.NEXT.NOTICE;
 			return Landform.NEXT.NOTICE;

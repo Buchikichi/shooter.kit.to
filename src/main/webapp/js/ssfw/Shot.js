@@ -7,7 +7,6 @@ class Shot extends Actor {
 		this.dir = 0;
 		this.radius = 2;
 		this.speed = 6;
-//		this.effectH = false;
 		this.size = 2;
 		this.maxX = Product.Instance.width;
 		this.fillStyle = 'rgba(255, 255, 0, 0.7)';
@@ -26,6 +25,10 @@ class Shot extends Actor {
 			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
 				Field.Instance.landform.smashWall(this);
 			}
+			this.fate();
+			return;
+		}
+		if (-this.stage.fg.x + this.maxX < this.x) {
 			this.fate();
 		}
 	}

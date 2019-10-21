@@ -4,7 +4,6 @@
 class Formation extends Actor {
 	constructor(x, y) {
 		super(x, y);
-		this.effectH = false;
 		this.steps = 0;
 		this.count = 0;
 		this.enemies = [];

@@ -39,8 +39,6 @@ Cascade.MAX_JOINT = 12;
 class CascadeChild extends Chain {
 	constructor(x, y, weight) {
 		super(x, y);
-		this.effectH = false;
-		this.effectV = false;
 		this.weight = weight;
 		this.radian = Math.SQ * .9;
 		this.radius = Cascade.RADIUS;

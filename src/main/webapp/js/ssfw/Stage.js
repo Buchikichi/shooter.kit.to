@@ -24,7 +24,6 @@ class Stage {
 
 	playBgm() {
 		if (this.bgm) {
-	//console.log('playBgm:');
 			AudioMixer.INSTANCE.play(this.bgm, .7, true);
 		}
 	}
@@ -34,18 +33,6 @@ class Stage {
 			this.foreground = this.map.mainVisual;
 		}
 		return this.foreground;
-//		if (this.foreground) {
-//			return this.foreground;
-//		}
-//		let fg;
-//
-//		this.view.forEach(ground => {
-//			if (ground instanceof StageFg) {
-//				fg = ground;
-//			}
-//		});
-//		this.foreground = fg;
-//		return fg;
 	}
 
 	getGround(id) {
@@ -126,10 +113,29 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		this.effectV = dy;
 	}
 
+	effect(target) {
+		let fg = this.fg;
+
+//		if (target.y < 0) {
+//			target.y += this.fg.height;
+//		} else if (this.fg.height < target.y) {
+//			target.y -= this.fg.height;
+//		}
+		if (!this.isMoving) {
+			return;
+		}
+		if (target.effectH) {
+			target.x -= Math.cos(fg.radian) * fg.speed;
+		}
+		if (target.effectV) {
+			target.y -= Math.sin(fg.radian) * fg.speed;
+		}
+	}
+
 	scanEvent() {
 		let result = [];
 		let fg = this.fg;
-		let gx = fg.x;
+		let gx = -fg.x;
 		let gy = fg.y;
 		let rear = Math.round(gx / Landform.BRICK_WIDTH);
 
@@ -163,12 +169,21 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				newList.push(rec);
 				return;
 			}
-			let x = isFront ? this.product.width + Landform.BRICK_WIDTH * 1.5 : 0;
+			// spawn
+			let x = gx + (isFront ? this.product.width + Landform.BRICK_WIDTH * 1.5 : 0);
 			let y = -gy + (rec.h + 1) * Landform.BRICK_WIDTH;
 			let reserve = Enemy.assign(rec.number, x, y);
 
 			if (reserve != null) {
-				result.push(reserve);
+				let enemy;
+
+				if (reserve.formation) {
+					enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
+				} else {
+					enemy = new reserve.type(reserve.x, reserve.y);
+				}
+				enemy.stage = this;
+				result.push(enemy);
 			}
 		});
 		this.eventList = newList;

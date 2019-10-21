@@ -7,6 +7,8 @@ class FieldMapEditor extends FieldMap {
 		this.col = 0;
 		this.colDir = 1;
 		this.currentBrick = null;
+		this.scale = 1;
+		this.progress = 0;
 	}
 
 	get mapImage() {
@@ -27,7 +29,7 @@ class FieldMapEditor extends FieldMap {
 		formData.append('map', this.mapImage);
 		formData.append('brickSize', this.brickSize);
 		formData.append('mainSeq', this.mainSeq);
-		this.visualList.forEach(mapVisual => {
+		this.mapVisualList.forEach(mapVisual => {
 			let prefix = 'mapVisualList[' + mapVisual.seq + '].';
 
 			formData.append(prefix + 'seq', mapVisual.seq);
@@ -66,6 +68,18 @@ class FieldMapEditor extends FieldMap {
 		this.currentBrick = null;
 	}
 
+	setProgress(progress) {
+		super.setProgress(progress);
+		let mainX = this.mainVisual.x;
+		let mainY = this.mainVisual.y;
+
+		this.mapVisualList.forEach(mapVisual => {
+			mapVisual.x -= mainX;
+			mapVisual.y += mainY;
+		});
+		this.progress = progress;
+	}
+
 	drawBricks(ctx) {
 		let bw = this.bricks.width * 4;
 		let brick = this.bricks.data;
@@ -73,6 +87,7 @@ class FieldMapEditor extends FieldMap {
 		let halfBrick = this.brickSize / 2;
 		let col = this.col;
 		let rev = 256 - this.col;
+		let minLeft = this.progress / this.scale - this.brickSize;
 
 		ctx.save();
 		ctx.strokeStyle = 'rgba(' + col + ', ' + col + ', ' + rev + ', .7)';
@@ -85,6 +100,9 @@ class FieldMapEditor extends FieldMap {
 				let left = x * this.brickSize;
 				let brickNum = brick[ix + 2];
 
+				if (left < minLeft) {
+					continue;
+				}
 				if (brickNum == 254) {
 					let ax = left + halfBrick;
 					let ay = top + halfBrick;
@@ -108,6 +126,17 @@ class FieldMapEditor extends FieldMap {
 		if (this.col <= 0 || 255 <= this.col) {
 			this.colDir *= -1;
 		}
+//		this.drawForDebug(ctx);
+	}
+
+	drawForDebug(ctx) {
+		let x = this.progress / this.scale;
+		let y = 0;
+
+		ctx.save();
+		ctx.strokeStyle = 'white';
+		ctx.strokeText('x:' + x, x, 20);
+		ctx.restore();
 	}
 
 	save() {
