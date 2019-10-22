@@ -3,7 +3,7 @@
  */
 class Field extends Matter {
 	constructor(view) {
-		super(0, 0);
+		super();
 		this.setRect(view.width, view.height);
 		this.setupLandform(view);
 		Field.Instance = this;

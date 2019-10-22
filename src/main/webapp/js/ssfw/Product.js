@@ -61,6 +61,17 @@ console.log('this.ship.x:' + x);
 		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
+	selectStage(stageId) {
+		this.detailList.forEach(stage => {
+			if (stage.id != stageId) {
+				return;
+			}
+			this.stage = StageEditor.create(stage);
+		});
+//		Field.Instance.landform.loadStage(this.stage);
+		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
+	}
+
 	_reset() {
 		this.ship = new Ship(-400, 100);
 		this.ship.stage = this.stage;
@@ -165,6 +176,7 @@ console.log('this.ship.x:' + x);
 		ctx.save();
 		ctx.translate(this.stage.fg.x, 0);
 		this.performersList.forEach(actor => actor.draw(ctx));
+		this.stage.draw(ctx);
 		ctx.restore();
 		this.drawForDebug(ctx);
 	}
@@ -175,8 +187,10 @@ console.log('this.ship.x:' + x);
 		ctx.save();
 		ctx.strokeStyle = 'white';
 		ctx.strokeText('progress:' + this.stage.progress, 10, y += 20);
-		ctx.strokeText('fg.x:' + this.stage.fg.x, 10, y += 20);
-		ctx.strokeText('ship.x:' + this.ship.x, 10, y += 20);
+		ctx.strokeText('map.x:' + this.stage.map.x, 10, y += 20);
+		if (this.ship) {
+			ctx.strokeText('ship.x:' + this.ship.x, 10, y += 20);
+		}
 		ctx.restore();
 	}
 

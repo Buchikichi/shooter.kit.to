@@ -60,20 +60,6 @@ class Stage {
 		this.playBgm();
 	}
 
-	moveH(x) {
-		if (this.fg.speed == 0) {
-			return;
-		}
-		let step = x / this.fg.speed;
-
-//console.log('moveH:' + x);
-//console.log(step + '/' + this.fg.speed);
-//		this.view.forEach(ground => {
-//			ground.x = step * ground.speed % ground.width;
-//console.log(ground.viewId + ':' + ground.x);
-//		});
-	}
-
 	scrollV(target) {
 		this.effectV = 0;
 		if (this.scroll == Stage.SCROLL.OFF) {
@@ -226,6 +212,9 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 //		if (this.scroll == Stage.SCROLL.LOOP) {
 //			this.scroll = Stage.SCROLL.ON;
 //		}
+	}
+
+	draw(ctx) {
 	}
 
 	/**

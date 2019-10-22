@@ -191,8 +191,8 @@ class Actor extends Matter {
 				return;
 			}
 			if (this.x < areaLeft || areaRight < this.x || this.y < areaTop || areaBottom < this.y) {
-//console.log('eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
-//console.log(this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
+console.log('eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
+console.log(this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
 				this.eject();
 			}
 			return;

@@ -17,27 +17,23 @@ class EditStage {
 
 	loadDetail() {
 		let productId = document.getElementById('productId').value;
-		let mediasetId = document.getElementById('mediasetId').value;
+		let loading = document.getElementById('loading');
 
-		Mediaset.create(mediasetId).then(mediaset => {
-			mediaset.loadVisual();
-			new ProductEntity().listActors(productId).then(list => {
-				this.actorList = list;
-				new ProductEntity().select(productId).then(rec => {
-					let detail = null;
+		Product.create(productId).then(product => {
+			let detail = null;
 
-					rec.detailList.forEach(productDetail => {
-						if (productDetail.id != this.detailId) {
-							return;
-						}
-						detail = productDetail;
-					});
-					this.view = new FlexibleView(512, 224);
-					this.field = new FieldEditor(this.view, detail);
-					this.setupStage(detail);
-					this.checkLoading();
-				});
+			this.view = new FlexibleView(512, 224);
+			this.field = new FieldEditor(this.view, detail);
+			product.selectStage(this.detailId);
+//			this.setupStage(detail);
+			return Mediaset.Instance.checkLoading((loaded, max) => {
+				let msg = loaded + '/' + max;
+
+				loading.innerHTML = msg;
 			});
+		}).then(()=> {
+			loading.parentNode.removeChild(loading);
+			this.start();
 		});
 	}
 
@@ -86,33 +82,8 @@ class EditStage {
 		})
 	}
 
-	checkLoading() {
-		let loading = document.getElementById('loading');
-		let repositories = [VisualManager.Instance/*, AudioMixer.INSTANCE*/];
-		let checkLoading = ()=> {
-			let loaded = 0;
-			let max = 0;
-			let isComplete = true;
-
-			repositories.forEach(repo => {
-				loaded += repo.loaded;
-				max += repo.max;
-				isComplete &= repo.isComplete();
-			});
-			let msg = loaded + '/' + max;
-
-			loading.innerHTML = msg;
-			if (isComplete) {
-				loading.parentNode.removeChild(loading);
-				this.start();
-				return;
-			}
-			setTimeout(checkLoading, 125);
-		};
-		checkLoading();
-	}
-
 	start() {
+		let product = Product.Instance;
 		let view = FlexibleView.Instance;
 		let landform = this.field.landform;
 		let activate = ()=> {
@@ -136,24 +107,24 @@ class EditStage {
 				}
 			}
 			view.clear();
-			this.field.draw(view.ctx);
+			product.draw(view.ctx);
 			requestAnimationFrame(activate);
 		};
 
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
 		this.actorPanel = new ActorPanel(this.field);
-		this.actorPanel.setupActors(this.actorList);
-		this.setupActors(this.actorList);
+		this.actorPanel.setupActors(Product.Instance.actorList);
+		this.setupActors(Product.Instance.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		landform.isEdit = true;
-		landform.loadStage(this.stage);
-		activate();
+//		landform.loadStage(this.stage);
 		this.setupEvents();
+		activate();
 	}
 
 	setupActors(actorList) {
-console.log('#setupActors');
+console.log('#setupActors:' + actorList);
 		Enemy.LIST = [
 			{name:'', type:Waver, img:''},
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
@@ -208,16 +179,13 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	setupEvents() {
 		let slider = $('#slider');
 		let landform = this.field.landform;
-		let max = landform.stage.fg.width / Landform.BRICK_WIDTH - 1;
+		let stage = Product.Instance.stage;
+		let max = (stage.fg.image.width - Product.Instance.width) / stage.map.brickSize;
 
-		slider.change(()=> {
-			let x = slider.val() * Landform.BRICK_WIDTH;
-
-			landform.stage.moveH(x);
-		});
+		slider.change(()=> Product.Instance.stage.setProgress(slider.val()));
 		slider.attr('max', max);
 		slider.slider('refresh');
-		landform.stage.moveH(0);
+		Product.Instance.stage.setProgress(0);
 
 		// Actor
 		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
@@ -225,15 +193,6 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let saveButton = document.getElementById('saveButton');
 
 		saveButton.addEventListener('click', ()=> this.saveMap());
-		// mapFile
-		let mapFile = document.getElementById('mapFile');
-
-		mapFile.addEventListener('change', ()=> {
-			let file = mapFile.files[0];
-			let url = window.URL.createObjectURL(file);
-
-			landform.loadMapData(url);
-		});
 		//
 		this.setupPointingDevice();
 	}
@@ -259,7 +218,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			let h = val * Landform.BRICK_WIDTH;
 
 			slider.val(val).slider('refresh');
-			landform.stage.moveH(h);
+			landform.stage.setProgress(h);
 		}
 		if (dy != 0) {
 			landform.wheel(dy);
