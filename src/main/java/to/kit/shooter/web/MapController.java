@@ -2,11 +2,11 @@ package to.kit.shooter.web;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,7 +20,6 @@ import to.kit.shooter.service.MapService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
-import to.kit.shooter.web.form.MapForm;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
 
@@ -74,41 +73,20 @@ public class MapController implements BasicControllerInterface<Map> {
 
 	/**
 	 * パネルでの保存.
-	 * @param form フォーム
+	 * @param map マップ
 	 * @return 結果
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Map> save(MapForm form) {
+	public ResultForm<Map> save(@RequestBody Map map) {
 		ResultForm<Map> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		Map map = new Map();
-		BeanUtils.copyProperties(form, map);
 		map.setOwner(customerId);
 		Map saved = this.mapService.save(map);
-
-		result.setResult(saved);
-		result.setOk(true);
-		return result;
-	}
-
-	@RequestMapping("/saveMap")
-	@ResponseBody
-	public ResultForm<Map> saveMap(MapForm form) {
-		ResultForm<Map> result = new ResultForm<>();
-		String customerId = getCustomerId();
-
-		if (customerId == null || customerId.isEmpty()) {
-			return result;
-		}
-		Map map = new Map();
-		BeanUtils.copyProperties(form, map);
-		map.setOwner(customerId);
-		Map saved = this.mapService.saveMap(map);
 
 		result.setResult(saved);
 		result.setOk(true);

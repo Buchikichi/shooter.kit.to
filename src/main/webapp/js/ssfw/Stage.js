@@ -30,7 +30,7 @@ class Stage {
 
 	get fg() {
 		if (!this.foreground) {
-			this.foreground = this.map.mainVisual;
+			this.foreground = this.map._mainVisual;
 		}
 		return this.foreground;
 	}
@@ -46,7 +46,7 @@ class Stage {
 
 	retry() {
 		this.phase = Stage.PHASE.NORMAL;
-		this.progress = -this.product.width / this.map.mainVisual.speed;
+		this.progress = -this.product.width / this.map._mainVisual.speed;
 		this.hibernate = this.product.maxHibernate;
 
 		this.scroll = this.scrollSv;

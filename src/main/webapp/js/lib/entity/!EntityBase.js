@@ -26,15 +26,29 @@ class EntityBase {
 		return AjaxUtils.post('/' + this.base + '/select', formData);
 	}
 
-	save(formData) {
-		return AjaxUtils.post('/' + this.base + '/save', formData);
-//		return $.ajax({
-//			type: 'post',
-//			url: '/' + this.base + '/save',
-//			dataType: 'json',
-//			data: formData,
-//			processData : false,
-//			contentType: false,
-//		});
+	save(data) {
+		let appears = [];
+
+		return fetch('/' + this.base + '/save', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json;charset=UTF-8'},
+			body: JSON.stringify(data, (key, value) => {
+				if (key.startsWith('_')) {
+					return;
+				}
+				if (value != null && typeof value == 'object') {
+					if (0 <= appears.indexOf(value)) {
+//console.log('appears:' + key);
+//console.log(value);
+						return;
+					}
+					appears.push(value);
+				}
+				return value;
+			}),
+			credentials: 'include',
+		}).then(res => {
+			return res.json();
+		});
 	}
 }

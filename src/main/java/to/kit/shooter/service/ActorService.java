@@ -5,10 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
@@ -26,18 +24,18 @@ public class ActorService {
 	 * @return 一覧
 	 */
 	public List<Actor> list(String keyword, int type) {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
-		Specification<Actor> nameSpec = Specifications.where((root, query, cb) -> {
+		Sort sort = Sort.by(Order.desc("updated"), Order.by("name"));
+		Specification<Actor> nameSpec = Specification.where((root, query, cb) -> {
 			return cb.like(root.get("name"), "%" + keyword + "%");
 		});
-		Specification<Actor> spec = Specifications.where(nameSpec).and((root, query, cb) -> {
+		Specification<Actor> spec = Specification.where(nameSpec).and((root, query, cb) -> {
 			return cb.equal(root.get("type"), Integer.valueOf(type));
 		});
 		return this.actorRepository.findAll(spec, sort);
 	}
 
 	public Actor detail(String id) {
-		return this.actorRepository.findOne(id);
+		return this.actorRepository.findById(id).get();
 	}
 
 	public Actor save(Actor actor) {
@@ -45,7 +43,7 @@ public class ActorService {
 		Actor entity = null;
 
 		if (id != null && !id.isEmpty()) {
-			entity = this.actorRepository.findOne(id);
+			entity = this.actorRepository.findById(id).get();
 		}
 		if (entity != null) {
 			actor.setId(entity.getId());

@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Audio;
@@ -24,22 +21,22 @@ public class AudioService {
 	private AudioViewRepository audioViewRepository;
 
 	public List<AudioView> list(String mediasetId, int type) {
-		Sort sort = new Sort(new Order(Direction.ASC, "audioType"), new Order(Direction.ASC, "audioSeq"), new Order(Direction.ASC, "name"));
-		Specification<AudioView> mediasetIdSpec = Specifications.where((root, query, cb) -> {
+		Sort sort = Sort.by("audioType", "audioSeq", "name");
+		Specification<AudioView> mediasetIdSpec = Specification.where((root, query, cb) -> {
 			return cb.like(root.get("mediaset").get("id"), '%' + mediasetId);
 		});
-		Specification<AudioView> spec = Specifications.where(mediasetIdSpec).and((root, query, cb) -> {
+		Specification<AudioView> spec = Specification.where(mediasetIdSpec).and((root, query, cb) -> {
 			return type == -1 ? null : cb.equal(root.get("audioType"), Integer.valueOf(type));
 		});
 		return this.audioViewRepository.findAll(spec, sort);
 	}
 
 	public AudioView detail(String id) {
-		return this.audioViewRepository.findOne(id);
+		return this.audioViewRepository.findById(id).get();
 	}
 
 	public Audio findOne(String id) {
-		return this.audioRepository.findOne(id);
+		return this.audioRepository.findById(id).get();
 	}
 
 	public Audio findByName(String name) {
@@ -51,7 +48,7 @@ public class AudioService {
 		Audio prev = null;
 
 		if (id != null && !id.isEmpty()) {
-			prev = this.audioRepository.findOne(id);
+			prev = this.audioRepository.findById(id).get();
 		}
 		if (prev != null) {
 			String webm = entity.getWebm();

@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +23,20 @@ public class MapService {
 	private MapVisualRepository mapVisualRepository;
 
 	public List<Map> list() {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
+		Sort sort = Sort.by(Order.desc("updated"), Order.by("name"));
 		return this.mapRepository.findAll(sort);
 	}
 
 	public Map detail(String id) {
-		return this.mapRepository.findOne(id);
+		return this.mapRepository.findById(id).get();
 	}
 
-	public Map save(Map map) {
+	public Map save0(Map map) {
 		String id = map.getId();
 		Map entity = null;
 
 		if (id != null && !id.isEmpty()) {
-			entity = this.mapRepository.findOne(id);
+			entity = this.mapRepository.findById(id).get();
 		}
 		if (entity != null) {
 			// 画面で入力するものだけ更新
@@ -59,7 +58,7 @@ public class MapService {
 	}
 
 	@Transactional
-	public Map saveMap(Map map) {
+	public Map save(Map map) {
 		String id = map.getId();
 		Map saved;
 
@@ -68,17 +67,18 @@ public class MapService {
 			saved = this.mapRepository.saveAndFlush(map);
 		} else {
 			// Update
-			Map entity = this.mapRepository.findOne(id);
+			Map entity = this.mapRepository.findById(id).get();
 
 			if (entity == null) {
 				return null;
 			}
-			entity.setName(map.getName());
-			entity.setMap(map.getMap());
-			entity.setMainSeq(map.getMainSeq());
-			entity.setBrickSize(map.getBrickSize());
-			entity.setUpdated(new Date());
-			saved = this.mapRepository.saveAndFlush(entity);
+//			entity.setName(map.getName());
+//			entity.setMap(map.getMap());
+//			entity.setMainSeq(map.getMainSeq());
+//			entity.setBrickSize(map.getBrickSize());
+//			entity.setUpdated(new Date());
+			map.setUpdated(new Date());
+			saved = this.mapRepository.saveAndFlush(map);
 		}
 		// MapVisual
 		this.mapVisualRepository.deleteByMapId(id);

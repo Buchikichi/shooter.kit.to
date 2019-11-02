@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +23,12 @@ public class ProductDetailService {
 	private ScenarioRepository scenarioRepository;
 
 	public List<ProductDetail> list() {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
+		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
 		return this.productDetailRepository.findAll(sort);
 	}
 
 	public ProductDetail detail(String id) {
-		return this.productDetailRepository.findOne(id);
+		return this.productDetailRepository.findById(id).get();
 	}
 
 	@Transactional
@@ -44,7 +43,7 @@ public class ProductDetailService {
 			scenario.setProductDetail(detail);
 			this.scenarioRepository.saveAndFlush(scenario);
 		}
-		ProductDetail entity = this.productDetailRepository.findOne(id);
+		ProductDetail entity = this.productDetailRepository.findById(id).get();
 
 		if (entity == null) {
 			return null;

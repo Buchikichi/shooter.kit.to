@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,11 @@ public class ProductActorService {
 	private ProductActorRepository productActorRepository;
 
 	public List<ProductActor> list() {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
+		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
 		return this.productActorRepository.findAll(sort);
 	}
 
 	public ProductActor detail(String id) {
-		return this.productActorRepository.findOne(id);
+		return this.productActorRepository.findById(id).get();
 	}
 }

@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 
@@ -23,13 +23,12 @@ public class MapVisual {
 	private int seq;
 	private int visualType;
 	private int visualSeq;
-	private int x;
-	private int y;
+	private int repeat;
 	private double radian;
 	private double speed;
 	private double blink;
 
 	@ManyToOne
-	@JsonIgnore
+	@JsonBackReference
 	private Map map;
 }

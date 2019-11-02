@@ -1,28 +1,29 @@
 package to.kit.shooter;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.javascript.jscomp.AbstractCommandLineRunner;
-import com.google.javascript.jscomp.Compiler;
-import com.google.javascript.jscomp.CompilerOptions;
-import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
-import com.google.javascript.jscomp.JSError;
-import com.google.javascript.jscomp.PropertyRenamingPolicy;
-import com.google.javascript.jscomp.Result;
-import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.VariableRenamingPolicy;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//import java.io.Writer;
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//import com.google.javascript.jscomp.AbstractCommandLineRunner;
+//import com.google.javascript.jscomp.Compiler;
+//import com.google.javascript.jscomp.CompilerOptions;
+//import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+//import com.google.javascript.jscomp.JSError;
+//import com.google.javascript.jscomp.PropertyRenamingPolicy;
+//import com.google.javascript.jscomp.Result;
+//import com.google.javascript.jscomp.SourceFile;
+//import com.google.javascript.jscomp.VariableRenamingPolicy;
 
 public final class CompMain {
+/*
 	private List<SourceFile> listSource(File dir) {
 		List<SourceFile> list = new ArrayList<>();
 
 		for (File file : dir.listFiles()) {
-			list.add(SourceFile.fromFile(file));
+			list.add(SourceFile.fromFile(file.getAbsolutePath()));
 		}
 		return list;
 	}
@@ -44,13 +45,14 @@ public final class CompMain {
 		for (JSError err : result.errors) {
 			System.out.println(err.toString());
 		}
-		if (result.errors.length == 0) {
+		if (result.errors.size() == 0) {
 			try (Writer writer = new FileWriter(outFile)) {
 				writer.write(compiler.toSource());
 			}
 			System.out.println("Complete.");
 		}
 	}
+//*/
 
 	/**
 	 * メイン.
@@ -66,8 +68,8 @@ public final class CompMain {
 			return;
 		}
 		File outFile = new File(args[1]);
-		CompMain app = new CompMain();
-
-		app.execute(dir, outFile);
+//		CompMain app = new CompMain();
+//
+//		app.execute(dir, outFile);
 	}
 }

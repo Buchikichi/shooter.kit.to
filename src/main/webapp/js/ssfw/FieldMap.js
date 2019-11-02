@@ -4,15 +4,15 @@
 class FieldMap extends Matter {
 	constructor() {
 		super();
-		this.mainVisual = null;
+		this._mainVisual = null;
 	}
 
 	get x() {
-		return -this.mainVisual.x;
+		return -this._mainVisual.x;
 	}
 
 	get y() {
-		return -this.mainVisual.y;
+		return -this._mainVisual.y;
 	}
 
 	resetBricks() {
@@ -87,7 +87,7 @@ console.log('this.mainSeq:' + this.mainSeq);
 			visualList.push(MapVisual.create(mapVisual));
 		});
 		this.mapVisualList = visualList;
-		this.mainVisual = this.mapVisualList[this.mainSeq];
+		this._mainVisual = this.mapVisualList[this.mainSeq];
 		//
 		let z = -10000 * (countBG - 1) - 1;
 

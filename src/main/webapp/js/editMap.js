@@ -81,7 +81,7 @@ class EditMain {
 	}
 
 	changeScale() {
-		let mainVisual = this.fieldMap.mainVisual;
+		let mainVisual = this.fieldMap._mainVisual;
 
 		this.canvas.width = mainVisual.image.width * this.scale;
 		this.canvas.height = mainVisual.image.height * this.scale;

@@ -70,8 +70,8 @@ class FieldMapEditor extends FieldMap {
 
 	setProgress(progress) {
 		super.setProgress(progress);
-		let mainX = this.mainVisual.x;
-		let mainY = this.mainVisual.y;
+		let mainX = this._mainVisual.x;
+		let mainY = this._mainVisual.y;
 
 		this.mapVisualList.forEach(mapVisual => {
 			mapVisual.x -= mainX;
@@ -90,8 +90,8 @@ class FieldMapEditor extends FieldMap {
 		let minLeft = this.progress / this.scale - this.brickSize;
 
 		ctx.save();
-		ctx.strokeStyle = 'rgba(' + col + ', ' + col + ', ' + rev + ', .7)';
-		ctx.fillStyle = ctx.strokeStyle;
+		ctx.strokeStyle = 'rgba(255, 255, 255, .3)';
+		ctx.fillStyle = 'rgba(0, 0, 0, .3)';
 		for (let y = 0; y < this.bricks.height; y++) {
 			let ix = y * bw;
 			let top = y * this.brickSize;
@@ -109,10 +109,12 @@ class FieldMapEditor extends FieldMap {
 	
 					ctx.beginPath();
 					ctx.arc(ax, ay, brickWidth / 2, 0, Math.PI2, false);
+					ctx.fill();
 					ctx.stroke();
 //					ctx.strokeRect(left, top, brickWidth, brickWidth);
 				} else if (0 < brickNum) {
 					ctx.fillRect(left, top, brickWidth, brickWidth);
+					ctx.strokeRect(left, top, brickWidth, brickWidth);
 				}
 			}
 		}
@@ -140,7 +142,7 @@ class FieldMapEditor extends FieldMap {
 	}
 
 	save() {
-		return new MapEntity().saveMap(this.formData);
+		return new MapEntity().save(this);
 	}
 
 	static create(mapId) {

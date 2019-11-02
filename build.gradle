@@ -6,19 +6,13 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/2.14.1/userguide/tutorial_java_projects.html
  */
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath('org.springframework.boot:spring-boot-gradle-plugin:1.5.14.RELEASE')
-	}
+plugins {
+  id 'org.springframework.boot' version '2.1.9.RELEASE'
+  id 'java'
+  id 'eclipse'
 }
 
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
 
@@ -53,7 +47,7 @@ dependencies {
 	runtime('org.postgresql:postgresql')
 	compile('org.projectlombok:lombok:1.16.14')
 	compile('commons-codec:commons-codec:1.10')
-	compile('com.google.javascript:closure-compiler:v20170218')
+//	compile('com.google.javascript:closure-compiler:v20191027')
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the

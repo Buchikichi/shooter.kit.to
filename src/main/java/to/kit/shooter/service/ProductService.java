@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class ProductService {
 	private ProductActorRepository productActorRepository;
 
 	public List<Product> list() {
-		Sort sort = new Sort(new Order(Direction.DESC, "updated"), new Order(Direction.ASC, "name"));
+		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
 		List<Product> list = this.productRepository.findAll(sort);
 
 		for (Product entity : list) {
@@ -39,7 +38,7 @@ public class ProductService {
 	}
 
 	public Product detail(String id) {
-		Product product = this.productRepository.findOne(id);
+		Product product = this.productRepository.findById(id).get();
 		List<ProductDetail> detailList = product.getDetailList();
 		List<ProductActor> actorList = product.getActorList();
 		List<Scores> scoreList = product.getScoreList();
@@ -69,7 +68,7 @@ public class ProductService {
 			String id = detail.getId();
 
 			if (id != null) {
-				ProductDetail prev = this.productDetailRepository.findOne(id);
+				ProductDetail prev = this.productDetailRepository.findById(id).get();
 
 				if (prev != null) {
 					detail.setMap(prev.getMap());
@@ -89,7 +88,7 @@ public class ProductService {
 	public Product save(Product entity) {
 		String id = entity.getId();
 
-		if (!this.productRepository.exists(id)) {
+		if (!this.productRepository.existsById(id)) {
 			id = null;
 			entity.setId(null);
 		}
@@ -114,7 +113,7 @@ public class ProductService {
 	 * @param id プロダクトID
 	 */
 	public void increase(String id) {
-		Product product = this.productRepository.findOne(id);
+		Product product = this.productRepository.findById(id).get();
 
 		if (product != null) {
 			int next = product.getCount() + 1;
