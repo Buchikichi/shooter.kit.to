@@ -40,24 +40,35 @@ class Product extends Matter {
 	}
 
 	nextStage() {
-		if (this.ship) {
-console.log('nextStage this.ship.x:' + this.ship.x);
-			let x = this.ship.x - this.stage.map.x;
-			let y = this.ship.y - this.stage.map.y;
-			this.ship.x = x;
-			this.ship.y = y;
-console.log('this.ship.x:' + x);
-		}
+console.log('Product#nextStage:' + this.stageNum);
+if (this.ship) {
+	console.log('ship_' + this.ship.x + '/' + this.ship.y);
+}
 		let stage = this.detailList[this.stageNum];
 
+		// Remove MapVisual of previous stage.
+		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
+		this.performersList.forEach(actor => {
+			actor.x -= actor.stage.map.x;
+			actor.y -= actor.stage.map.y;
+		});
+if (this.ship) {
+	console.log('map:' + this.stage.map.x + '/' + this.stage.map.y);
+	console.log('ship:' + this.ship.x + '/' + this.ship.y);
+}
+		// Create next stage.
 		this.stage = Object.assign(stage);
 		Field.Instance.landform.loadStage(this.stage);
 		this.stageNum++;
 		if (this.detailList.length <= this.stageNum) {
 			this.stageNum = 0;
 		}
-		// Remove MapVisual of previous stage.
-		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
+		this.performersList.forEach(actor => {
+			actor.x += this.stage.map.x;
+			actor.y += this.stage.map.y;
+			actor.stage = this.stage
+		});
+		// Add MapVisual
 		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
@@ -152,6 +163,7 @@ console.log('this.ship.x:' + x);
 				actor.score = 0;
 			}
 		});
+		this.stage.effectMap(ship);
 		enemyList.forEach(enemy => {
 			enemy.triggered = parseInt(Math.random() * this.loosingRate / 10) == 0;
 			shipList.forEach(s => enemy.isHit(s));
@@ -174,7 +186,7 @@ console.log('this.ship.x:' + x);
 		}
 		// Draw
 		ctx.save();
-		ctx.translate(this.stage.fg.x, 0);
+		ctx.translate(this.stage.fg.x, this.stage.fg.y);
 		this.performersList.forEach(actor => actor.draw(ctx));
 		this.stage.draw(ctx);
 		ctx.restore();
@@ -182,14 +194,21 @@ console.log('this.ship.x:' + x);
 	}
 
 	drawForDebug(ctx) {
+		let x = 2;
 		let y = 20;
+		let actors = this.performersList.filter(actor => !(actor instanceof MapVisual));
+		let mainVisual = this.stage.map._mainVisual;
 
 		ctx.save();
 		ctx.strokeStyle = 'white';
-		ctx.strokeText('progress:' + this.stage.progress, 10, y += 20);
-		ctx.strokeText('map.x:' + this.stage.map.x, 10, y += 20);
+		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actors[actors.length - 1].constructor.name: ''), x, y += 20);
+		ctx.strokeText('progress:' + parseInt(this.stage.progress) + '/' + parseInt(mainVisual.progressH), x, y += 20);
+		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + parseInt(mainVisual.y), x, y += 20);
 		if (this.ship) {
-			ctx.strokeText('ship.x:' + this.ship.x, 10, y += 20);
+			let fg = this.ship.stage.map;
+			let shipX = parseInt(this.ship.x/* - fg.x*/);
+			let shipY = parseInt(this.ship.y + mainVisual.y);
+			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);
 		}
 		ctx.restore();
 	}

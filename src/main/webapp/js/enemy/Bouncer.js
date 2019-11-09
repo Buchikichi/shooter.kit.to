@@ -15,7 +15,10 @@ class Bouncer extends Enemy {
 	}
 
 	move(target) {
-		if (this.shuttle && (this.x < 0 || Product.Instance.width + Landform.BRICK_WIDTH < this.x)) {
+		let result = super.move(target);
+		let x = this.x - this.stage.map.x;
+
+		if (this.shuttle && (x < 0 || Product.Instance.width + this.width < x)) {
 			this.dir = Math.trim(this.dir + Math.PI);
 			this.x = this.svX;
 			this.shuttle--;
@@ -24,6 +27,6 @@ class Bouncer extends Enemy {
 			this.x = this.svX;
 			this.y = this.svY;
 		}
-		return super.move(target);
+		return result;
 	}
 }

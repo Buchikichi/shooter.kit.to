@@ -35,6 +35,14 @@ class Stage {
 		return this.foreground;
 	}
 
+	get width() {
+		return this.map._mainVisual.image.width;
+	}
+
+	get height() {
+		return this.map._mainVisual.image.height;
+	}
+
 	getGround(id) {
 		return this.viewDic[id];
 	}
@@ -52,6 +60,7 @@ class Stage {
 		this.scroll = this.scrollSv;
 		this.effectH = 0;
 		this.effectV = 0;
+		this.map.reset();
 		this.map.setProgress(this.progress);
 		this.view.forEach(ground => {
 			ground.reset(this.checkPoint);
@@ -100,21 +109,49 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 	}
 
 	effect(target) {
-		let fg = this.fg;
+		let mainVisual = this.map._mainVisual/*this.fg*/;
 
-//		if (target.y < 0) {
-//			target.y += this.fg.height;
-//		} else if (this.fg.height < target.y) {
-//			target.y -= this.fg.height;
-//		}
+		if (target instanceof MapVisual) {
+			return;
+		}
 		if (!this.isMoving) {
 			return;
 		}
+		if (this.scroll == Stage.SCROLL.LOOP) {
+			let cy = mainVisual.y + target.y;
+
+			if (cy < 0) {
+				target.y += this.height;
+			}
+			if (this.height < cy) {
+				target.y -= this.height;
+			}
+		}
 		if (target.effectH) {
-			target.x -= Math.cos(fg.radian) * fg.speed;
+			target.x -= Math.cos(mainVisual.radian) * mainVisual.speed;
 		}
 		if (target.effectV) {
-			target.y -= Math.sin(fg.radian) * fg.speed;
+			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
+		}
+	}
+
+	effectMap(ship) {
+		let fg = this.map._mainVisual/*this.fg*/;
+		let img = fg.image;
+		let h = img.height;
+		let x = ship.x - fg.x;
+		let y = (ship.y + fg.y + h) % h;
+		let qt = this.product.hH / 2;
+		let top = qt;
+		let bottom = this.product.height - qt;
+
+		if (y < top) {
+			ship.y += ship.speed;
+			fg.addProgressH(ship.speed);
+		}
+		if (bottom < y) {
+			ship.y -= ship.speed;
+			fg.addProgressH(-ship.speed);
 		}
 	}
 
@@ -122,7 +159,6 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let result = [];
 		let fg = this.fg;
 		let gx = -fg.x;
-		let gy = fg.y;
 		let rear = Math.round(gx / Landform.BRICK_WIDTH);
 
 		if (rear == this.lastScan) {
@@ -157,7 +193,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			}
 			// spawn
 			let x = gx + (isFront ? this.product.width + Landform.BRICK_WIDTH * 1.5 : 0);
-			let y = -gy + (rec.h + 1) * Landform.BRICK_WIDTH;
+			let y = (rec.h + 1) * Landform.BRICK_WIDTH;
 			let reserve = Enemy.assign(rec.number, x, y);
 
 			if (reserve != null) {

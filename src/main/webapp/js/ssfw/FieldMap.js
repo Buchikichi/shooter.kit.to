@@ -15,7 +15,7 @@ class FieldMap extends Matter {
 		return -this._mainVisual.y;
 	}
 
-	resetBricks() {
+	reset() {
 		let img = new Image();
 
 		img.onload = ()=> {
@@ -28,12 +28,11 @@ class FieldMap extends Matter {
 			this.bricks = ctx.getImageData(0, 0, img.width, img.height);
 		};
 		img.src = this.map;
+		this.mapVisualList.forEach(mapVisual => mapVisual.reset());
 	}
 
 	setProgress(progress) {
-		this.mapVisualList.forEach(mapVisual => {
-			mapVisual.setProgress(progress);
-		});
+		this.mapVisualList.forEach(mapVisual => mapVisual.setProgress(progress));
 	}
 
 	/**
@@ -77,7 +76,6 @@ console.log('this.mainSeq:' + this.mainSeq);
 		let countBG = 0;
 
 		this.migrate();
-		this.resetBricks();
 		this.mapVisualList.forEach((mapVisual, ix) => {
 			if (mapVisual.visualType == Visual.TYPE.Background) {
 				countBG++;
@@ -95,6 +93,7 @@ console.log('this.mainSeq:' + this.mainSeq);
 			mapVisual.z = z;
 			z += 10000;
 		});
+		this.reset();
 		return this;
 	}
 
@@ -123,13 +122,27 @@ this.effectH = 0;
 this.effectV = 0;
 	}
 
+	reset() {
+		this.pattern = null;
+		this.progressH = 0;
+	}
+
 	get image() {
 		return Mediaset.Instance.getImage(this);
 	}
 
 	setProgress(progress) {
+		let h = this.image.height;
+
 		this.x = progress * Math.cos(this.radian) * this.speed;
-		this.y = progress * Math.sin(this.radian) * this.speed;
+		this.y = (progress * Math.sin(this.radian) * this.speed + this.progressH) % h;
+		if (0 <= this.y) {
+			this.y -= h;
+		}
+	}
+
+	addProgressH(delta) {
+		this.progressH += delta;
 	}
 
 	getPattern(ctx) {

@@ -11,39 +11,6 @@ class FieldMapEditor extends FieldMap {
 		this.progress = 0;
 	}
 
-	get mapImage() {
-		let canvas = document.createElement('canvas');
-		let ctx = canvas.getContext('2d');
-
-		canvas.width = this.bricks.width;
-		canvas.height = this.bricks.height;
-		ctx.putImageData(this.bricks, 0, 0);
-		return canvas.toDataURL('image/png');
-	}
-
-	get formData() {
-		let formData = new FormData();
-
-		formData.append('id', this.id);
-		formData.append('name', this.name);
-		formData.append('map', this.mapImage);
-		formData.append('brickSize', this.brickSize);
-		formData.append('mainSeq', this.mainSeq);
-		this.mapVisualList.forEach(mapVisual => {
-			let prefix = 'mapVisualList[' + mapVisual.seq + '].';
-
-			formData.append(prefix + 'seq', mapVisual.seq);
-			formData.append(prefix + 'visualType', mapVisual.visualType);
-			formData.append(prefix + 'visualSeq', mapVisual.visualSeq);
-			formData.append(prefix + 'x', mapVisual.x);
-			formData.append(prefix + 'y', mapVisual.y);
-			formData.append(prefix + 'radian', mapVisual.radian);
-			formData.append(prefix + 'speed', mapVisual.speed);
-			formData.append(prefix + 'blink', mapVisual.blink);
-		});
-		return formData;
-	}
-
 	touch(x, y, num) {
 		let bx = parseInt(x / this.brickSize);
 		let by = parseInt(y / this.brickSize);
@@ -142,6 +109,13 @@ class FieldMapEditor extends FieldMap {
 	}
 
 	save() {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+
+		canvas.width = this.bricks.width;
+		canvas.height = this.bricks.height;
+		ctx.putImageData(this.bricks, 0, 0);
+		this.map = canvas.toDataURL('image/png');
 		return new MapEntity().save(this);
 	}
 

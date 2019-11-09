@@ -93,6 +93,7 @@ class Actor extends Matter {
 	}
 
 	eject() {
+//console.log('Actor#eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
 		this.isGone = true;
 //		this.x = Number.MIN_SAFE_INTEGER;
 	}
@@ -158,6 +159,8 @@ class Actor extends Matter {
 		if (!this.stage) {
 			return;
 		}
+		let x = this.x - this.stage.map.x;
+		let y = this.y - this.stage.map.y;
 		let mapX = this.stage.map.x;
 		let mapY = this.stage.map.y;
 
@@ -172,40 +175,37 @@ class Actor extends Matter {
 			} else if (areaRight < this.x) {
 				this.x = areaRight;
 			}
-			if (this.y < areaTop) {
-				this.y = areaTop;
-			} else if (areaBottom < this.y) {
-				this.y = areaBottom;
-			}
-			return;
-		}
-		if (this.activityAreaType == Actor.ActivityAreaType.FREEDOM) {
-			let areaLeft = mapX - Product.Instance.width;
-			let areaRight = mapX + Product.Instance.width * 2;
-			let areaTop = mapY - Product.Instance.height;
-			let areaBottom = mapY + Product.Instance.height * 2;
-
-			if (this.x == 0 && this.y == 0) {
-//console.log(this.constructor.name + (this.id ? ':' + this.id : ''));
-//console.log(this.x + '/' + this.y);
-				return;
-			}
-			if (this.x < areaLeft || areaRight < this.x || this.y < areaTop || areaBottom < this.y) {
-console.log('eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
-console.log(this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
-				this.eject();
+			if (this.stage.scroll != Stage.SCROLL.LOOP) {
+				if (this.y < areaTop) {
+					this.y = areaTop;
+				} else if (areaBottom < this.y) {
+					this.y = areaBottom;
+				}
 			}
 			return;
 		}
 		if (this.activityAreaType == Actor.ActivityAreaType.EJECT) {
-			let areaLeft = mapX - this.width;
-			let areaRight = mapX + Product.Instance.width + this.width;
-			let areaTop = mapY - this.height;
-			let areaBottom = mapY + Product.Instance.height + this.height;
-
-			if (this.x < areaLeft || areaRight < this.x || this.y < areaTop || areaBottom < this.y) {
+			if (x < -this.width || Product.Instance.width + this.width < x) {
+				this.eject();
+//console.log('EJECT:' + this.x + '/' + this.y);
+			}
+			if (this.stage.scroll != Stage.SCROLL.LOOP && (y < -this.height || Product.Instance.height + this.height < y)) {
 				this.eject();
 			}
+			return;
+		}
+		// Actor.ActivityAreaType.FREEDOM
+		let areaLeft = -Product.Instance.width;
+		let areaRight = Product.Instance.width * 2;
+		let areaTop = -Product.Instance.height;
+		let areaBottom = Product.Instance.height * 2;
+
+		if (x < areaLeft || areaRight < x) {
+			this.eject();
+//console.log('FREEDOM:' + this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
+		}
+		if (this.stage.scroll != Stage.SCROLL.LOOP && (y < areaTop || areaBottom < y)) {
+			this.eject();
 		}
 	}
 

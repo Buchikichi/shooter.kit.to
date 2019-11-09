@@ -13,7 +13,7 @@ class Repository {
 	}
 
 	isComplete() {
-		return 0 < this.max && this.max == this.loaded;
+		return this.max == 0 || 0 < this.max && this.max == this.loaded;
 	}
 
 	reserve(key, name = null, contentType = '') {

@@ -14,6 +14,7 @@ class Battery extends Enemy {
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 		];
+		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.checkInverse();
 	}
 
