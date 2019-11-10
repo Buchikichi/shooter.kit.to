@@ -110,6 +110,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	effect(target) {
 		let mainVisual = this.map._mainVisual/*this.fg*/;
+		let isLoop = this.scroll == Stage.SCROLL.LOOP;
 
 		if (target instanceof MapVisual) {
 			return;
@@ -117,7 +118,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		if (!this.isMoving) {
 			return;
 		}
-		if (this.scroll == Stage.SCROLL.LOOP) {
+		if (isLoop) {
 			let cy = mainVisual.y + target.y;
 
 			if (cy < 0) {
@@ -133,6 +134,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		if (target.effectV) {
 			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
 		}
+		this.map.checkHit(target, isLoop);
 	}
 
 	effectMap(ship) {
@@ -147,11 +149,11 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 		if (y < top) {
 			ship.y += ship.speed;
-			fg.addProgressH(ship.speed);
+			this.map.addProgressH(ship.speed);
 		}
 		if (bottom < y) {
 			ship.y -= ship.speed;
-			fg.addProgressH(-ship.speed);
+			this.map.addProgressH(-ship.speed);
 		}
 	}
 

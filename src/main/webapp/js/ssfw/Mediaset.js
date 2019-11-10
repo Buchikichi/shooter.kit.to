@@ -54,11 +54,17 @@ class Mediaset {
 	}
 
 	getImage(rec) {
-		let result = null;
 		let key = rec.visualType + ':' + rec.visualSeq;
 		let visual = this.visualDic[key];
 
 		return VisualManager.Instance.dic[visual.id];
+	}
+
+	getImageName(rec) {
+		let key = rec.visualType + ':' + rec.visualSeq;
+		let visual = this.visualDic[key];
+
+		return visual.name;
 	}
 
 	static create(obj) {

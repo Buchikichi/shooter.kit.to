@@ -15,10 +15,10 @@ class EditMain {
 		this.ctx = canvas.getContext('2d');
 		Mediaset.create(meidasetId).then(mediaset => {
 			mediaset.loadVisual();
-			FieldMapEditor.create(mapId).then(fieldMap => {
-				this.fieldMap = fieldMap;
-				this.checkLoading();
-			});
+			return FieldMapEditor.create(mapId);
+		}).then(fieldMap => {
+			this.fieldMap = fieldMap;
+			this.checkLoading();
 		});
 	}
 
@@ -40,28 +40,15 @@ class EditMain {
 
 	checkLoading() {
 		let loading = document.getElementById('loading');
-		let repositories = [VisualManager.Instance/*, AudioMixer.INSTANCE*/];
-		let checkLoading = ()=> {
-			let loaded = 0;
-			let max = 0;
-			let isComplete = true;
 
-			repositories.forEach(repo => {
-				loaded += repo.loaded;
-				max += repo.max;
-				isComplete &= repo.isComplete();
-			});
+		Mediaset.Instance.checkLoading((loaded, max) => {
 			let msg = loaded + '/' + max;
 
 			loading.innerHTML = msg;
-			if (isComplete) {
-				loading.parentNode.removeChild(loading);
-				this.start();
-				return;
-			}
-			setTimeout(checkLoading, 125);
-		};
-		checkLoading();
+		}).then(()=> {
+			loading.parentNode.removeChild(loading);
+			this.start();
+		});
 	}
 
 	start() {
@@ -115,7 +102,32 @@ class EditMain {
 			landform.generateBrick(ctx);
 		});
 		//
+		this.setupImagePanel();
 		this.setupPointingDevice();
+	}
+
+	setupImagePanel() {
+		let imagePanel = document.getElementById('imagePanel');
+		let ul = document.querySelector('ul');
+//      <li>
+//        <a href="#">aa<span class="ui-li-count">*</span></a>
+//        <a href="#"></a>
+//      </li>
+
+		this.fieldMap.mapVisualList.forEach(mapVisual => {
+			let li = document.createElement('li');
+			let anchor = document.createElement('a');
+			let deleteButton = document.createElement('a');
+
+			anchor.href = '#';
+			anchor.textContent = mapVisual.imageName;
+//			anchor.append(mapVisual.image);
+			li.append(anchor);
+			li.append(deleteButton);
+			ul.append(li);
+		});
+		$(ul).listview('refresh');
+		$(ul).sortable();
 	}
 
 	setupPointingDevice() {

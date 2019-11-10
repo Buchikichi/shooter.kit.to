@@ -36,6 +36,7 @@ class Actor extends Matter {
 		this.effectV = false;
 		this.hitPoint = 1;
 		this.activityAreaType = Actor.ActivityAreaType.FREEDOM;
+		this.collidingWallType = Actor.CollidingWallType.THROUGH;
 
 		this.absorbed = false;
 		this.absorbedTarget = null;
@@ -417,4 +418,11 @@ Actor.ActivityAreaType = {
 	FREEDOM: 0,
 	RESTRICTION: 1,
 	EJECT: 2,
+};
+Actor.CollidingWallType = {
+	THROUGH: 0,
+	BOUNCE: 1,
+	SMASH: 2,
+	CRUSH: 4,
+	SMASH_CRUSH: 6,
 };

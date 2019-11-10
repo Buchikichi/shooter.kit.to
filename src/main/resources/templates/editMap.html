@@ -7,6 +7,7 @@
 <link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script type="text/javascript" src="/js/implementor-min.js"></script>
 <script type="text/javascript" src="/js/editMap-min.js"></script>
@@ -27,6 +28,16 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 }
+#imagePanel li00 {
+	background-color: black;
+}
+#imagePanel a:first-child {
+	background-color: transparent;
+}
+#imagePanel li img {
+	width: auto;
+	height: auto;
+}
 </style>
 </head>
 
@@ -39,6 +50,7 @@
     <div data-role="footer"  data-position="fixed">
       <div id="panel">
         <fieldset data-role="controlgroup" data-type="horizontal">
+          <a href="#imagePanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Images</a>
           <button disabled="disabled" data-theme="b">Scale</button>
           <label>1<input type="radio" name="scale" value="1"/></label>
           <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
@@ -50,6 +62,18 @@
           <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
       </div>
+    </div>
+    <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
+      <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
+        <li data-role="list-divider" class="ui-state-disabled">Images</li>
+        <li>
+          <a href="#">
+            <img src="/visual/src/46d38a7b-d5d2-4a59-adbc-28166dadbf41"/>
+            <span class="ui-li-count">*</span>
+          </a>
+          <a href="#"></a>
+        </li>
+      </ul>
     </div>
     <div id="attrPanel" data-role="panel" data-position="right" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data">

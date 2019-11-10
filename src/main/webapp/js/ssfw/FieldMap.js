@@ -16,23 +16,20 @@ class FieldMap extends Matter {
 	}
 
 	reset() {
-		let img = new Image();
-
-		img.onload = ()=> {
-			let canvas = document.createElement('canvas');
-			let ctx = canvas.getContext('2d');
-
-			canvas.width = img.width;
-			canvas.height = img.height;
-			ctx.drawImage(img, 0, 0);
-			this.bricks = ctx.getImageData(0, 0, img.width, img.height);
-		};
-		img.src = this.map;
+		this.bricks = new Bricks(this);
 		this.mapVisualList.forEach(mapVisual => mapVisual.reset());
+	}
+
+	checkHit(target, isLoop) {
+		target.walled = this.bricks.isHit(target, isLoop);
 	}
 
 	setProgress(progress) {
 		this.mapVisualList.forEach(mapVisual => mapVisual.setProgress(progress));
+	}
+
+	addProgressH(delta) {
+		this.mapVisualList.forEach(mapVisual => mapVisual.addProgressH(delta));
 	}
 
 	/**
@@ -80,7 +77,7 @@ console.log('this.mainSeq:' + this.mainSeq);
 			if (mapVisual.visualType == Visual.TYPE.Background) {
 				countBG++;
 			}
-			mapVisual.map = this;
+			mapVisual._fieldMap = this;
 			mapVisual.isMain = (ix == this.mainSeq);
 			visualList.push(MapVisual.create(mapVisual));
 		});
@@ -113,7 +110,10 @@ console.log('this.mainSeq:' + this.mainSeq);
 class MapVisual extends Matter {
 	constructor() {
 		super();
+		this._img = null;
+		this._imgName = null;
 		this.isMain = false;
+		this.canvas = null;
 		this.pattern = null;
 		this.alpha = 1;
 		this.blinkDir = -1;
@@ -123,12 +123,23 @@ this.effectV = 0;
 	}
 
 	reset() {
+		this.canvas = null;
 		this.pattern = null;
 		this.progressH = 0;
 	}
 
 	get image() {
-		return Mediaset.Instance.getImage(this);
+		if (!this._img) {
+			this._img = Mediaset.Instance.getImage(this);
+		}
+		return this._img;
+	}
+
+	get imageName() {
+		if (!this._imgName) {
+			this._imgName = Mediaset.Instance.getImageName(this);
+		}
+		return this._imgName;
 	}
 
 	setProgress(progress) {
@@ -146,15 +157,35 @@ this.effectV = 0;
 	}
 
 	getPattern(ctx) {
+		let sourceImage = this.image;
+
+		if (this.canvas == null) {
+			this.canvas = document.createElement('canvas');
+			this.canvas.width = sourceImage.width;
+			this.canvas.height = sourceImage.height;
+			this.canvas.getContext('2d').drawImage(sourceImage, 0, 0);
+		}
 		if (this.pattern == null) {
-			this.pattern = ctx.createPattern(this.image, 'repeat');
+			this.pattern = ctx.createPattern(this.canvas, 'repeat');
 		}
 		return this.pattern;
 	}
 
+	smash(matter) {
+		let ctx = this.canvas.getContext('2d');
+		let brickSize = this._fieldMap.brickSize;
+		let tx = parseInt(matter.x / brickSize) * brickSize;
+		let ty = parseInt(matter.y / brickSize) * brickSize;
+
+//		ctx.fillStyle = 'yellow';
+//		ctx.fillRect(tx, ty, brickSize, brickSize);
+		ctx.clearRect(tx, ty, brickSize, brickSize);
+		this.pattern = null;
+	}
+
 	draw(ctx) {
 		ctx.save();
-		ctx.translate(this.x + this.map.x, this.y + this.map.y);
+		ctx.translate(this.x + this._fieldMap.x, this.y + this._fieldMap.y);
 		ctx.globalAlpha = this.alpha;
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);

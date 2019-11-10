@@ -9,6 +9,7 @@ class Shot extends Actor {
 		this.speed = 6;
 		this.size = 2;
 		this.activityAreaType = Actor.ActivityAreaType.EJECT;
+		this.collidingWallType = Actor.CollidingWallType.SMASH_CRUSH;
 		this.fillStyle = 'rgba(255, 255, 0, 0.7)';
 
 		let pan = Product.Instance.calcPan(this);
@@ -17,16 +18,5 @@ class Shot extends Actor {
 
 	fate() {
 		this.eject();
-	}
-
-	move(target) {
-		super.move(target);
-		if (this.walled) {
-			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
-				Field.Instance.landform.smashWall(this);
-			}
-			this.fate();
-			return;
-		}
 	}
 }

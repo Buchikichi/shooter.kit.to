@@ -37,60 +37,14 @@ class FieldMapEditor extends FieldMap {
 
 	setProgress(progress) {
 		super.setProgress(progress);
-		let mainX = this._mainVisual.x;
-		let mainY = this._mainVisual.y;
-
-		this.mapVisualList.forEach(mapVisual => {
-			mapVisual.x -= mainX;
-			mapVisual.y += mainY;
-		});
+		this._mainVisual.x = 0;
+		this._mainVisual.y = 0;
 		this.progress = progress;
-	}
-
-	drawBricks(ctx) {
-		let bw = this.bricks.width * 4;
-		let brick = this.bricks.data;
-		let brickWidth = this.brickSize * .9;
-		let halfBrick = this.brickSize / 2;
-		let col = this.col;
-		let rev = 256 - this.col;
-		let minLeft = this.progress / this.scale - this.brickSize;
-
-		ctx.save();
-		ctx.strokeStyle = 'rgba(255, 255, 255, .3)';
-		ctx.fillStyle = 'rgba(0, 0, 0, .3)';
-		for (let y = 0; y < this.bricks.height; y++) {
-			let ix = y * bw;
-			let top = y * this.brickSize;
-
-			for (let x = 0; x < bw; x++, ix += 4) {
-				let left = x * this.brickSize;
-				let brickNum = brick[ix + 2];
-
-				if (left < minLeft) {
-					continue;
-				}
-				if (brickNum == 254) {
-					let ax = left + halfBrick;
-					let ay = top + halfBrick;
-	
-					ctx.beginPath();
-					ctx.arc(ax, ay, brickWidth / 2, 0, Math.PI2, false);
-					ctx.fill();
-					ctx.stroke();
-//					ctx.strokeRect(left, top, brickWidth, brickWidth);
-				} else if (0 < brickNum) {
-					ctx.fillRect(left, top, brickWidth, brickWidth);
-					ctx.strokeRect(left, top, brickWidth, brickWidth);
-				}
-			}
-		}
-		ctx.restore();
 	}
 
 	draw(ctx) {
 		super.draw(ctx);
-		this.drawBricks(ctx);
+		this.bricks.draw(ctx);
 		this.col += this.colDir * 4;
 		if (this.col <= 0 || 255 <= this.col) {
 			this.colDir *= -1;
@@ -104,7 +58,7 @@ class FieldMapEditor extends FieldMap {
 
 		ctx.save();
 		ctx.strokeStyle = 'white';
-		ctx.strokeText('x:' + x, x, 20);
+		ctx.strokeText('x:' + this.x + '/' + this.y, x, 20);
 		ctx.restore();
 	}
 
