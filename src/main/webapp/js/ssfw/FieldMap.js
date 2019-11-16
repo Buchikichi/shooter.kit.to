@@ -4,6 +4,7 @@
 class FieldMap extends Matter {
 	constructor() {
 		super();
+		this.progressH = 0;
 		this._mainVisual = null;
 	}
 
@@ -17,11 +18,20 @@ class FieldMap extends Matter {
 
 	reset() {
 		this.bricks = new Bricks(this);
+		this.progressH = 0;
 		this.mapVisualList.forEach(mapVisual => mapVisual.reset());
 	}
 
-	checkHit(target, isLoop) {
-		target.walled = this.bricks.isHit(target, isLoop);
+	scanFloor(actor) {
+		return this.bricks.scanFloor(actor);
+	}
+
+	getHorizontalAngle(actor) {
+		return this.bricks.getHorizontalAngle(actor);
+	}
+
+	checkHit(target) {
+		target.walled = this.bricks.isHit(target);
 	}
 
 	setProgress(progress) {
@@ -29,7 +39,23 @@ class FieldMap extends Matter {
 	}
 
 	addProgressH(delta) {
-		this.mapVisualList.forEach(mapVisual => mapVisual.addProgressH(delta));
+		let stage = this._stage;
+
+		this.progressH += delta;
+		if (stage.scroll == Stage.SCROLL.ON) {
+			let h = this._mainVisual.image.height;
+			let min = -h + Product.Instance.height;
+
+			if (0 < this.progressH) {
+				this.progressH = 0;
+				return false;
+			}
+			if (this.progressH < min) {
+				this.progressH = min;
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -125,7 +151,6 @@ this.effectV = 0;
 	reset() {
 		this.canvas = null;
 		this.pattern = null;
-		this.progressH = 0;
 	}
 
 	get image() {
@@ -144,16 +169,16 @@ this.effectV = 0;
 
 	setProgress(progress) {
 		let h = this.image.height;
+		let stage = this._fieldMap._stage;
 
 		this.x = progress * Math.cos(this.radian) * this.speed;
-		this.y = (progress * Math.sin(this.radian) * this.speed + this.progressH) % h;
-		if (0 <= this.y) {
+		this.y = (progress * Math.sin(this.radian) * this.speed + this._fieldMap.progressH) % h;
+		if (stage.scroll == Stage.SCROLL.LOOP && 0 < this.y) {
 			this.y -= h;
 		}
-	}
-
-	addProgressH(delta) {
-		this.progressH += delta;
+		if ((stage.scroll == Stage.SCROLL.OFF | stage.scroll == Stage.SCROLL.TOP) && 0 < this.y) {
+			this.y = 0;
+		}
 	}
 
 	getPattern(ctx) {

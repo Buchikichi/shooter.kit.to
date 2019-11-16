@@ -11,6 +11,14 @@ class Enemy extends Actor {
 		this.chamberList = [new Chamber(Bullet, Enemy.TRIGGER_CYCLE)];
 	}
 
+	checkInverse() {
+		let map = Product.Instance.stage.map;
+		let y = this.y + this.hH + map.brickSize / 2;
+		let src = Object.assign({}, this, {y:y});
+
+		this.isInverse = !map.bricks.isHit(src);
+	}
+
 	move(target) {
 		if (this.routine) {
 			let mov = this.routine[this.routineIx];

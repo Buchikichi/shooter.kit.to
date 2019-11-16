@@ -12,15 +12,7 @@ class Hatch extends Enemy {
 		this.children = 0;
 		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.anim = new Animator('enemy.hatch', Animator.TYPE.Y, 1, 2);
-		this.isInverse = false;
-		let field = Field.Instance;
-		if (field && field.landform) {
-			let landform = field.landform;
-			let src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
-
-			landform.hitTest(src);
-			this.isInverse = !src.walled;
-		}
+		this.checkInverse();
 	}
 
 	move(target) {

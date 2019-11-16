@@ -9,17 +9,13 @@ class Bullet extends Actor {
 		this.speed = 2;
 		this.anim = new Animator('bullet');
 		this.activityAreaType = Actor.ActivityAreaType.EJECT;
-		this.collidingWallType = Actor.CollidingWallType.CRUSH;
+		this.collidingWallType = Actor.CollidingWallType.EJECT;
 		this.recalculation();
 	}
 
 	move(target) {
 		super.move(target);
 		this.radian += Bullet.RAD_STEP;
-	}
-
-	fate() {
-		this.isGone = true;
 	}
 }
 Bullet.RAD_STEP = Math.PI / 180;

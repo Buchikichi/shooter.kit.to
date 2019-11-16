@@ -16,15 +16,15 @@ class Bricks {
 		this.fieldMap = fieldMap;
 	}
 
-	isHit(actor, isLoop) {
+	getIndex(actor) {
 		if (!this.bricks) {
-			return;
+			return -1;
 		}
 		let brickSize = this.fieldMap.brickSize;
 		let x = parseInt(actor.x / brickSize);
 		let y = parseInt(actor.y / brickSize);
 
-		if (isLoop) {
+		if (actor._stage && actor._stage.isLoop) {
 			if (y < 0) {
 				y += this.bricks.height;
 			}
@@ -33,12 +33,95 @@ class Bricks {
 			}
 		}
 		if (x < 0 || this.bricks.width < x || y < 0 || this.bricks.height < y) {
+			return -1;
+		}
+		return (y * this.bricks.width + x) * 4;
+	}
+
+	getBrick(actor) {
+		let ix = this.getIndex(actor);
+
+		if (ix == -1) {
+			return 0;
+		}
+		return this.bricks.data[ix + 2];
+	}
+
+	scanFloor(actor) {
+		if (!this.bricks) {
+			return;
+		}
+		let brickSize = this.fieldMap.brickSize;
+		let y = actor.y;
+		let type = this.getBrick(actor);
+		let sign = actor.gravity < 0 ? -1 : 1;
+
+		if (0 < type) {
+			y = Math.floor(actor.y / brickSize) * brickSize;
+			while (0 < type) {
+				y -= brickSize * sign;
+				let temp = {x:actor.x, y:y};
+				type = this.getBrick(temp);
+			}
+			y += brickSize * sign;
+		} else {
+			y = Math.floor(actor.y / brickSize) * brickSize;
+			if (sign < 0) {
+				// top
+				while (0 < y && !type) {
+					y -= brickSize;
+					let temp = {x:actor.x, y:y};
+
+					type = this.getBrick(temp);
+				}
+				if (!type) {
+					// abyss
+					y = -actor.height - brickSize;
+				}
+			} else {
+				// bottom
+				while (y < actor._stage.height && !type) {
+					y += brickSize;
+					let temp = {x:actor.x, y:y};
+
+					type = this.getBrick(temp);
+				}
+				if (!type) {
+					// abyss
+					y = actor._stage.height + actor.height + brickSize;
+				}
+			}
+		}
+		return y;
+	}
+
+	getHorizontalAngle(actor) {
+		let brickSize = this.fieldMap.brickSize;
+		let y = actor.y - brickSize * 2;
+		let left = Object.assign({}, actor, {x:actor.x - brickSize, y:y});
+		let right = Object.assign({}, actor, {x:actor.x + brickSize, y:y});
+		let leftY = this.scanFloor(left);
+		let rightY = this.scanFloor(right);
+
+		return Math.atan2(rightY - leftY, actor.width);
+	}
+
+	isHit(actor) {
+		if (!this.bricks) {
 			return false;
 		}
-		let ix = (y * this.bricks.width + x) * 4;
+		let ix = this.getIndex(actor);
+
+		if (ix == -1) {
+			return false;
+		}
+		//
 		let type = this.bricks.data[ix + 2];
 
 		if (0 < type) {
+			if (actor.collidingWallType & Actor.CollidingWallType.EJECT) {
+				actor.eject();
+			}
 			if (actor.collidingWallType & Actor.CollidingWallType.CRUSH) {
 				actor.fate();
 			}

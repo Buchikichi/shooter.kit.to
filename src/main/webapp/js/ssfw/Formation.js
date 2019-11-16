@@ -43,6 +43,7 @@ class Formation extends Actor {
 
 	move(target) {
 		super.move(target);
+		this.isGone = this.enemies.filter(c => !c.isGone).length == 0;
 		if (this.enemies.length <= this.count) {
 			if (!this.isGone && this.isDestroyed()) {
 let capsules = [SpeedupCapsule, MissileCapsule];

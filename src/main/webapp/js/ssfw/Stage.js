@@ -43,6 +43,10 @@ class Stage {
 		return this.map._mainVisual.image.height;
 	}
 
+	get isLoop() {
+		return this.scroll == Stage.SCROLL.LOOP;
+	}
+
 	getGround(id) {
 		return this.viewDic[id];
 	}
@@ -110,7 +114,6 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	effect(target) {
 		let mainVisual = this.map._mainVisual/*this.fg*/;
-		let isLoop = this.scroll == Stage.SCROLL.LOOP;
 
 		if (target instanceof MapVisual) {
 			return;
@@ -118,7 +121,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		if (!this.isMoving) {
 			return;
 		}
-		if (isLoop) {
+		if (this.isLoop) {
 			let cy = mainVisual.y + target.y;
 
 			if (cy < 0) {
@@ -134,7 +137,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		if (target.effectV) {
 			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
 		}
-		this.map.checkHit(target, isLoop);
+		this.map.checkHit(target);
 	}
 
 	effectMap(ship) {
@@ -147,13 +150,17 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let top = qt;
 		let bottom = this.product.height - qt;
 
-		if (y < top) {
-			ship.y += ship.speed;
-			this.map.addProgressH(ship.speed);
-		}
-		if (bottom < y) {
-			ship.y -= ship.speed;
-			this.map.addProgressH(-ship.speed);
+		if (this.scroll & (Stage.SCROLL.ON | Stage.SCROLL.LOOP)) {
+			if (y < top) {
+				if (this.map.addProgressH(ship.speed)) {
+					ship.y += ship.speed;
+				}
+			}
+			if (bottom < y) {
+				if (this.map.addProgressH(-ship.speed)) {
+					ship.y -= ship.speed;
+				}
+			}
 		}
 	}
 
@@ -206,7 +213,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				} else {
 					enemy = new reserve.type(reserve.x, reserve.y);
 				}
-				enemy.stage = this;
+				enemy._stage = this;
 				result.push(enemy);
 			}
 		});
@@ -285,6 +292,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	init() {
 		this.map = FieldMap.create(this.map);
+		this.map._stage = this;
 this.view = [];//Stage.createViewList(this.map);
 this.view.forEach(ground => {
 	ground.stage = this;
@@ -421,16 +429,6 @@ class StageFg extends StageView {
 		}
 		this.canvas = this.createCanvas();
 		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
-	}
-
-	smashWall(target) {
-		let tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-		let ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-		let ctx = this.canvas.getContext('2d');
-
-		ty %= this.height;
-		ctx.clearRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
-		this.pattern = ctx.createPattern(this.canvas, 'repeat');
 	}
 }
 

@@ -16,7 +16,7 @@ class Bouncer extends Enemy {
 
 	move(target) {
 		let result = super.move(target);
-		let x = this.x - this.stage.map.x;
+		let x = this.x - this._stage.map.x;
 
 		if (this.shuttle && (x < 0 || Product.Instance.width + this.width < x)) {
 			this.dir = Math.trim(this.dir + Math.PI);

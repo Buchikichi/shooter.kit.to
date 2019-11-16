@@ -18,18 +18,6 @@ class Battery extends Enemy {
 		this.checkInverse();
 	}
 
-	checkInverse() {
-		let field = Field.Instance;
-
-		if (field && field.landform) {
-			let landform = field.landform;
-			let src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
-
-			landform.hitTest(src);
-			this.isInverse = !src.walled;
-		}
-	}
-
 	drawNormal(ctx) {
 		if (this.isInverse) {
 			if (this.radian < -Math.SQ) {

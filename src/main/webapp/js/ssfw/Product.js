@@ -49,8 +49,8 @@ if (this.ship) {
 		// Remove MapVisual of previous stage.
 		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
 		this.performersList.forEach(actor => {
-			actor.x -= actor.stage.map.x;
-			actor.y -= actor.stage.map.y;
+			actor.x -= actor._stage.map.x;
+			actor.y -= actor._stage.map.y;
 		});
 if (this.ship) {
 	console.log('map:' + this.stage.map.x + '/' + this.stage.map.y);
@@ -66,7 +66,7 @@ if (this.ship) {
 		this.performersList.forEach(actor => {
 			actor.x += this.stage.map.x;
 			actor.y += this.stage.map.y;
-			actor.stage = this.stage
+			actor._stage = this.stage
 		});
 		// Add MapVisual
 		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
@@ -85,7 +85,7 @@ if (this.ship) {
 
 	_reset() {
 		this.ship = new Ship(-400, 100);
-		this.ship.stage = this.stage;
+		this.ship._stage = this.stage;
 		this.ship.reset();
 		this.ship.enter();
 		this.performersList = [this.ship];
@@ -152,11 +152,10 @@ if (this.ship) {
 			let child = actor.move(ship);
 
 			if (child instanceof Array) {
-				child.forEach(c => {c.stage = this.stage; validActors.push(c);});
+				child.forEach(c => {c._stage = this.stage; validActors.push(c);});
 			}
 			this.stage.effect(actor);
 //			Field.Instance.landform.effect(actor);
-//			Field.Instance.landform.hitTest(actor);
 			validActors.push(actor);
 			if (actor.explosion && actor.score) {
 				score += actor.score;
@@ -203,9 +202,9 @@ if (this.ship) {
 		ctx.strokeStyle = 'white';
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actors[actors.length - 1].constructor.name: ''), x, y += 20);
 		ctx.strokeText('progress:' + parseInt(this.stage.progress) + '/' + parseInt(mainVisual.progressH), x, y += 20);
-		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + parseInt(mainVisual.y), x, y += 20);
+		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + mainVisual.y, x, y += 20);
 		if (this.ship) {
-			let fg = this.ship.stage.map;
+			let fg = this.ship._stage.map;
 			let shipX = parseInt(this.ship.x/* - fg.x*/);
 			let shipY = parseInt(this.ship.y + mainVisual.y);
 			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);

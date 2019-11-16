@@ -7,7 +7,7 @@ class Rewinder extends Chain {
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.hasBounds = false;
 		this.ratio = Rewinder.RATIO_MAX;
-		this.delta = -.8;
+		this.delta = -.55;
 		this.anim = new Animator('material.cascade');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)

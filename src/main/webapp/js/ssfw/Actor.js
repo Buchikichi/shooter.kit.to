@@ -136,7 +136,7 @@ class Actor extends Matter {
 	reactY(y) {
 		this.y = y;
 		this.dy *= -this.reaction;
-		this.radian = Field.Instance.landform.getHorizontalAngle(this);
+		this.radian = this._stage.map.getHorizontalAngle(this);
 	}
 
 	trigger(target, force = false) {
@@ -157,13 +157,13 @@ class Actor extends Matter {
 	}
 
 	checkActivityArea() {
-		if (!this.stage) {
+		if (!this._stage) {
 			return;
 		}
-		let x = this.x - this.stage.map.x;
-		let y = this.y - this.stage.map.y;
-		let mapX = this.stage.map.x;
-		let mapY = this.stage.map.y;
+		let x = this.x - this._stage.map.x;
+		let y = this.y - this._stage.map.y;
+		let mapX = this._stage.map.x;
+		let mapY = this._stage.map.y;
 
 		if (this.activityAreaType == Actor.ActivityAreaType.RESTRICTION) {
 			let areaLeft = mapX + this.hW;
@@ -176,7 +176,7 @@ class Actor extends Matter {
 			} else if (areaRight < this.x) {
 				this.x = areaRight;
 			}
-			if (this.stage.scroll != Stage.SCROLL.LOOP) {
+			if (this._stage.scroll != Stage.SCROLL.LOOP) {
 				if (this.y < areaTop) {
 					this.y = areaTop;
 				} else if (areaBottom < this.y) {
@@ -190,7 +190,7 @@ class Actor extends Matter {
 				this.eject();
 //console.log('EJECT:' + this.x + '/' + this.y);
 			}
-			if (this.stage.scroll != Stage.SCROLL.LOOP && (y < -this.height || Product.Instance.height + this.height < y)) {
+			if (this._stage.scroll != Stage.SCROLL.LOOP && (y < -this.height || Product.Instance.height + this.height < y)) {
 				this.eject();
 			}
 			return;
@@ -205,7 +205,7 @@ class Actor extends Matter {
 			this.eject();
 //console.log('FREEDOM:' + this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
 		}
-		if (this.stage.scroll != Stage.SCROLL.LOOP && (y < areaTop || areaBottom < y)) {
+		if (this._stage.scroll != Stage.SCROLL.LOOP && (y < areaTop || areaBottom < y)) {
 			this.eject();
 		}
 	}
@@ -229,7 +229,7 @@ class Actor extends Matter {
 			this.y += Math.sin(this.dir) * this.speed;
 		}
 		if (this.gravity != 0) {
-			let y = Field.Instance.landform.scanFloor(this);
+			let y = this._stage.map.scanFloor(this);
 			let lift = false;
 
 			if (this.gravity < 0) {
@@ -250,7 +250,7 @@ class Actor extends Matter {
 			if (lift) {
 				let diff = Math.abs(this.y - y);
 
-				if (Landform.BRICK_WIDTH * 2 < diff) {
+				if (this._stage.map.brickSize * 2 < diff) {
 					this.reactX(y);
 				} else {
 					this.reactY(y);
@@ -421,8 +421,9 @@ Actor.ActivityAreaType = {
 };
 Actor.CollidingWallType = {
 	THROUGH: 0,
-	BOUNCE: 1,
-	SMASH: 2,
-	CRUSH: 4,
-	SMASH_CRUSH: 6,
+	SMASH: 1,
+	BOUNCE: 2,
+	EJECT: 4,
+	CRUSH: 8,
+	SMASH_CRUSH: 1 | 8,
 };
