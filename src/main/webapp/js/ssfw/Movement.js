@@ -24,8 +24,6 @@ Gizmo.DEST = {
 };
 
 Gizmo.prototype.tick = function(src, target) {
-	let landform = Field.Instance.landform;
-
 	if (this.type == Gizmo.TYPE.FIXED) {
 		if (this.destination == Gizmo.DEST.ROTATE) {
 			src.radian = src.dir;

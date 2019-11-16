@@ -14,16 +14,6 @@ class Missile extends Actor {
 		this.fillStyle = 'rgba(200, 200, 255, 0.6)';
 	}
 
-//	move(target) {
-//		super.move(target);
-//		if (this.walled) {
-//			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
-//				Field.Instance.landform.smashWall(this);
-//			}
-//			this.fate();
-//		}
-//	}
-
 	reactX(y) {
 		super.reactX(y);
 		this.shuttle--;

@@ -12,15 +12,12 @@ class FieldMapEditor extends FieldMap {
 	}
 
 	touch(x, y, num) {
-		let bx = parseInt(x / this.brickSize);
-		let by = parseInt(y / this.brickSize);
-		let ix = by * this.bricks.width * 4 + bx * 4;
-		let brick = this.bricks.data;
+		let ix = this.bricks.getIndex({x:x, y:y});
+		let brick = this.bricks.bricks.data;
 		let lastNum = brick[ix + 2];
 
-//console.log(lastNum + '/' + num);
 		if (this.currentBrick != null) {
-			brick[ix + 2] = this.currentBrick;
+			this.bricks.putBrick(ix, this.currentBrick);
 			return;
 		}
 		if (lastNum == num) {
@@ -28,7 +25,7 @@ class FieldMapEditor extends FieldMap {
 		} else {
 			this.currentBrick = num;
 		}
-		brick[ix + 2] = this.currentBrick;
+		this.bricks.putBrick(ix, this.currentBrick);
 	}
 
 	leave() {
@@ -65,10 +62,11 @@ class FieldMapEditor extends FieldMap {
 	save() {
 		let canvas = document.createElement('canvas');
 		let ctx = canvas.getContext('2d');
+		let bricks = this.bricks.bricks;
 
-		canvas.width = this.bricks.width;
-		canvas.height = this.bricks.height;
-		ctx.putImageData(this.bricks, 0, 0);
+		canvas.width = bricks.width;
+		canvas.height = bricks.height;
+		ctx.putImageData(bricks, 0, 0);
 		this.map = canvas.toDataURL('image/png');
 		return new MapEntity().save(this);
 	}

@@ -168,13 +168,13 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let result = [];
 		let fg = this.fg;
 		let gx = -fg.x;
-		let rear = Math.round(gx / Landform.BRICK_WIDTH);
+		let rear = Math.round(gx / this.map.brickSize);
 
 		if (rear == this.lastScan) {
 			return result;
 		}
 		//
-		let front = Math.round((gx + this.product.width) / Landform.BRICK_WIDTH);
+		let front = Math.round((gx + this.product.width) / this.map.brickSize);
 		let newList = [];
 
 		this.eventList.forEach(rec => {
@@ -201,8 +201,8 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				return;
 			}
 			// spawn
-			let x = gx + (isFront ? this.product.width + Landform.BRICK_WIDTH * 1.5 : 0);
-			let y = (rec.h + 1) * Landform.BRICK_WIDTH;
+			let x = gx + (isFront ? this.product.width + this.map.brickSize * 1.5 : 0);
+			let y = (rec.h + 1) * this.map.brickSize;
 			let reserve = Enemy.assign(rec.number, x, y);
 
 			if (reserve != null) {

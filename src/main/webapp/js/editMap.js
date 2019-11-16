@@ -108,26 +108,57 @@ class EditMain {
 
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
+		let mapName = document.getElementById('mapName');
+		let brickSize = document.getElementById('brickSize');
 		let ul = document.querySelector('ul');
+		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
 //      <li>
 //        <a href="#">aa<span class="ui-li-count">*</span></a>
 //        <a href="#"></a>
 //      </li>
 
+		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
+		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
 		this.fieldMap.mapVisualList.forEach(mapVisual => {
 			let li = document.createElement('li');
 			let anchor = document.createElement('a');
+			let span = document.createElement('span');
 			let deleteButton = document.createElement('a');
 
+			span.textContent = mapVisual.imageName;
 			anchor.href = '#';
-			anchor.textContent = mapVisual.imageName;
 //			anchor.append(mapVisual.image);
+			anchor.append(span);
+			anchor.addEventListener('dblclick', ()=> this.openMapVisualPopup(mapVisual));
 			li.append(anchor);
 			li.append(deleteButton);
-			ul.append(li);
+			li.classList.add('sortable-item');
+//			ul.append(li);
+			ul.insertBefore(li, fg)
 		});
 		$(ul).listview('refresh');
-		$(ul).sortable();
+		$(ul).sortable({
+			//cancel: '.sortable-item',
+			items: '> li.sortable-item',
+			change: (ev, ui) => {
+console.log('sortable#change');
+				$(ul).listview('refresh');
+			}
+		});
+	}
+
+	openMapVisualPopup(mapVisual) {
+		let mapVisualPopup = document.getElementById('mapVisualPopup');
+		let repeat = mapVisualPopup.querySelector('[name=repeat]');
+		let radian = mapVisualPopup.querySelector('[name=radian]');
+		let speed = mapVisualPopup.querySelector('[name=speed]');
+		let blink = mapVisualPopup.querySelector('[name=blink]');
+
+		repeat.value = mapVisual.repeat;
+		radian.value = mapVisual.radian;
+		speed.value = mapVisual.speed;
+		blink.value = mapVisual.blink;
+		$(mapVisualPopup).popup('open');
 	}
 
 	setupPointingDevice() {
@@ -137,7 +168,7 @@ class EditMain {
 			if (!isValid) {
 				return;
 			}
-console.log('scrollTop:' + document.body.scrollTop);
+//console.log('scrollTop:' + document.body.scrollTop);
 			let x = (this.view.scrollLeft + e.clientX) / this.scale;
 			let y = (e.pageY) / this.scale;
 

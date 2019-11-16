@@ -173,6 +173,9 @@ this.effectV = 0;
 
 		this.x = progress * Math.cos(this.radian) * this.speed;
 		this.y = (progress * Math.sin(this.radian) * this.speed + this._fieldMap.progressH) % h;
+		if (!stage) {
+			return;
+		}
 		if (stage.scroll == Stage.SCROLL.LOOP && 0 < this.y) {
 			this.y -= h;
 		}

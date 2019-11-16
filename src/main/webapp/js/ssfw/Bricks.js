@@ -47,6 +47,11 @@ class Bricks {
 		return this.bricks.data[ix + 2];
 	}
 
+	putBrick(ix, type) {
+		this.bricks.data[ix + 2] = type;
+		this.bricks.data[ix + 3] = type ? 255 : 0;
+	}
+
 	scanFloor(actor) {
 		if (!this.bricks) {
 			return;
