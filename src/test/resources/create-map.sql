@@ -10,6 +10,7 @@ CREATE TABLE map(
 	description text NOT NULL,
 	map text,
 	brick_size integer NOT NULL,
+	rebirth integer NOT NULL DEFAULT 0,
 	main_seq integer NOT NULL,
 
 	theme varchar(36),
@@ -62,4 +63,5 @@ COMMENT ON COLUMN map.updated IS '更新日';
 
 ALTER TABLE stage RENAME TO map;
 ALTER TABLE map ADD brick_size integer NOT NULL DEFAULT 1;
+ALTER TABLE map ADD rebirth integer NOT NULL DEFAULT 0;
 ALTER TABLE map ADD main_seq integer NOT NULL DEFAULT 0;

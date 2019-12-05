@@ -35,6 +35,7 @@ public class Map {
 	private String description;
 	private String map;
 	private int mainSeq;
+	private int rebirth;
 	private int brickSize;
 
 	private String theme;

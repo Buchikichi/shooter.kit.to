@@ -194,6 +194,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 
 		saveButton.addEventListener('click', ()=> this.saveMap());
 		//
+//		$('#frame').draggable();
 		this.setupPointingDevice();
 	}
 

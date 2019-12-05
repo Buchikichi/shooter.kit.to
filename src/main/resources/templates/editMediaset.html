@@ -68,7 +68,10 @@
         <option value="7">ending</option>
       </select>
     </fieldset>
-    <ul id="listView" data-role="listview" data-filter="true"></ul>
+    <ul id="listView" data-role="listview" data-filter="true" th:fragment="listview">
+      <li>
+      </li>
+    </ul>
   </div>
   <div data-role="footer" data-position="fixed">
     <div data-role="navbar" data-iconpos="left">
@@ -153,8 +156,9 @@
 <!--
       <label for="imageThumb">Thumbnail:</label><input type="file" id="imageThumb" name="thumb"/>
 -->
-      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
+      <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
       <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
+      <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid">Create map</button>
     </form>
     <div class="message"></div>
   </div>

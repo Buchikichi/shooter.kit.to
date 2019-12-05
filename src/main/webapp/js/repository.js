@@ -104,7 +104,8 @@ console.log(ui.position);
 
 			event.preventDefault();
 			$.mobile.loading('show', {text: 'Save...', textVisible: true});
-			this.entity.save(formData).then(data => {
+console.log('RepositoryManager: saveResource');
+			this.entity.saveResource(formData).then(data => {
 				$.mobile.loading('hide');
 				if (data.ok) {
 					$(this.panel).panel('close');

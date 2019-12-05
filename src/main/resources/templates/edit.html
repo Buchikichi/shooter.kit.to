@@ -7,6 +7,7 @@
 <link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script type="text/javascript" src="/js/implementor-min.js"></script>
 <script type="text/javascript" src="/js/edit-min.js"></script>
@@ -46,7 +47,9 @@
 <body>
   <div data-role="page">
     <div id="view">
-      <canvas id="canvas"></canvas>
+      <div id="frame">
+        <canvas id="canvas"></canvas>
+      </div>
       <div id="loading"></div>
     </div>
     <div data-role="footer"  data-position="fixed">
@@ -60,14 +63,107 @@
         </fieldset>
       </div>
     </div>
-    <div id="attrPanel" data-role="panel" data-position="right" data-display="overlay">
+    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data">
         <input id="productId" type="hidden" th:value="${detail.product.id}"/>
         <input id="width" type="hidden" th:value="${detail.product.width}"/>
         <input id="height" type="hidden" th:value="${detail.product.height}"/>
         <input id="mediasetId" type="hidden" th:value="${detail.product.mediaset.id}"/>
         <input id="detailId" type="hidden" th:value="${detail.id}"/>
-        <div id="inputBox"></div>
+        <label>Stage name:
+          <input id="stageName" type="text" required="required" th:value="${detail.map.name}"/>
+        </label>
+        <label>V-Scroll type:
+          <select name="roll" data-mini="true" th:value="${detail.roll}">
+            <option value="0">OFF</option>
+            <option value="1">ON</option>
+            <option value="2">LOOP</option>
+            <option value="4">TOP</option>
+            <option value="8">BOTTOM</option>
+          </select>
+        </label>
+        <label>H-Repeat:
+          <input id="repeat" type="number" min="1" value="4"/>
+        </label>
+        <div data-role="collapsibleset">
+          <div data-role="collapsible" data-mini="true">
+            <h2>Start or retry</h2>
+            <ul data-role="listview">
+              <li data-role="list-divider">Effect:</li>
+              <li class="ui-field-contain">
+                <select name="effectStart" data-mini="true">
+                  <option value="0">none</option>
+                  <option value="1">Fade in</option>
+                  <option value="2">Fade out</option>
+                  <option value="3" selected="selected">Spiral</option>
+                </select>
+                <input type="range" name="fadeLength" min="1" max="30" value="5">
+                <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
+              </li>
+              <li data-role="list-divider">BGM:</li>
+              <li class="ui-field-contain">
+                <select name="bgm" data-mini="true">
+                  <option value="0">none</option>
+                  <option value="1" selected="selected">a</option>
+                  <option value="2">b</option>
+                  <option value="3">c</option>
+                </select>
+              </li>
+            </ul>
+          </div>
+          <div data-role="collapsible" data-mini="true">
+            <h2>Sequel</h2>
+            <ul data-role="listview">
+              <li data-role="list-divider">Effect:</li>
+              <li class="ui-field-contain">
+                <select name="effectSequel" data-mini="true">
+                  <option value="0">None</option>
+                  <option value="1" selected="selected">Fade in</option>
+                  <option value="2">Fade out</option>
+                  <option value="3">Spiral</option>
+                </select>
+                <input type="range" name="fadeLength" min="1" max="30" value="5">
+                <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
+              </li>
+              <li data-role="list-divider">BGM:</li>
+              <li class="ui-field-contain">
+                <select name="bgm" data-mini="true">
+                  <option value="0">none</option>
+                  <option value="1" selected="selected">a</option>
+                  <option value="2">b</option>
+                  <option value="3">c</option>
+                </select>
+              </li>
+            </ul>
+          </div>
+          <div data-role="collapsible" data-mini="true">
+            <h2>Crash handling</h2>
+            <ul data-role="listview">
+              <li data-role="list-divider">Scroll:</li>
+              <li class="ui-field-contain">
+                <select name="crashHandlingScroll" id="select-native-2" data-mini="true">
+                  <option value="0">Keep</option>
+                  <option value="1">Stop</option>
+                </select>
+              </li>
+              <li data-role="list-divider">BGM:</li>
+              <li class="ui-field-contain">
+                <select name="crashHandling" id="select-native-2" data-mini="true">
+                  <option value="0">Keep</option>
+                  <option value="1">Stop</option>
+                  <option value="2">Fade</option>
+                </select>
+              </li>
+              <li data-role="list-divider">Player:</li>
+              <li class="ui-field-contain">
+                <select name="crashHandlingPlayer" data-mini="true">
+                  <option value="0">Rebirth</option>
+                  <option value="1" selected="selected">Start over</option>
+                </select>
+              </li>
+            </ul>
+          </div>
+        </div>
 <!--
         <fieldset data-role="controlgroup" data-mini="true">
           <legend>BG1:</legend>
@@ -75,12 +171,12 @@
           <input type="number" name="bg1dir"/>
           <input type="number" name="bg1blink"/>
         </fieldset>
--->
         <button type="button" data-rel="close" class="ui-btn ui-mini ui-btn-b ui-corner-all">Close</button>
         <fieldset data-role="collapsible" data-mini="true">
           <legend>Trial</legend>
           <input id="mapFile" type="file"/>
         </fieldset>
+-->
       </form>
     </div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">

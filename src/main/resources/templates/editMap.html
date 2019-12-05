@@ -28,16 +28,6 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 }
-#imagePanel li00 {
-	background-color: black;
-}
-#imagePanel a:first-child {
-	background-color: transparent;
-}
-#imagePanel li img {
-	width: auto;
-	height: auto;
-}
 </style>
 </head>
 
@@ -65,9 +55,6 @@
     </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
       <input id="mapName" type="text" th:value="${map.name}"/>
-      <label>Brick size:
-      <input id="brickSize" type="range" th:value="${map.brickSize}" min="2" max="16" step="2"/>
-      </label>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
         <li data-role="list-divider" class="ui-state-disabled">BG</li>
         <li>
@@ -121,12 +108,18 @@
       </form>
     </div>
     <div id="brickPanel" data-role="panel" data-position="right" data-display="overlay">
+      <label>Brick size:
+      <input id="brickSize" type="range" th:value="${map.brickSize}" min="2" max="16" step="2"/>
+      </label>
       <fieldset data-role="controlgroup" data-mini="true">
-        <button class="ui-btn ui-btn-b" disabled="disabled">Brick</button>
+        <button class="ui-btn ui-btn-b" disabled="disabled" th:text="#{brick.type}">Brick</button>
         <label>Brick<input type="radio" name="brick" value="255" checked="checked"/></label>
         <label>Plate<input type="radio" name="brick" value="254"/></label>
         <label>Rebirth<input type="radio" name="brick" value="253"/></label>
       </fieldset>
+      <label>Rebirth:
+        <input type="number" name="rebirth" th:value="${map.rebirth}" class="numeric"/>
+      </label>
     </div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>

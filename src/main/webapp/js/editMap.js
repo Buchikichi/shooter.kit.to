@@ -103,13 +103,13 @@ class EditMain {
 		});
 		//
 		this.setupImagePanel();
+		this.setupBrickPanel();
 		this.setupPointingDevice();
 	}
 
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
 		let mapName = document.getElementById('mapName');
-		let brickSize = document.getElementById('brickSize');
 		let ul = document.querySelector('ul');
 		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
 //      <li>
@@ -118,7 +118,6 @@ class EditMain {
 //      </li>
 
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
-		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
 		this.fieldMap.mapVisualList.forEach(mapVisual => {
 			let li = document.createElement('li');
 			let anchor = document.createElement('a');
@@ -145,6 +144,12 @@ console.log('sortable#change');
 				$(ul).listview('refresh');
 			}
 		});
+	}
+
+	setupBrickPanel() {
+		let brickSize = document.getElementById('brickSize');
+
+		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
 	}
 
 	openMapVisualPopup(mapVisual) {

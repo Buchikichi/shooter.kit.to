@@ -51,4 +51,14 @@ class EntityBase {
 			return res.json();
 		});
 	}
+
+	saveResource(data) {
+		return fetch('/' + this.base + '/save', {
+			method: 'post',
+			body: data,
+			credentials: 'include',
+		}).then(res => {
+			return res.json();
+		});
+	}
 }

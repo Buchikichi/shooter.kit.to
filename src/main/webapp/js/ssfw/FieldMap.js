@@ -17,9 +17,9 @@ class FieldMap extends Matter {
 	}
 
 	reset() {
-		this.bricks = new Bricks(this);
 		this.progressH = 0;
 		this.mapVisualList.forEach(mapVisual => mapVisual.reset());
+		this.bricks = new Bricks(this);
 	}
 
 	scanFloor(actor) {

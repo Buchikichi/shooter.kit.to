@@ -1,19 +1,43 @@
 class Bricks {
 	constructor(fieldMap) {
-		let img = new Image();
-
 		this.bricks = null;
-		img.onload = ()=> {
-			let canvas = document.createElement('canvas');
-			let ctx = canvas.getContext('2d');
+		if (fieldMap.map) {
+			let img = new Image();
 
-			canvas.width = img.width;
-			canvas.height = img.height;
-			ctx.drawImage(img, 0, 0);
-			this.bricks = ctx.getImageData(0, 0, img.width, img.height);
-		};
-		img.src = fieldMap.map;
+			img.onload = ()=> {
+				let canvas = document.createElement('canvas');
+				let ctx = canvas.getContext('2d');
+
+				canvas.width = img.width;
+				canvas.height = img.height;
+				ctx.drawImage(img, 0, 0);
+				this.bricks = ctx.getImageData(0, 0, img.width, img.height);
+			};
+			img.src = fieldMap.map;
+		} else {
+			this.reset(fieldMap);
+		}
 		this.fieldMap = fieldMap;
+	}
+
+	reset(fieldMap) {
+		new Promise(resolve => {
+			let checkImage = ()=> {
+				if (fieldMap._mainVisual.image) {
+					resolve(fieldMap._mainVisual.image);
+					return;
+				}
+				setTimeout(checkImage, 30);
+			};
+			checkImage();
+		}).then(img => {
+			let width = img.width / fieldMap.brickSize;
+			let height = img.height / fieldMap.brickSize;
+			let size = width * height * 4;
+
+			this.bricks = new ImageData(width, height);
+			this.bricks.data = new Array(size);
+		});
 	}
 
 	getIndex(actor) {
