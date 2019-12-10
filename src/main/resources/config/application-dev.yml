@@ -14,6 +14,10 @@ spring:
     maxTotal: 10
   http:
     multipart:
-      maxFileSize: 4MB
-      maxRequestSize: 4MB
+      maxFileSize: 8MB
+      maxRequestSize: 10MB
+  servlet:
+    multipart:
+      maxFileSize: 8MB
+      maxRequestSize: 10MB
 logging.level.org.hibernate: DEBUG

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style type="text/css">
+#imageSelector {
+  max-width: 800px;
+}
+#imageList {
+  height: 600px;
+  max-height: 600px;
+  overflow: auto;
+}
+</style>
+</head>
+
+<body>
+  <div id="imageSelector" data-role="popup" data-overlay-theme="b" class="ui-content ui-corner-all">
+    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+    <fieldset id="visualType" data-role="controlgroup" data-type="horizontal" data-mini="true">
+      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+      <select name="visualType">
+        <option value="0">player</option>
+        <option value="1">shot</option>
+        <option value="2">item</option>
+        <option value="3">aerial</option>
+        <option value="4">subaerial</option>
+        <option value="5">boss</option>
+        <option value="6">ornament</option>
+        <option value="7">explosion</option>
+        <option value="8">background</option>
+        <option value="9">foreground</option>
+        <option value="10">other</option>
+      </select>
+    </fieldset>
+    <div id="imageList">
+      <ul data-role="listview" data-filter="true" data-inset="true">
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

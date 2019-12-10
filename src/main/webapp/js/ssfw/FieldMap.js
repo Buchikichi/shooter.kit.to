@@ -96,26 +96,20 @@ console.log('this.mainSeq:' + this.mainSeq);
 
 	init() {
 		let visualList = [];
-		let countBG = 0;
 
 		this.migrate();
-		this.mapVisualList.forEach((mapVisual, ix) => {
-			if (mapVisual.visualType == Visual.TYPE.Background) {
-				countBG++;
-			}
+console.log('mainSeq:' + this.mainSeq);
+		this.mapVisualList.forEach(mapVisual => {
 			mapVisual._fieldMap = this;
-			mapVisual.isMain = (ix == this.mainSeq);
-			visualList.push(MapVisual.create(mapVisual));
+			mapVisual.isMain = (mapVisual.seq == this.mainSeq);
+			mapVisual.z = mapVisual.seq * 10000 - 1;
+			let newMapVisual = MapVisual.create(mapVisual);
+			if (mapVisual.isMain) {
+				this._mainVisual = newMapVisual;
+			}
+			visualList.push(newMapVisual);
 		});
 		this.mapVisualList = visualList;
-		this._mainVisual = this.mapVisualList[this.mainSeq];
-		//
-		let z = -10000 * (countBG - 1) - 1;
-
-		this.mapVisualList.forEach(mapVisual => {
-			mapVisual.z = z;
-			z += 10000;
-		});
 		this.reset();
 		return this;
 	}

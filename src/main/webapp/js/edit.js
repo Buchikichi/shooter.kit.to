@@ -7,6 +7,19 @@ class EditStage {
 	 * インスタンス生成.
 	 */
 	constructor() {
+		this.width = 512;
+		this.height = 224;
+		this.canvas = document.getElementById('canvas');
+		this.canvas.width = this.width;
+		this.canvas.height = this.height;
+		this.ctx = this.canvas.getContext('2d');
+		let style = [
+			'width:' + this.width + 'px',
+			'height:' + this.height + 'px',
+		];
+		this.view = document.getElementById('view');
+		this.view.setAttribute('style', style.join(';'));
+
 		this.detailId = document.getElementById('detailId').value;
 		this.loadDetail();
 	}
@@ -22,8 +35,8 @@ class EditStage {
 		Product.create(productId).then(product => {
 			let detail = null;
 
-			this.view = new FlexibleView(512, 224);
-			this.field = new FieldEditor(this.view, detail);
+//			this.view = new FlexibleView(512, 224);
+//			this.field = new FieldEditor(this.view, detail);
 			product.selectStage(this.detailId);
 //			this.setupStage(detail);
 			return Mediaset.Instance.checkLoading((loaded, max) => {
@@ -84,40 +97,44 @@ class EditStage {
 
 	start() {
 		let product = Product.Instance;
-		let view = FlexibleView.Instance;
-		let landform = this.field.landform;
+//		let view = FlexibleView.Instance;
+//		let landform = this.field.landform;
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 			let delta = this.controller.delta;
 			let move = this.controller.move;
 			let point = this.controller.point;
 
-			landform.target = null;
-			landform.which = false;
-			if (move) {
-				landform.target = move;
-			}
-			if (delta) {
-				if (this.isMove) {
-					landform.selection = '0';
-					this.moveLandform(delta);
-				}
-				if (this.isActor) {
-					landform.which = true;
-				}
-			}
-			view.clear();
-			product.draw(view.ctx);
+//			landform.target = null;
+//			landform.which = false;
+//			if (move) {
+//				landform.target = move;
+//			}
+//			if (delta) {
+//				if (this.isMove) {
+//					landform.selection = '0';
+//					this.moveLandform(delta);
+//				}
+//				if (this.isActor) {
+//					landform.which = true;
+//				}
+//			}
+//			view.clear();
+//			product.draw(view.ctx);
+			this.ctx.save();
+			this.ctx.clearRect(0, 0, this.width, this.height);
+			product.draw(this.ctx);
+			this.ctx.restore();
 			requestAnimationFrame(activate);
 		};
 
 //console.log('start!:' + landform.stage.fg.width);
 		this.controller = new Controller();
-		this.actorPanel = new ActorPanel(this.field);
-		this.actorPanel.setupActors(Product.Instance.actorList);
+//		this.actorPanel = new ActorPanel(this.field);
+//		this.actorPanel.setupActors(Product.Instance.actorList);
 		this.setupActors(Product.Instance.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
-		landform.isEdit = true;
+//		landform.isEdit = true;
 //		landform.loadStage(this.stage);
 		this.setupEvents();
 		activate();
@@ -178,7 +195,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 
 	setupEvents() {
 		let slider = $('#slider');
-		let landform = this.field.landform;
+//		let landform = this.field.landform;
 		let stage = Product.Instance.stage;
 		let max = (stage.fg.image.width - Product.Instance.width) / stage.map.brickSize;
 
@@ -188,7 +205,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		Product.Instance.stage.setProgress(0);
 
 		// Actor
-		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
+//		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
 		// saveButton
 		let saveButton = document.getElementById('saveButton');
 

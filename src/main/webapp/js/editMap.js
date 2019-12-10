@@ -110,40 +110,80 @@ class EditMain {
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
 		let mapName = document.getElementById('mapName');
-		let ul = document.querySelector('ul');
+		let ul = imagePanel.querySelector('ul');
 		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
 //      <li>
 //        <a href="#">aa<span class="ui-li-count">*</span></a>
 //        <a href="#"></a>
 //      </li>
 
+		this.imageSelector = new ImageSelector();
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
-		this.fieldMap.mapVisualList.forEach(mapVisual => {
+		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => {
 			let li = document.createElement('li');
 			let anchor = document.createElement('a');
 			let span = document.createElement('span');
-			let deleteButton = document.createElement('a');
 
 			span.textContent = mapVisual.imageName;
 			anchor.href = '#';
-//			anchor.append(mapVisual.image);
 			anchor.append(span);
-			anchor.addEventListener('dblclick', ()=> this.openMapVisualPopup(mapVisual));
+			anchor.addEventListener('click', ()=> this.openMapVisualPopup(mapVisual));
 			li.append(anchor);
-			li.append(deleteButton);
-			li.classList.add('sortable-item');
-//			ul.append(li);
-			ul.insertBefore(li, fg)
+			if (mapVisual.isMain) {
+				let mark = document.createElement('span');
+
+				mark.textContent = '*';
+				mark.classList.add('ui-li-count');
+				anchor.append(mark);
+			} else {
+				let deleteButton = document.createElement('a');
+
+				deleteButton.addEventListener('click', ()=> {
+console.log('delete');
+				});
+				li.append(deleteButton);
+			}
+			li.setAttribute('data-index', ix);
+			li.classList.add('sortable-item', 'mapVisual');
+			if (mapVisual.seq <= 0) {
+				ul.insertBefore(li, fg)
+			} else {
+				ul.append(li);
+			}
 		});
 		$(ul).listview('refresh');
 		$(ul).sortable({
 			//cancel: '.sortable-item',
+			helper: 'clone',
 			items: '> li.sortable-item',
 			change: (ev, ui) => {
 console.log('sortable#change');
+			},
+			update: (ev, ui) => {
+console.log('sortable#update');
+				this.sortMapVisual(ul);
 				$(ul).listview('refresh');
 			}
 		});
+	}
+
+	sortMapVisual(ul) {
+		let list = [];
+		let lis = ul.querySelectorAll('.mapVisual');
+		let fgs = ul.querySelectorAll('li.fg ~ *').length;
+		let start = fgs - lis.length + 1;
+
+console.log('start:' + start);
+		lis.forEach((li, seq) => {
+			let ix = li.getAttribute('data-index');
+			let mapVisual = this.fieldMap.mapVisualList[ix];
+
+			mapVisual.seq = start + seq;
+			mapVisual.z = mapVisual.seq * 10000 - 1;
+console.log('seq:' + mapVisual.seq + '/z:' + mapVisual.z);
+			list.push(mapVisual);
+		});
+		this.fieldMap.mapVisualList = list;
 	}
 
 	setupBrickPanel() {

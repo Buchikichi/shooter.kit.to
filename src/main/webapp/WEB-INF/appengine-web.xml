@@ -9,7 +9,7 @@
   <ssl-enabled>true</ssl-enabled>
   <env-variables>
     <env-var name="spring.profiles.active" value="gae"/>
-    <env-var name="DB_URL" value="jdbc:postgresql://35.212.253.3:45432/b3cb9f51c1f541fe6bc8edaf45501e6c"/>
+    <env-var name="DB_URL" value="jdbc:postgresql://127.0.0.1/b3cb9f51c1f541fe6bc8edaf45501e6c"/>
     <env-var name="DB_USER" value="b3f8f4a349909dfc752d2f49cf996ee3"/>
     <env-var name="DB_PASS" value="b682b2f794932d57a1c31fd4225b53e0"/>
     <env-var name="SALT" value="fd9630e5ea7bf9522011cac52c1357c6"/>
