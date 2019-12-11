@@ -112,10 +112,6 @@ class EditMain {
 		let mapName = document.getElementById('mapName');
 		let ul = imagePanel.querySelector('ul');
 		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
-//      <li>
-//        <a href="#">aa<span class="ui-li-count">*</span></a>
-//        <a href="#"></a>
-//      </li>
 
 		this.imageSelector = new ImageSelector();
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
@@ -125,7 +121,6 @@ class EditMain {
 			let span = document.createElement('span');
 
 			span.textContent = mapVisual.imageName;
-			anchor.href = '#';
 			anchor.append(span);
 			anchor.addEventListener('click', ()=> this.openMapVisualPopup(mapVisual));
 			li.append(anchor);
@@ -156,11 +151,8 @@ console.log('delete');
 			//cancel: '.sortable-item',
 			helper: 'clone',
 			items: '> li.sortable-item',
-			change: (ev, ui) => {
-console.log('sortable#change');
-			},
 			update: (ev, ui) => {
-console.log('sortable#update');
+				// console.log('sortable#update');
 				this.sortMapVisual(ul);
 				$(ul).listview('refresh');
 			}
@@ -173,14 +165,17 @@ console.log('sortable#update');
 		let fgs = ul.querySelectorAll('li.fg ~ *').length;
 		let start = fgs - lis.length + 1;
 
-console.log('start:' + start);
+		// console.log('start:' + start);
 		lis.forEach((li, seq) => {
 			let ix = li.getAttribute('data-index');
 			let mapVisual = this.fieldMap.mapVisualList[ix];
 
 			mapVisual.seq = start + seq;
 			mapVisual.z = mapVisual.seq * 10000 - 1;
-console.log('seq:' + mapVisual.seq + '/z:' + mapVisual.z);
+			if (mapVisual.isMain) {
+				this.fieldMap.mainSeq = mapVisual.seq;
+			}
+			// console.log('seq:' + mapVisual.seq + '/z:' + mapVisual.z);
 			list.push(mapVisual);
 		});
 		this.fieldMap.mapVisualList = list;
