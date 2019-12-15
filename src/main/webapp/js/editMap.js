@@ -7,13 +7,13 @@ class EditMain {
 	 * インスタンス生成.
 	 */
 	constructor() {
-		let meidasetId = document.getElementById('mediasetId').value;
+		let mediasetId = document.getElementById('mediasetId').value;
 		let mapId = document.getElementById('mapId').value;
 
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
-		Mediaset.create(meidasetId).then(mediaset => {
+		Mediaset.create(mediasetId).then(mediaset => {
 			mediaset.loadVisual();
 			return FieldMapEditor.create(mapId);
 		}).then(fieldMap => {
@@ -22,16 +22,12 @@ class EditMain {
 		});
 	}
 
+	get brickColor() {
+		return document.querySelector('[name="color"]:checked').value;
+	}
+
 	get scale() {
 		return document.querySelector('[name="scale"]:checked').value;
-	}
-
-	get isMove() {
-		return $('[name="behavior"]:checked').val() == 'm';
-	}
-
-	get isBrick() {
-		return $('[name="behavior"]:checked').val() == 'b';
 	}
 
 	get brickNum() {
@@ -67,6 +63,10 @@ class EditMain {
 		activate();
 	}
 
+	changeColor() {
+		this.fieldMap.brickColor = this.brickColor;
+	}
+
 	changeScale() {
 		let mainVisual = this.fieldMap._mainVisual;
 
@@ -79,29 +79,9 @@ class EditMain {
 
 	setupEvents() {
 		this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
-		// Scale
+		$('[name="color"]').click(()=> this.changeColor());
 		$('[name="scale"]').click(()=> this.changeScale());
-		// Brick
-		$('[name="behavior"]:eq(1)').click(()=> $('#brickPanel').panel('open'));
-		// saveButton
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
-		// mapFile
-		let mapFile = document.getElementById('mapFile');
-
-		mapFile.addEventListener('change',()=> {
-			let file = mapFile.files[0];
-			let url = window.URL.createObjectURL(file);
-
-			landform.loadMapData(url);
-		});
-		// generateButton
-		let generateButton = document.getElementById('generateButton');
-		generateButton.addEventListener('click',()=> {
-			let ctx = FlexibleView.Instance.ctx;
-
-			landform.generateBrick(ctx);
-		});
-		//
 		this.setupImagePanel();
 		this.setupBrickPanel();
 		this.setupPointingDevice();
@@ -185,6 +165,20 @@ console.log('delete');
 		let brickSize = document.getElementById('brickSize');
 
 		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
+		// generateButton
+		document.getElementById('generateButton').addEventListener('click', ()=> {
+			if (!confirm('Sure?')) {
+				return;
+			}
+			this.fieldMap.generateBrick(this.ctx);
+		});
+		// generateButton
+		document.getElementById('clearButton').addEventListener('click', ()=> {
+			if (!confirm('Sure?')) {
+				return;
+			}
+			this.fieldMap.clear();
+		});
 	}
 
 	openMapVisualPopup(mapVisual) {
@@ -222,6 +216,9 @@ console.log('delete');
 		canvas.addEventListener('mousemove', e => touch(e));
 		canvas.addEventListener('mousedown', e => {
 			isValid = true;
+			if (this.brickColor == '-') {
+				document.querySelectorAll('[name="color"]')[0].click();
+			}
 			touch(e);
 		});
 		canvas.addEventListener('mouseup', ()=> leave());

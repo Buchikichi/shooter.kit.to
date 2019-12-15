@@ -4,11 +4,57 @@
 class FieldMapEditor extends FieldMap {
 	constructor() {
 		super();
+		this.brickColor = 'b';
 		this.col = 0;
 		this.colDir = 1;
 		this.currentBrick = null;
 		this.scale = 1;
 		this.progress = 0;
+	}
+
+	getImageData() {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+		let img = this._mainVisual.image;
+
+		canvas.width = img.width;
+		canvas.height = img.height;
+		ctx.drawImage(img, 0, 0);
+		return ctx.getImageData(0, 0, img.width, img.height);
+	}
+
+	generateBrick(ctx) {
+		let img = this.getImageData();
+		let brickSize = this.brickSize;
+		let brickHalf = brickSize / 2;
+		let steps = brickSize * 4;
+		let bricks = this.bricks.bricks;
+		let sx = (img.width * brickHalf + brickHalf) * 4;
+		let ix = 0;
+
+		console.log('img width:' + img.width + '/height:' + img.height);
+		console.log('bricks width:' + bricks.width + '/height:' + bricks.height);
+		for (let by = 0; by < bricks.height; by++) {
+			for (let bx = 0; bx < bricks.width; bx++, ix += 4, sx += steps) {
+				let dot = false;
+
+				for (let c = 0; c < 4; c++) {
+					if (img.data[sx + c]) {
+						dot = true;
+					}
+				}
+				let val = dot ? Bricks.BRICK_TYPE.WALL : 0;
+
+				this.bricks.putBrick(ix, val);
+			}
+			sx += img.width * (brickSize - 1) * 4;
+		}
+console.log('ix:' + ix);
+console.log('sx:' + sx);
+	}
+
+	clear() {
+		this.bricks.clear(this);
 	}
 
 	touch(x, y, num) {
@@ -41,7 +87,18 @@ class FieldMapEditor extends FieldMap {
 
 	draw(ctx) {
 		super.draw(ctx);
-		this.bricks.draw(ctx);
+		ctx.save();
+		if (this.brickColor == 'b') {
+			ctx.strokeStyle = 'rgba(255, 255, 255, .7)';
+			ctx.fillStyle = 'rgba(0, 0, 0, .5)';
+		} else if (this.brickColor == 'w') {
+			ctx.strokeStyle = 'rgba(0, 0, 0, .7)';
+			ctx.fillStyle = 'rgba(255, 255, 255, .5)';
+		}
+		if (this.brickColor != '-') {
+			this.bricks.draw(ctx);
+		}
+		ctx.restore();
 		this.col += this.colDir * 4;
 		if (this.col <= 0 || 255 <= this.col) {
 			this.colDir *= -1;

@@ -98,7 +98,7 @@ console.log('this.mainSeq:' + this.mainSeq);
 		let visualList = [];
 
 		this.migrate();
-console.log('mainSeq:' + this.mainSeq);
+		// console.log('mainSeq:' + this.mainSeq);
 		this.mapVisualList.forEach(mapVisual => {
 			mapVisual._fieldMap = this;
 			mapVisual.isMain = (mapVisual.seq == this.mainSeq);

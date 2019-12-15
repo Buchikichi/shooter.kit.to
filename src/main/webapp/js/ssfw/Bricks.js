@@ -15,12 +15,12 @@ class Bricks {
 			};
 			img.src = fieldMap.map;
 		} else {
-			this.reset(fieldMap);
+			this.clear(fieldMap);
 		}
 		this.fieldMap = fieldMap;
 	}
 
-	reset(fieldMap) {
+	clear(fieldMap) {
 		new Promise(resolve => {
 			let checkImage = ()=> {
 				if (fieldMap._mainVisual.image) {
@@ -165,6 +165,9 @@ class Bricks {
 	}
 
 	draw(ctx) {
+		if (!this.bricks) {
+			return;
+		}
 		let bw = this.bricks.width * 4;
 		let brick = this.bricks.data;
 		let brickSize = this.fieldMap.brickSize;
@@ -173,8 +176,6 @@ class Bricks {
 		let minLeft = this.fieldMap.progress / this.fieldMap.scale - brickSize;
 
 		ctx.save();
-		ctx.strokeStyle = 'rgba(255, 255, 255, .3)';
-		ctx.fillStyle = 'rgba(0, 0, 0, .3)';
 		for (let y = 0; y < this.bricks.height; y++) {
 			let ix = y * bw;
 			let top = y * brickSize;
@@ -187,16 +188,16 @@ let firstX = true;
 				if (left < minLeft) {
 					continue;
 				}
-if (firstX) {
-	ctx.fillStyle = 'rgba(0, 0, 0, .8)';
-	firstX = false;
-} else {
-	ctx.fillStyle = 'rgba(0, 0, 0, .3)';
-}
+// if (firstX) {
+// 	ctx.fillStyle = 'rgba(0, 0, 0, .8)';
+// 	firstX = false;
+// } else {
+// 	ctx.fillStyle = 'rgba(0, 0, 0, .3)';
+// }
 				if (brickType == Bricks.BRICK_TYPE.BRITTLE) {
 					let ax = left + halfBrick;
 					let ay = top + halfBrick;
-	
+
 					ctx.beginPath();
 					ctx.arc(ax, ay, brickWidth / 2, 0, Math.PI2, false);
 					ctx.fill();
