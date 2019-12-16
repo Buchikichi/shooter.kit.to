@@ -155,8 +155,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 		Product product = new Product();
 
 		BeanUtils.copyProperties(form, product);
-		if (product.getDetailList() == null) {
-			product.setDetailList(new ArrayList<>());
+		if (product.getStageList() == null) {
+			product.setStageList(new ArrayList<>());
 		}
 		if (product.getActorList() == null) {
 			product.setActorList(new ArrayList<>());

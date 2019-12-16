@@ -10,46 +10,46 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Stage;
 import to.kit.shooter.entity.Scenario;
-import to.kit.shooter.repository.ProductDetailRepository;
+import to.kit.shooter.repository.StageRepository;
 import to.kit.shooter.repository.ScenarioRepository;
 
 @Service
-public class ProductDetailService {
+public class StageService {
 	@Autowired
-	private ProductDetailRepository productDetailRepository;
+	private StageRepository stageRepository;
 	@Autowired
 	private ScenarioRepository scenarioRepository;
 
-	public List<ProductDetail> list() {
+	public List<Stage> list() {
 		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
-		return this.productDetailRepository.findAll(sort);
+		return this.stageRepository.findAll(sort);
 	}
 
-	public ProductDetail detail(String id) {
-		return this.productDetailRepository.findById(id).get();
+	public Stage detail(String id) {
+		return this.stageRepository.findById(id).get();
 	}
 
 	@Transactional
-	public ProductDetail saveMap(ProductDetail detail) {
-		String id = detail.getId();
+	public Stage saveMap(Stage stage) {
+		String id = stage.getId();
 
 		if (id == null || id.isEmpty()) {
 			return null;
 		}
-		this.scenarioRepository.deleteByProductDetailId(id);
-		for (Scenario scenario : detail.getScenarioList()) {
-			scenario.setProductDetail(detail);
+		this.scenarioRepository.deleteByStageId(id);
+		for (Scenario scenario : stage.getScenarioList()) {
+			scenario.setStage(stage);
 			this.scenarioRepository.saveAndFlush(scenario);
 		}
-		ProductDetail entity = this.productDetailRepository.findById(id).get();
+		Stage entity = this.stageRepository.findById(id).get();
 
 		if (entity == null) {
 			return null;
 		}
-		entity.setMap(detail.getMap());
+		entity.setMap(stage.getMap());
 		entity.setUpdated(new Date());
-		return this.productDetailRepository.saveAndFlush(entity);
+		return this.stageRepository.saveAndFlush(entity);
 	}
 }

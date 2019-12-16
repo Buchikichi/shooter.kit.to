@@ -27,7 +27,7 @@
   <div data-role="collapsible" data-collapsed="false" data-mini="true">
     <h4 th:text="#{stage}">Stage</h4>
     <ul id="productStageView" data-role="listview" data-split-icon="edit">
-      <li th:each="stage:${product.detailList}">
+      <li th:each="stage:${product.stageList}">
         <a th:with="map=${stage.map}" href="#editStagePanel" th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
           <img src="/img/icon.listview.png"/>
           <span th:text="${map.name}"></span>

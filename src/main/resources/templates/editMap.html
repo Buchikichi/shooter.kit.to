@@ -58,7 +58,7 @@
       </div>
     </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
-      <input id="mapName" type="text" th:value="${map.name}"/>
+      <input type="text" th:field="${map.name}"/>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
         <li data-role="list-divider" class="ui-state-disabled">BG</li>
         <li data-role="list-divider" class="fg sortable-item ui-state-disabled">FG</li>
@@ -105,7 +105,7 @@
         </li>
       </ul>
     </div>
-    <div th:replace="_imageSelector"></div> 
+    <div th:replace="_imageSelector"></div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>
     </div>

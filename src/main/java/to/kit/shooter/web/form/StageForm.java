@@ -7,11 +7,11 @@ import to.kit.shooter.entity.Scenario;
 import to.kit.shooter.entity.Map;
 
 /**
- * Product detail form.
+ * Stage form.
  * @author H.Sasai
  */
 @Data
-public class ProductDetailForm {
+public class StageForm {
 	private String id;
 	private int seq;
 	private int roll;

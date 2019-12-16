@@ -28,5 +28,5 @@ public class Scenario {
 
 	@ManyToOne
 	@JsonBackReference
-	private ProductDetail productDetail;
+	private Stage stage;
 }

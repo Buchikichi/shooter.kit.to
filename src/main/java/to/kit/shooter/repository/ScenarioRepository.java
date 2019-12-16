@@ -8,5 +8,5 @@ import to.kit.shooter.entity.Scenario;
  * @author H.Sasai
  */
 public interface ScenarioRepository extends JpaRepository<Scenario, String> {
-	void deleteByProductDetailId(String productDetailId);
+	void deleteByStageId(String stageId);
 }

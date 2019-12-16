@@ -7,10 +7,10 @@ class EditStage {
 	 * インスタンス生成.
 	 */
 	constructor() {
-		this.detailId = document.getElementById('detailId').value;
+		this.stageId = document.getElementById('stageId').value;
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
-		this.loadDetail();
+		this.loadStage();
 	}
 
 	get isMove() {
@@ -37,17 +37,17 @@ class EditStage {
 		return document.querySelector('[name="repeat"]').value;
 	}
 
-	loadDetail() {
+	loadStage() {
 		let productId = document.getElementById('productId').value;
 		let loading = document.getElementById('loading');
 
 		Product.create(productId).then(product => {
-			let detail = null;
+			let stage = null;
 
 //			this.view = new FlexibleView(512, 224);
-//			this.field = new FieldEditor(this.view, detail);
-			product.selectStage(this.detailId);
-//			this.setupStage(detail);
+//			this.field = new FieldEditor(this.view, stage);
+			product.selectStage(this.stageId);
+//			this.setupStage(stage);
 			return Mediaset.Instance.checkLoading((loaded, max) => {
 				let msg = loaded + '/' + max;
 
@@ -86,7 +86,7 @@ class EditStage {
 		Product.Instance.stage.map.brickColor = this.brickColor;
 	}
 
-	setupStage(detail) {
+	setupStage(stage) {
 		let form = document.getElementById('inputBox');
 		let propList = {
 			'speed':{min:0, max:1, step:0.1},
@@ -94,9 +94,9 @@ class EditStage {
 			'blink':{min:0, max:1, step:0.01},
 		}
 
-		this.stage = Stage.create(detail);
+		this.stage = Stage.create(stage);
 		Stage.VIEWS.forEach(key => {
-			let imageId = detail[key];
+			let imageId = stage[key];
 
 			if (!imageId || imageId.length == 0) {
 				return;
@@ -110,7 +110,7 @@ class EditStage {
 				let attr = propList[prop];
 				let name = key + prop;
 				let input = document.createElement('input');
-				let value = detail[name].toFixed(2);
+				let value = stage[name].toFixed(2);
 
 				input.setAttribute('type', 'number');
 				input.setAttribute('name', name);
@@ -354,7 +354,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let prefix = 'scenarioList[';
 		let ix = 0;
 
-		formData.append('id', this.detailId);
+		formData.append('id', this.stageId);
 		formData.append('map.id', this.stage.map.id);
 		landform.scenarioList.forEach(scenario => {
 			Object.keys(scenario).forEach(key => {

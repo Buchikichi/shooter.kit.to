@@ -18,12 +18,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 /**
- * ProductDetail.
+ * Stage.
  * @author H.Sasai
  */
 @Entity
 @Data
-public class ProductDetail {
+public class Stage {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
@@ -49,7 +49,7 @@ public class ProductDetail {
 	@JsonBackReference
 	private Product product;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productDetail", targetEntity = Scenario.class)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "stage", targetEntity = Scenario.class)
 	@OrderBy("v, h")
 	private List<Scenario> scenarioList;
 

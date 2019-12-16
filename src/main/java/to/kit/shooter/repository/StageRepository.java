@@ -4,17 +4,17 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Stage;
 
 /**
- * プロダクト詳細.
+ * ステージ.
  * @author H.Sasai
  */
-public interface ProductDetailRepository extends JpaRepository<ProductDetail, String> {
+public interface StageRepository extends JpaRepository<Stage, String> {
 	/**
 	 * プロダクト内のステージを全て取得.
 	 * @param productId プロダクトID
 	 * @return ステージ一覧
 	 */
-	List<ProductDetail> findByProductId(String productId);
+	List<Stage> findByProductId(String productId);
 }

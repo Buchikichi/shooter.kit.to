@@ -43,7 +43,7 @@ console.log('Product#nextStage:' + this.stageNum);
 if (this.ship) {
 	console.log('ship_' + this.ship.x + '/' + this.ship.y);
 }
-		let stage = this.detailList[this.stageNum];
+		let stage = this.stageList[this.stageNum];
 		let performersList = this.stage ? this.stage.removeMapVisual() : [];
 
 if (this.ship) {
@@ -55,13 +55,13 @@ if (this.ship) {
 		this.stage.start();
 		Field.Instance.landform.loadStage(this.stage);
 		this.stageNum++;
-		if (this.detailList.length <= this.stageNum) {
+		if (this.stageList.length <= this.stageNum) {
 			this.stageNum = 0;
 		}
 	}
 
 	selectStage(stageId) {
-		this.detailList.forEach(stage => {
+		this.stageList.forEach(stage => {
 			if (stage.id != stageId) {
 				return;
 			}
@@ -216,11 +216,11 @@ if (this.ship) {
 		let stageList = [];
 
 		this.setRect(this.width, this.height);
-		this.detailList.forEach(stage => {
+		this.stageList.forEach(stage => {
 			stage.product = this;
 			stageList.push(Stage.create(stage))
 		});
-		this.detailList = stageList;
+		this.stageList = stageList;
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;
 		}

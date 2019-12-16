@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Customer;
-import to.kit.shooter.entity.ProductDetail;
-import to.kit.shooter.service.ProductDetailService;
+import to.kit.shooter.entity.Stage;
+import to.kit.shooter.service.StageService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
-import to.kit.shooter.web.form.ProductDetailForm;
+import to.kit.shooter.web.form.StageForm;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
 
@@ -27,11 +27,11 @@ import to.kit.shooter.web.form.ResultListForm;
  * @author H.Sasai
  */
 @Controller
-@RequestMapping("/detail")
+@RequestMapping("/stage")
 @SessionAttributes(types = LoginInfo.class)
-public class DetailController implements BasicControllerInterface<ProductDetail> {
+public class StageController implements BasicControllerInterface<Stage> {
 	@Autowired
-	private ProductDetailService productDetailService;
+	private StageService stageService;
 	@Autowired
 	private LoginInfo loginInfo;
 
@@ -50,12 +50,12 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	public ResultListForm list(FilteringForm form) {
 		ResultListForm result = new ResultListForm();
 		List<ListItem> resultList = result.getResult();
-		List<ProductDetail> list = this.productDetailService.list();
+		List<Stage> list = this.stageService.list();
 
-		for (ProductDetail detail : list) {
+		for (Stage stage : list) {
 			ListItem item = new ListItem();
 
-			item.setId(detail.getId());
+			item.setId(stage.getId());
 			resultList.add(item);
 		}
 		return result;
@@ -64,22 +64,22 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	@RequestMapping("/select")
 	@ResponseBody
 	@Override
-	public ProductDetail select(@RequestParam String id) {
-		return this.productDetailService.detail(id);
+	public Stage select(@RequestParam String id) {
+		return this.stageService.detail(id);
 	}
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<ProductDetail> save(ProductDetailForm form) {
-		ResultForm<ProductDetail> result = new ResultForm<>();
+	public ResultForm<Stage> save(StageForm form) {
+		ResultForm<Stage> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		ProductDetail detail = new ProductDetail();
-		BeanUtils.copyProperties(form, detail);
-		ProductDetail saved = this.productDetailService.saveMap(detail);
+		Stage stage = new Stage();
+		BeanUtils.copyProperties(form, stage);
+		Stage saved = this.stageService.saveMap(stage);
 
 		result.setResult(saved);
 		result.setOk(true);
@@ -89,9 +89,9 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		ProductDetail detail = this.productDetailService.detail(id);
+		Stage stage = this.stageService.detail(id);
 
-		model.addAttribute("stage", detail);
-		return "edit";
+		model.addAttribute("stage", stage);
+		return "editStage";
 	}
 }

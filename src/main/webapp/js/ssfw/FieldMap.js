@@ -189,9 +189,10 @@ this.effectV = 0;
 		}
 		if (this.pattern == null) {
 			let repetition = 'repeat';
+			let stage = this._fieldMap._stage;
 
-			if (this.isMain) {
-				let roll = this._fieldMap._stage.scroll;
+			if (this.isMain && stage) {
+				let roll = stage.scroll;
 				let noRepeatV = roll == Stage.SCROLL.OFF || roll == Stage.SCROLL.ON;
 
 				repetition = noRepeatV ? 'repeat-x' : 'repeat';

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Map;
 import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Stage;
 import to.kit.shooter.service.MapService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
@@ -97,12 +97,12 @@ public class MapController implements BasicControllerInterface<Map> {
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		Map map = this.mapService.detail(id);
-		ProductDetail detail = map.getProductDetailList().get(0);
+		Stage detail = map.getStageList().get(0);
 		Product product = detail.getProduct();
 
 		model.addAttribute("mediasetId", product.getMediaset().getId());
 		model.addAttribute("map", map);
-		model.addAttribute("detail", new ProductDetail());
+		model.addAttribute("detail", new Stage());
 		return "editMap";
 	}
 }

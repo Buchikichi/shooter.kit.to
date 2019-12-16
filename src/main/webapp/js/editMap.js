@@ -89,7 +89,7 @@ class EditMain {
 
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
-		let mapName = document.getElementById('mapName');
+		let mapName = imagePanel.querySelector('[name=name]');
 		let ul = imagePanel.querySelector('ul');
 		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
 

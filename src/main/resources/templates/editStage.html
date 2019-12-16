@@ -10,7 +10,7 @@
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script type="text/javascript" src="/js/implementor-min.js"></script>
-<script type="text/javascript" src="/js/edit-min.js"></script>
+<script type="text/javascript" src="/js/editStage-min.js"></script>
 <style type="text/css">
 * {
 	margin: 0;
@@ -75,7 +75,7 @@
         <input id="width" type="hidden" th:value="${stage.product.width}"/>
         <input id="height" type="hidden" th:value="${stage.product.height}"/>
         <input id="mediasetId" type="hidden" th:value="${stage.product.mediaset.id}"/>
-        <input id="detailId" type="hidden" th:value="${stage.id}"/>
+        <input id="stageId" type="hidden" th:value="${stage.id}"/>
         <input id="stageName" type="text" required="required" th:value="${stage.map.name}"/>
         <label><span>V-Scroll type:</span>
           <select name="roll" data-mini="true" th:field="${stage.roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">

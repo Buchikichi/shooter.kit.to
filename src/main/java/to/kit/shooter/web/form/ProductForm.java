@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.ProductActor;
-import to.kit.shooter.entity.ProductDetail;
+import to.kit.shooter.entity.Stage;
 
 /**
  * Product form.
@@ -19,7 +19,7 @@ public class ProductForm {
 	private int access;
 	private int width;
 	private int height;
-	private List<ProductDetail> detailList;
+	private List<Stage> stageList;
 	private List<ProductActor> actorList;
 	private Mediaset mediaset;
 }

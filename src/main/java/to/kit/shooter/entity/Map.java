@@ -74,7 +74,7 @@ public class Map {
 	@JsonManagedReference
 	private List<MapVisual> mapVisualList = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = ProductDetail.class)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = Stage.class)
 	@JsonIgnore
-	private List<ProductDetail> productDetailList;
+	private List<Stage> stageList;
 }

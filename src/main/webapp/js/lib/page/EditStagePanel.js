@@ -15,7 +15,7 @@ class EditStagePanel {
 		let editButton = this.panel.querySelector('.ui-icon-edit');
 
 		editButton.addEventListener('click', ()=> {
-			window.open('/detail/edit/' + this.rec.id);
+			window.open('/stage/edit/' + this.rec.id);
 		});
 		// remove map
 		let deleteButton = this.panel.querySelector('.ui-icon-delete');

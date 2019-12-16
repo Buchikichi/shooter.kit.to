@@ -47,7 +47,7 @@ public class Product {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
 	@JsonManagedReference
-	private List<ProductDetail> detailList = new ArrayList<>();
+	private List<Stage> stageList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("type, seq")
