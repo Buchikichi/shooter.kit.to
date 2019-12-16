@@ -188,7 +188,16 @@ this.effectV = 0;
 			this.canvas.getContext('2d').drawImage(sourceImage, 0, 0);
 		}
 		if (this.pattern == null) {
-			this.pattern = ctx.createPattern(this.canvas, 'repeat');
+			let repetition = 'repeat';
+
+			if (this.isMain) {
+				let roll = this._fieldMap._stage.scroll;
+				let noRepeatV = roll == Stage.SCROLL.OFF || roll == Stage.SCROLL.ON;
+
+				repetition = noRepeatV ? 'repeat-x' : 'repeat';
+			}
+console.log('repetition:' + repetition);
+			this.pattern = ctx.createPattern(this.canvas, repetition);
 		}
 		return this.pattern;
 	}

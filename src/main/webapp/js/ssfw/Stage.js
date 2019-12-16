@@ -51,6 +51,12 @@ class Stage {
 		return this.viewDic[id];
 	}
 
+	changeRoll(roll) {
+		this.roll = roll;
+		this.scroll = roll;
+		this.map._mainVisual.pattern = null;
+	}
+
 	reset() {
 		this.checkPoint = Stage.CHECK_POINT[0];
 		this.retry();
@@ -288,7 +294,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			list.push(view);
 		});
 		return list;
-	} 
+	}
 
 	init() {
 		this.map = FieldMap.create(this.map);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title th:text="${detail.map.name}"></title>
+<title th:text="${stage.map.name}"></title>
 <link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
@@ -18,22 +18,15 @@
 }
 #view {
 	position: relative;
-	overflow: hidden;
+	overflow: auto;
 	z-index: 0;
-	transform-origin: 0px 0px;
-	transform: scale(2);
-	color: white;
+	transform-origin: top left;
+  	color: white;
 	background-color: black;
 	/*border: 1px blue dotted;*/
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
-}
-#canvas {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	z-index: 1000;
 }
 #actorPanel img {
 	min-width: 1em;
@@ -54,36 +47,47 @@
     </div>
     <div data-role="footer"  data-position="fixed">
       <div id="panel">
-        <input id="slider" type="range" value="0" min="0" max="0"/>
         <fieldset data-role="controlgroup" data-type="horizontal">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
-          <label>Move<input type="radio" name="behavior" value="m" checked="checked"/></label>
-          <label>Actor<input type="radio" name="behavior" value="a" disabled="disabled"/></label>
+          <label>Actor<input type="radio" name="behavior" value="a" checked="checked"/></label>
+          <label>Event<input type="radio" name="behavior" value="e"/></label>
+          <button disabled="disabled" data-theme="b">Guide</button>
+          <label>ON<input type="radio" name="guide" value="1" checked="checked"/></label>
+          <label>off<input type="radio" name="guide" value="0"/></label>
+          <button disabled="disabled" data-theme="b">Brick</button>
+          <label>B<input type="radio" name="color" value="b" checked="checked"/></label>
+          <label>W<input type="radio" name="color" value="w"/></label>
+          <label>-<input type="radio" name="color" value="-"/></label>
+          <button disabled="disabled" data-theme="b">Scale</button>
+          <label>1<input type="radio" name="scale" value="1" checked="checked"/></label>
+          <label>2<input type="radio" name="scale" value="2"/></label>
+          <label>3<input type="radio" name="scale" value="3"/></label>
+          <label>4<input type="radio" name="scale" value="4"/></label>
           <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
       </div>
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data">
-        <input id="productId" type="hidden" th:value="${detail.product.id}"/>
-        <input id="width" type="hidden" th:value="${detail.product.width}"/>
-        <input id="height" type="hidden" th:value="${detail.product.height}"/>
-        <input id="mediasetId" type="hidden" th:value="${detail.product.mediaset.id}"/>
-        <input id="detailId" type="hidden" th:value="${detail.id}"/>
-        <label>Stage name:
-          <input id="stageName" type="text" required="required" th:value="${detail.map.name}"/>
-        </label>
-        <label>V-Scroll type:
-          <select name="roll" data-mini="true" th:value="${detail.roll}">
-            <option value="0">OFF</option>
-            <option value="1">ON</option>
-            <option value="2">LOOP</option>
-            <option value="4">TOP</option>
-            <option value="8">BOTTOM</option>
+        <input id="productId" type="hidden" th:value="${stage.product.id}"/>
+        <input id="width" type="hidden" th:value="${stage.product.width}"/>
+        <input id="height" type="hidden" th:value="${stage.product.height}"/>
+        <input id="mediasetId" type="hidden" th:value="${stage.product.mediaset.id}"/>
+        <input id="detailId" type="hidden" th:value="${stage.id}"/>
+        <input id="stageName" type="text" required="required" th:value="${stage.map.name}"/>
+        <label><span>V-Scroll type:</span>
+          <select name="roll" data-mini="true" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
+            <option th:each="opt:${scrollList}" th:value="${opt.value}" th:selected="${opt.value == stage.roll}" th:text="${opt}">OFF</option>
           </select>
         </label>
-        <label>H-Repeat:
-          <input id="repeat" type="number" min="1" value="4"/>
+        <label><span>V-Start pos:</span>
+          <input type="text" name="vStartPos" value="0" disabled="disabled"/>
+        </label>
+        <label><span>H-Repeat:</span>
+          <input type="number" name="repeat" min="1" value="1"/>
+        </label>
+        <label><span>H-Start pos:</span>
+          <input type="range" name="hStartPos" min="0" max="4" value="0"/>
         </label>
         <div data-role="collapsibleset">
           <div data-role="collapsible" data-mini="true">

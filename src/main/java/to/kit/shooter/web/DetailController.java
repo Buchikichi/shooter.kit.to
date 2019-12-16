@@ -91,7 +91,7 @@ public class DetailController implements BasicControllerInterface<ProductDetail>
 	public String edit(Model model, @PathVariable("id") String id) {
 		ProductDetail detail = this.productDetailService.detail(id);
 
-		model.addAttribute("detail", detail);
+		model.addAttribute("stage", detail);
 		return "edit";
 	}
 }

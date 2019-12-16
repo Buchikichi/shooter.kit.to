@@ -7,25 +7,34 @@ class EditStage {
 	 * インスタンス生成.
 	 */
 	constructor() {
-		this.width = 512;
-		this.height = 224;
-		this.canvas = document.getElementById('canvas');
-		this.canvas.width = this.width;
-		this.canvas.height = this.height;
-		this.ctx = this.canvas.getContext('2d');
-		let style = [
-			'width:' + this.width + 'px',
-			'height:' + this.height + 'px',
-		];
-		this.view = document.getElementById('view');
-		this.view.setAttribute('style', style.join(';'));
-
 		this.detailId = document.getElementById('detailId').value;
+		this.frame = document.getElementById('frame');
+		this.canvas = document.getElementById('canvas');
 		this.loadDetail();
 	}
 
 	get isMove() {
 		return $('[name="behavior"]:checked').val() == 'm';
+	}
+
+	get gide() {
+		return document.querySelector('[name="guide"]:checked').value;
+	}
+
+	get brickColor() {
+		return document.querySelector('[name="color"]:checked').value;
+	}
+
+	get scale() {
+		return document.querySelector('[name="scale"]:checked').value;
+	}
+
+	get roll() {
+		return parseInt(document.querySelector('[name="roll"]').value);
+	}
+
+	get repeat() {
+		return document.querySelector('[name="repeat"]').value;
 	}
 
 	loadDetail() {
@@ -46,8 +55,30 @@ class EditStage {
 			});
 		}).then(()=> {
 			loading.parentNode.removeChild(loading);
+			this.resetCanvas();
 			this.start();
 		});
+	}
+
+	resetCanvas() {
+		let product = Product.Instance;
+		let stage = product.stage;
+		let scale = this.scale;
+		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+		let width = stage.width * this.repeat;
+		let height = stage.height + (hasMargin ? product.height * 2 : 0);
+		let frameWidth = width * scale;
+		let frameHeight = height * scale;
+		let originTop = hasMargin ? product.height : 0;
+
+		this.frame.style.width = frameWidth + 'px';
+		this.frame.style.height = frameHeight + 'px';
+		this.canvas.style.transformOrigin = originTop + 'px ' + '0px';
+		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
+		this.canvas.width = width;
+		this.canvas.height = height;
+		console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
+		this.ctx = this.canvas.getContext('2d');
 	}
 
 	setupStage(detail) {
@@ -122,14 +153,15 @@ class EditStage {
 //			view.clear();
 //			product.draw(view.ctx);
 			this.ctx.save();
-			this.ctx.clearRect(0, 0, this.width, this.height);
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+//			this.ctx.scale(this.scale, this.scale);
 			product.draw(this.ctx);
 			this.ctx.restore();
 			requestAnimationFrame(activate);
 		};
 
 //console.log('start!:' + landform.stage.fg.width);
-		this.controller = new Controller();
+//		this.controller = new Controller();
 //		this.actorPanel = new ActorPanel(this.field);
 //		this.actorPanel.setupActors(Product.Instance.actorList);
 		this.setupActors(Product.Instance.actorList);
@@ -194,16 +226,11 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	}
 
 	setupEvents() {
-		let slider = $('#slider');
-//		let landform = this.field.landform;
 		let stage = Product.Instance.stage;
-		let max = (stage.fg.image.width - Product.Instance.width) / stage.map.brickSize;
 
-		slider.change(()=> Product.Instance.stage.setProgress(slider.val()));
-		slider.attr('max', max);
-		slider.slider('refresh');
 		Product.Instance.stage.setProgress(0);
 
+		$('[name="scale"]').click(()=> this.resetCanvas());
 		// Actor
 //		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
 		// saveButton
@@ -212,6 +239,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		saveButton.addEventListener('click', ()=> this.saveMap());
 		//
 //		$('#frame').draggable();
+		this.setupAttributes();
 		this.setupPointingDevice();
 	}
 
@@ -242,6 +270,33 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			landform.wheel(dy);
 		}
 		this.controller.decPoint(dx * Landform.BRICK_WIDTH, dy * Landform.BRICK_WIDTH);
+	}
+
+	setupAttributes() {
+		let stage = Product.Instance.stage;
+		let roll = document.querySelector('[name="roll"]');
+		let repeat = document.querySelector('[name="repeat"]');
+
+		roll.addEventListener('change', ()=> {
+			console.log('roll:' + this.roll);
+			stage.changeRoll(this.roll);
+			this.resetCanvas();
+		});
+		repeat.addEventListener('change', ()=> {
+			let repeatValue = parseInt(repeat.value);
+
+			if (!repeatValue) {
+				repeat.value = 1;
+			}
+			let width = stage.width * repeat.value;
+
+			if (16384 < width) {
+				let v = parseInt(16384 / stage.width);
+				console.log('v:' + v);
+				repeat.value = v;
+			}
+			this.resetCanvas();
+		});
 	}
 
 	setupPointingDevice() {
