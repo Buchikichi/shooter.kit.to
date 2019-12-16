@@ -128,9 +128,12 @@ console.log('sx:' + sx);
 		return new MapEntity().save(this);
 	}
 
-	static create(mapId) {
-		return new MapEntity().select(mapId).then(map => {
-			return Object.assign(new FieldMapEditor(), map).init();
-		});
+	static create(obj) {
+		if ('string' == typeof obj) {
+			return new MapEntity().select(obj).then(map => {
+				return FieldMapEditor.create(map);
+			});
+		}
+		return Object.assign(new FieldMapEditor(), obj).init();
 	}
 }

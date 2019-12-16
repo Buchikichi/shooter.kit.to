@@ -37,6 +37,9 @@ public class Product {
 	private int width;
 	private int height;
 	private int count;
+	private int crashScroll;
+	private int crashBgm;
+	private int crashPlayer;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

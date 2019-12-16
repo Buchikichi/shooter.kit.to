@@ -15,7 +15,6 @@ public class ProductDetailForm {
 	private String id;
 	private int seq;
 	private int roll;
-	private String mapData;
 	private List<Scenario> scenarioList;
 
 	private Map map;

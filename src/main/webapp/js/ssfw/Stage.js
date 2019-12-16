@@ -10,6 +10,7 @@ class Stage {
 		this.progress = 0;
 		this.eventList = [];
 		this.lastScan = null;
+		this.performersList = [];
 	}
 
 	get isMoving() {
@@ -47,14 +48,20 @@ class Stage {
 		return this.scroll == Stage.SCROLL.LOOP;
 	}
 
-	getGround(id) {
-		return this.viewDic[id];
-	}
-
 	changeRoll(roll) {
 		this.roll = roll;
 		this.scroll = roll;
 		this.map._mainVisual.pattern = null;
+	}
+
+	start() {
+		this.performersList.forEach(actor => {
+			actor.x += this.map.x;
+			actor.y += this.map.y;
+			actor._stage = this;
+		});
+		// Add MapVisual
+		this.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
 	reset() {
@@ -72,9 +79,6 @@ class Stage {
 		this.effectV = 0;
 		this.map.reset();
 		this.map.setProgress(this.progress);
-		this.view.forEach(ground => {
-			ground.reset(this.checkPoint);
-		});
 		this.eventList = this.scenarioList.concat();
 		this.playBgm();
 	}
@@ -230,9 +234,6 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	forward() {
 		this.map.setProgress(this.progress++);
-//		this.view.forEach(ground => {
-//			ground.forward();
-//		});
 		let fgX = this.fg.x;
 
 		Stage.CHECK_POINT.forEach(cp => {
@@ -265,47 +266,33 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 //		}
 	}
 
-	draw(ctx) {
+	removeMapVisual() {
+		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
+		this.performersList.forEach(actor => {
+			actor.x -= this.map.x;
+			actor.y -= this.map.y;
+		});
+		return this.performersList;
 	}
 
-	/**
-	 * レコードからステージを生成.
-	 */
-	static createViewList(rec) {
-		let list = [];
+	move() {
+		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
+		this.performersList.sort((a, b) => a.z - b.z);
+	}
 
-		Stage.VIEWS.forEach(key => {
-			let imageId = rec[key];
+	draw(ctx) {
+		this.performersList.forEach(actor => actor.draw(ctx));
+	}
 
-			if (!imageId || imageId.length == 0) {
-				return;
-			}
-			let speed = rec[key + 'speed'];
-			let dir = rec[key + 'dir'];
-			let blink = rec[key + 'blink'];
-			let view;
-			// (img, speed = .5, dir = 0, blink = 0)
-			if (key.startsWith('b')) {
-				view = new StageBg(imageId, speed, dir, blink);
-			} else {
-				view = new StageFg(imageId, speed, dir, blink);
-			}
-			view.viewId = key;
-			list.push(view);
-		});
-		return list;
+	createFieldMap() {
+		return FieldMap.create(this.map);
 	}
 
 	init() {
-		this.map = FieldMap.create(this.map);
-		this.map._stage = this;
-this.view = [];//Stage.createViewList(this.map);
-this.view.forEach(ground => {
-	ground.stage = this;
-	this.viewDic[ground.viewId] = ground;
-});
 		this.scroll = this.roll;
 		this.scrollSv = this.roll;
+		this.map = this.createFieldMap();
+		this.map._stage = this;
 		this.setBgm(this.map.theme, this.map.boss);
 		return this;
 	}
@@ -327,122 +314,3 @@ Stage.PHASE = {
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
-
-
-/**
- * Foreground and Background.
- */
-class StageView {
-	constructor(imageId, speed, dir, blink) {
-		this.imageId = imageId;
-		this.speed = speed;
-		this.dir = dir;
-		this.blink = blink;
-		this.pattern = null;
-		this.repeatX = 2;
-		this.repeatY = 2;
-	}
-
-	get img() {
-		return VisualManager.Instance.dic[this.imageId];
-	}
-
-	reset(checkPoint) {
-		if (!this.width) {
-			let img = this.img;
-
-			this.width = img.width;
-			this.height = img.height;
-			this.w2 = img.width * this.repeatX;
-			this.h2 = img.height * this.repeatY;
-		}
-		this.x = checkPoint.x % this.width;
-		this.y = 0;
-		this.effectH = 0;
-		this.effectV = 0;
-		this.alpha = 1;
-		this.blinkDir = -1;
-	}
-
-	forward() {
-		let effectV = this.stage.effectV;
-
-		this.effectH = Math.cos(this.dir) * this.speed;
-		this.effectV = Math.sin(this.dir) * this.speed;
-		this.x += this.effectH;
-		this.y += this.effectV;
-		this.y -= effectV * this.speed;
-		if (this.width < this.x) {
-			this.x -= this.width;
-		}
-		if (this.y < 0) {
-			this.y += this.height;
-		}
-		if (this.height < this.y) {
-			this.y -= this.height;
-		}
-	}
-
-	getPattern(ctx) {
-		if (!this.pattern) {
-			this.pattern = ctx.createPattern(this.img, 'repeat');
-		}
-		return this.pattern;
-	}
-
-	draw(ctx) {
-		if (this.blink) {
-			this.alpha += this.blinkDir * this.blink;
-			if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
-				this.blinkDir *= -1;
-			}
-		}
-		ctx.save();
-		ctx.globalAlpha = this.alpha;
-		ctx.translate(-this.x, -this.y);
-		ctx.beginPath();
-		ctx.fillStyle = this.getPattern(ctx);
-		ctx.rect(0, 0, this.w2, this.h2);
-		ctx.fill();
-		ctx.restore();
-	}
-}
-
-/**
- * Foreground information.
- */
-class StageFg extends StageView {
-	constructor(imageId, speed = .5, dir = 0, blink = 0) {
-		super(imageId, speed, dir, blink);
-		this.repeatX = 1;
-	}
-
-	createCanvas() {
-		let canvas = document.createElement('canvas');
-		let ctx = canvas.getContext('2d');
-
-		canvas.width = this.width;
-		canvas.height = this.height;
-		ctx.clearRect(0, 0, this.width, this.height);
-		ctx.drawImage(this.img, 0, 0);
-		return canvas;
-	}
-
-	reset(checkPoint) {
-		super.reset(checkPoint);
-		if (checkPoint.x == 0) {
-			this.x = -this.product.width;
-		}
-		this.canvas = this.createCanvas();
-		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
-	}
-}
-
-/**
- * Background information.
- */
-class StageBg extends StageView {
-	constructor(imageId, speed = .5, dir = 0, blink = 0) {
-		super(imageId, speed, dir, blink);
-	}
-}

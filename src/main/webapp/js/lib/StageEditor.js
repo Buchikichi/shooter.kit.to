@@ -14,8 +14,14 @@ class StageEditor extends Stage {
 	}
 
 	draw(ctx) {
-//console.log('draw:' + this.eventList.length);
+		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+
 		ctx.save();
+		if (hasMargin) {
+			ctx.translate(0, Product.Instance.height);
+		}
+		super.draw(ctx);
+		this.map.draw(ctx);
 		this.eventList.forEach(rec => {
 			let bw = this.map.brickSize;
 			let bh = bw / 2;
@@ -30,8 +36,14 @@ class StageEditor extends Stage {
 		ctx.restore();
 	}
 
+	createFieldMap() {
+		return FieldMapEditor.create(this.map);
+	}
+
 	init() {
+		console.log('StageEditor#init');
 		super.init();
+		console.log('map:' + this.map.constructor.name);
 		this.eventList = this.scenarioList.concat();
 		return this;
 	}

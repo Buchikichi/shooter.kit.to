@@ -81,6 +81,11 @@ class EditStage {
 		this.ctx = this.canvas.getContext('2d');
 	}
 
+	changeColor() {
+		console.log('changeColor:' + this.brickColor);
+		Product.Instance.stage.map.brickColor = this.brickColor;
+	}
+
 	setupStage(detail) {
 		let form = document.getElementById('inputBox');
 		let propList = {
@@ -228,17 +233,16 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	setupEvents() {
 		let stage = Product.Instance.stage;
 
-		Product.Instance.stage.setProgress(0);
+		stage.setProgress(0);
 
 		$('[name="scale"]').click(()=> this.resetCanvas());
+		$('[name="color"]').click(()=> this.changeColor());
 		// Actor
 //		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
 		// saveButton
-		let saveButton = document.getElementById('saveButton');
-
-		saveButton.addEventListener('click', ()=> this.saveMap());
+		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
 		//
-//		$('#frame').draggable();
+		this.changeColor();
 		this.setupAttributes();
 		this.setupPointingDevice();
 	}
@@ -276,6 +280,11 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let stage = Product.Instance.stage;
 		let roll = document.querySelector('[name="roll"]');
 		let repeat = document.querySelector('[name="repeat"]');
+		let vPos = document.querySelector('[name="vPos"]');
+		let startEffect = document.querySelector('[name="startEffect"]');
+		let startSpeed = document.querySelector('[name="startSpeed"]');
+		let sequelEffect = document.querySelector('[name="sequelEffect"]');
+		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
 
 		roll.addEventListener('change', ()=> {
 			console.log('roll:' + this.roll);
@@ -297,6 +306,21 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			}
 			this.resetCanvas();
 		});
+		$(vPos).change(()=> {
+			console.log('vPos:' + vPos.value);
+			stage.vPos = vPos.value;
+			this.resetCanvas();
+		});
+		startEffect.addEventListener('change', ()=> stage.startEffect = startEffect.value);
+		$(startSpeed).change(()=> {
+			console.log('startSpeed:' + startSpeed.value);
+			stage.startSpeed = startSpeed.value;
+		});
+		sequelEffect.addEventListener('change', ()=> stage.sequelEffect = sequelEffect.value);
+		$(sequelSpeed).change(()=> {
+			console.log('startSpeed:' + sequelSpeed.value);
+			stage.sequelSpeed = sequelSpeed.value;
+		});
 	}
 
 	setupPointingDevice() {
@@ -307,12 +331,13 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	}
 
 	saveMap() {
-		let save = this.saveDetailMap();
+//		let save = this.saveDetailMap();
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-		save.then(data => {
+//		save.then(data => {
+		new ProductEntity().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Stage saved.';
@@ -330,7 +355,6 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let ix = 0;
 
 		formData.append('id', this.detailId);
-		formData.append('mapData', landform.mapImage);
 		formData.append('map.id', this.stage.map.id);
 		landform.scenarioList.forEach(scenario => {
 			Object.keys(scenario).forEach(key => {

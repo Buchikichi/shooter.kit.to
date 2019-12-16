@@ -19,6 +19,7 @@
 #view {
 	position: relative;
 	overflow: auto;
+	overflow-y: hidden;
 	z-index: 0;
 	transform-origin: top left;
   	color: white;
@@ -45,9 +46,9 @@
       </div>
       <div id="loading"></div>
     </div>
-    <div data-role="footer"  data-position="fixed">
+    <div data-role="footer" data-position="fixed" data-tap-toggle="false">
       <div id="panel">
-        <fieldset data-role="controlgroup" data-type="horizontal">
+        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
           <label>Actor<input type="radio" name="behavior" value="a" checked="checked"/></label>
           <label>Event<input type="radio" name="behavior" value="e"/></label>
@@ -55,9 +56,9 @@
           <label>ON<input type="radio" name="guide" value="1" checked="checked"/></label>
           <label>off<input type="radio" name="guide" value="0"/></label>
           <button disabled="disabled" data-theme="b">Brick</button>
-          <label>B<input type="radio" name="color" value="b" checked="checked"/></label>
+          <label>B<input type="radio" name="color" value="b"/></label>
           <label>W<input type="radio" name="color" value="w"/></label>
-          <label>-<input type="radio" name="color" value="-"/></label>
+          <label>-<input type="radio" name="color" value="-" checked="checked"/></label>
           <button disabled="disabled" data-theme="b">Scale</button>
           <label>1<input type="radio" name="scale" value="1" checked="checked"/></label>
           <label>2<input type="radio" name="scale" value="2"/></label>
@@ -68,7 +69,8 @@
       </div>
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
-      <form id="attrForm" enctype="multipart/form-data">
+      <form id="attrForm" enctype="multipart/form-data"
+           th:with="effectList=${T(to.kit.shooter.entity.EffectType).LIST}">
         <input id="productId" type="hidden" th:value="${stage.product.id}"/>
         <input id="width" type="hidden" th:value="${stage.product.width}"/>
         <input id="height" type="hidden" th:value="${stage.product.height}"/>
@@ -76,18 +78,18 @@
         <input id="detailId" type="hidden" th:value="${stage.id}"/>
         <input id="stageName" type="text" required="required" th:value="${stage.map.name}"/>
         <label><span>V-Scroll type:</span>
-          <select name="roll" data-mini="true" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
-            <option th:each="opt:${scrollList}" th:value="${opt.value}" th:selected="${opt.value == stage.roll}" th:text="${opt}">OFF</option>
+          <select name="roll" data-mini="true" th:field="${stage.roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
+            <option th:each="opt:${scrollList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
           </select>
         </label>
         <label><span>V-Start pos:</span>
-          <input type="text" name="vStartPos" value="0" disabled="disabled"/>
+          <input type="text" th:field="${stage.hPos}" disabled="disabled"/>
         </label>
         <label><span>H-Repeat:</span>
-          <input type="number" name="repeat" min="1" value="1"/>
+          <input type="number" min="1" th:field="${stage.repeat}" />
         </label>
         <label><span>H-Start pos:</span>
-          <input type="range" name="hStartPos" min="0" max="4" value="0"/>
+          <input type="range" min="0" max="4" th:field="${stage.vPos}"/>
         </label>
         <div data-role="collapsibleset">
           <div data-role="collapsible" data-mini="true">
@@ -95,13 +97,10 @@
             <ul data-role="listview">
               <li data-role="list-divider">Effect:</li>
               <li class="ui-field-contain">
-                <select name="effectStart" data-mini="true">
-                  <option value="0">none</option>
-                  <option value="1">Fade in</option>
-                  <option value="2">Fade out</option>
-                  <option value="3" selected="selected">Spiral</option>
+                <select data-mini="true" th:field="${stage.startEffect}">
+                  <option th:each="opt:${effectList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
-                <input type="range" name="fadeLength" min="1" max="30" value="5">
+                <input type="range" min="1" max="30" th:field="${stage.startSpeed}"/>
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
               </li>
               <li data-role="list-divider">BGM:</li>
@@ -120,13 +119,10 @@
             <ul data-role="listview">
               <li data-role="list-divider">Effect:</li>
               <li class="ui-field-contain">
-                <select name="effectSequel" data-mini="true">
-                  <option value="0">None</option>
-                  <option value="1" selected="selected">Fade in</option>
-                  <option value="2">Fade out</option>
-                  <option value="3">Spiral</option>
+                <select data-mini="true" th:field="${stage.sequelEffect}">
+                  <option th:each="opt:${effectList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
-                <input type="range" name="fadeLength" min="1" max="30" value="5">
+                <input type="range" min="1" max="30" th:field="${stage.sequelSpeed}">
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
               </li>
               <li data-role="list-divider">BGM:</li>
@@ -136,33 +132,6 @@
                   <option value="1" selected="selected">a</option>
                   <option value="2">b</option>
                   <option value="3">c</option>
-                </select>
-              </li>
-            </ul>
-          </div>
-          <div data-role="collapsible" data-mini="true">
-            <h2>Crash handling</h2>
-            <ul data-role="listview">
-              <li data-role="list-divider">Scroll:</li>
-              <li class="ui-field-contain">
-                <select name="crashHandlingScroll" id="select-native-2" data-mini="true">
-                  <option value="0">Keep</option>
-                  <option value="1">Stop</option>
-                </select>
-              </li>
-              <li data-role="list-divider">BGM:</li>
-              <li class="ui-field-contain">
-                <select name="crashHandling" id="select-native-2" data-mini="true">
-                  <option value="0">Keep</option>
-                  <option value="1">Stop</option>
-                  <option value="2">Fade</option>
-                </select>
-              </li>
-              <li data-role="list-divider">Player:</li>
-              <li class="ui-field-contain">
-                <select name="crashHandlingPlayer" data-mini="true">
-                  <option value="0">Rebirth</option>
-                  <option value="1" selected="selected">Start over</option>
                 </select>
               </li>
             </ul>

@@ -27,10 +27,11 @@
   <div data-role="collapsible" data-collapsed="false" data-mini="true">
     <h4 th:text="#{stage}">Stage</h4>
     <ul id="productStageView" data-role="listview" data-split-icon="edit">
-      <li th:each="detail:${product.detailList}">
-        <a th:with="map=${detail.map}" href="#editStagePanel" th:attr="data-id=${detail.id}, data-stage=${map.id}, data-roll=${detail.roll}">
+      <li th:each="stage:${product.detailList}">
+        <a th:with="map=${stage.map}" href="#editStagePanel" th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
           <img src="/img/icon.listview.png"/>
           <span th:text="${map.name}"></span>
+          <span th:text="${#lists.size(stage.scenarioList)}" class="ui-li-count"></span>
           <p th:text="${map.description}"></p>
         </a>
       </li>
@@ -42,10 +43,8 @@
     <div id="message"></div>
   </div>
   <div id="infoPanel" data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay">
-    <div class="ui-bar ui-bar-b ui-corner-all">Product information.</div>
     <form id="productForm">
       <input type="hidden" name="id" th:value="${product.id}"/>
-      <label for="name">Name:</label>
       <input id="name" name="name" type="text" required="required" th:value="${product.name}"/>
       <label for="description">Description:</label>
       <textarea id="description" name="description" required="required" th:text="${product.description}"></textarea>
@@ -72,6 +71,33 @@
         </select>
         <button id="editMediasetButton" type="button" data-icon="edit" data-rel="close" data-mini="true">Edit mediaset</button>
       </fieldset>
+      <div data-role="collapsible" data-mini="true">
+        <h2>Crash handling</h2>
+        <ul data-role="listview">
+          <li data-role="list-divider">Scroll:</li>
+          <li class="ui-field-contain">
+            <select data-mini="true" th:field="${product.crashScroll}">
+              <option value="0">Keep</option>
+              <option value="1">Stop</option>
+            </select>
+          </li>
+          <li data-role="list-divider">BGM:</li>
+          <li class="ui-field-contain">
+            <select data-mini="true" th:field="${product.crashBgm}">
+              <option value="0">Keep</option>
+              <option value="1">Stop</option>
+              <option value="2">Fade</option>
+            </select>
+          </li>
+          <li data-role="list-divider">Player:</li>
+          <li class="ui-field-contain">
+            <select data-mini="true" th:field="${product.crashPlayer}">
+              <option value="0">Rebirth</option>
+              <option value="1">Start over</option>
+            </select>
+          </li>
+        </ul>
+      </div>
       <fieldset class="ui-grid-a">
         <div class="ui-block-a">
           <div class="ui-field-contain">

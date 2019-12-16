@@ -12,7 +12,6 @@ class Product extends Matter {
 		this.hiscore = 0;
 		this.stageNum = 0;
 		this.stage = null;
-		this.performersList = [];
 	}
 
 	get isGameOver() {
@@ -45,31 +44,20 @@ if (this.ship) {
 	console.log('ship_' + this.ship.x + '/' + this.ship.y);
 }
 		let stage = this.detailList[this.stageNum];
+		let performersList = this.stage ? this.stage.removeMapVisual() : [];
 
-		// Remove MapVisual of previous stage.
-		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
-		this.performersList.forEach(actor => {
-			actor.x -= actor._stage.map.x;
-			actor.y -= actor._stage.map.y;
-		});
 if (this.ship) {
 	console.log('map:' + this.stage.map.x + '/' + this.stage.map.y);
 	console.log('ship:' + this.ship.x + '/' + this.ship.y);
 }
 		// Create next stage.
-		this.stage = Object.assign(stage);
+		this.stage = Object.assign(stage, { performersList: performersList });
+		this.stage.start();
 		Field.Instance.landform.loadStage(this.stage);
 		this.stageNum++;
 		if (this.detailList.length <= this.stageNum) {
 			this.stageNum = 0;
 		}
-		this.performersList.forEach(actor => {
-			actor.x += this.stage.map.x;
-			actor.y += this.stage.map.y;
-			actor._stage = this.stage
-		});
-		// Add MapVisual
-		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
 	selectStage(stageId) {
@@ -80,7 +68,8 @@ if (this.ship) {
 			this.stage = StageEditor.create(stage);
 		});
 //		Field.Instance.landform.loadStage(this.stage);
-		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
+//		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
+		this.stage.start();
 	}
 
 	_reset() {
@@ -88,8 +77,10 @@ if (this.ship) {
 		this.ship._stage = this.stage;
 		this.ship.reset();
 		this.ship.enter();
-		this.performersList = [this.ship];
-		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
+//		this.performersList = [this.ship];
+//		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
+		this.stage.performersList = [this.ship];
+		this.stage.start();
 	}
 
 	retry() {
@@ -105,7 +96,7 @@ if (this.ship) {
 		if (this.stage.phase == Stage.PHASE.BOSS) {
 			return;
 		}
-		this.stage.scanEvent().forEach(enemy => this.performersList.push(enemy));
+		this.stage.move();
 		let next = Field.Instance.landform.forward(this.ship);
 
 		if (this.isGameOver) {
@@ -130,15 +121,14 @@ if (this.ship) {
 		if (!this.stage) {
 			return;
 		}
-		let shipList = this.performersList.filter(a => a instanceof Ship);
+		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
 		let shotList = [];
 		let enemyList = [];
 		let validActors = [];
 		let score = 0;
 
-		this.performersList.sort((a, b) => a.z - b.z);
-		this.performersList.forEach(actor => {
+		this.stage.performersList.forEach(actor => {
 			if (actor.isGone) {
 				return;
 			}
@@ -172,7 +162,7 @@ if (this.ship) {
 			this.stage.phase = Stage.PHASE.NORMAL;
 			AudioMixer.INSTANCE.fade();
 		}
-		this.performersList = validActors;
+		this.stage.performersList = validActors;
 		this.score += score;
 		if (!this.isGameOver && shipList.every(s => s.isGone)) {
 			AudioMixer.INSTANCE.stop();
@@ -186,7 +176,6 @@ if (this.ship) {
 		// Draw
 		ctx.save();
 		ctx.translate(this.stage.fg.x, this.stage.fg.y);
-		this.performersList.forEach(actor => actor.draw(ctx));
 		this.stage.draw(ctx);
 		ctx.restore();
 		this.drawForDebug(ctx);
@@ -195,7 +184,7 @@ if (this.ship) {
 	drawForDebug(ctx) {
 		let x = 2;
 		let y = 20;
-		let actors = this.performersList.filter(actor => !(actor instanceof MapVisual));
+		let actors = this.stage.performersList.filter(actor => !(actor instanceof MapVisual));
 		let mainVisual = this.stage.map._mainVisual;
 
 		ctx.save();

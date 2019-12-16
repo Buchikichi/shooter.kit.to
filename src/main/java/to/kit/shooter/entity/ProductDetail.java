@@ -29,7 +29,17 @@ public class ProductDetail {
 	private String id;
 	private int seq;
 	private int roll;
-	private String mapData;
+	private int repeat;
+	private int hPos;
+	private int vPos;
+	private int startEffect;
+	private int startSpeed;
+	private int startAudioType;
+	private int startAudioSeq;
+	private int sequelEffect;
+	private int sequelSpeed;
+	private int sequelAudioType;
+	private int sequelAudioSeq;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
