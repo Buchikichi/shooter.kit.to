@@ -11,11 +11,11 @@ CREATE TABLE stage(
 	repeat integer NOT NULL DEFAULT 1,
 	h_pos integer NOT NULL DEFAULT 0,
 	v_pos integer NOT NULL DEFAULT 0,
-	start_effect integer NOT NULL DEFAULT 0,
+	start_transition integer NOT NULL DEFAULT 0,
 	start_speed integer NOT NULL DEFAULT 0,
 	start_audio_type integer NOT NULL DEFAULT -1,
 	start_audio_seq integer NOT NULL DEFAULT 0,
-	sequel_effect integer NOT NULL DEFAULT 0,
+	sequel_transition integer NOT NULL DEFAULT 0,
 	sequel_speed integer NOT NULL DEFAULT 0,
 	sequel_audio_type integer NOT NULL DEFAULT -1,
 	sequel_audio_seq integer NOT NULL DEFAULT 0,
@@ -31,11 +31,11 @@ COMMENT ON COLUMN stage.roll IS 'スクロール種類';
 COMMENT ON COLUMN stage.repeat IS 'リピート';
 COMMENT ON COLUMN stage.h_pos IS '開始位置H';
 COMMENT ON COLUMN stage.v_pos IS '開始位置V';
-COMMENT ON COLUMN stage.start_effect IS '開始エフェクト';
+COMMENT ON COLUMN stage.start_transition IS '開始エフェクト';
 COMMENT ON COLUMN stage.start_speed IS '開始エフェクト速度';
 COMMENT ON COLUMN stage.start_audio_type IS '開始オーディオタイプ';
 COMMENT ON COLUMN stage.start_audio_seq IS '開始オーディオ番号';
-COMMENT ON COLUMN stage.sequel_effect IS '続きエフェクト';
+COMMENT ON COLUMN stage.sequel_transition IS '続きエフェクト';
 COMMENT ON COLUMN stage.sequel_speed IS '続きエフェクト速度';
 COMMENT ON COLUMN stage.sequel_audio_type IS '続きオーディオタイプ';
 COMMENT ON COLUMN stage.sequel_audio_seq IS '続きオーディオ番号';
@@ -50,11 +50,11 @@ ALTER TABLE stage DROP COLUMN map;
 ALTER TABLE stage ADD repeat integer NOT NULL DEFAULT 1;
 ALTER TABLE stage ADD h_pos integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD v_pos integer NOT NULL DEFAULT 0;
-ALTER TABLE stage ADD start_effect integer NOT NULL DEFAULT 0;
+ALTER TABLE stage ADD start_transition integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD start_speed integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD start_audio_type integer NOT NULL DEFAULT -1;
 ALTER TABLE stage ADD start_audio_seq integer NOT NULL DEFAULT 0;
-ALTER TABLE stage ADD sequel_effect integer NOT NULL DEFAULT 0;
+ALTER TABLE stage ADD sequel_transition integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD sequel_speed integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD sequel_audio_type integer NOT NULL DEFAULT -1;
 ALTER TABLE stage ADD sequel_audio_seq integer NOT NULL DEFAULT 0;

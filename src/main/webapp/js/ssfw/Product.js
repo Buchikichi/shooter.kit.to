@@ -52,8 +52,10 @@ if (this.ship) {
 }
 		// Create next stage.
 		this.stage = Object.assign(stage, { performersList: performersList });
+		this.stage.playBgm();
 		this.stage.start();
 		Field.Instance.landform.loadStage(this.stage);
+		this.stage.reset();
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {
 			this.stageNum = 0;
@@ -93,34 +95,32 @@ if (this.ship) {
 		if (!this.stage) {
 			return;
 		}
-		if (this.stage.phase == Stage.PHASE.BOSS) {
+		if (Transition.Instance.waitForDrawing) {
 			return;
 		}
-		this.stage.move();
-		let next = Field.Instance.landform.forward(this.ship);
+		if (this.stage.phase != Stage.PHASE.BOSS) {
+			this.stage.move();
 
-		if (this.isGameOver) {
-			return;
-		}
-		if (next == Landform.NEXT.NOTICE) {
-			AudioMixer.INSTANCE.fade();
-			this.stage.notice();
-		} else if (next == Landform.NEXT.ARRIV) {
-			this.stage.toBossMode();
-		} else if (next == Landform.NEXT.PAST) {
-			this.nextStage();
-		}
-		if (Product.MIN_LOOSING_RATE < this.loosingRate) {
-			let step = this.loosingRate / 10000;
+			let next = Field.Instance.landform.forward(this.ship);
 
-			this.loosingRate -= step;
-		}
-	}
+			if (this.isGameOver) {
+				return;
+			}
+			if (next == Landform.NEXT.NOTICE) {
+				AudioMixer.INSTANCE.fade();
+				this.stage.notice();
+			} else if (next == Landform.NEXT.ARRIV) {
+				this.stage.toBossMode();
+			} else if (next == Landform.NEXT.PAST) {
+				this.nextStage();
+			}
+			if (Product.MIN_LOOSING_RATE < this.loosingRate) {
+				let step = this.loosingRate / 10000;
 
-	draw(ctx) {
-		if (!this.stage) {
-			return;
+				this.loosingRate -= step;
+			}
 		}
+
 		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
 		let shotList = [];
@@ -165,13 +165,21 @@ if (this.ship) {
 		this.stage.performersList = validActors;
 		this.score += score;
 		if (!this.isGameOver && shipList.every(s => s.isGone)) {
-			AudioMixer.INSTANCE.stop();
+			if (this.crashBgm == Product.CrashHandling.Bgm.Stop) {
+				AudioMixer.INSTANCE.stop();
+			}
 			if (--this.stage.hibernate <= 0) {
 				if (0 < --this.shipRemain) {
 					this.retry();
 //++this.shipRemain;
 				}
 			}
+		}
+	}
+
+	draw(ctx) {
+		if (!this.stage) {
+			return;
 		}
 		// Draw
 		ctx.save();
@@ -238,3 +246,8 @@ if (this.ship) {
 Product.Instance = null;
 Product.MIN_LOOSING_RATE = 1;
 Product.MAX_LOOSING_RATE = 20000;
+Product.CrashHandling = {
+	Bgm: {
+		Keep: 0, Stop: 1, Fade: 2,
+	}
+};

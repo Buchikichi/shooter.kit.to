@@ -42,6 +42,12 @@ class Mediaset {
 		])
 	}
 
+	getAudio(audioType, audioSeq) {
+		let key = audioType + ':' + audioSeq;
+
+		return this.audioDic[key];
+	}
+
 	getVisual(visualId) {
 		let result = null;
 

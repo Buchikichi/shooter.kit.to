@@ -43,6 +43,7 @@
     <div id="view">
       <div id="frame">
         <canvas id="canvas"></canvas>
+        <canvas id="transition"></canvas>
       </div>
       <div id="loading"></div>
     </div>
@@ -70,7 +71,7 @@
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data"
-           th:with="effectList=${T(to.kit.shooter.entity.EffectType).LIST}">
+           th:with="transitionList=${T(to.kit.shooter.entity.TransitionType).LIST}">
         <input id="productId" type="hidden" th:value="${stage.product.id}"/>
         <input id="width" type="hidden" th:value="${stage.product.width}"/>
         <input id="height" type="hidden" th:value="${stage.product.height}"/>
@@ -95,10 +96,10 @@
           <div data-role="collapsible" data-mini="true">
             <h2>Start or retry</h2>
             <ul data-role="listview">
-              <li data-role="list-divider">Effect:</li>
+              <li data-role="list-divider">Transition:</li>
               <li class="ui-field-contain">
-                <select data-mini="true" th:field="${stage.startEffect}">
-                  <option th:each="opt:${effectList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
+                <select data-mini="true" th:field="${stage.startTransition}">
+                  <option th:each="opt:${transitionList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
                 <input type="range" min="1" max="30" th:field="${stage.startSpeed}"/>
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
@@ -117,10 +118,10 @@
           <div data-role="collapsible" data-mini="true">
             <h2>Sequel</h2>
             <ul data-role="listview">
-              <li data-role="list-divider">Effect:</li>
+              <li data-role="list-divider">Transition:</li>
               <li class="ui-field-contain">
-                <select data-mini="true" th:field="${stage.sequelEffect}">
-                  <option th:each="opt:${effectList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
+                <select data-mini="true" th:field="${stage.sequelTransition}">
+                  <option th:each="opt:${transitionList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
                 <input type="range" min="1" max="30" th:field="${stage.sequelSpeed}">
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>

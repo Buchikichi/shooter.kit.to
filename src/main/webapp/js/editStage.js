@@ -281,9 +281,9 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let roll = document.querySelector('[name="roll"]');
 		let repeat = document.querySelector('[name="repeat"]');
 		let vPos = document.querySelector('[name="vPos"]');
-		let startEffect = document.querySelector('[name="startEffect"]');
+		let startTransition = document.querySelector('[name="startTransition"]');
 		let startSpeed = document.querySelector('[name="startSpeed"]');
-		let sequelEffect = document.querySelector('[name="sequelEffect"]');
+		let sequelTransition = document.querySelector('[name="sequelTransition"]');
 		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
 
 		roll.addEventListener('change', ()=> {
@@ -311,12 +311,12 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			stage.vPos = vPos.value;
 			this.resetCanvas();
 		});
-		startEffect.addEventListener('change', ()=> stage.startEffect = startEffect.value);
+		startTransition.addEventListener('change', ()=> stage.startTransition = startTransition.value);
 		$(startSpeed).change(()=> {
 			console.log('startSpeed:' + startSpeed.value);
 			stage.startSpeed = startSpeed.value;
 		});
-		sequelEffect.addEventListener('change', ()=> stage.sequelEffect = sequelEffect.value);
+		sequelTransition.addEventListener('change', ()=> stage.sequelTransition = sequelTransition.value);
 		$(sequelSpeed).change(()=> {
 			console.log('startSpeed:' + sequelSpeed.value);
 			stage.sequelSpeed = sequelSpeed.value;

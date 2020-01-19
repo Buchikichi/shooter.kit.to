@@ -17,15 +17,13 @@ class Stage {
 		return this.phase == Stage.PHASE.NORMAL;
 	}
 
-	setBgm(bgm, boss = null) {
-		this.bgm = bgm;
-		this.boss = boss;
-		return this;
-	}
-
 	playBgm() {
-		if (this.bgm) {
-			AudioMixer.INSTANCE.play(this.bgm, .7, true);
+		let audio = Mediaset.Instance.getAudio(this.startAudioType, this.startAudioSeq);
+
+		if (audio) {
+			// console.log('Stage#playBgm:');
+			// console.log(audio);
+			AudioMixer.INSTANCE.play(audio.id, .7, true);
 		}
 	}
 
@@ -55,6 +53,7 @@ class Stage {
 	}
 
 	start() {
+console.log('Stage#start');
 		this.performersList.forEach(actor => {
 			actor.x += this.map.x;
 			actor.y += this.map.y;
@@ -65,11 +64,13 @@ class Stage {
 	}
 
 	reset() {
+console.log('Stage#reset');
 		this.checkPoint = Stage.CHECK_POINT[0];
 		this.retry();
 	}
 
 	retry() {
+console.log('Stage#retry!');
 		this.phase = Stage.PHASE.NORMAL;
 		this.progress = -this.product.width / this.map._mainVisual.speed;
 		this.hibernate = this.product.maxHibernate;
@@ -80,7 +81,10 @@ class Stage {
 		this.map.reset();
 		this.map.setProgress(this.progress);
 		this.eventList = this.scenarioList.concat();
-		this.playBgm();
+		Transition.Instance.play(this.startTransition, this.startSpeed);
+		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
+			this.playBgm();
+		}
 	}
 
 	scrollV(target) {
@@ -281,6 +285,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 	}
 
 	draw(ctx) {
+		Transition.Instance.draw();
 		this.performersList.forEach(actor => actor.draw(ctx));
 	}
 
@@ -293,7 +298,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		this.scrollSv = this.roll;
 		this.map = this.createFieldMap();
 		this.map._stage = this;
-		this.setBgm(this.map.theme, this.map.boss);
+this.boss = this.map.boss; // TODO: remove
 		return this;
 	}
 

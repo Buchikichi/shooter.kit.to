@@ -32,11 +32,11 @@ public class Stage {
 	private int repeat;
 	private int hPos;
 	private int vPos;
-	private int startEffect;
+	private int startTransition;
 	private int startSpeed;
 	private int startAudioType;
 	private int startAudioSeq;
-	private int sequelEffect;
+	private int sequelTransition;
 	private int sequelSpeed;
 	private int sequelAudioType;
 	private int sequelAudioSeq;

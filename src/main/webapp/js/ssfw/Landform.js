@@ -98,9 +98,6 @@ console.log('scenarioList created!!!');
 
 	reset() {
 		this.next = Landform.NEXT.NONE;
-		if (Product.Instance.stage) {
-			Product.Instance.stage.reset();
-		}
 	}
 
 	retry() {
