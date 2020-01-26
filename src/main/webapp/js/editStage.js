@@ -167,8 +167,9 @@ class EditStage {
 
 //console.log('start!:' + landform.stage.fg.width);
 //		this.controller = new Controller();
-//		this.actorPanel = new ActorPanel(this.field);
+		this.actorPanel = new ActorPanel();
 //		this.actorPanel.setupActors(Product.Instance.actorList);
+		this.eventPanel = new EventPanel();
 		this.setupActors(Product.Instance.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 //		landform.isEdit = true;
@@ -231,20 +232,22 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	}
 
 	setupEvents() {
+console.log('EditStage#setupEvents');
 		let stage = Product.Instance.stage;
 
 		stage.setProgress(0);
 
+		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
+		$('[name="behavior"]:eq(1)').click(()=> this.eventPanel.open());
 		$('[name="scale"]').click(()=> this.resetCanvas());
 		$('[name="color"]').click(()=> this.changeColor());
-		// Actor
-//		$('[name="behavior"]:eq(1)').click(()=> this.actorPanel.open());
 		// saveButton
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
 		//
 		this.changeColor();
 		this.setupAttributes();
 		this.setupPointingDevice();
+		new AudioSelector();
 	}
 
 	moveLandform(delta) {
@@ -283,8 +286,12 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 		let vPos = document.querySelector('[name="vPos"]');
 		let startTransition = document.querySelector('[name="startTransition"]');
 		let startSpeed = document.querySelector('[name="startSpeed"]');
+		let startAudio = document.querySelector('[name="startAudio"]');
+		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioType, stage.startAudioSeq);
 		let sequelTransition = document.querySelector('[name="sequelTransition"]');
 		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
+		let sequelAudio = document.querySelector('[name="sequelAudio"]');
+		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioType, stage.sequelAudioSeq);
 
 		roll.addEventListener('change', ()=> {
 			console.log('roll:' + this.roll);
@@ -311,16 +318,25 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 			stage.vPos = vPos.value;
 			this.resetCanvas();
 		});
+
 		startTransition.addEventListener('change', ()=> stage.startTransition = startTransition.value);
 		$(startSpeed).change(()=> {
 			console.log('startSpeed:' + startSpeed.value);
 			stage.startSpeed = startSpeed.value;
 		});
+		//console.log(startAudioData);
+		startAudio.setAttribute('data-type', stage.startAudioType);
+		startAudio.setAttribute('data-seq', stage.startAudioSeq);
+		startAudio.textContent = startAudioData ? startAudioData.name : null;
+
 		sequelTransition.addEventListener('change', ()=> stage.sequelTransition = sequelTransition.value);
 		$(sequelSpeed).change(()=> {
 			console.log('startSpeed:' + sequelSpeed.value);
 			stage.sequelSpeed = sequelSpeed.value;
 		});
+		sequelAudio.setAttribute('data-type', stage.sequelAudioType);
+		sequelAudio.setAttribute('data-seq', stage.sequelAudioSeq);
+		sequelAudio.textContent = sequelAudioData ? sequelAudioData.name : null;
 	}
 
 	setupPointingDevice() {
@@ -367,8 +383,7 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 }
 
 class ActorPanel {
-	constructor(field) {
-		this.field = field;
+	constructor() {
 		this.panel = document.getElementById('actorPanel');
 	}
 
@@ -473,4 +488,32 @@ function setupActorList(landform) {
 	actorList.find('input').click(function() {
 		landform.selection = this.value;
 	});
+}
+
+class EventPanel {
+	constructor() {
+		this.panel = document.getElementById('eventPanel');
+		this.setupEvent();
+	}
+
+	setupEvent() {
+		let op = $('[name="op"]');
+		let audioSelectorButton = document.getElementById('audioSelectorButton');
+
+		op.click(()=> {
+			let chk = this.panel.querySelector('[name=op]:checked');
+
+			if (chk.value == 'aPl') {
+				// Play BGM
+				$(audioSelectorButton).show();
+			} else {
+				$(audioSelectorButton).hide();
+			}
+		});
+		$(audioSelectorButton).hide();
+	}
+
+	open() {
+		$(this.panel).panel('open');
+	}
 }

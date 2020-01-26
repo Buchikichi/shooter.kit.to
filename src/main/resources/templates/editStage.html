@@ -106,12 +106,7 @@
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <select name="bgm" data-mini="true">
-                  <option value="0">none</option>
-                  <option value="1" selected="selected">a</option>
-                  <option value="2">b</option>
-                  <option value="3">c</option>
-                </select>
+                <button name="startAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -128,12 +123,7 @@
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <select name="bgm" data-mini="true">
-                  <option value="0">none</option>
-                  <option value="1" selected="selected">a</option>
-                  <option value="2">b</option>
-                  <option value="3">c</option>
-                </select>
+                <button name="sequelAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -153,13 +143,46 @@
 -->
       </form>
     </div>
-    <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
+    <div id="actorPanel" data-role="panel" data-position="left" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>
+    </div>
+    <div id="eventPanel" data-role="panel" data-position="left" data-display="overlay">
+      <div data-role="collapsibleset" data-mini="true">
+        <div data-role="collapsible">
+          <h3>Mode</h3>
+          <fieldset data-role="controlgroup" data-mini="true" data-inset="false">
+            <label><input type="radio" name="op" value="ent"><span>Enter</span></label>
+            <label><input type="radio" name="op" value="ckp"><span>Checkpoint</span></label>
+            <label><input type="radio" name="op" value="bos"><span>Boss mode</span></label>
+            <label><input type="radio" name="op" value="stp"><span>Stop scroll</span></label>
+            <label><input type="radio" name="op" value="nxt"><span>Next stage</span></label>
+          </fieldset>
+        </div>
+        <div data-role="collapsible">
+          <h3>Effect</h3>
+          <fieldset data-role="controlgroup" data-mini="true">
+            <label><input type="radio" name="op" value="eFa"><span>Fade out</span></label>
+          </fieldset>
+          </div>
+        <div data-role="collapsible">
+          <h3>Audio</h3>
+          <fieldset data-role="controlgroup" data-mini="true">
+            <label><input type="radio" name="op" value="aPa"><span>Pause BGM</span></label>
+            <label><input type="radio" name="op" value="aRe"><span>Resume BGM</span></label>
+            <label><input type="radio" name="op" value="aFa"><span>Fade BGM</span></label>
+            <label><input type="radio" name="op" value="aPl"><span>Play BGM</span></label>
+          </fieldset>
+          <fieldset id="audioSelectorButton" data-role="controlgroup" data-mini="true">
+            <button class="ui-btn ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+          </fieldset>
+        </div>
+      </div>
     </div>
     <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
       <p></p>
     </div>
+    <div th:replace="_audioSelector"></div>
   </div>
 </body>
 </html>
