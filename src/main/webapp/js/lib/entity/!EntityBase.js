@@ -1,6 +1,6 @@
 class EntityBase {
-	constructor(base) {
-		this.base = base;
+	constructor() {
+		this.base = this.constructor.name.slice(0, -('Entity'.length)).toLowerCase();
 	}
 
 	/**

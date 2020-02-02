@@ -11,9 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -46,13 +48,16 @@ public class Stage {
 	private Date updated;
 
 	@ManyToOne
-	@JsonBackReference
+//	@JsonBackReference
+	@JsonIgnore
 	private Product product;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "stage", targetEntity = Scenario.class)
 	@OrderBy("v, h")
+	@JsonManagedReference
 	private List<Scenario> scenarioList;
 
-	@ManyToOne
+	@OneToOne
+	@JsonManagedReference
 	private Map map;
 }

@@ -347,13 +347,11 @@ console.log('EditStage#setupEvents');
 	}
 
 	saveMap() {
-//		let save = this.saveDetailMap();
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-//		save.then(data => {
-		new ProductEntity().then(data => {
+		Product.Instance.stage.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Stage saved.';

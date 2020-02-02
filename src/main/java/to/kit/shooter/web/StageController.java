@@ -2,11 +2,11 @@ package to.kit.shooter.web;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +18,6 @@ import to.kit.shooter.service.StageService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
-import to.kit.shooter.web.form.StageForm;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
 
@@ -70,15 +69,13 @@ public class StageController implements BasicControllerInterface<Stage> {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Stage> save(StageForm form) {
+	public ResultForm<Stage> save(@RequestBody Stage stage) {
 		ResultForm<Stage> result = new ResultForm<>();
 		String customerId = getCustomerId();
 
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		Stage stage = new Stage();
-		BeanUtils.copyProperties(form, stage);
 		Stage saved = this.stageService.saveMap(stage);
 
 		result.setResult(saved);

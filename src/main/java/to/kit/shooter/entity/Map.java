@@ -12,9 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
@@ -74,7 +75,7 @@ public class Map {
 	@JsonManagedReference
 	private List<MapVisual> mapVisualList = new ArrayList<>();
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = Stage.class)
-	@JsonIgnore
-	private List<Stage> stageList;
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "map", targetEntity = Stage.class)
+	@JsonBackReference
+	private Stage stage;
 }

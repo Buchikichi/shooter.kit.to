@@ -48,6 +48,11 @@ class StageEditor extends Stage {
 		return this;
 	}
 
+	save() {
+		console.log('StageEditor#save');
+		return new StageEntity().save(this);
+	}
+
 	static create(rec) {
 		return Object.assign(new StageEditor(), rec).init();
 	}

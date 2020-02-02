@@ -48,7 +48,6 @@ public class StageService {
 		if (entity == null) {
 			return null;
 		}
-		entity.setMap(stage.getMap());
 		entity.setUpdated(new Date());
 		return this.stageRepository.saveAndFlush(entity);
 	}
