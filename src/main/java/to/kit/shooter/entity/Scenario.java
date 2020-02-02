@@ -1,6 +1,8 @@
 package to.kit.shooter.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +26,8 @@ public class Scenario {
 	private int h;
 	private String target;
 	private int number;
-	private String op;
+	@Enumerated(EnumType.STRING)
+	private ScenarioType op;
 
 	@ManyToOne
 	@JsonBackReference

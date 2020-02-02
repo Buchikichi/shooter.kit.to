@@ -10,10 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.Stage;
 import to.kit.shooter.entity.Scenario;
-import to.kit.shooter.repository.StageRepository;
+import to.kit.shooter.entity.Stage;
 import to.kit.shooter.repository.ScenarioRepository;
+import to.kit.shooter.repository.StageRepository;
 
 @Service
 public class StageService {
@@ -48,7 +48,8 @@ public class StageService {
 		if (entity == null) {
 			return null;
 		}
-		entity.setUpdated(new Date());
-		return this.stageRepository.saveAndFlush(entity);
+		stage.setProduct(entity.getProduct());
+		stage.setUpdated(new Date());
+		return this.stageRepository.saveAndFlush(stage);
 	}
 }

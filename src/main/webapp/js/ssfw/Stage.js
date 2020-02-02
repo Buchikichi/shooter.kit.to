@@ -193,7 +193,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 		this.eventList.forEach(rec => {
 			let spawn = false;
-			let isFront = rec.op == 'spawn';
+			let isFront = rec.op == 'Spw';
 
 			if (isFront) {
 				if (rec.v < front) {
@@ -202,7 +202,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				if (rec.v == front) {
 					spawn = true;
 				}
-			} else if (rec.op == 'reverse') {
+			} else if (rec.op == 'Rev') {
 				if (rec.v < rear) {
 					return;
 				}

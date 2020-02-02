@@ -150,12 +150,11 @@
       <div data-role="collapsibleset" data-mini="true">
         <div data-role="collapsible">
           <h3>Mode</h3>
-          <fieldset data-role="controlgroup" data-mini="true" data-inset="false">
-            <label><input type="radio" name="op" value="ent"><span>Enter</span></label>
-            <label><input type="radio" name="op" value="ckp"><span>Checkpoint</span></label>
-            <label><input type="radio" name="op" value="bos"><span>Boss mode</span></label>
-            <label><input type="radio" name="op" value="stp"><span>Stop scroll</span></label>
-            <label><input type="radio" name="op" value="nxt"><span>Next stage</span></label>
+          <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
+              th:with="modeList=${T(to.kit.shooter.entity.ScenarioType).MODE_LIST}">
+            <label th:each="opt:${modeList}"><input type="radio" name="op" th:value="${opt}">
+              <span th:text="#{${opt.value}}"></span>
+            </label>
           </fieldset>
         </div>
         <div data-role="collapsible">
@@ -166,11 +165,11 @@
           </div>
         <div data-role="collapsible">
           <h3>Audio</h3>
-          <fieldset data-role="controlgroup" data-mini="true">
-            <label><input type="radio" name="op" value="aPa"><span>Pause BGM</span></label>
-            <label><input type="radio" name="op" value="aRe"><span>Resume BGM</span></label>
-            <label><input type="radio" name="op" value="aFa"><span>Fade BGM</span></label>
-            <label><input type="radio" name="op" value="aPl"><span>Play BGM</span></label>
+          <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
+              th:with="audioList=${T(to.kit.shooter.entity.ScenarioType).AUDIO_LIST}">
+            <label th:each="opt:${audioList}"><input type="radio" name="op" th:value="${opt}">
+              <span th:text="#{${opt.value}}"></span>
+            </label>
           </fieldset>
           <fieldset id="audioSelectorButton" data-role="controlgroup" data-mini="true">
             <button class="ui-btn ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>

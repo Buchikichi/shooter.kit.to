@@ -343,6 +343,9 @@ console.log('EditStage#setupEvents');
 		let canvas = document.getElementById('canvas');
 
 		canvas.addEventListener('mousemove', event => {
+			let scenario = this.eventPanel.scenario;
+
+			// console.log(scenario);
 		});
 	}
 
@@ -494,6 +497,12 @@ class EventPanel {
 		this.setupEvent();
 	}
 
+	get scenario() {
+		let op = this.panel.querySelector('[name=op]:checked').value;
+
+		return {op: op};
+	}
+
 	setupEvent() {
 		let op = $('[name="op"]');
 		let audioSelectorButton = document.getElementById('audioSelectorButton');
@@ -501,13 +510,16 @@ class EventPanel {
 		op.click(()=> {
 			let chk = this.panel.querySelector('[name=op]:checked');
 
-			if (chk.value == 'aPl') {
+			if (chk.value.toLowerCase() == 'apl') {
 				// Play BGM
 				$(audioSelectorButton).show();
 			} else {
 				$(audioSelectorButton).hide();
 			}
 		});
+		let firstOp = this.panel.querySelector('[name=op]');
+
+		$(firstOp).prop('checked', true).checkboxradio('refresh');
 		$(audioSelectorButton).hide();
 	}
 
