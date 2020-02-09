@@ -106,7 +106,7 @@
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <button name="startAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+                <button type="button" name="startAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -123,7 +123,7 @@
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <button name="sequelAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+                <button type="button" name="sequelAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -152,22 +152,25 @@
           <h3>Mode</h3>
           <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
               th:with="modeList=${T(to.kit.shooter.entity.ScenarioType).MODE_LIST}">
-            <label th:each="opt:${modeList}"><input type="radio" name="op" th:value="${opt}">
+            <label th:each="opt:${modeList}"><input type="radio" name="op" th:value="${opt}" data-type="mode"/>
               <span th:text="#{${opt.value}}"></span>
             </label>
           </fieldset>
         </div>
         <div data-role="collapsible">
           <h3>Effect</h3>
-          <fieldset data-role="controlgroup" data-mini="true">
-            <label><input type="radio" name="op" value="eFa"><span>Fade out</span></label>
-          </fieldset>
+          <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
+              th:with="modeList=${T(to.kit.shooter.entity.ScenarioType).EFFECT_LIST}">
+              <label th:each="opt:${modeList}"><input type="radio" name="op" th:value="${opt}" data-type="effect"/>
+                <span th:text="#{${opt.value}}"></span>
+              </label>
+            </fieldset>
           </div>
         <div data-role="collapsible">
           <h3>Audio</h3>
           <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
               th:with="audioList=${T(to.kit.shooter.entity.ScenarioType).AUDIO_LIST}">
-            <label th:each="opt:${audioList}"><input type="radio" name="op" th:value="${opt}">
+            <label th:each="opt:${audioList}"><input type="radio" name="op" th:value="${opt}" data-type="audio">
               <span th:text="#{${opt.value}}"></span>
             </label>
           </fieldset>

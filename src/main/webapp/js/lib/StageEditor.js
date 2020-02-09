@@ -1,6 +1,9 @@
 class StageEditor extends Stage {
 	constructor() {
 		super();
+		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+		this.cursorX = 0;
+		this.cursorY = 0;
 	}
 
 	setProgress(x) {
@@ -13,6 +16,104 @@ class StageEditor extends Stage {
 		this.progress = progress;
 	}
 
+	setCursorPos(pos) {
+		this.cursorX = pos.x;
+		this.cursorY = pos.y;
+	}
+
+	setScenario(pos, scenario) {
+		let bw = this.map.brickSize;
+		let x = parseInt(pos.x / bw);
+		let y = scenario.target == 'E' ? parseInt(pos.y / bw) : 0;
+
+		scenario.v = x;
+		scenario.h = y;
+		this._eventList = this._eventList.filter(rec =>
+			rec.target == 'E' || rec.v != scenario.v || rec.h != scenario.h);
+		this._eventList.push(scenario);
+	}
+
+	drawMode(ctx, rec) {
+		let bw = this.map.brickSize;
+		let sx = rec.v * bw;
+
+		ctx.fillStyle = 'rgba(255, 100, 100, .5)';
+		ctx.fillRect(sx + 2, 2, bw - 4, this._product.height - 4);
+	}
+
+	drawEvents(ctx) {
+		let width = this.map.brickSize;
+		let height = this._product.height;
+
+		this._eventList.forEach(rec => {
+			if (rec.target == 'E') {
+				return;
+			}
+			let sx = rec.v * width;
+
+			ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
+			ctx.strokeRect(sx, 0, width, height);
+			ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
+			ctx.strokeRect(sx + 1, 1, width - 2, height - 2);
+			if (rec.target == 'm') {
+				// Mode
+				ctx.fillStyle = 'rgba(255, 100, 100, .5)';
+				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+				// this.drawMode(ctx, rec);
+				return;
+			}
+			if (rec.target == 'e') {
+				// Effect
+				ctx.fillStyle = 'rgba(100, 255, 100, .5)';
+				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+				return;
+			}
+			if (rec.target == 'a') {
+				// Audio
+				ctx.fillStyle = 'rgba(100, 100, 255, .5)';
+				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+			}
+		});
+	}
+
+	drawActors(ctx) {
+		let bw = this.map.brickSize;
+		let bh = bw / 2;
+
+		this._eventList.forEach(rec => {
+			if (rec.target != 'E') {
+				return;
+			}
+			let sx = rec.v * bw + bh;
+			let sy = rec.h * bw + bh;
+
+			ctx.fillStyle = 'orange';
+			ctx.beginPath();
+			ctx.arc(sx, sy, bh, 0, Math.PI2);
+			ctx.fill();
+			});
+	}
+
+	drawCursor(ctx) {
+		if (this.cursorType == StageEditor.CURSOR_TYPE.NONE) {
+			return;
+		}
+		let bw = this.map.brickSize;
+		let x = parseInt(this.cursorX / bw) * bw;
+		// let y = parseInt(this.cursorY / bw) * bw;
+
+		if (this.cursorType == StageEditor.CURSOR_TYPE.ACTOR) {
+			return;
+		}
+		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
+			let y = this.scroll & Stage.SCROLL.LOOP ? 0 : -this._product.height;
+			let height = ctx.canvas.height;
+
+			ctx.fillStyle = 'rgba(255, 60, 120, .5)';
+			ctx.fillRect(x, y, bw, height);
+		}
+	}
+
 	draw(ctx) {
 		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
 
@@ -22,17 +123,9 @@ class StageEditor extends Stage {
 		}
 		super.draw(ctx);
 		this.map.draw(ctx);
-		this.eventList.forEach(rec => {
-			let bw = this.map.brickSize;
-			let bh = bw / 2;
-			let sx = rec.v * bw + bh;
-			let sy = rec.h * bw + bh;
-
-			ctx.fillStyle = 'orange';
-			ctx.beginPath();
-			ctx.arc(sx, sy, bh, 0, Math.PI2);
-			ctx.fill();
-		});
+		this.drawEvents(ctx);
+		this.drawActors(ctx);
+		this.drawCursor(ctx);
 		ctx.restore();
 	}
 
@@ -44,16 +137,22 @@ class StageEditor extends Stage {
 		console.log('StageEditor#init');
 		super.init();
 		console.log('map:' + this.map.constructor.name);
-		this.eventList = this.scenarioList.concat();
+		this._eventList = this.scenarioList.concat();
 		return this;
 	}
 
 	save() {
 		console.log('StageEditor#save');
+		this.scenarioList = this._eventList.concat();
 		return new StageEntity().save(this);
 	}
 
 	static create(rec) {
 		return Object.assign(new StageEditor(), rec).init();
 	}
+}
+StageEditor.CURSOR_TYPE = {
+	NONE: 0,
+	ACTOR: 1,
+	EVENT: 2,
 }

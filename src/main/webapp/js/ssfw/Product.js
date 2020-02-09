@@ -225,7 +225,7 @@ if (this.ship) {
 
 		this.setRect(this.width, this.height);
 		this.stageList.forEach(stage => {
-			stage.product = this;
+			stage._product = this;
 			stageList.push(Stage.create(stage))
 		});
 		this.stageList = stageList;

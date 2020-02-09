@@ -8,7 +8,7 @@ class Stage {
 		this.effectH = 0;
 		this.effectV = 0;
 		this.progress = 0;
-		this.eventList = [];
+		this._eventList = [];
 		this.lastScan = null;
 		this.performersList = [];
 	}
@@ -72,15 +72,15 @@ console.log('Stage#reset');
 	retry() {
 console.log('Stage#retry!');
 		this.phase = Stage.PHASE.NORMAL;
-		this.progress = -this.product.width / this.map._mainVisual.speed;
-		this.hibernate = this.product.maxHibernate;
+		this.progress = -this._product.width / this.map._mainVisual.speed;
+		this.hibernate = this._product.maxHibernate;
 
 		this.scroll = this.scrollSv;
 		this.effectH = 0;
 		this.effectV = 0;
 		this.map.reset();
 		this.map.setProgress(this.progress);
-		this.eventList = this.scenarioList.concat();
+		this._eventList = this.scenarioList.concat();
 		Transition.Instance.play(this.startTransition, this.startSpeed);
 		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
 			this.playBgm();
@@ -92,7 +92,7 @@ console.log('Stage#retry!');
 		if (this.scroll == Stage.SCROLL.OFF) {
 			return;
 		}
-		let diff = this.product.hH - target.y;
+		let diff = this._product.hH - target.y;
 		let fg = this.fg;
 
 		if (this.scroll == Stage.SCROLL.TOP) {
@@ -104,7 +104,7 @@ console.log('Stage#retry!');
 		}
 		let dy = diff / 3;
 		let nextY = fg.y - dy;
-		let fgViewY = fg.image.height - this.product.height;
+		let fgViewY = fg.image.height - this._product.height;
 
 		if (this.scroll == Stage.SCROLL.ON) {
 			if (nextY < 0 || fgViewY < nextY) {
@@ -160,9 +160,9 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let h = img.height;
 		let x = ship.x - fg.x;
 		let y = (ship.y + fg.y + h) % h;
-		let qt = this.product.hH / 2;
+		let qt = this._product.hH / 2;
 		let top = qt;
-		let bottom = this.product.height - qt;
+		let bottom = this._product.height - qt;
 
 		if (this.scroll & (Stage.SCROLL.ON | Stage.SCROLL.LOOP)) {
 			if (y < top) {
@@ -188,10 +188,10 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			return result;
 		}
 		//
-		let front = Math.round((gx + this.product.width) / this.map.brickSize);
+		let front = Math.round((gx + this._product.width) / this.map.brickSize);
 		let newList = [];
 
-		this.eventList.forEach(rec => {
+		this._eventList.forEach(rec => {
 			let spawn = false;
 			let isFront = rec.op == 'Spw';
 
@@ -215,7 +215,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				return;
 			}
 			// spawn
-			let x = gx + (isFront ? this.product.width + this.map.brickSize * 1.5 : 0);
+			let x = gx + (isFront ? this._product.width + this.map.brickSize * 1.5 : 0);
 			let y = (rec.h + 1) * this.map.brickSize;
 			let reserve = Enemy.assign(rec.number, x, y);
 
@@ -231,7 +231,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				result.push(enemy);
 			}
 		});
-		this.eventList = newList;
+		this._eventList = newList;
 		this.lastScan = rear;
 		return result;
 	}

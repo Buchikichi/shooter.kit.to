@@ -8,8 +8,11 @@ class EditStage {
 	 */
 	constructor() {
 		this.stageId = document.getElementById('stageId').value;
+		this.view = document.getElementById('view');
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
+		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+		this.scenario = null;
 		this.loadStage();
 	}
 
@@ -17,7 +20,7 @@ class EditStage {
 		return $('[name="behavior"]:checked').val() == 'm';
 	}
 
-	get gide() {
+	get guide() {
 		return document.querySelector('[name="guide"]:checked').value;
 	}
 
@@ -35,6 +38,10 @@ class EditStage {
 
 	get repeat() {
 		return document.querySelector('[name="repeat"]').value;
+	}
+
+	get hasMargin() {
+		return this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
 	}
 
 	loadStage() {
@@ -64,20 +71,18 @@ class EditStage {
 		let product = Product.Instance;
 		let stage = product.stage;
 		let scale = this.scale;
-		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
 		let width = stage.width * this.repeat;
-		let height = stage.height + (hasMargin ? product.height * 2 : 0);
+		let height = stage.height + (this.hasMargin ? product.height * 2 : 0);
 		let frameWidth = width * scale;
 		let frameHeight = height * scale;
-		let originTop = hasMargin ? product.height : 0;
 
 		this.frame.style.width = frameWidth + 'px';
 		this.frame.style.height = frameHeight + 'px';
-		this.canvas.style.transformOrigin = originTop + 'px ' + '0px';
-		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
 		this.canvas.width = width;
 		this.canvas.height = height;
-		console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
+		this.canvas.style.transformOrigin = 'left top';
+		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
+		// console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
 		this.ctx = this.canvas.getContext('2d');
 	}
 
@@ -169,7 +174,7 @@ class EditStage {
 //		this.controller = new Controller();
 		this.actorPanel = new ActorPanel();
 //		this.actorPanel.setupActors(Product.Instance.actorList);
-		this.eventPanel = new EventPanel();
+		this.eventPanel = new EventPanel(this);
 		this.setupActors(Product.Instance.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 //		landform.isEdit = true;
@@ -340,13 +345,36 @@ console.log('EditStage#setupEvents');
 	}
 
 	setupPointingDevice() {
+		let product = Product.Instance;
+		let stage = product.stage;
 		let canvas = document.getElementById('canvas');
+		let calcPos = e => {
+			let y = (this.view.scrollTop + e.clientY) / this.scale - (this.hasMargin ? product.height : 0);
 
-		canvas.addEventListener('mousemove', event => {
-			let scenario = this.eventPanel.scenario;
+			return { x: (this.view.scrollLeft + e.clientX) / this.scale, y: y };
+		}
 
-			// console.log(scenario);
+		canvas.addEventListener('mousedown', e => {
+			if (this.cursorType == StageEditor.CURSOR_TYPE.NONE) {
+				return;
+			}
+			let pos = calcPos(e);
+
+			stage.setScenario(pos, Object.assign({}, this.scenario));
+			if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
+				this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+				return;
+			}
 		});
+		canvas.addEventListener('mousemove', e => {
+			let pos = calcPos(e);
+			// console.log('scrollLeft:' + this.view.scrollLeft + '/scrollTop:' + this.view.scrollTop);
+			// console.log('clientX:' + e.clientX + '/clientY:' + e.clientY);
+			// console.log('x:' + pos.x + '/y:' + pos.y);
+			stage.cursorType = this.cursorType;
+			stage.setCursorPos(pos);
+		});
+		canvas.addEventListener('mouseout', e => stage.cursorType = StageEditor.CURSOR_TYPE.NONE);
 	}
 
 	saveMap() {
@@ -492,15 +520,20 @@ function setupActorList(landform) {
 }
 
 class EventPanel {
-	constructor() {
+	constructor(stageEditor) {
+		this.stageEditor = stageEditor;
 		this.panel = document.getElementById('eventPanel');
 		this.setupEvent();
 	}
 
 	get scenario() {
-		let op = this.panel.querySelector('[name=op]:checked').value;
+		let chk = this.panel.querySelector('[name=op]:checked');
+		let op = chk.value;
+		let cursorType = chk.getAttribute('data-type');
+		let type = 0;
+		let number = 0;
 
-		return {op: op};
+		return {op: op, target: cursorType.charAt(0), type: type, number: number};
 	}
 
 	setupEvent() {
@@ -516,6 +549,8 @@ class EventPanel {
 			} else {
 				$(audioSelectorButton).hide();
 			}
+			this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
+			this.stageEditor.scenario = this.scenario;
 		});
 		let firstOp = this.panel.querySelector('[name=op]');
 

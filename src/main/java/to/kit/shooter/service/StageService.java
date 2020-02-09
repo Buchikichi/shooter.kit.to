@@ -38,11 +38,14 @@ public class StageService {
 		if (id == null || id.isEmpty()) {
 			return null;
 		}
+		List<Scenario> scenarioList = stage.getScenarioList();
+
 		this.scenarioRepository.deleteByStageId(id);
-		for (Scenario scenario : stage.getScenarioList()) {
+		for (Scenario scenario : scenarioList) {
 			scenario.setStage(stage);
 			this.scenarioRepository.saveAndFlush(scenario);
 		}
+		scenarioList.clear();
 		Stage entity = this.stageRepository.findById(id).get();
 
 		if (entity == null) {
