@@ -2,8 +2,8 @@ class StageEditor extends Stage {
 	constructor() {
 		super();
 		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
-		this.cursorX = 0;
-		this.cursorY = 0;
+		this.pos = {x:0, y:0};
+		this._currentScenario = null;
 	}
 
 	setProgress(x) {
@@ -17,8 +17,25 @@ class StageEditor extends Stage {
 	}
 
 	setCursorPos(pos) {
-		this.cursorX = pos.x;
-		this.cursorY = pos.y;
+		let act = this._eventList.find(s => s.target == 'E' && s.includes(pos));
+
+		this.pos = pos;
+		if (act) {
+			// console.log('act:');
+			// console.log(act);
+			this._currentScenario = act;
+			return;
+		}
+		//
+		let event = this._eventList.find(s => s.target != 'E' && s.isHit(pos));
+
+		if (event) {
+			// console.log('event:');
+			// console.log(event);
+			this._currentScenario = event;
+			return;
+		}
+		this._currentScenario = null;
 	}
 
 	setScenario(pos, scenario) {
@@ -109,7 +126,7 @@ class StageEditor extends Stage {
 			return;
 		}
 		let bw = this.map.brickSize;
-		let x = parseInt(this.cursorX / bw) * bw;
+		let x = parseInt(this.pos.x / bw) * bw;
 		// let y = parseInt(this.cursorY / bw) * bw;
 
 		if (this.cursorType == StageEditor.CURSOR_TYPE.ACTOR) {
@@ -135,6 +152,9 @@ class StageEditor extends Stage {
 		this.map.draw(ctx);
 		this.drawEvents(ctx);
 		this.drawActors(ctx);
+		if (this._currentScenario) {
+			this._currentScenario.drawBalloon(ctx, this.pos);
+		}
 		this.drawCursor(ctx);
 		ctx.restore();
 	}
@@ -143,13 +163,12 @@ class StageEditor extends Stage {
 		return FieldMapEditor.create(this.map);
 	}
 
-	init() {
-		console.log('StageEditor#init');
-		super.init();
-		console.log('map:' + this.map.constructor.name);
-		this._eventList = this.scenarioList.concat();
-		return this;
-	}
+	// init() {
+	// 	console.log('StageEditor#init');
+	// 	super.init();
+	// 	console.log('map:' + this.map.constructor.name);
+	// 	return this;
+	// }
 
 	save() {
 		console.log('StageEditor#save');

@@ -33,6 +33,12 @@ class Enemy extends Actor {
 		return result;
 	}
 
+	static getActor(number) {
+		let actor = Enemy.LIST[number % Enemy.LIST.length];
+
+		return actor;
+	}
+
 	static assign(ix, x, y) {
 //console.log('Enemy.assign:' + ix + '/' + Enemy.LIST.length);
 		let instance = Enemy.LIST[ix % Enemy.LIST.length];

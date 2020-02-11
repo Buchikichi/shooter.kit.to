@@ -260,27 +260,6 @@ if (!isFront) enemy.dir = 0;
 		return false;
 	}
 
-	forward() {
-		if (this.scroll == Stage.SCROLL.STOP) {
-			return;
-		}
-		let mainVisual = this.map._mainVisual;
-		let max = this.length - Product.Instance.width;
-
-		this.map.setProgress(this.progress++);
-//console.log('x:' + -mainVisual.x + '/max:' + max);
-		if (max < -mainVisual.x) {
-			this.phase = Stage.PHASE.NEXT_STAGE;
-		}
-		// let fgX = this.fg.x;
-
-		// Stage.CHECK_POINT.forEach(cp => {
-		// 	if (cp.x <= fgX && this.checkPoint.x < fgX) {
-		// 		this.checkPoint = cp;
-		// 	}
-		// });
-	}
-
 	notice() {
 		if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
 			return;
@@ -306,10 +285,25 @@ if (!isFront) enemy.dir = 0;
 	move(target) {
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
-		if (this.scroll != Stage.SCROLL.STOP) {
-			this.scrollV(target);
+		if (this.scroll == Stage.SCROLL.STOP) {
+			return;
 		}
-		this.forward();
+		let mainVisual = this.map._mainVisual;
+		let max = this.length - Product.Instance.width;
+
+		this.scrollV(target);
+		this.map.setProgress(this.progress++);
+//console.log('x:' + -mainVisual.x + '/max:' + max);
+		if (max < -mainVisual.x) {
+			this.phase = Stage.PHASE.NEXT_STAGE;
+		}
+		// let fgX = this.fg.x;
+
+		// Stage.CHECK_POINT.forEach(cp => {
+		// 	if (cp.x <= fgX && this.checkPoint.x < fgX) {
+		// 		this.checkPoint = cp;
+		// 	}
+		// });
 	}
 
 	draw(ctx) {
@@ -325,6 +319,10 @@ if (!isFront) enemy.dir = 0;
 		this.scroll = this.roll;
 		this.map = this.createFieldMap();
 		this.map._stage = this;
+		this.scenarioList = this.scenarioList.map(s => Scenario.create(s));
+		this._eventList = this.scenarioList.concat();
+		this._eventList.forEach(s => s._stage = this);
+		console.log('Stage#init map:' + this.map.constructor.name);
 		return this;
 	}
 

@@ -157,15 +157,12 @@ class EditStage {
 			requestAnimationFrame(activate);
 		};
 
-//console.log('start!:' + landform.stage.fg.width);
 //		this.controller = new Controller();
 		this.actorPanel = new ActorPanel();
 //		this.actorPanel.setupActors(Product.Instance.actorList);
 		this.eventPanel = new EventPanel(this);
 		this.setupActors(Product.Instance.actorList);
 		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
-//		landform.isEdit = true;
-//		landform.loadStage(this.stage);
 		this.setupEvents();
 		activate();
 	}

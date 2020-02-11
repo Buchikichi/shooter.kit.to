@@ -59,7 +59,6 @@ if (this.ship) {
 		this.stage = Object.assign(stage, { performersList: performersList });
 		this.stage.playBgm();
 		this.stage.start();
-		Field.Instance.landform.loadStage(this.stage);
 		this.stage.reset();
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {
@@ -74,7 +73,6 @@ if (this.ship) {
 			}
 			this.stage = StageEditor.create(stage);
 		});
-//		Field.Instance.landform.loadStage(this.stage);
 //		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 		this.stage.start();
 	}
@@ -91,7 +89,6 @@ if (this.ship) {
 	}
 
 	retry() {
-		Field.Instance.landform.retry();
 		this.stage.retry();
 		this._reset();
 	}
@@ -104,24 +101,17 @@ if (this.ship) {
 			return;
 		}
 		this.stage.move(this.ship);
-//		if (this.stage.phase != Stage.PHASE.BOSS) {
-//			let next = Field.Instance.landform.forward(this.ship);
+		if (this.isGameOver) {
+			return;
+		}
+		if (this.stage.phase == Stage.PHASE.NEXT_STAGE) {
+			this.nextStage();
+		}
+		if (Product.MIN_LOOSING_RATE < this.loosingRate) {
+			let step = this.loosingRate / 10000;
 
-			if (this.isGameOver) {
-				return;
-			}
-			if (this.stage.phase == Stage.PHASE.NEXT_STAGE) {
-				this.nextStage();
-			}
-			// if (next == Landform.NEXT.PAST) {
-			// 	this.nextStage();
-			// }
-			if (Product.MIN_LOOSING_RATE < this.loosingRate) {
-				let step = this.loosingRate / 10000;
-
-				this.loosingRate -= step;
-			}
-//		}
+			this.loosingRate -= step;
+		}
 
 		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
@@ -147,7 +137,6 @@ if (this.ship) {
 				child.forEach(c => {c._stage = this.stage; validActors.push(c);});
 			}
 			this.stage.effect(actor);
-//			Field.Instance.landform.effect(actor);
 			validActors.push(actor);
 			if (actor.explosion && actor.score) {
 				score += actor.score;
