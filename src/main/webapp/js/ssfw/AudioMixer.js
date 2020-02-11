@@ -60,6 +60,7 @@ class AudioMixer extends Repository {
 
 		if (isBgm) {
 	//console.log('d:' + buff.duration);
+			this.stop();
 			element.source.loopEnd = buff.duration;
 			element.source.loop = true;
 			this.bgm.push(element);
@@ -92,7 +93,7 @@ class AudioMixer extends Repository {
 	getCurrentTime() {
 		if (0 < this.bgm.length) {
 			let validList = [];
-		
+
 			this.bgm.forEach(function(element) {
 				if (!element.done) {
 					validList.push(element);
@@ -144,6 +145,7 @@ function AudioElement(ctx, buff, offset) {
 }
 
 AudioElement.prototype.setPan = function(panValue) {
+	// The value can range between -1 (full left pan) and 1 (full right pan).
 	if (this.panNode) {
 		this.panNode.pan.value = panValue;
 	}

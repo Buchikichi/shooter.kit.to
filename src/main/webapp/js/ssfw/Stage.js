@@ -2,7 +2,6 @@ class Stage {
 	constructor() {
 		this.foreground = null;
 		this.bgm = null;
-		this.boss = null;
 		this.checkPoint = Stage.CHECK_POINT[0];
 		this.viewDic = {};
 		this.effectH = 0;
@@ -11,20 +10,11 @@ class Stage {
 		this._eventList = [];
 		this.lastScan = null;
 		this.performersList = [];
+		this.hasGuide = false;
 	}
 
 	get isMoving() {
-		return this.phase == Stage.PHASE.NORMAL;
-	}
-
-	playBgm() {
-		let audio = Mediaset.Instance.getAudio(this.startAudioType, this.startAudioSeq);
-
-		if (audio) {
-			// console.log('Stage#playBgm:');
-			// console.log(audio);
-			AudioMixer.INSTANCE.play(audio.id, .7, true);
-		}
+		return this.scroll != Stage.SCROLL.STOP;
 	}
 
 	get fg() {
@@ -32,6 +22,10 @@ class Stage {
 			this.foreground = this.map._mainVisual;
 		}
 		return this.foreground;
+	}
+
+	get length() {
+		return this.map._mainVisual.image.width * this.repeat;
 	}
 
 	get width() {
@@ -46,10 +40,14 @@ class Stage {
 		return this.scroll == Stage.SCROLL.LOOP;
 	}
 
-	changeRoll(roll) {
-		this.roll = roll;
-		this.scroll = roll;
-		this.map._mainVisual.pattern = null;
+	playBgm() {
+		let audio = Mediaset.Instance.getAudio(this.startAudioType, this.startAudioSeq);
+
+		if (audio) {
+			// console.log('Stage#playBgm:');
+			// console.log(audio);
+			AudioMixer.INSTANCE.play(audio.id, .7, true);
+		}
 	}
 
 	start() {
@@ -75,7 +73,7 @@ console.log('Stage#retry!');
 		this.progress = -this._product.width / this.map._mainVisual.speed;
 		this.hibernate = this._product.maxHibernate;
 
-		this.scroll = this.scrollSv;
+		this.scroll = this.roll;
 		this.effectH = 0;
 		this.effectV = 0;
 		this.map.reset();
@@ -146,9 +144,11 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			}
 		}
 		if (target.effectH) {
+			// console.log('Stage#effect effectH:' + target.constructor.name);
 			target.x -= Math.cos(mainVisual.radian) * mainVisual.speed;
 		}
 		if (target.effectV) {
+			// console.log('Stage#effect effectV:' + target.constructor.name);
 			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
 		}
 		this.map.checkHit(target);
@@ -192,30 +192,29 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let newList = [];
 
 		this._eventList.forEach(rec => {
+			if (front < rec.v) {
+				newList.push(rec);
+				return;
+			}
+			if (this.executeEvent(rec)) {
+				return;
+			}
 			let spawn = false;
 			let isFront = rec.op == 'Spw';
 
-			if (isFront) {
-				if (rec.v < front) {
-					return;
-				}
-				if (rec.v == front) {
-					spawn = true;
-				}
-			} else if (rec.op == 'Rev') {
-				if (rec.v < rear) {
-					return;
-				}
-				if (rec.v == rear) {
-					spawn = true;
-				}
+			if (isFront && rec.v <= front) {
+				spawn = true;
+			}
+			if (rec.op == 'Rev' && rec.v <= rear) {
+console.log(rec);
+				spawn = true;
 			}
 			if (!spawn) {
 				newList.push(rec);
 				return;
 			}
 			// spawn
-			let x = gx + (isFront ? this._product.width + this.map.brickSize * 1.5 : 0);
+			let x = gx + (isFront ? this._product.width + this.map.brickSize * 1.5 : 16);
 			let y = (rec.h + 1) * this.map.brickSize;
 			let reserve = Enemy.assign(rec.number, x, y);
 
@@ -227,6 +226,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				} else {
 					enemy = new reserve.type(reserve.x, reserve.y);
 				}
+if (!isFront) enemy.dir = 0;
 				enemy._stage = this;
 				result.push(enemy);
 			}
@@ -236,15 +236,49 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		return result;
 	}
 
-	forward() {
-		this.map.setProgress(this.progress++);
-		let fgX = this.fg.x;
+	executeEvent(rec) {
+		let op = rec.op;
 
-		Stage.CHECK_POINT.forEach(cp => {
-			if (cp.x <= fgX && this.checkPoint.x < fgX) {
-				this.checkPoint = cp;
-			}
-		});
+		if (op == 'Bos') {
+			this.phase = Stage.PHASE.BOSS;
+			return true;
+		}
+		if (op == 'Stp') {
+			this.scroll = Stage.SCROLL.STOP;
+			return true;
+		}
+		if (op == 'Afa') {
+			AudioMixer.INSTANCE.fade();
+			return true;
+		}
+		if (op == 'Apl') {
+			let audio = Mediaset.Instance.getAudio(rec.type, rec.number);
+
+			AudioMixer.INSTANCE.play(audio.id, .7, true);
+			return true;
+		}
+		return false;
+	}
+
+	forward() {
+		if (this.scroll == Stage.SCROLL.STOP) {
+			return;
+		}
+		let mainVisual = this.map._mainVisual;
+		let max = this.length - Product.Instance.width;
+
+		this.map.setProgress(this.progress++);
+//console.log('x:' + -mainVisual.x + '/max:' + max);
+		if (max < -mainVisual.x) {
+			this.phase = Stage.PHASE.NEXT_STAGE;
+		}
+		// let fgX = this.fg.x;
+
+		// Stage.CHECK_POINT.forEach(cp => {
+		// 	if (cp.x <= fgX && this.checkPoint.x < fgX) {
+		// 		this.checkPoint = cp;
+		// 	}
+		// });
 	}
 
 	notice() {
@@ -260,16 +294,6 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		}
 	}
 
-	toBossMode() {
-		this.phase = Stage.PHASE.BOSS;
-		if (this.boss) {
-			AudioMixer.INSTANCE.play(this.boss, .7, true);
-		}
-//		if (this.scroll == Stage.SCROLL.LOOP) {
-//			this.scroll = Stage.SCROLL.ON;
-//		}
-	}
-
 	removeMapVisual() {
 		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
 		this.performersList.forEach(actor => {
@@ -279,9 +303,13 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		return this.performersList;
 	}
 
-	move() {
+	move(target) {
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
+		if (this.scroll != Stage.SCROLL.STOP) {
+			this.scrollV(target);
+		}
+		this.forward();
 	}
 
 	draw(ctx) {
@@ -295,10 +323,8 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	init() {
 		this.scroll = this.roll;
-		this.scrollSv = this.roll;
 		this.map = this.createFieldMap();
 		this.map._stage = this;
-this.boss = this.map.boss; // TODO: remove
 		return this;
 	}
 
@@ -311,11 +337,13 @@ Stage.SCROLL = {
 	ON: 1,
 	LOOP: 2,
 	TOP: 4,
-	BOTTOM: 8
+	BOTTOM: 8,
+	STOP: 16,
 };
 Stage.PHASE = {
 	NORMAL: 0,
-	BOSS: 1
+	BOSS: 1,
+	NEXT_STAGE: 2,
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];

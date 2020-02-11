@@ -42,6 +42,17 @@ class Mediaset {
 		])
 	}
 
+	getAudioById(audioId) {
+		let result = null;
+
+		this.audioList.forEach(audio => {
+			if (audio.id == audioId) {
+				result = audio;
+			}
+		});
+		return result;
+	}
+
 	getAudio(audioType, audioSeq) {
 		let key = audioType + ':' + audioSeq;
 

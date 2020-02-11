@@ -22,7 +22,7 @@ class Titan extends Enemy {
 			if (key == 'root') {
 				return;
 			}
-			let titanBone = new TitanBone(key, 0, 0);
+			let titanBone = new TitanBone(key, this.x, this.y);
 
 			if (key == Titan.CORE) {
 				titanBone.hitPoint = Titan.HIT_POINT;

@@ -20,14 +20,6 @@ class EditStage {
 		return $('[name="behavior"]:checked').val() == 'm';
 	}
 
-	get guide() {
-		return document.querySelector('[name="guide"]:checked').value;
-	}
-
-	get brickColor() {
-		return document.querySelector('[name="color"]:checked').value;
-	}
-
 	get scale() {
 		return document.querySelector('[name="scale"]:checked').value;
 	}
@@ -84,11 +76,6 @@ class EditStage {
 		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
 		// console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
 		this.ctx = this.canvas.getContext('2d');
-	}
-
-	changeColor() {
-		console.log('changeColor:' + this.brickColor);
-		Product.Instance.stage.map.brickColor = this.brickColor;
 	}
 
 	setupStage(stage) {
@@ -239,17 +226,25 @@ console.log(ix + ':' + productActor.className + ':' + actor.name);
 	setupEvents() {
 console.log('EditStage#setupEvents');
 		let stage = Product.Instance.stage;
+		let changeGuide = ()=> {
+			stage.hasGuide = document.querySelector('[name="guide"]:checked').value == '1';
+		};
+		let changeColor = ()=> {
+			stage.map.brickColor = document.querySelector('[name="color"]:checked').value;
+		};
 
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
 		$('[name="behavior"]:eq(1)').click(()=> this.eventPanel.open());
+		$('[name="guide"]').click(()=> changeGuide());
 		$('[name="scale"]').click(()=> this.resetCanvas());
-		$('[name="color"]').click(()=> this.changeColor());
+		$('[name="color"]').click(()=> changeColor());
 		// saveButton
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
 		//
-		this.changeColor();
+		changeGuide();
+		changeColor();
 		this.setupAttributes();
 		this.setupPointingDevice();
 		new AudioSelector();
@@ -533,12 +528,20 @@ class EventPanel {
 		let type = 0;
 		let number = 0;
 
+		if (op == 'Apl') {
+			let audioSelector = document.querySelector('#audioSelectorButton .audioSelector');
+
+			type = audioSelector.getAttribute('data-type');
+			number = audioSelector.getAttribute('data-seq');
+			console.log('type:' + type + '/number:' + number);
+		}
 		return {op: op, target: cursorType.charAt(0), type: type, number: number};
 	}
 
 	setupEvent() {
 		let op = $('[name="op"]');
 		let audioSelectorButton = document.getElementById('audioSelectorButton');
+		let firstOp = this.panel.querySelector('[name=op]');
 
 		op.click(()=> {
 			let chk = this.panel.querySelector('[name=op]:checked');
@@ -548,14 +551,17 @@ class EventPanel {
 				$(audioSelectorButton).show();
 			} else {
 				$(audioSelectorButton).hide();
+				// $(this.panel).panel('close');
 			}
 			this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
-			this.stageEditor.scenario = this.scenario;
 		});
-		let firstOp = this.panel.querySelector('[name=op]');
-
 		$(firstOp).prop('checked', true).checkboxradio('refresh');
 		$(audioSelectorButton).hide();
+		$(this.panel).panel({
+			close: ()=> {
+				this.stageEditor.scenario = this.scenario;
+			}
+		});
 	}
 
 	open() {

@@ -25,6 +25,7 @@ public class Scenario {
 	private int v;
 	private int h;
 	private String target;
+	private int type;
 	private int number;
 	@Enumerated(EnumType.STRING)
 	private ScenarioType op;

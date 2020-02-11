@@ -85,6 +85,31 @@ console.log('sx:' + sx);
 		this.progress = progress;
 	}
 
+	drawGuide(ctx) {
+		if (!this._stage || !this._stage.hasGuide) {
+			return;
+		}
+		let img = this._mainVisual.image;
+		let x = img.width;
+		let height = img.height;
+
+		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
+		ctx.lineWidth = 3;
+		while (x <= ctx.canvas.width) {
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, height);
+			ctx.stroke();
+			x += img.width;
+		}
+		x = ctx.canvas.width - Product.Instance.width;
+		ctx.setLineDash([4, 1]);
+		ctx.beginPath();
+		ctx.moveTo(x, 0);
+		ctx.lineTo(x, height);
+		ctx.stroke();
+	}
+
 	draw(ctx) {
 		super.draw(ctx);
 		ctx.save();
@@ -98,6 +123,7 @@ console.log('sx:' + sx);
 		if (this.brickColor != '-') {
 			this.bricks.draw(ctx);
 		}
+		this.drawGuide(ctx);
 		ctx.restore();
 		this.col += this.colDir * 4;
 		if (this.col <= 0 || 255 <= this.col) {

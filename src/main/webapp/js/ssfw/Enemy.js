@@ -61,6 +61,14 @@ class Chain extends Enemy {
 		this.next = null;
 	}
 
+	eject() {
+		console.log('Chain#eject:' + this.constructor.name);
+		super.eject();
+		if (this.next) {
+			this.next.eject();
+		}
+	}
+
 	unshift(element) {
 		element.next = this;
 		element.prev = this.prev;

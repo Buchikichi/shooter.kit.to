@@ -19,7 +19,12 @@ class Product extends Matter {
 	}
 
 	calcPan(matter) {
-		return (matter.x - this.hW) / this.hW;
+		// between -1 and 1
+		let hW = this.width / 2;
+		let pos = matter.x + this.stage.map._mainVisual.x - hW;
+
+		// console.log('Product#calcPan:' + pos / hW + '/pos:' + pos);
+		return pos / hW;
 	}
 
 	startGame() {
@@ -98,28 +103,25 @@ if (this.ship) {
 		if (Transition.Instance.waitForDrawing) {
 			return;
 		}
-		if (this.stage.phase != Stage.PHASE.BOSS) {
-			this.stage.move();
-
-			let next = Field.Instance.landform.forward(this.ship);
+		this.stage.move(this.ship);
+//		if (this.stage.phase != Stage.PHASE.BOSS) {
+//			let next = Field.Instance.landform.forward(this.ship);
 
 			if (this.isGameOver) {
 				return;
 			}
-			if (next == Landform.NEXT.NOTICE) {
-				AudioMixer.INSTANCE.fade();
-				this.stage.notice();
-			} else if (next == Landform.NEXT.ARRIV) {
-				this.stage.toBossMode();
-			} else if (next == Landform.NEXT.PAST) {
+			if (this.stage.phase == Stage.PHASE.NEXT_STAGE) {
 				this.nextStage();
 			}
+			// if (next == Landform.NEXT.PAST) {
+			// 	this.nextStage();
+			// }
 			if (Product.MIN_LOOSING_RATE < this.loosingRate) {
 				let step = this.loosingRate / 10000;
 
 				this.loosingRate -= step;
 			}
-		}
+//		}
 
 		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = 0 < shipList.length ? shipList[0] : new Actor(); // FIXME:
@@ -159,7 +161,9 @@ if (this.ship) {
 			shotList.forEach(s => enemy.isHit(s));
 		});
 		if (this.stage.phase == Stage.PHASE.BOSS && enemyList.length == 0) {
+			console.log('Defeated the boss.');
 			this.stage.phase = Stage.PHASE.NORMAL;
+			this.stage.scroll = this.stage.roll;
 			AudioMixer.INSTANCE.fade();
 		}
 		this.stage.performersList = validActors;
@@ -193,12 +197,20 @@ if (this.ship) {
 		let x = 2;
 		let y = 20;
 		let actors = this.stage.performersList.filter(actor => !(actor instanceof MapVisual));
+		let actorNames = [];
 		let mainVisual = this.stage.map._mainVisual;
 
+		actors.forEach(actor => {
+			if (10 <= actorNames.length || !(actor instanceof Enemy) || actor instanceof Chain) {
+				return;
+			}
+			actorNames.push(actor.constructor.name);
+		});
 		ctx.save();
 		ctx.strokeStyle = 'white';
-		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actors[actors.length - 1].constructor.name: ''), x, y += 20);
-		ctx.strokeText('progress:' + parseInt(this.stage.progress) + '/' + parseInt(mainVisual.progressH), x, y += 20);
+		ctx.strokeText('phase:' + this.stage.phase, x, y += 20);
+		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
+		ctx.strokeText('progress:' + parseInt(this.stage.progress), x, y += 20);
 		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + mainVisual.y, x, y += 20);
 		if (this.ship) {
 			let fg = this.ship._stage.map;

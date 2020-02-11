@@ -38,8 +38,12 @@ class AudioSelector {
 				let anchor = li.querySelector('a');
 
 				anchor.addEventListener('click', ()=> {
-					console.log(rec);
+					let audio = Mediaset.Instance.getAudioById(rec.id);
+					console.log(audio);
 					this.targetButton.textContent = rec.name;
+					this.targetButton.setAttribute('data-type', audio.audioType);
+					this.targetButton.setAttribute('data-seq', audio.audioSeq);
+					$(this.audioSelector).popup('close');
                 });
 				ul.appendChild(li);
 			});

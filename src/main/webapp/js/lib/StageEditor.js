@@ -33,6 +33,12 @@ class StageEditor extends Stage {
 		this._eventList.push(scenario);
 	}
 
+	changeRoll(roll) {
+		this.roll = roll;
+		this.scroll = roll;
+		this.map._mainVisual.pattern = null;
+	}
+
 	drawMode(ctx, rec) {
 		let bw = this.map.brickSize;
 		let sx = rec.v * bw;
@@ -87,7 +93,11 @@ class StageEditor extends Stage {
 			let sx = rec.v * bw + bh;
 			let sy = rec.h * bw + bh;
 
-			ctx.fillStyle = 'orange';
+			if (rec.op == 'Spw') {
+				ctx.fillStyle = 'orange';
+			} else {
+				ctx.fillStyle = 'tomato';
+			}
 			ctx.beginPath();
 			ctx.arc(sx, sy, bh, 0, Math.PI2);
 			ctx.fill();

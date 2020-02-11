@@ -94,7 +94,7 @@ class Actor extends Matter {
 	}
 
 	eject() {
-//console.log('Actor#eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
+		// console.log('Actor#eject:' + this.constructor.name + (this.id ? ':' + this.id : ''));
 		this.isGone = true;
 //		this.x = Number.MIN_SAFE_INTEGER;
 	}
@@ -164,6 +164,7 @@ class Actor extends Matter {
 		let y = this.y - this._stage.map.y;
 		let mapX = this._stage.map.x;
 		let mapY = this._stage.map.y;
+		let height = this._stage.map._mainVisual.image.height;
 
 		if (this.activityAreaType == Actor.ActivityAreaType.RESTRICTION) {
 			let areaLeft = mapX + this.hW;
@@ -190,7 +191,7 @@ class Actor extends Matter {
 				this.eject();
 //console.log('EJECT:' + this.x + '/' + this.y);
 			}
-			if (this._stage.scroll != Stage.SCROLL.LOOP && (y < -this.height || Product.Instance.height + this.height < y)) {
+			if (this._stage.scroll != Stage.SCROLL.LOOP && (y < -this.height || height + this.height < y)) {
 				this.eject();
 			}
 			return;
@@ -199,13 +200,14 @@ class Actor extends Matter {
 		let areaLeft = -Product.Instance.width;
 		let areaRight = Product.Instance.width * 2;
 		let areaTop = -Product.Instance.height;
-		let areaBottom = Product.Instance.height * 2;
+		let areaBottom = height + Product.Instance.height;
 
 		if (x < areaLeft || areaRight < x) {
+			// console.log('Actor#checkActivityArea FREEDOM:' + x + '|L:' + areaLeft + '/R:' + areaRight);
 			this.eject();
-//console.log('FREEDOM:' + this.x + '/' + this.y + '|L:' + areaLeft + 'R' + areaRight + '/' + areaBottom);
 		}
 		if (this._stage.scroll != Stage.SCROLL.LOOP && (y < areaTop || areaBottom < y)) {
+			// console.log('Actor#checkActivityArea FREEDOM:' + y + '|T:' + areaTop + '/B:' + areaBottom);
 			this.eject();
 		}
 	}
