@@ -13,8 +13,6 @@ CREATE TABLE map(
 	rebirth integer NOT NULL DEFAULT 0,
 	main_seq integer NOT NULL,
 
-	theme varchar(36),
-	boss varchar(36),
 	bg1 varchar(36),
 	bg1speed real NOT NULL DEFAULT 0,
 	bg1dir real NOT NULL DEFAULT 0,
@@ -49,8 +47,6 @@ COMMENT ON COLUMN map.access IS 'アクセスレベル{0:private, 1:protected, 2
 COMMENT ON COLUMN map.name IS '名前';
 COMMENT ON COLUMN map.description IS '説明';
 COMMENT ON COLUMN map.map IS 'map';
-COMMENT ON COLUMN map.theme IS 'theme';
-COMMENT ON COLUMN map.boss IS 'boss';
 COMMENT ON COLUMN map.bg1 IS 'bg1';
 COMMENT ON COLUMN map.bg2 IS 'bg2';
 COMMENT ON COLUMN map.bg3 IS 'bg3';
@@ -65,3 +61,5 @@ ALTER TABLE stage RENAME TO map;
 ALTER TABLE map ADD brick_size integer NOT NULL DEFAULT 1;
 ALTER TABLE map ADD rebirth integer NOT NULL DEFAULT 0;
 ALTER TABLE map ADD main_seq integer NOT NULL DEFAULT 0;
+ALTER TABLE map DROP COLUMN theme;
+ALTER TABLE map DROP COLUMN boss;

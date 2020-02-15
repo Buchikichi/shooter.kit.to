@@ -43,8 +43,6 @@ public class MapService {
 			entity.setAccess(map.getAccess());
 			entity.setName(map.getName());
 			entity.setDescription(map.getDescription());
-			entity.setTheme(map.getTheme());
-			entity.setBoss(map.getBoss());
 			entity.setBg1(map.getBg1());
 			entity.setBg2(map.getBg2());
 			entity.setBg3(map.getBg3());

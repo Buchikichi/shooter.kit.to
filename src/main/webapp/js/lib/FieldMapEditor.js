@@ -92,10 +92,21 @@ console.log('sx:' + sx);
 		let img = this._mainVisual.image;
 		let x = img.width;
 		let height = img.height;
+		let width = ctx.canvas.width;
 
-		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
 		ctx.lineWidth = 3;
-		while (x <= ctx.canvas.width) {
+		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
+		ctx.beginPath();
+		ctx.moveTo(0, -1);
+		ctx.lineTo(width, -1);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(0, height + 1);
+		ctx.lineTo(width, height + 1);
+		ctx.stroke();
+		//
+		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
+		while (x <= width) {
 			ctx.beginPath();
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x, height);

@@ -97,7 +97,7 @@ public class MapController implements BasicControllerInterface<Map> {
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		Map map = this.mapService.detail(id);
-		Stage detail = map.getStage();
+		Stage detail = map.getStageList().get(0);
 		Product product = detail.getProduct();
 
 		model.addAttribute("mediasetId", product.getMediaset().getId());

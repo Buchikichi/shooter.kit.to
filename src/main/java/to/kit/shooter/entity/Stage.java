@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -57,7 +56,6 @@ public class Stage {
 	@JsonManagedReference
 	private List<Scenario> scenarioList;
 
-	@OneToOne
-	@JsonManagedReference
+	@ManyToOne
 	private Map map;
 }

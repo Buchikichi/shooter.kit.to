@@ -197,7 +197,7 @@ this.effectV = 0;
 
 				repetition = noRepeatV ? 'repeat-x' : 'repeat';
 			}
-console.log('repetition:' + repetition);
+// console.log('repetition:' + repetition);
 			this.pattern = ctx.createPattern(this.canvas, repetition);
 		}
 		return this.pattern;
@@ -216,12 +216,14 @@ console.log('repetition:' + repetition);
 	}
 
 	draw(ctx) {
+		let height = this._fieldMap._mainVisual.image.height;
+
 		ctx.save();
 		ctx.translate(this.x + this._fieldMap.x, this.y + this._fieldMap.y);
 		ctx.globalAlpha = this.alpha;
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
-		ctx.rect(-this.x, -this.y, ctx.canvas.width, ctx.canvas.height);
+		ctx.rect(-this.x, -this.y, ctx.canvas.width, height);
 		ctx.fill();
 //		this.drawForDebug(ctx);
 		ctx.restore();
