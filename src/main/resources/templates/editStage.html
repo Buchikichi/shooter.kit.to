@@ -16,18 +16,28 @@
 	margin: 0;
 	padding: 0;
 }
+body {
+	overflow: hidden;
+}
 #view {
 	position: relative;
 	overflow: auto;
-	overflow-y: hidden;
 	z-index: 0;
 	transform-origin: top left;
-  	color: white;
+	color: white;
 	background-color: black;
 	/*border: 1px blue dotted;*/
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
+}
+#canvas {
+	position: absolute;
+	z-index: 1000;
+}
+#transition {
+	position: absolute;
+	z-index: 1001;
 }
 #actorPanel img {
 	min-width: 1em;

@@ -17,12 +17,14 @@ class StageEditor extends Stage {
 	}
 
 	setCursorPos(pos) {
+		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.target == 'E' && s.includes(pos));
 
 		this.pos = pos;
 		if (act) {
 			// console.log('act:');
 			// console.log(act);
+			act.hasFocus = true;
 			this._currentScenario = act;
 			return;
 		}
@@ -38,13 +40,14 @@ class StageEditor extends Stage {
 		this._currentScenario = null;
 	}
 
-	setScenario(pos, scenario) {
+	addScenario(pos, scenario) {
 		let bw = this.map.brickSize;
 		let x = parseInt(pos.x / bw);
 		let y = scenario.target == 'E' ? parseInt(pos.y / bw) : 0;
 
 		scenario.v = x;
 		scenario.h = y;
+		scenario._stage = this;
 		this._eventList = this._eventList.filter(rec =>
 			rec.target == 'E' || rec.v != scenario.v || rec.h != scenario.h);
 		this._eventList.push(scenario);
@@ -54,71 +57,6 @@ class StageEditor extends Stage {
 		this.roll = roll;
 		this.scroll = roll;
 		this.map._mainVisual.pattern = null;
-	}
-
-	drawMode(ctx, rec) {
-		let bw = this.map.brickSize;
-		let sx = rec.v * bw;
-
-		ctx.fillStyle = 'rgba(255, 100, 100, .5)';
-		ctx.fillRect(sx + 2, 2, bw - 4, this._product.height - 4);
-	}
-
-	drawEvents(ctx) {
-		let width = this.map.brickSize;
-		let height = this._product.height;
-
-		this._eventList.forEach(rec => {
-			if (rec.target == 'E') {
-				return;
-			}
-			let sx = rec.v * width;
-
-			ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
-			ctx.strokeRect(sx, 0, width, height);
-			ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
-			ctx.strokeRect(sx + 1, 1, width - 2, height - 2);
-			if (rec.target == 'm') {
-				// Mode
-				ctx.fillStyle = 'rgba(255, 100, 100, .5)';
-				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
-				// this.drawMode(ctx, rec);
-				return;
-			}
-			if (rec.target == 'e') {
-				// Effect
-				ctx.fillStyle = 'rgba(100, 255, 100, .5)';
-				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
-				return;
-			}
-			if (rec.target == 'a') {
-				// Audio
-				ctx.fillStyle = 'rgba(100, 100, 255, .5)';
-				ctx.fillRect(sx + 2, 2, width - 4, height - 4);
-			}
-		});
-	}
-
-	drawActors(ctx) {
-		let bw = this.map.brickSize;
-		let bh = bw / 2;
-
-		this._eventList.forEach(rec => {
-			if (rec.target != 'E') {
-				return;
-			}
-			let sx = rec.v * bw + bh;
-			let sy = rec.h * bw + bh;
-
-			if (rec.op == 'Spw') {
-				ctx.fillStyle = 'orange';
-			} else {
-				ctx.fillStyle = 'tomato';
-			}
-			ctx.beginPath();
-			ctx.arc(sx, sy, bh, 0, Math.PI2);
-			ctx.fill();
-			});
 	}
 
 	drawCursor(ctx) {
@@ -150,8 +88,7 @@ class StageEditor extends Stage {
 		}
 		super.draw(ctx);
 		this.map.draw(ctx);
-		this.drawEvents(ctx);
-		this.drawActors(ctx);
+		this._eventList.forEach(rec => rec.draw(ctx));
 		if (this._currentScenario) {
 			this._currentScenario.drawBalloon(ctx, this.pos);
 		}

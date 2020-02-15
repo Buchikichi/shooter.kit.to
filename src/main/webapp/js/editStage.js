@@ -11,6 +11,7 @@ class EditStage {
 		this.view = document.getElementById('view');
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
+		this.footer = document.querySelector('[data-role=footer]');
 		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
 		this.scenario = null;
 		this.loadStage();
@@ -229,6 +230,12 @@ console.log('EditStage#setupEvents');
 		let changeColor = ()=> {
 			stage.map.brickColor = document.querySelector('[name="color"]:checked').value;
 		};
+		let resize = ()=> {
+			let height = window.innerHeight - this.footer.clientHeight - 8;
+// console.log('resize:' + window.innerHeight);
+// console.log('footer:' + this.footer.clientHeight);
+			this.view.style.height = height + 'px';
+		};
 
 		stage.setProgress(0);
 
@@ -237,11 +244,12 @@ console.log('EditStage#setupEvents');
 		$('[name="guide"]').click(()=> changeGuide());
 		$('[name="scale"]').click(()=> this.resetCanvas());
 		$('[name="color"]').click(()=> changeColor());
-		// saveButton
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
+		window.addEventListener('resize', resize);
 		//
 		changeGuide();
 		changeColor();
+		resize();
 		this.setupAttributes();
 		this.setupPointingDevice();
 		new AudioSelector();
@@ -341,9 +349,13 @@ console.log('EditStage#setupEvents');
 		let stage = product.stage;
 		let canvas = document.getElementById('canvas');
 		let calcPos = e => {
-			let y = (this.view.scrollTop + e.clientY) / this.scale - (this.hasMargin ? product.height : 0);
+			let scrollLeft = this.view.scrollLeft / this.scale;
+			let scrollTop = this.view.scrollTop;
+			let width = this.view.clientWidth / this.scale;
+			let x = scrollLeft + e.clientX / this.scale;
+			let y = (scrollTop + e.clientY) / this.scale - (this.hasMargin ? product.height : 0);
 
-			return { x: (this.view.scrollLeft + e.clientX) / this.scale, y: y };
+			return { x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop, width: width };
 		}
 
 		canvas.addEventListener('mousedown', e => {
@@ -352,7 +364,7 @@ console.log('EditStage#setupEvents');
 			}
 			let pos = calcPos(e);
 
-			stage.setScenario(pos, Object.assign({}, this.scenario));
+			stage.addScenario(pos, this.scenario);
 			if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
 				this.cursorType = StageEditor.CURSOR_TYPE.NONE;
 				return;
@@ -532,7 +544,7 @@ class EventPanel {
 			number = audioSelector.getAttribute('data-seq');
 			console.log('type:' + type + '/number:' + number);
 		}
-		return {op: op, target: cursorType.charAt(0), type: type, number: number};
+		return Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number});
 	}
 
 	setupEvent() {
