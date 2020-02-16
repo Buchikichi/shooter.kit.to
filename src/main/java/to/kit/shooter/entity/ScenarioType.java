@@ -14,7 +14,8 @@ public enum ScenarioType {
 	Stp("op.stop_scroll"),
 	Nxt("op.next_stage"),
 	// Effect
-	Efa("op.effect_fade"),
+	Efi("op.effect_fade_in"),
+	Efo("op.effect_fade_out"),
 	// Audio
 	Apa("op.pause_bgm"),
 	Are("op.resuem_bgm"),
@@ -28,7 +29,7 @@ public enum ScenarioType {
 	}
 
 	public static final ScenarioType[] MODE_LIST = { Ent, Ckp, Bos, Stp, Nxt };
-	public static final ScenarioType[] EFFECT_LIST = { Efa };
+	public static final ScenarioType[] EFFECT_LIST = { Efi, Efo };
 	public static final ScenarioType[] AUDIO_LIST = { Apa, Are, Afa, Apl };
 
 //	public static ScenarioType getType(int value) {

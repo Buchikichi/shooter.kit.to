@@ -90,21 +90,22 @@ console.log('sx:' + sx);
 			return;
 		}
 		let img = this._mainVisual.image;
-		let x = img.width;
+		let x = -this._stage.startPos;
 		let height = img.height;
-		let width = ctx.canvas.width;
+		let width = this._stage.length;
 
 		ctx.lineWidth = 3;
 		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
 		ctx.beginPath();
-		ctx.moveTo(0, -1);
+		ctx.moveTo(x, -1);
 		ctx.lineTo(width, -1);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.moveTo(0, height + 1);
+		ctx.moveTo(x, height + 1);
 		ctx.lineTo(width, height + 1);
 		ctx.stroke();
 		//
+		x = 0;
 		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
 		while (x <= width) {
 			ctx.beginPath();
@@ -113,7 +114,7 @@ console.log('sx:' + sx);
 			ctx.stroke();
 			x += img.width;
 		}
-		x = ctx.canvas.width - Product.Instance.width;
+		x = this._stage.length - Product.Instance.width;
 		ctx.setLineDash([4, 1]);
 		ctx.beginPath();
 		ctx.moveTo(x, 0);

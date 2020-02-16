@@ -6,6 +6,10 @@ class StageEditor extends Stage {
 		this._currentScenario = null;
 	}
 
+	get startPos() {
+		return this._product.width / 2 * this.posV;
+	}
+
 	setProgress(x) {
 		if (this.fg.speed == 0) {
 			return;
@@ -40,6 +44,21 @@ class StageEditor extends Stage {
 		this._currentScenario = null;
 	}
 
+	removeScenario(scenario = this._currentScenario) {
+		if (!scenario) {
+			return;
+		}
+		let op = scenario.op;
+		let v = scenario.v;
+		let h = scenario.h;
+
+		console.log('removeScenario op:' + op + '/v:' + v + ',h:' + h);
+		if (scenario.target == 'E') {
+			h = 0;
+		}
+		this._eventList = this._eventList.filter(s => s.op != op || s.v != v || s.h != h);
+	}
+
 	addScenario(pos, scenario) {
 		let bw = this.map.brickSize;
 		let x = parseInt(pos.x / bw);
@@ -48,8 +67,7 @@ class StageEditor extends Stage {
 		scenario.v = x;
 		scenario.h = y;
 		scenario._stage = this;
-		this._eventList = this._eventList.filter(rec =>
-			rec.target == 'E' || rec.v != scenario.v || rec.h != scenario.h);
+		this.removeScenario(scenario);
 		this._eventList.push(scenario);
 	}
 
@@ -81,11 +99,10 @@ class StageEditor extends Stage {
 
 	draw(ctx) {
 		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+		let ty = hasMargin ? Product.Instance.height : 0;
 
 		ctx.save();
-		if (hasMargin) {
-			ctx.translate(0, Product.Instance.height);
-		}
+		ctx.translate(this.startPos, ty);
 		super.draw(ctx);
 		this.map.draw(ctx);
 		this._eventList.forEach(rec => rec.draw(ctx));
@@ -99,13 +116,6 @@ class StageEditor extends Stage {
 	createFieldMap() {
 		return FieldMapEditor.create(this.map);
 	}
-
-	// init() {
-	// 	console.log('StageEditor#init');
-	// 	super.init();
-	// 	console.log('map:' + this.map.constructor.name);
-	// 	return this;
-	// }
 
 	save() {
 		console.log('StageEditor#save');
@@ -121,4 +131,5 @@ StageEditor.CURSOR_TYPE = {
 	NONE: 0,
 	ACTOR: 1,
 	EVENT: 2,
+	REMOVE: 3,
 }

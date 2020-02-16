@@ -9,8 +9,8 @@ CREATE TABLE stage(
 	seq integer NOT NULL DEFAULT 0,
 	roll integer NOT NULL DEFAULT 0,
 	repeat integer NOT NULL DEFAULT 1,
-	h_pos integer NOT NULL DEFAULT 0,
-	v_pos integer NOT NULL DEFAULT 0,
+	pos_h integer NOT NULL DEFAULT 0,
+	pos_v integer NOT NULL DEFAULT 0,
 	start_transition integer NOT NULL DEFAULT 0,
 	start_speed integer NOT NULL DEFAULT 0,
 	start_audio_type integer NOT NULL DEFAULT -1,
@@ -29,8 +29,8 @@ COMMENT ON COLUMN stage.map_id IS 'マップID';
 COMMENT ON COLUMN stage.seq IS '順序';
 COMMENT ON COLUMN stage.roll IS 'スクロール種類';
 COMMENT ON COLUMN stage.repeat IS 'リピート';
-COMMENT ON COLUMN stage.h_pos IS '開始位置H';
-COMMENT ON COLUMN stage.v_pos IS '開始位置V';
+COMMENT ON COLUMN stage.pos_h IS '開始位置H';
+COMMENT ON COLUMN stage.pos_v IS '開始位置V';
 COMMENT ON COLUMN stage.start_transition IS '開始エフェクト';
 COMMENT ON COLUMN stage.start_speed IS '開始エフェクト速度';
 COMMENT ON COLUMN stage.start_audio_type IS '開始オーディオタイプ';
@@ -48,8 +48,8 @@ ALTER TABLE stage RENAME stage_id TO map_id;
 ALTER TABLE stage DROP COLUMN map;
 
 ALTER TABLE stage ADD repeat integer NOT NULL DEFAULT 1;
-ALTER TABLE stage ADD h_pos integer NOT NULL DEFAULT 0;
-ALTER TABLE stage ADD v_pos integer NOT NULL DEFAULT 0;
+ALTER TABLE stage ADD pos_h integer NOT NULL DEFAULT 0;
+ALTER TABLE stage ADD pos_v integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD start_transition integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD start_speed integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD start_audio_type integer NOT NULL DEFAULT -1;

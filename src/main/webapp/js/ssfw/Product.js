@@ -59,7 +59,7 @@ if (this.ship) {
 		this.stage = Object.assign(stage, { performersList: performersList });
 		this.stage.playBgm();
 		this.stage.start();
-		this.stage.reset();
+//		this.stage.reset();
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {
 			this.stageNum = 0;
@@ -89,6 +89,7 @@ if (this.ship) {
 	}
 
 	retry() {
+		console.log('Product#retry');
 		this.stage.retry();
 		this._reset();
 	}

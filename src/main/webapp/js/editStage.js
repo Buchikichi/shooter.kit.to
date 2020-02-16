@@ -1,6 +1,4 @@
-document.addEventListener('DOMContentLoaded', ()=> {
-	new EditStage();
-});
+document.addEventListener('DOMContentLoaded', () => new EditStage());
 
 class EditStage {
 	/**
@@ -64,7 +62,7 @@ class EditStage {
 		let product = Product.Instance;
 		let stage = product.stage;
 		let scale = this.scale;
-		let width = stage.width * this.repeat;
+		let width = product.width / 2 * stage.posV + stage.length;
 		let height = stage.height + (this.hasMargin ? product.height * 2 : 0);
 		let frameWidth = width * scale;
 		let frameHeight = height * scale;
@@ -241,6 +239,7 @@ console.log('EditStage#setupEvents');
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
 		$('[name="behavior"]:eq(1)').click(()=> this.eventPanel.open());
+		$('[name="behavior"]:eq(2)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
 		$('[name="guide"]').click(()=> changeGuide());
 		$('[name="scale"]').click(()=> this.resetCanvas());
 		$('[name="color"]').click(()=> changeColor());
@@ -288,7 +287,7 @@ console.log('EditStage#setupEvents');
 		let stage = Product.Instance.stage;
 		let roll = document.querySelector('[name="roll"]');
 		let repeat = document.querySelector('[name="repeat"]');
-		let vPos = document.querySelector('[name="vPos"]');
+		let posV = document.querySelector('[name="posV"]');
 		let startTransition = document.querySelector('[name="startTransition"]');
 		let startSpeed = document.querySelector('[name="startSpeed"]');
 		let startAudio = document.querySelector('[name="startAudio"]');
@@ -299,7 +298,7 @@ console.log('EditStage#setupEvents');
 		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioType, stage.sequelAudioSeq);
 
 		roll.addEventListener('change', ()=> {
-			console.log('roll:' + this.roll);
+			// console.log('roll:' + this.roll);
 			stage.changeRoll(this.roll);
 			this.resetCanvas();
 		});
@@ -318,9 +317,8 @@ console.log('EditStage#setupEvents');
 			}
 			this.resetCanvas();
 		});
-		$(vPos).change(()=> {
-			console.log('vPos:' + vPos.value);
-			stage.vPos = vPos.value;
+		$(posV).change(()=> {
+			stage.posV = posV.value;
 			this.resetCanvas();
 		});
 
@@ -352,7 +350,7 @@ console.log('EditStage#setupEvents');
 			let scrollLeft = this.view.scrollLeft / this.scale;
 			let scrollTop = this.view.scrollTop;
 			let width = this.view.clientWidth / this.scale;
-			let x = scrollLeft + e.clientX / this.scale;
+			let x = -stage.startPos + scrollLeft + e.clientX / this.scale;
 			let y = (scrollTop + e.clientY) / this.scale - (this.hasMargin ? product.height : 0);
 
 			return { x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop, width: width };
@@ -364,7 +362,11 @@ console.log('EditStage#setupEvents');
 			}
 			let pos = calcPos(e);
 
-			stage.addScenario(pos, this.scenario);
+			if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
+				stage.removeScenario();
+			} else {
+				stage.addScenario(pos, this.scenario);
+			}
 			if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
 				this.cursorType = StageEditor.CURSOR_TYPE.NONE;
 				return;

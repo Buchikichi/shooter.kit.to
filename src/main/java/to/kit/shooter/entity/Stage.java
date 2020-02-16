@@ -31,8 +31,10 @@ public class Stage {
 	private int seq;
 	private int roll;
 	private int repeat;
-	private int hPos;
-	private int vPos;
+	@Column(name = "pos_h")
+	private int posH;
+	@Column(name = "pos_v")
+	private int posV;
 	private int startTransition;
 	private int startSpeed;
 	private int startAudioType;

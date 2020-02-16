@@ -28,13 +28,15 @@ class Mediaset {
 		return this.loadAudio().loadVisual();
 	}
 
-	checkLoading(callback) {
+	checkLoading(callback = null) {
 		let repositories = [VisualManager.Instance, AudioMixer.INSTANCE];
 		let max = repositories.reduce((a, c) => a.max + c.max);
 		let checkLoading = ()=>{
 			let loaded = repositories.reduce((a, c) => a.loaded + c.loaded);
 
-			callback(loaded, max);
+			if (callback) {
+				callback(loaded, max);
+			}
 		};
 		return Promise.all([
 			VisualManager.Instance.checkLoading(checkLoading),

@@ -221,6 +221,7 @@ this.effectV = 0;
 		ctx.save();
 		ctx.translate(this.x + this._fieldMap.x, this.y + this._fieldMap.y);
 		ctx.globalAlpha = this.alpha;
+		this._fieldMap._stage.effector.effect(ctx);
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
 		ctx.rect(-this.x, -this.y, ctx.canvas.width, height);

@@ -1,16 +1,11 @@
 class Stage {
 	constructor() {
 		this.foreground = null;
-		this.bgm = null;
-		this.checkPoint = Stage.CHECK_POINT[0];
 		this.viewDic = {};
-		this.effectH = 0;
-		this.effectV = 0;
-		this.progress = 0;
-		this._eventList = [];
 		this.lastScan = null;
 		this.performersList = [];
 		this.hasGuide = false;
+		this.effector = new StageEffector(this);
 	}
 
 	get isMoving() {
@@ -40,6 +35,12 @@ class Stage {
 		return this.scroll == Stage.SCROLL.LOOP;
 	}
 
+	get startPos() {
+		let hW = this._product.width / this.map._mainVisual.speed / 2;
+
+		return this.posV * hW;
+	}
+
 	playBgm() {
 		let audio = Mediaset.Instance.getAudio(this.startAudioType, this.startAudioSeq);
 
@@ -51,7 +52,7 @@ class Stage {
 	}
 
 	start() {
-console.log('Stage#start');
+console.log('Stage#start :' + this.performersList.length);
 		this.performersList.forEach(actor => {
 			actor.x += this.map.x;
 			actor.y += this.map.y;
@@ -61,24 +62,9 @@ console.log('Stage#start');
 		this.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
-	reset() {
-console.log('Stage#reset');
-		this.checkPoint = Stage.CHECK_POINT[0];
-		this.retry();
-	}
-
 	retry() {
 console.log('Stage#retry!');
-		this.phase = Stage.PHASE.NORMAL;
-		this.progress = -this._product.width / this.map._mainVisual.speed;
-		this.hibernate = this._product.maxHibernate;
-
-		this.scroll = this.roll;
-		this.effectH = 0;
-		this.effectV = 0;
-		this.map.reset();
-		this.map.setProgress(this.progress);
-		this._eventList = this.scenarioList.concat();
+		this.reset();
 		Transition.Instance.play(this.startTransition, this.startSpeed);
 		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
 			this.playBgm();
@@ -182,41 +168,47 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let result = [];
 		let fg = this.fg;
 		let gx = -fg.x;
-		let rear = Math.round(gx / this.map.brickSize);
+		let bw = this.map.brickSize;
+		let rear = Math.round(gx / bw);
 
 		if (rear == this.lastScan) {
 			return result;
 		}
 		//
-		let front = Math.round((gx + this._product.width) / this.map.brickSize);
+		let front = Math.round((gx + this._product.width) / bw);
 		let newList = [];
 
-		this._eventList.forEach(rec => {
-			if (front < rec.v) {
-				newList.push(rec);
+		this._eventList.forEach(s => {
+			s.x = rear * bw;
+			if (front < s.v) {
+				newList.push(s);
 				return;
 			}
-			if (this.executeEvent(rec)) {
+			let evt = this.executeEvent(s);
+			if (evt) {
+				if (evt instanceof Actor) {
+					result.push(evt);
+				}
 				return;
 			}
 			let spawn = false;
-			let isFront = rec.op == 'Spw';
+			let isFront = s.op == 'Spw';
 
-			if (isFront && rec.v <= front) {
+			if (isFront && s.v <= front) {
 				spawn = true;
 			}
-			if (rec.op == 'Rev' && rec.v <= rear) {
-console.log(rec);
+			if (s.op == 'Rev' && s.v <= rear) {
+console.log(s);
 				spawn = true;
 			}
 			if (!spawn) {
-				newList.push(rec);
+				newList.push(s);
 				return;
 			}
 			// spawn
-			let x = gx + (isFront ? this._product.width + this.map.brickSize * 1.5 : 16);
-			let y = (rec.h + 1) * this.map.brickSize;
-			let reserve = Enemy.assign(rec.number, x, y);
+			let x = gx + (isFront ? this._product.width + bw * 1.5 : 16);
+			let y = (s.h + 1) * bw;
+			let reserve = Enemy.assign(s.number, x, y);
 
 			if (reserve != null) {
 				let enemy;
@@ -245,6 +237,15 @@ if (!isFront) enemy.dir = 0;
 		}
 		if (op == 'Stp') {
 			this.scroll = Stage.SCROLL.STOP;
+			return true;
+		}
+		if (op == 'Nxt') {
+			this.phase = Stage.PHASE.NEXT_STAGE;
+			return true;
+		}
+		if (op == 'Efi' || op == 'Efo') {
+			// Fade in/out.
+			this.effector.start(op);
 			return true;
 		}
 		if (op == 'Afa') {
@@ -283,6 +284,7 @@ if (!isFront) enemy.dir = 0;
 	}
 
 	move(target) {
+		this.effector.move();
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
 		if (this.scroll == Stage.SCROLL.STOP) {
@@ -295,7 +297,8 @@ if (!isFront) enemy.dir = 0;
 		this.map.setProgress(this.progress++);
 //console.log('x:' + -mainVisual.x + '/max:' + max);
 		if (max < -mainVisual.x) {
-			this.phase = Stage.PHASE.NEXT_STAGE;
+			//this.phase = Stage.PHASE.NEXT_STAGE;
+			this.progress = -this.startPos;
 		}
 		// let fgX = this.fg.x;
 
@@ -315,14 +318,28 @@ if (!isFront) enemy.dir = 0;
 		return FieldMap.create(this.map);
 	}
 
-	init() {
+	reset() {
+		// console.log('Stage#reset');
+		this.phase = Stage.PHASE.NORMAL;
+		this.progress = -this.startPos;
+		this.hibernate = this._product.maxHibernate;
 		this.scroll = this.roll;
-		this.map = this.createFieldMap();
-		this.map._stage = this;
-		this.scenarioList = this.scenarioList.map(s => Scenario.create(s));
+		this.effectH = 0;
+		this.effectV = 0;
+		this.map.reset();
+		this.map.setProgress(this.progress);
+		this.effector.reset();
 		this._eventList = this.scenarioList.concat();
-		this._eventList.forEach(s => s._stage = this);
-		console.log('Stage#init map:' + this.map.constructor.name);
+	}
+
+	init() {
+		// console.log('Stage#init' + this.id);
+		this.map._stage = this;
+		this.map = this.createFieldMap();
+		// console.log('Stage#init map:' + this.map.constructor.name);
+		this.scenarioList = this.scenarioList.map(s => Scenario.create(s, this));
+		Mediaset.Instance.checkLoading().then(() => this.reset());
+		this.checkPoint = this.progress;
 		return this;
 	}
 

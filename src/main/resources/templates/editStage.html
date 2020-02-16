@@ -61,8 +61,10 @@ body {
       <div id="panel">
         <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
+          <button disabled="disabled" data-theme="b">Event</button>
           <label>Actor<input type="radio" name="behavior" value="a" checked="checked"/></label>
-          <label>Event<input type="radio" name="behavior" value="e"/></label>
+          <label>Effect<input type="radio" name="behavior" value="e"/></label>
+          <label>Remove<input type="radio" name="behavior" value="r"/></label>
           <button disabled="disabled" data-theme="b">Guide</button>
           <label>ON<input type="radio" name="guide" value="1" checked="checked"/></label>
           <label>off<input type="radio" name="guide" value="0"/></label>
@@ -94,13 +96,13 @@ body {
           </select>
         </label>
         <label><span>V-Start pos:</span>
-          <input type="text" th:field="${stage.hPos}" disabled="disabled"/>
+          <input type="text" th:field="${stage.posH}" disabled="disabled"/>
         </label>
         <label><span>H-Repeat:</span>
           <input type="number" min="1" th:field="${stage.repeat}" />
         </label>
         <label><span>H-Start pos:</span>
-          <input type="range" min="0" max="4" th:field="${stage.vPos}"/>
+          <input type="range" min="0" max="4" th:field="${stage.posV}"/>
         </label>
         <div data-role="collapsibleset">
           <div data-role="collapsible" data-mini="true">

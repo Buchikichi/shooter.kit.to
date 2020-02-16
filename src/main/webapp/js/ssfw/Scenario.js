@@ -66,7 +66,7 @@ class Scenario {
 		let height = 24;
 		let x = pos.x - width / 2;
 		let y = pos.y - height - Scenario.Balloon.Margin;
-		let left = pos.scrollLeft;
+		let left = -this._stage.startPos + pos.scrollLeft;
 		let right = left + pos.width - width;
 
 		if (x < left) {
@@ -153,8 +153,8 @@ class Scenario {
 		return this;
 	}
 
-	static create(rec) {
-		return Object.assign(new Scenario(), rec).init();
+	static create(rec, stage = null) {
+		return Object.assign(new Scenario(), rec, { _stage: stage }).init();
 	}
 }
 Scenario.Balloon = {
