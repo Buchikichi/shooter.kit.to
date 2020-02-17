@@ -51,7 +51,6 @@ class Product extends Matter {
 		// Create next stage.
 		this.stage = Object.assign(stage, { performersList: performersList });
 		this.stage.start(isFirst);
-//		this.stage.reset();
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {
 			this.stageNum = 0;
@@ -67,11 +66,6 @@ class Product extends Matter {
 		});
 //		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 		this.stage.start();
-	}
-
-	retry() {
-		console.log('Product#retry');
-		this.stage.retry();
 	}
 
 	move() {
@@ -148,7 +142,7 @@ class Product extends Matter {
 			}
 			if (--this.stage.hibernate <= 0) {
 				if (0 < --this.shipRemain) {
-					this.retry();
+					this.stage.retry();
 //++this.shipRemain;
 				}
 			}
@@ -182,16 +176,14 @@ class Product extends Matter {
 		});
 		ctx.save();
 		ctx.strokeStyle = 'white';
-		ctx.strokeText('phase:' + this.stage.phase, x, y += 20);
+		ctx.strokeText('phase:' + this.stage.phase + '/progress:' + parseInt(this.stage.progress), x, y += 20);
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
-		ctx.strokeText('progress:' + parseInt(this.stage.progress), x, y += 20);
-		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + mainVisual.y, x, y += 20);
+		ctx.strokeText('map:' + parseInt(-mainVisual.x) + '/' + mainVisual.y, x, y += 20);
 
 		let ship = this.stage.performersList.find(a => a instanceof Ship);
 
 		if (ship) {
-			let fg = ship._stage.map;
-			let shipX = parseInt(ship.x/* - fg.x*/);
+			let shipX = parseInt(ship.x + mainVisual.x);
 			let shipY = parseInt(ship.y + mainVisual.y);
 			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);
 		}

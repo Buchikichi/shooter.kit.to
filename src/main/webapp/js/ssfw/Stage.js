@@ -59,7 +59,8 @@ class Stage {
 
 	retry() {
 		console.log('Stage#retry!');
-		this.reset();
+		this.reset(Stage.PHASE.NORMAL);
+		this.performersList.push(this.checkPoint.retrieve());
 		Transition.Instance.play(this.startTransition, this.startSpeed);
 		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
 			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
@@ -163,8 +164,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	scanEvent() {
 		let result = [];
-		let fg = this.fg;
-		let gx = -fg.x;
+		let gx = -this.map._mainVisual.x;
 		let bw = this.map.brickSize;
 		let rear = Math.round(gx / bw);
 
@@ -176,12 +176,17 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let newList = [];
 
 		this._eventList.forEach(s => {
-			// console.log('Stage#scanEvent op:' + s.op);
-			s.x = s.v * bw;
 			if (front < s.v) {
 				newList.push(s);
 				return;
 			}
+			if (s.v < rear) {
+				return;
+			}
+			s.isFront = rear < s.v;
+			s.x = s.v * bw;
+			// console.log('Stage#scanEvent op:' + s.op + '/num:' + s.number);
+			// console.log('gx:' + gx + 'front:' + front + '/s.v:' + s.v);
 			let evt = this.executeEvent(s);
 			if (evt) {
 				if (evt instanceof Actor) {
@@ -233,10 +238,15 @@ if (!isFront) enemy.dir = 0;
 			let ship = this.performersList.find(a => a instanceof Ship)
 
 			this.phase = Stage.PHASE.NORMAL;
+			this.checkPoint.enter({ x: rec.x, y: 104 });
 			if (ship) {
 				return true;
 			}
-			return new Ship(rec.x, 104);
+			return this.checkPoint.retrieve();
+		}
+		if (op == 'Ckp' && !rec.isFront) {
+			this.checkPoint.update();
+			return true;
 		}
 		if (op == 'Bos') {
 			this.phase = Stage.PHASE.BOSS;
@@ -260,9 +270,7 @@ if (!isFront) enemy.dir = 0;
 			return true;
 		}
 		if (op == 'Apl') {
-			let audio = Mediaset.Instance.getAudio(rec.type, rec.number);
-
-			AudioMixer.INSTANCE.play(audio.id, .7, true);
+			Mediaset.Instance.playBgm(rec.type, rec.number);
 			return true;
 		}
 		return false;
@@ -304,6 +312,7 @@ if (!isFront) enemy.dir = 0;
 		this.map.setProgress(this.progress++);
 //console.log('x:' + -mainVisual.x + '/max:' + max);
 		if (max < -mainVisual.x) {
+			console.log('Stage#move over:' + -mainVisual.x + '/max:' + max);
 			//this.phase = Stage.PHASE.NEXT_STAGE;
 			this.progress = -this.startPos;
 		}
@@ -325,10 +334,9 @@ if (!isFront) enemy.dir = 0;
 		return FieldMap.create(this.map);
 	}
 
-	reset() {
+	reset(phase = Stage.PHASE.INIT) {
 		console.log('Stage#reset');
-		this.phase = Stage.PHASE.INIT;
-		this.progress = -this.startPos;
+		this.phase = phase;
 		this.hibernate = this._product.maxHibernate;
 		this.scroll = this.roll;
 		this.effectH = 0;
@@ -337,6 +345,7 @@ if (!isFront) enemy.dir = 0;
 		this.map.setProgress(this.progress);
 		this.effector.reset();
 		this._eventList = this.scenarioList.concat();
+		this.performersList = this.performersList.filter(actor => actor instanceof MapVisual);
 	}
 
 	init() {
@@ -345,8 +354,9 @@ if (!isFront) enemy.dir = 0;
 		this.map = this.createFieldMap();
 		// console.log('Stage#init map:' + this.map.constructor.name);
 		this.scenarioList = this.scenarioList.map(s => Scenario.create(s, this));
+		this.progress = -this.startPos;
 		Mediaset.Instance.checkLoading().then(() => this.reset());
-		this.checkPoint = this.progress;
+		this.checkPoint = new CheckPoint(this);
 		return this;
 	}
 
@@ -370,3 +380,31 @@ Stage.PHASE = {
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
+
+class CheckPoint {
+	constructor(stage) {
+		this._stage = stage;
+		this.dx = 0;
+		this.dy = 0;
+		this.update();
+	}
+
+	enter(pos) {
+		this.update();
+		this.dx = pos.x - this.x;
+		this.dy = pos.y - this.y;
+	}
+
+	update() {
+		this.progress = this._stage.progress;
+		this.x = -this._stage.map._mainVisual.x;
+		this.y = 100;
+		console.log('CheckPoint#update progress:' + this.progress);
+	}
+
+	retrieve() {
+		this._stage.progress = this.progress;
+		this._stage.map.setProgress(this.progress);
+		return new Ship(this.x + this.dx, this.y + this.dy);
+	}
+}
