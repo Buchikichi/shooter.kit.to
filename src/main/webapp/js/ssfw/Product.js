@@ -12,6 +12,7 @@ class Product extends Matter {
 		this.hiscore = 0;
 		this.stageNum = 0;
 		this.stage = null;
+		this.effector = new StageEffector();
 	}
 
 	get isGameOver() {
@@ -33,6 +34,7 @@ class Product extends Matter {
 		this.score = 0;
 		this.shipRemain = this.maxShip;
 		this.stageNum = 0;
+		this.effector.reset();
 		this.nextStage();
 	}
 
@@ -76,6 +78,7 @@ class Product extends Matter {
 			return;
 		}
 		this.stage.move();
+		this.effector.move();
 		if (this.isGameOver) {
 			return;
 		}
@@ -128,7 +131,6 @@ class Product extends Matter {
 			console.log('Defeated the boss.');
 			this.stage.phase = Stage.PHASE.NORMAL;
 			this.stage.scroll = this.stage.roll;
-			AudioMixer.INSTANCE.fade();
 		}
 		this.stage.performersList = validActors;
 		this.score += score;
@@ -176,7 +178,7 @@ class Product extends Matter {
 		});
 		ctx.save();
 		ctx.strokeStyle = 'white';
-		ctx.strokeText('phase:' + this.stage.phase + '/progress:' + parseInt(this.stage.progress), x, y += 20);
+		ctx.strokeText('phase:' + this.stage.phase + '/scroll:' + this.stage.scroll + '/progress:' + parseInt(this.stage.progress), x, y += 20);
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
 		ctx.strokeText('map:' + parseInt(-mainVisual.x) + '/' + mainVisual.y, x, y += 20);
 
@@ -188,6 +190,14 @@ class Product extends Matter {
 			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);
 		}
 		ctx.restore();
+		//
+		let kb = Controller.Instance;
+
+		if (kb) {
+			if (kb.isHit('n')) {
+				this.stage.phase = Stage.PHASE.NEXT_STAGE;
+			}
+		}
 	}
 
 	registerScore() {

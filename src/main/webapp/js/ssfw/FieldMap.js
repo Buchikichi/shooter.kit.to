@@ -216,12 +216,15 @@ this.effectV = 0;
 	}
 
 	draw(ctx) {
-		let height = this._fieldMap._mainVisual.image.height;
+		let map = this._fieldMap;
+		let height = map._mainVisual.image.height;
 
 		ctx.save();
-		ctx.translate(this.x + this._fieldMap.x, this.y + this._fieldMap.y);
+		ctx.translate(this.x + map.x, this.y + map.y);
 		ctx.globalAlpha = this.alpha;
-		this._fieldMap._stage.effector.effect(ctx);
+		if (map._stage) {
+			map._stage._product.effector.effect(ctx);
+		}
 		ctx.beginPath();
 		ctx.fillStyle = this.getPattern(ctx);
 		ctx.rect(-this.x, -this.y, ctx.canvas.width, height);

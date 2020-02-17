@@ -5,7 +5,6 @@ class Stage {
 		this.lastScan = null;
 		this.performersList = [];
 		this.hasGuide = false;
-		this.effector = new StageEffector(this);
 	}
 
 	get isMoving() {
@@ -36,7 +35,11 @@ class Stage {
 	}
 
 	get startPos() {
-		return this._product.hW * this.posV / this.map._mainVisual.speed;
+		return this._product.hW * this.posV;
+	}
+
+	get startProgress() {
+		return -this.startPos / this.map._mainVisual.speed;
 	}
 
 	setupVisualList() {
@@ -49,9 +52,12 @@ class Stage {
 			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
 			Transition.Instance.play(this.startTransition, this.startSpeed);
 		} else {
-			let pos = this._product.hW * this.posV;
+			let pos = this.startPos;
 
-			this.performersList.forEach(a => a.x -= pos);
+			this.performersList.forEach(a => {
+				a.x -= pos
+				a._stage = this;
+			});
 			Mediaset.Instance.playBgm(this.sequelAudioType, this.sequelAudioSeq);
 		}
 		this.setupVisualList();
@@ -135,7 +141,9 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			// console.log('Stage#effect effectV:' + target.constructor.name);
 			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
 		}
-		this.map.checkHit(target);
+		if (this._product.effector.isBrickVisible || !(target instanceof Ship)) {
+			this.map.checkHit(target);
+		}
 	}
 
 	effectMap(ship) {
@@ -262,7 +270,7 @@ if (!isFront) enemy.dir = 0;
 		}
 		if (op == 'Efi' || op == 'Efo') {
 			// Fade in/out.
-			this.effector.start(op);
+			this._product.effector.start(op);
 			return true;
 		}
 		if (op == 'Afa') {
@@ -299,30 +307,23 @@ if (!isFront) enemy.dir = 0;
 	}
 
 	move() {
-		this.effector.move();
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
 		if (this.scroll == Stage.SCROLL.STOP) {
 			return;
 		}
 		let mainVisual = this.map._mainVisual;
-		let max = this.length - Product.Instance.width;
+		let max = this.length
 
 		this.scrollV();
 		this.map.setProgress(this.progress++);
-//console.log('x:' + -mainVisual.x + '/max:' + max);
 		if (max < -mainVisual.x) {
 			console.log('Stage#move over:' + -mainVisual.x + '/max:' + max);
+			this.performersList.forEach(a => a.x += mainVisual.x);
 			//this.phase = Stage.PHASE.NEXT_STAGE;
-			this.progress = -this.startPos;
+			this.progress = this.startProgress;
+			this.map.setProgress(this.progress);
 		}
-		// let fgX = this.fg.x;
-
-		// Stage.CHECK_POINT.forEach(cp => {
-		// 	if (cp.x <= fgX && this.checkPoint.x < fgX) {
-		// 		this.checkPoint = cp;
-		// 	}
-		// });
 	}
 
 	draw(ctx) {
@@ -343,9 +344,9 @@ if (!isFront) enemy.dir = 0;
 		this.effectV = 0;
 		this.map.reset();
 		this.map.setProgress(this.progress);
-		this.effector.reset();
 		this._eventList = this.scenarioList.concat();
 		this.performersList = this.performersList.filter(actor => actor instanceof MapVisual);
+		this._product.effector.reset();
 	}
 
 	init() {
@@ -354,7 +355,7 @@ if (!isFront) enemy.dir = 0;
 		this.map = this.createFieldMap();
 		// console.log('Stage#init map:' + this.map.constructor.name);
 		this.scenarioList = this.scenarioList.map(s => Scenario.create(s, this));
-		this.progress = -this.startPos;
+		this.progress = this.startProgress;
 		Mediaset.Instance.checkLoading().then(() => this.reset());
 		this.checkPoint = new CheckPoint(this);
 		return this;
@@ -379,7 +380,6 @@ Stage.PHASE = {
 	NEXT_STAGE: 3,
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
-Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];
 
 class CheckPoint {
 	constructor(stage) {
@@ -403,8 +403,11 @@ class CheckPoint {
 	}
 
 	retrieve() {
+		let ship = new Ship(this.x + this.dx, this.y + this.dy);
+
 		this._stage.progress = this.progress;
 		this._stage.map.setProgress(this.progress);
-		return new Ship(this.x + this.dx, this.y + this.dy);
+		ship._stage = this._stage;
+		return ship;
 	}
 }

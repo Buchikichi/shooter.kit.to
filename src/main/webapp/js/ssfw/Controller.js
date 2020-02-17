@@ -4,6 +4,7 @@
 class Controller {
 	constructor(isEdit = false) {
 		this.keys = {};
+		this.press = {};
 		this.point = {};
 		this.touch = false;
 		this.init(isEdit);
@@ -23,8 +24,10 @@ class Controller {
 	initKeys() {
 		window.addEventListener('keydown', event => {
 			if (event.key) {
-//console.log('key[' + event.key + ']');
-				this.keys[event.key] = true;
+				if (!this.press[event.key]) {
+					this.keys[event.key] = true;
+					// console.log('key[' + event.key + ']');
+				}
 			} else {
 				this.keys['k' + event.keyCode] = true;
 			}
@@ -32,6 +35,7 @@ class Controller {
 		window.addEventListener('keyup', event => {
 			if (event.key) {
 				delete this.keys[event.key];
+				delete this.press[event.key];
 			} else {
 				delete this.keys['k' + event.keyCode];
 			}
@@ -91,5 +95,14 @@ class Controller {
 	decPoint(x, y) {
 		this.prev.x += x;
 		this.prev.y += y;
+	}
+
+	isHit(k) {
+		if (this.keys[k]) {
+			delete this.keys[k];
+			this.press[k] = true;
+			return true;
+		}
+		return false;
 	}
 }

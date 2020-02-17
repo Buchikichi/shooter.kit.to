@@ -6,10 +6,6 @@ class StageEditor extends Stage {
 		this._currentScenario = null;
 	}
 
-	get startPos() {
-		return this._product.width / 2 * this.posV;
-	}
-
 	setProgress(x) {
 		if (this.fg.speed == 0) {
 			return;

@@ -13,6 +13,7 @@ class Molten extends Enemy {
 		this.phase = Molten.PHASE.TARGET;
 		this.rock = [];
 		this.appears = false;
+		this.effectH = true;
 		this.anim = new Animator('boss.molten');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
@@ -69,6 +70,7 @@ class MoltenRock extends Enemy {
 		this.speed = .6;
 		this.hitPoint = 5;
 		this.score = 10;
+		this.effectH = true;
 		this.anim = new Animator('boss.moltenRock');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
