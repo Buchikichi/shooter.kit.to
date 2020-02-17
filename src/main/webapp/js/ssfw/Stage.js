@@ -36,47 +36,44 @@ class Stage {
 	}
 
 	get startPos() {
-		let hW = this._product.width / this.map._mainVisual.speed / 2;
-
-		return this.posV * hW;
+		return this._product.hW * this.posV / this.map._mainVisual.speed;
 	}
 
-	playBgm() {
-		let audio = Mediaset.Instance.getAudio(this.startAudioType, this.startAudioSeq);
-
-		if (audio) {
-			// console.log('Stage#playBgm:');
-			// console.log(audio);
-			AudioMixer.INSTANCE.play(audio.id, .7, true);
-		}
-	}
-
-	start() {
-console.log('Stage#start :' + this.performersList.length);
-		this.performersList.forEach(actor => {
-			actor.x += this.map.x;
-			actor.y += this.map.y;
-			actor._stage = this;
-		});
-		// Add MapVisual
+	setupVisualList() {
 		this.map.mapVisualList.forEach(v => this.performersList.push(v));
 	}
 
+	start(isFirst) {
+		console.log('Stage#start :' + isFirst);
+		if (isFirst) {
+			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
+			Transition.Instance.play(this.startTransition, this.startSpeed);
+		} else {
+			let pos = this._product.hW * this.posV;
+
+			this.performersList.forEach(a => a.x -= pos);
+			Mediaset.Instance.playBgm(this.sequelAudioType, this.sequelAudioSeq);
+		}
+		this.setupVisualList();
+	}
+
 	retry() {
-console.log('Stage#retry!');
+		console.log('Stage#retry!');
 		this.reset();
 		Transition.Instance.play(this.startTransition, this.startSpeed);
 		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
-			this.playBgm();
+			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
 		}
 	}
 
-	scrollV(target) {
+	scrollV() {
+		let ship = this.performersList.find(a => a instanceof Ship);
+
 		this.effectV = 0;
-		if (this.scroll == Stage.SCROLL.OFF) {
+		if (!ship || this.scroll == Stage.SCROLL.OFF) {
 			return;
 		}
-		let diff = this._product.hH - target.y;
+		let diff = this._product.hH - ship.y;
 		let fg = this.fg;
 
 		if (this.scroll == Stage.SCROLL.TOP) {
@@ -179,7 +176,8 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let newList = [];
 
 		this._eventList.forEach(s => {
-			s.x = rear * bw;
+			// console.log('Stage#scanEvent op:' + s.op);
+			s.x = s.v * bw;
 			if (front < s.v) {
 				newList.push(s);
 				return;
@@ -231,6 +229,15 @@ if (!isFront) enemy.dir = 0;
 	executeEvent(rec) {
 		let op = rec.op;
 
+		if (op == 'Ent') {
+			let ship = this.performersList.find(a => a instanceof Ship)
+
+			this.phase = Stage.PHASE.NORMAL;
+			if (ship) {
+				return true;
+			}
+			return new Ship(rec.x, 104);
+		}
 		if (op == 'Bos') {
 			this.phase = Stage.PHASE.BOSS;
 			return true;
@@ -275,15 +282,15 @@ if (!isFront) enemy.dir = 0;
 	}
 
 	removeMapVisual() {
-		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
 		this.performersList.forEach(actor => {
-			actor.x -= this.map.x;
-			actor.y -= this.map.y;
+			actor.x += this.map._mainVisual.x;
+			actor.y += this.map._mainVisual.y;
 		});
+		this.performersList = this.performersList.filter(actor => !(actor instanceof MapVisual));
 		return this.performersList;
 	}
 
-	move(target) {
+	move() {
 		this.effector.move();
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
@@ -293,7 +300,7 @@ if (!isFront) enemy.dir = 0;
 		let mainVisual = this.map._mainVisual;
 		let max = this.length - Product.Instance.width;
 
-		this.scrollV(target);
+		this.scrollV();
 		this.map.setProgress(this.progress++);
 //console.log('x:' + -mainVisual.x + '/max:' + max);
 		if (max < -mainVisual.x) {
@@ -319,8 +326,8 @@ if (!isFront) enemy.dir = 0;
 	}
 
 	reset() {
-		// console.log('Stage#reset');
-		this.phase = Stage.PHASE.NORMAL;
+		console.log('Stage#reset');
+		this.phase = Stage.PHASE.INIT;
 		this.progress = -this.startPos;
 		this.hibernate = this._product.maxHibernate;
 		this.scroll = this.roll;
@@ -356,9 +363,10 @@ Stage.SCROLL = {
 	STOP: 16,
 };
 Stage.PHASE = {
-	NORMAL: 0,
-	BOSS: 1,
-	NEXT_STAGE: 2,
+	INIT: 0,
+	NORMAL: 1,
+	BOSS: 2,
+	NEXT_STAGE: 3,
 };
 Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 Stage.CHECK_POINT = [{x:0, y:0}, {x:660, y:0}, {x:1440, y:0}];

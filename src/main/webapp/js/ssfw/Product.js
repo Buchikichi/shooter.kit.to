@@ -34,7 +34,6 @@ class Product extends Matter {
 		this.shipRemain = this.maxShip;
 		this.stageNum = 0;
 		this.nextStage();
-		this._reset();
 	}
 
 	increase() {
@@ -44,21 +43,14 @@ class Product extends Matter {
 	}
 
 	nextStage() {
-console.log('Product#nextStage:' + this.stageNum);
-if (this.ship) {
-	console.log('ship_' + this.ship.x + '/' + this.ship.y);
-}
+		console.log('Product#nextStage:' + this.stageNum);
+		let isFirst = !this.stage;
 		let stage = this.stageList[this.stageNum];
-		let performersList = this.stage ? this.stage.removeMapVisual() : [];
+		let performersList = isFirst ? [] : this.stage.removeMapVisual();
 
-if (this.ship) {
-	console.log('map:' + this.stage.map.x + '/' + this.stage.map.y);
-	console.log('ship:' + this.ship.x + '/' + this.ship.y);
-}
 		// Create next stage.
 		this.stage = Object.assign(stage, { performersList: performersList });
-		this.stage.playBgm();
-		this.stage.start();
+		this.stage.start(isFirst);
 //		this.stage.reset();
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {
@@ -77,21 +69,9 @@ if (this.ship) {
 		this.stage.start();
 	}
 
-	_reset() {
-		this.ship = new Ship(-400, 100);
-		this.ship._stage = this.stage;
-		this.ship.reset();
-		this.ship.enter();
-//		this.performersList = [this.ship];
-//		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
-		this.stage.performersList = [this.ship];
-		this.stage.start();
-	}
-
 	retry() {
 		console.log('Product#retry');
 		this.stage.retry();
-		this._reset();
 	}
 
 	move() {
@@ -101,7 +81,7 @@ if (this.ship) {
 		if (Transition.Instance.waitForDrawing) {
 			return;
 		}
-		this.stage.move(this.ship);
+		this.stage.move();
 		if (this.isGameOver) {
 			return;
 		}
@@ -158,7 +138,11 @@ if (this.ship) {
 		}
 		this.stage.performersList = validActors;
 		this.score += score;
+		if (this.stage.phase == Stage.PHASE.INIT) {
+			return;
+		}
 		if (!this.isGameOver && shipList.every(s => s.isGone)) {
+			console.log('Product#move crash.');
 			if (this.crashBgm == Product.CrashHandling.Bgm.Stop) {
 				AudioMixer.INSTANCE.stop();
 			}
@@ -191,7 +175,7 @@ if (this.ship) {
 		let mainVisual = this.stage.map._mainVisual;
 
 		actors.forEach(actor => {
-			if (10 <= actorNames.length || !(actor instanceof Enemy) || actor instanceof Chain) {
+			if (10 <= actorNames.length || !(actor instanceof Enemy)) {
 				return;
 			}
 			actorNames.push(actor.constructor.name);
@@ -202,10 +186,13 @@ if (this.ship) {
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
 		ctx.strokeText('progress:' + parseInt(this.stage.progress), x, y += 20);
 		ctx.strokeText('map:' + parseInt(mainVisual.x) + '/' + mainVisual.y, x, y += 20);
-		if (this.ship) {
-			let fg = this.ship._stage.map;
-			let shipX = parseInt(this.ship.x/* - fg.x*/);
-			let shipY = parseInt(this.ship.y + mainVisual.y);
+
+		let ship = this.stage.performersList.find(a => a instanceof Ship);
+
+		if (ship) {
+			let fg = ship._stage.map;
+			let shipX = parseInt(ship.x/* - fg.x*/);
+			let shipY = parseInt(ship.y + mainVisual.y);
 			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);
 		}
 		ctx.restore();

@@ -61,6 +61,14 @@ class Mediaset {
 		return this.audioDic[key];
 	}
 
+	playBgm(audioType, audioSeq) {
+		let audio = this.getAudio(audioType, audioSeq);
+
+		if (audio) {
+			AudioMixer.INSTANCE.play(audio.id, .99, true);
+		}
+	}
+
 	getVisual(visualId) {
 		let result = null;
 
