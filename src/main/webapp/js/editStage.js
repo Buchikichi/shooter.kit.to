@@ -23,16 +23,12 @@ class EditStage {
 		return document.querySelector('[name="scale"]:checked').value;
 	}
 
-	get roll() {
-		return parseInt(document.querySelector('[name="roll"]').value);
-	}
-
 	get repeat() {
 		return document.querySelector('[name="repeat"]').value;
 	}
 
 	get hasMargin() {
-		return this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+		return this.attrPanel.roll == Stage.SCROLL.OFF || this.attrPanel.roll == Stage.SCROLL.ON;
 	}
 
 	loadStage() {
@@ -53,6 +49,7 @@ class EditStage {
 			});
 		}).then(()=> {
 			loading.parentNode.removeChild(loading);
+			this.setupEvents();
 			this.resetCanvas();
 			this.start();
 		});
@@ -156,13 +153,7 @@ class EditStage {
 			requestAnimationFrame(activate);
 		};
 
-//		this.controller = new Controller();
-		this.actorPanel = new ActorPanel();
-//		this.actorPanel.setupActors(Product.Instance.actorList);
-		this.eventPanel = new EventPanel(this);
-		this.setupActors(Product.Instance.actorList);
-		$('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
-		this.setupEvents();
+		console.log('EditStage#start');
 		activate();
 	}
 
@@ -235,11 +226,18 @@ console.log('EditStage#setupEvents');
 			this.view.style.height = height + 'px';
 		};
 
+//		this.controller = new Controller();
+		this.attrPanel = new AttrPanel(this);
+		this.actorPanel = new ActorPanel();
+//		this.actorPanel.setupActors(Product.Instance.actorList);
+		this.eventPanel = new EventPanel(this);
+		this.setupActors(Product.Instance.actorList);
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
 		$('[name="behavior"]:eq(1)').click(()=> this.eventPanel.open());
 		$('[name="behavior"]:eq(2)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
+		// $('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		$('[name="guide"]').click(()=> changeGuide());
 		$('[name="scale"]').click(()=> this.resetCanvas());
 		$('[name="color"]').click(()=> changeColor());
@@ -249,7 +247,6 @@ console.log('EditStage#setupEvents');
 		changeGuide();
 		changeColor();
 		resize();
-		this.setupAttributes();
 		this.setupPointingDevice();
 		new AudioSelector();
 	}
@@ -281,65 +278,6 @@ console.log('EditStage#setupEvents');
 			landform.wheel(dy);
 		}
 		this.controller.decPoint(dx * Landform.BRICK_WIDTH, dy * Landform.BRICK_WIDTH);
-	}
-
-	setupAttributes() {
-		let stage = Product.Instance.stage;
-		let roll = document.querySelector('[name="roll"]');
-		let repeat = document.querySelector('[name="repeat"]');
-		let posV = document.querySelector('[name="posV"]');
-		let startTransition = document.querySelector('[name="startTransition"]');
-		let startSpeed = document.querySelector('[name="startSpeed"]');
-		let startAudio = document.querySelector('[name="startAudio"]');
-		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioType, stage.startAudioSeq);
-		let sequelTransition = document.querySelector('[name="sequelTransition"]');
-		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
-		let sequelAudio = document.querySelector('[name="sequelAudio"]');
-		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioType, stage.sequelAudioSeq);
-
-		roll.addEventListener('change', ()=> {
-			// console.log('roll:' + this.roll);
-			stage.changeRoll(this.roll);
-			this.resetCanvas();
-		});
-		repeat.addEventListener('change', ()=> {
-			let repeatValue = parseInt(repeat.value);
-
-			if (!repeatValue) {
-				repeat.value = 1;
-			}
-			let width = stage.width * repeat.value;
-
-			if (16384 < width) {
-				let v = parseInt(16384 / stage.width);
-				console.log('v:' + v);
-				repeat.value = v;
-			}
-			this.resetCanvas();
-		});
-		$(posV).change(()=> {
-			stage.posV = posV.value;
-			this.resetCanvas();
-		});
-
-		startTransition.addEventListener('change', ()=> stage.startTransition = startTransition.value);
-		$(startSpeed).change(()=> {
-			console.log('startSpeed:' + startSpeed.value);
-			stage.startSpeed = startSpeed.value;
-		});
-		//console.log(startAudioData);
-		startAudio.setAttribute('data-type', stage.startAudioType);
-		startAudio.setAttribute('data-seq', stage.startAudioSeq);
-		startAudio.textContent = startAudioData ? startAudioData.name : null;
-
-		sequelTransition.addEventListener('change', ()=> stage.sequelTransition = sequelTransition.value);
-		$(sequelSpeed).change(()=> {
-			console.log('startSpeed:' + sequelSpeed.value);
-			stage.sequelSpeed = sequelSpeed.value;
-		});
-		sequelAudio.setAttribute('data-type', stage.sequelAudioType);
-		sequelAudio.setAttribute('data-seq', stage.sequelAudioSeq);
-		sequelAudio.textContent = sequelAudioData ? sequelAudioData.name : null;
 	}
 
 	setupPointingDevice() {
@@ -414,6 +352,86 @@ console.log('EditStage#setupEvents');
 			ix++;
 		});
 		return new ProductEntity().saveMap(formData);
+	}
+}
+
+class AttrPanel {
+	constructor(stageEditor) {
+		this.stageEditor = stageEditor;
+		this.panel = document.getElementById('attrPanel');
+		this.init();
+		this.setupEvent();
+	}
+
+	get roll() {
+		return parseInt(document.querySelector('[name="roll"]').value);
+	}
+
+	init() {
+		let stage = Product.Instance.stage;
+		let startAudio = document.querySelector('[name="startAudio"]');
+		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioType, stage.startAudioSeq);
+		let sequelAudio = document.querySelector('[name="sequelAudio"]');
+		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioType, stage.sequelAudioSeq);
+
+		//console.log(startAudioData);
+		startAudio.setAttribute('data-type', stage.startAudioType);
+		startAudio.setAttribute('data-seq', stage.startAudioSeq);
+		startAudio.textContent = startAudioData ? startAudioData.name : null;
+		sequelAudio.setAttribute('data-type', stage.sequelAudioType);
+		sequelAudio.setAttribute('data-seq', stage.sequelAudioSeq);
+		sequelAudio.textContent = sequelAudioData ? sequelAudioData.name : null;
+	}
+
+	setupEvent() {
+		let stage = Product.Instance.stage;
+		let roll = document.querySelector('[name="roll"]');
+		let repeat = document.querySelector('[name="repeat"]');
+		let posV = document.querySelector('[name="posV"]');
+		let startTransition = document.querySelector('[name="startTransition"]');
+		let startSpeed = document.querySelector('[name="startSpeed"]');
+		let startAudio = document.querySelector('[name="startAudio"]');
+		let sequelTransition = document.querySelector('[name="sequelTransition"]');
+		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
+		let sequelAudio = document.querySelector('[name="sequelAudio"]');
+
+		roll.addEventListener('change', ()=> {
+			// console.log('roll:' + this.roll);
+			stage.changeRoll(this.roll);
+			this.stageEditor.resetCanvas();
+		});
+		repeat.addEventListener('change', ()=> {
+			let repeatValue = parseInt(repeat.value);
+
+			if (!repeatValue) {
+				repeat.value = 1;
+			}
+			let width = stage.width * repeat.value;
+
+			if (16384 < width) {
+				let v = parseInt(16384 / stage.width);
+				console.log('v:' + v);
+				repeat.value = v;
+			}
+			this.stageEditor.resetCanvas();
+		});
+		$(posV).change(()=> {
+			stage.posV = posV.value;
+			this.stageEditor.resetCanvas();
+		});
+		startTransition.addEventListener('change', ()=> stage.startTransition = startTransition.value);
+		$(startSpeed).change(()=> stage.startSpeed = startSpeed.value);
+		sequelTransition.addEventListener('change', ()=> stage.sequelTransition = sequelTransition.value);
+		$(sequelSpeed).change(()=> stage.sequelSpeed = sequelSpeed.value);
+		$(this.panel).panel({
+			close: ()=> {
+				console.log('AttrPanel closed.');
+				stage.startAudioType = parseInt(startAudio.getAttribute('data-type'));
+				stage.startAudioSeq = parseInt(startAudio.getAttribute('data-seq'));
+				stage.sequelAudioType = parseInt(sequelAudio.getAttribute('data-type'));
+				stage.sequelAudioSeq = parseInt(sequelAudio.getAttribute('data-seq'));
+			}
+		});
 	}
 }
 
