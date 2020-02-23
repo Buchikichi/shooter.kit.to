@@ -15,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import lombok.Data;
 
 /**
@@ -46,20 +44,16 @@ public class Product {
 	private Date updated;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
-	@JsonManagedReference
 	private List<Stage> stageList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("type, seq")
-	@JsonManagedReference
 	private List<ProductActor> actorList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("score DESC")
-	@JsonManagedReference
 	private List<Scores> scoreList = new ArrayList<>();
 
 	@ManyToOne
-	@JsonManagedReference
 	private Mediaset mediaset;
 }

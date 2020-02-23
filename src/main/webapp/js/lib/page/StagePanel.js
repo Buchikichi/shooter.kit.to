@@ -1,12 +1,12 @@
 class StagePanel {
 	constructor() {
 		this.panel = document.getElementById('stagePanel');
-		this.stageView = this.panel.querySelector('ul');
 		this.map = new MapEntity();
+		this.stage = new StageEntity();
 	}
 
 	open(callBack) {
-		let ul = this.stageView;
+		let ul = this.panel.querySelector('ul');
 		let keyword = '';
 
 		ul.textContent = 'Loading...';
@@ -18,15 +18,33 @@ class StagePanel {
 				let anchor = li.querySelector('a');
 
 				ul.appendChild(li);
-				anchor.addEventListener('click', ()=> {
-					if (!callBack(rec)) {
-console.log('Already exists!');
-						return;
-					}
-					$(this.stagePanel).panel('close');
-				});
+				anchor.addEventListener('click', ()=> this.addStage(rec, callBack));
 			});
 			$(ul).listview('refresh');
+		});
+	}
+
+	addStage(rec, callBack) {
+		let messagePopup = document.getElementById('messagePopup');
+		let content = messagePopup.querySelector('p');
+		let productId = document.querySelector('input[name=id]');
+		let productStageView = document.getElementById('productStageView');
+		let seq = productStageView.querySelectorAll('li').length;
+		let stage = { product: { id: productId.value }, map: { id: rec.id }, seq: seq };
+
+		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		new StageEntity().save(stage).then(data => {
+			$.mobile.loading('hide');
+			if (data.ok) {
+				if (!callBack(data.result)) {
+					console.log('Already exists!');
+					return;
+				}
+			} else {
+				content.textContent = 'Save failed.';
+				$(messagePopup).popup('open', {});
+			}
+			$(this.panel).panel('close');
 		});
 	}
 }

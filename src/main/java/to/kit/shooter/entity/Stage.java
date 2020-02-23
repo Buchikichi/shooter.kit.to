@@ -13,8 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 
@@ -30,7 +29,7 @@ public class Stage {
 	private String id;
 	private int seq;
 	private int roll;
-	private int repeat;
+	private int repeat = 1;
 	@Column(name = "pos_h")
 	private int posH;
 	@Column(name = "pos_v")
@@ -49,13 +48,11 @@ public class Stage {
 	private Date updated;
 
 	@ManyToOne
-//	@JsonBackReference
-	@JsonIgnore
+	@JsonBackReference
 	private Product product;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "stage", targetEntity = Scenario.class)
 	@OrderBy("v, h")
-	@JsonManagedReference
 	private List<Scenario> scenarioList;
 
 	@ManyToOne

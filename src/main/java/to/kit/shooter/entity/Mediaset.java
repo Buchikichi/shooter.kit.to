@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
 
@@ -44,11 +43,9 @@ public class Mediaset {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
 	@OrderBy("audioType, audioSeq")
-	@JsonManagedReference
 	private List<AudioView> audioList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
 	@OrderBy("visualType, visualSeq")
-	@JsonManagedReference
 	private List<VisualView> visualList = new ArrayList<>();
 }

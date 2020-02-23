@@ -26,14 +26,15 @@
   </div>
   <div data-role="collapsible" data-collapsed="false" data-mini="true">
     <h4 th:text="#{stage}">Stage</h4>
-    <ul id="productStageView" data-role="listview" data-split-icon="edit">
+    <ul id="productStageView" data-role="listview" data-split-icon="delete">
       <li th:each="stage:${product.stageList}">
-        <a th:with="map=${stage.map}" href="#editStagePanel" th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
+        <a th:with="map=${stage.map}" href="#" th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
           <img src="/img/icon.listview.png"/>
           <span th:text="${map.name}"></span>
           <span th:text="${#lists.size(stage.scenarioList)}" class="ui-li-count"></span>
           <p th:text="${map.description}"></p>
         </a>
+        <a href="#"></a>
       </li>
     </ul>
   </div>
@@ -115,23 +116,8 @@
     </form>
   </div>
   <div id="stagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <span>Choose a stage.</span>
+    <span>Choose a map.</span>
     <ul data-role="listview" data-filter="true"></ul>
-  </div>
-  <div id="editStagePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <form>
-      <label>Scroll:
-        <select name="roll">
-          <option value="0">OFF</option>
-          <option value="1">ON</option>
-          <option value="2">LOOP</option>
-          <option value="4">TOP</option>
-          <option value="8">BOTTOM</option>
-        </select>
-      </label>
-      <button type="button" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-edit">Edit stage</button>
-      <button type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-delete">Remove stage</button>
-    </form>
   </div>
   <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
     <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>

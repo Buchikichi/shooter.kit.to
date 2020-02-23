@@ -36,7 +36,8 @@ public class StageService {
 		String id = stage.getId();
 
 		if (id == null || id.isEmpty()) {
-			return null;
+			// New stage.
+			return this.stageRepository.saveAndFlush(stage);
 		}
 		List<Scenario> scenarioList = stage.getScenarioList();
 

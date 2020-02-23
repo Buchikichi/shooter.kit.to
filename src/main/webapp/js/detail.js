@@ -9,17 +9,15 @@ class AppMain {
 	 */
 	constructor() {
 		this.productStageView = document.getElementById('productStageView');
-		this.product = new ProductEntity();
 		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
-		this.editStagePanel = new EditStagePanel(this);
 		this.productActorPage = new ProductActorPage();
-		this.setupButton();
+		this.setupEvents();
 		this.checkCustomer();
 		$(this.productStageView).sortable();
 	}
 
-	setupButton() {
+	setupEvents() {
 		let plusButton = document.querySelector('a[href="#stagePanel"]');
 		let editMediasetButton = document.getElementById('editMediasetButton');
 
@@ -32,21 +30,20 @@ class AppMain {
 			window.open('/mediaset/edit/' + mediasetSelect.value);
 		});
 		//
-		let stageButtonList = this.productStageView.querySelectorAll('a');
+		this.productStageView.querySelectorAll('li').forEach(li => {
+			let anchor = li.querySelector('a:first-child');
+			let delButton = li.querySelector('a:last-child');
+			let id = anchor.getAttribute('data-id');
 
-		stageButtonList.forEach(anchor => {
-			anchor.addEventListener('click', ()=> {
-				let rec = this.getRec(anchor);
-
-				this.editStagePanel.open(rec);
+			anchor.addEventListener('click', ()=> window.open('/stage/edit/' + id));
+			delButton.addEventListener('click', ()=> {
+				this.productStageView.removeChild(li);
 			});
 		});
 		//
 		let saveButton = document.getElementById('saveButton');
 
-		saveButton.addEventListener('click', ()=> {
-			this.saveProduct();
-		});
+		saveButton.addEventListener('click', ()=> this.saveProduct());
 		$(saveButton).addClass('ui-state-disabled');
 	}
 
@@ -64,27 +61,17 @@ class AppMain {
 
 	addStage(rec) {
 		let stageId = rec.id;
-		let elements = this.productStageView.querySelectorAll('li');
-		let exists = false;
-
-		elements.forEach(li => {
-			let anchor = li.querySelector('a');
-			let dataId = anchor.getAttribute('data-stage');
-
-			if (dataId == stageId) {
-				exists = true;
-			}
-		});
-		if (exists) {
-			return false;
-		}
-		rec.href = '#editStagePanel';
 		let listviewRow = new ListviewRow(rec, '/img/icon.listview.png');
 		let li = listviewRow.li;
 		let anchor = listviewRow.anchor;
+		let delButton = document.createElement('a');
 
+		console.log(rec);
 		anchor.setAttribute('data-stage', stageId);
 		anchor.setAttribute('data-roll', 0);
+		anchor.addEventListener('click', ()=> window.open('/stage/edit/' + stageId));
+		delButton.addEventListener('click', ()=> this.productStageView.removeChild(li));
+		li.appendChild(delButton);
 		this.productStageView.appendChild(li);
 		$(this.productStageView).listview('refresh');
 		return true;
@@ -151,6 +138,7 @@ class AppMain {
 	}
 
 	saveProduct() {
+		this.product = new ProductEntity();
 		let form = document.getElementById('productForm');
 		let formData = new FormData(form);
 		let stageList = this.listStages();

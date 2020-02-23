@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -31,6 +31,6 @@ public class Scores {
 	private Date updated;
 
 	@ManyToOne
-	@JsonBackReference
+	@JsonIgnore
 	private Product product;
 }
