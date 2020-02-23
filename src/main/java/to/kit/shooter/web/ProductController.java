@@ -8,11 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,7 +29,6 @@ import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
-import to.kit.shooter.web.form.ProductForm;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.ResultListForm;
 
@@ -100,14 +99,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private Map<ActorType, List<ProductActor>> makeTypeMap(List<ProductActor> actorList) {
 		Map<ActorType, List<ProductActor>> map = new HashMap<>();
 
+		for (ActorType type : ActorType.List) {
+			map.put(type, new ArrayList<>());
+		}
 		for (ProductActor productActor : actorList) {
 			ActorType type = ActorType.getType(productActor.getType());
 			List<ProductActor> list = map.get(type);
 
-			if (list == null) {
-				list = new ArrayList<>();
-				map.put(type, list);
-			}
 			list.add(productActor);
 		}
 		return map;
@@ -140,7 +138,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Product> save(ProductForm form) {
+	public ResultForm<Product> save(@RequestBody Product product) {
 		ResultForm<Product> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
@@ -152,22 +150,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 		if (loginId == null || loginId.isEmpty()) {
 			return result;
 		}
-		Product product = new Product();
-
-		BeanUtils.copyProperties(form, product);
-		if (product.getStageList() == null) {
-			product.setStageList(new ArrayList<>());
-		}
-		if (product.getActorList() == null) {
-			product.setActorList(new ArrayList<>());
-		}
 		product.setOwner(loginId);
 		Product saved = this.productService.save(product);
 
 		if (saved == null) {
 			return result;
 		}
-		this.productService.deleteUnusedStage(saved);
+		this.productService.deleteUnusedStage(product);
 		result.setResult(saved);
 		result.setOk(true);
 		return result;
@@ -186,7 +175,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/increase")
 	@ResponseBody
-	public ResultForm<Object> play(@RequestParam String id) {
+	public ResultForm<Object> increase(@RequestParam String id) {
 		ResultForm<Object> result = new ResultForm<>();
 
 		result.setOk(true);

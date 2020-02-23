@@ -51,7 +51,8 @@ class Product extends Matter {
 		let performersList = isFirst ? [] : this.stage.removeMapVisual();
 
 		// Create next stage.
-		this.stage = Object.assign(stage, { performersList: performersList });
+		this.stage = Object.create(stage);
+		this.stage.performersList = performersList;
 		this.stage.start(isFirst);
 		this.stageNum++;
 		if (this.stageList.length <= this.stageNum) {

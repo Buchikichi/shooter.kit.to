@@ -77,12 +77,15 @@ form [type=image] {
 #loading {
 	text-align: center;
 	position: absolute;
+	top: 0px;
+	left: 0px;
 	width: 100%;
 	height: 100%;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-image: url("../img/ajax-loader.gif");
 	background-color: #222;
+	opacity: 0.9;
 	z-index: 1200;
 }
 #gameOver {

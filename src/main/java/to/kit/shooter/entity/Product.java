@@ -44,6 +44,7 @@ public class Product {
 	private Date updated;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "product", cascade = CascadeType.ALL)
+	@OrderBy("seq")
 	private List<Stage> stageList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)

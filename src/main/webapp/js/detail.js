@@ -8,13 +8,25 @@ class AppMain {
 	 * インスタンス生成.
 	 */
 	constructor() {
+		let productId = document.querySelector('input[name=id]').value;
+		let loading = document.getElementById('loading');
+
+		ProductEditor.create(productId).then(product => {
+//			this.setupActors(product);
+			this.product = product;
+			return Mediaset.Instance.checkLoading((loaded, max) => loading.innerHTML = loaded + '/' + max);
+		}).then(()=> {
+			loading.parentNode.removeChild(loading);
+//			this.start();
+		});
+
 		this.productStageView = document.getElementById('productStageView');
 		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
 		this.productActorPage = new ProductActorPage();
 		this.setupEvents();
 		this.checkCustomer();
-		$(this.productStageView).sortable();
+		$(this.productStageView).sortable({handle: '.sortable'});
 	}
 
 	setupEvents() {
@@ -37,7 +49,7 @@ class AppMain {
 
 			anchor.addEventListener('click', ()=> window.open('/stage/edit/' + id));
 			delButton.addEventListener('click', ()=> {
-				this.productStageView.removeChild(li);
+//				this.productStageView.removeChild(li);
 			});
 		});
 		//
@@ -125,9 +137,8 @@ class AppMain {
 
 	listStages() {
 		let list = [];
-		let stageList = this.productStageView.querySelectorAll('li');
 
-		stageList.forEach((li, ix) => {
+		this.productStageView.querySelectorAll('li').forEach((li, ix) => {
 			let anchor = li.querySelector('a');
 			let rec = this.getRec(anchor);
 
@@ -138,34 +149,30 @@ class AppMain {
 	}
 
 	saveProduct() {
-		this.product = new ProductEntity();
 		let form = document.getElementById('productForm');
 		let formData = new FormData(form);
 		let stageList = this.listStages();
 		let actorList = this.productActorPage.listActor();
 
-		stageList.forEach(rec => {
-			let prefix = 'stageList[' + rec.seq + '].';
+		this.product.updateStageSeq(stageList);
+// 		stageList.forEach(rec => {
+// 			let prefix = 'stageList[' + rec.seq + '].';
 
-//console.log(rec);
-			formData.append(prefix + 'id', rec.id);
-			formData.append(prefix + 'stage.id', rec.stageId);
-			formData.append(prefix + 'seq', rec.seq);
-			formData.append(prefix + 'roll', rec.roll);
-		});
-		actorList.forEach((rec, ix) => {
-			if (!rec) {
-				return;
-			}
-			let prefix = 'actorList[' + ix + '].';
+// console.log(rec);
+// 		});
+		// actorList.forEach((rec, ix) => {
+		// 	if (!rec) {
+		// 		return;
+		// 	}
+		// 	let prefix = 'actorList[' + ix + '].';
 
-			formData.append(prefix + 'actor.id', rec.actorId);
-			formData.append(prefix + 'seq', ix);
-			formData.append(prefix + 'type', rec.productType);
-			formData.append(prefix + 'className', rec.className);
-		});
+		// 	formData.append(prefix + 'actor.id', rec.actorId);
+		// 	formData.append(prefix + 'seq', ix);
+		// 	formData.append(prefix + 'type', rec.productType);
+		// 	formData.append(prefix + 'className', rec.className);
+		// });
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-		this.product.save(formData).then(data => {
+		this.product.save().then(data => {
 			let messagePopup = document.getElementById('messagePopup');
 			let content = messagePopup.querySelector('p');
 

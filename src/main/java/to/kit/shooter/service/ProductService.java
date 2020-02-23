@@ -1,22 +1,21 @@
 package to.kit.shooter.service;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
+import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.Stage;
-import to.kit.shooter.entity.Scores;
 import to.kit.shooter.repository.ProductActorRepository;
-import to.kit.shooter.repository.StageRepository;
 import to.kit.shooter.repository.ProductRepository;
+import to.kit.shooter.repository.StageRepository;
 
 @Service
 public class ProductService {
@@ -39,23 +38,15 @@ public class ProductService {
 
 	public Product detail(String id) {
 		Product product = this.productRepository.findById(id).get();
-		List<Stage> stageList = product.getStageList();
-		List<ProductActor> actorList = product.getActorList();
-		List<Scores> scoreList = product.getScoreList();
 
-		stageList.sort((a, b) -> a.getSeq() - b.getSeq());
-		actorList.sort((a, b) -> a.getSeq() - b.getSeq());
-		scoreList.sort((a, b) -> b.getScore() - a.getScore());
 		return product;
 	}
 
 	public void deleteUnusedStage(Product product) {
-		Set<String> valid = new HashSet<>();
+		List<String> valid = product.getStageList().stream()
+				.map(Stage::getId).collect(Collectors.toList());
 		List<Stage> list = this.stageRepository.findByProductId(product.getId());
 
-		for (Stage stage : product.getStageList()) {
-			valid.add(stage.getId());
-		}
 		for (Stage stage : list) {
 			if (!valid.contains(stage.getId())) {
 				this.stageRepository.delete(stage);
@@ -63,20 +54,16 @@ public class ProductService {
 		}
 	}
 
-	private void prepareStage(Product product) {
-		for (Stage stage : product.getStageList()) {
-			String id = stage.getId();
-
-			if (id != null) {
-				Stage prev = this.stageRepository.findById(id).get();
-
-				if (prev != null) {
-					stage.setMap(prev.getMap());
-					stage.setUpdated(new Date());
-				}
-			}
-			stage.setProduct(product);
+	private void prepare(Product product) {
+		for (Stage rec : product.getStageList()) {
+			rec.setProduct(product);
+			rec.setUpdated(new Date());
 		}
+		Mediaset mediaset = product.getMediaset();
+
+		mediaset.getAudioList().clear();
+		mediaset.getVisualList().clear();
+		product.getScoreList().clear();
 	}
 
 	private void deleteActorByProductId(String productId) {
@@ -92,14 +79,16 @@ public class ProductService {
 			id = null;
 			entity.setId(null);
 		}
-		if (id != null && !id.isEmpty()) {
-			deleteActorByProductId(id);
-		}
-		prepareStage(entity);
+//		if (id != null && !id.isEmpty()) {
+//			deleteActorByProductId(id);
+//		}
+
+		prepare(entity);
+
 		List<ProductActor> actorList = entity.getActorList();
-		actorList.removeIf(a -> {
-			return a.getActor() == null;
-		});
+//		actorList.removeIf(a -> {
+//			return a.getActor() == null;
+//		});
 		for (ProductActor actor : actorList) {
 			actor.setProduct(entity);
 			actor.setUpdated(new Date());
