@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 class AppMain {
 	constructor() {
 		this.customer = new Customer();
-		this.stageManager = new StageManager();
+		this.mapManager = new MapManager();
 		this.actorManager = new ActorManager();
 		this.imageManager = new ImageManager();
 		this.audioManager = new AudioManager();
@@ -26,8 +26,8 @@ class AppMain {
 		let audioButton = document.getElementById('audioButton');
 
 		mapButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#stagePanel');
-			this.manager = this.stageManager;
+			plusButton.setAttribute('href', '#mapPanel');
+			this.manager = this.mapManager;
 			this.manager.list();
 			this.hideFilter();
 		});
@@ -184,7 +184,7 @@ console.log('RepositoryManager: saveResource');
 			this.listView.textContent = null;
 			list.forEach(rec => {
 				let li = this.createRow(rec);
-				let anchor = li.querySelector('a');
+				let anchor = li.querySelector('a:last-child');
 
 				anchor.addEventListener('click', ()=> {
 					this.resetPanel(this.select(rec));
@@ -196,20 +196,22 @@ console.log('RepositoryManager: saveResource');
 	}
 
 	createRow(rec, imgsrc = null) {
-		rec['href'] = '#' + this.panelId;
 		let listviewRow = new ListviewRow(rec, imgsrc);
+		let anchor = document.createElement('a');
 
+		anchor.setAttribute('href', '#' + this.panelId);
+		listviewRow.li.appendChild(anchor);
 		return listviewRow.li;
 	}
 }
 
 /**
- * ステージ.
+ * マップ.
  */
-class StageManager extends RepositoryManager {
+class MapManager extends RepositoryManager {
 	constructor() {
 		super();
-		this.panel = document.getElementById('stagePanel');
+		this.panel = document.getElementById('mapPanel');
 		this.form = document.getElementById('stageForm');
 		this.entity = new MapEntity();
 		this.setupPanel();
@@ -217,34 +219,15 @@ class StageManager extends RepositoryManager {
 
 	setupPanel() {
 		super.setupPanel();
-		// Image selection
-		let imageButtons = this.form.querySelector('.imageButtons');
-
-		['BG1', 'BG2', 'BG3', 'FG1', 'FG2', 'FG3'].forEach(name => {
-			let filter = name.indexOf('B') != -1 ? VisualEntity.Type.BACK : VisualEntity.Type.FORE;
-			let button = new ImageSelectionButton(name, filter);
-
-			imageButtons.appendChild(button.fieldset);
-		});
-
-		// Audio selection
-		let audioButtons = this.form.querySelector('.audioButtons');
-
-		['theme', 'boss'].forEach(name => {
-			let button = new AudioSelectionButton(name, AudioEntity.Type.BGM);
-
-			audioButtons.appendChild(button.fieldset);
-		});
-
 		// edit map
-		let editButton = this.form.querySelector('.ui-icon-edit');
+		// let editButton = this.form.querySelector('.ui-icon-edit');
 
-		editButton.addEventListener('click', ()=> {
-			let hidden = this.form.querySelector('[name="id"]');
-			let id = hidden.value;
+		// editButton.addEventListener('click', ()=> {
+		// 	let hidden = this.form.querySelector('[name="id"]');
+		// 	let id = hidden.value;
 
-			window.open('/map/edit/' + id);
-		});
+		// 	window.open('/map/edit/' + id);
+		// });
 	}
 
 	getImgsrc(rec) {
@@ -264,7 +247,12 @@ class StageManager extends RepositoryManager {
 	}
 
 	createRow(rec) {
-		return super.createRow(rec, this.getImgsrc(rec));
+		let row = super.createRow(rec, this.getImgsrc(rec));
+
+		row.querySelector('a:first-child').addEventListener('click', ()=> {
+			window.open('/map/edit/' + rec.id);
+		});
+		return row;
 	}
 }
 

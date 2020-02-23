@@ -4,39 +4,13 @@
 
 CREATE TABLE map(
 	id varchar(36) NOT NULL DEFAULT gen_random_uuid(),
-	owner varchar(36) NOT NULL,
-	access integer  NOT NULL DEFAULT 0,
+	mediaset_id varchar(36) NOT NULL,
 	name text NOT NULL,
 	description text NOT NULL,
 	map text,
 	brick_size integer NOT NULL,
 	rebirth integer NOT NULL DEFAULT 0,
 	main_seq integer NOT NULL,
-
-	bg1 varchar(36),
-	bg1speed real NOT NULL DEFAULT 0,
-	bg1dir real NOT NULL DEFAULT 0,
-	bg1blink real NOT NULL DEFAULT 0,
-	bg2 varchar(36),
-	bg2speed real NOT NULL DEFAULT 0,
-	bg2dir real NOT NULL DEFAULT 0,
-	bg2blink real NOT NULL DEFAULT 0,
-	bg3 varchar(36),
-	bg3speed real NOT NULL DEFAULT 0,
-	bg3dir real NOT NULL DEFAULT 0,
-	bg3blink real NOT NULL DEFAULT 0,
-	fg1 varchar(36),
-	fg1speed real NOT NULL DEFAULT 0,
-	fg1dir real NOT NULL DEFAULT 0,
-	fg1blink real NOT NULL DEFAULT 0,
-	fg2 varchar(36),
-	fg2speed real NOT NULL DEFAULT 0,
-	fg2dir real NOT NULL DEFAULT 0,
-	fg2blink real NOT NULL DEFAULT 0,
-	fg3 varchar(36),
-	fg3speed real NOT NULL DEFAULT 0,
-	fg3dir real NOT NULL DEFAULT 0,
-	fg3blink real NOT NULL DEFAULT 0,
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
@@ -47,12 +21,9 @@ COMMENT ON COLUMN map.access IS 'アクセスレベル{0:private, 1:protected, 2
 COMMENT ON COLUMN map.name IS '名前';
 COMMENT ON COLUMN map.description IS '説明';
 COMMENT ON COLUMN map.map IS 'map';
-COMMENT ON COLUMN map.bg1 IS 'bg1';
-COMMENT ON COLUMN map.bg2 IS 'bg2';
-COMMENT ON COLUMN map.bg3 IS 'bg3';
-COMMENT ON COLUMN map.fg1 IS 'fg1';
-COMMENT ON COLUMN map.fg2 IS 'fg2';
-COMMENT ON COLUMN map.fg3 IS 'fg3';
+COMMENT ON COLUMN map.brick_size IS 'brick_size';
+COMMENT ON COLUMN map.rebirth IS 'rebirth';
+COMMENT ON COLUMN map.main_seq IS 'main_seq';
 COMMENT ON COLUMN map.created IS '作成日';
 COMMENT ON COLUMN map.updated IS '更新日';
 
@@ -61,5 +32,31 @@ ALTER TABLE stage RENAME TO map;
 ALTER TABLE map ADD brick_size integer NOT NULL DEFAULT 1;
 ALTER TABLE map ADD rebirth integer NOT NULL DEFAULT 0;
 ALTER TABLE map ADD main_seq integer NOT NULL DEFAULT 0;
+ALTER TABLE map RENAME owner TO mediaset_id;
+ALTER TABLE map DROP COLUMN access;
 ALTER TABLE map DROP COLUMN theme;
 ALTER TABLE map DROP COLUMN boss;
+ALTER TABLE map DROP COLUMN bg1;
+ALTER TABLE map DROP COLUMN bg1speed;
+ALTER TABLE map DROP COLUMN bg1dir;
+ALTER TABLE map DROP COLUMN bg1blink;
+ALTER TABLE map DROP COLUMN bg2;
+ALTER TABLE map DROP COLUMN bg2speed;
+ALTER TABLE map DROP COLUMN bg2dir;
+ALTER TABLE map DROP COLUMN bg2blink;
+ALTER TABLE map DROP COLUMN bg3;
+ALTER TABLE map DROP COLUMN bg3speed;
+ALTER TABLE map DROP COLUMN bg3dir;
+ALTER TABLE map DROP COLUMN bg3blink;
+ALTER TABLE map DROP COLUMN fg1;
+ALTER TABLE map DROP COLUMN fg1speed;
+ALTER TABLE map DROP COLUMN fg1dir;
+ALTER TABLE map DROP COLUMN fg1blink;
+ALTER TABLE map DROP COLUMN fg2;
+ALTER TABLE map DROP COLUMN fg2speed;
+ALTER TABLE map DROP COLUMN fg2dir;
+ALTER TABLE map DROP COLUMN fg2blink;
+ALTER TABLE map DROP COLUMN fg3;
+ALTER TABLE map DROP COLUMN fg3speed;
+ALTER TABLE map DROP COLUMN fg3dir;
+ALTER TABLE map DROP COLUMN fg3blink;

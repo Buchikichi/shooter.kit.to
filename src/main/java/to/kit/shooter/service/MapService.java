@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Map;
@@ -23,7 +22,7 @@ public class MapService {
 	private MapVisualRepository mapVisualRepository;
 
 	public List<Map> list() {
-		Sort sort = Sort.by(Order.desc("updated"), Order.by("name"));
+		Sort sort = Sort.by("name");
 		return this.mapRepository.findAll(sort);
 	}
 
@@ -40,15 +39,8 @@ public class MapService {
 		}
 		if (entity != null) {
 			// 画面で入力するものだけ更新
-			entity.setAccess(map.getAccess());
 			entity.setName(map.getName());
 			entity.setDescription(map.getDescription());
-			entity.setBg1(map.getBg1());
-			entity.setBg2(map.getBg2());
-			entity.setBg3(map.getBg3());
-			entity.setFg1(map.getFg1());
-			entity.setFg2(map.getFg2());
-			entity.setFg3(map.getFg3());
 			entity.setUpdated(new Date());
 			return this.mapRepository.saveAndFlush(entity);
 		}

@@ -1,7 +1,7 @@
 class ImageSelector {
-	constructor() {
+	constructor(mediasetId) {
 		this.imageSelector = document.getElementById('imageSelector');
-		this.mediasetId = document.getElementById('mediasetId').value;
+		this.mediasetId = mediasetId;
 		this.entity = new VisualEntity();
 		this.setupEvents();
 	}

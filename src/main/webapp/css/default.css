@@ -39,7 +39,7 @@ form [type=image] {
 }
 
 /** Button. */
-#editStagePanel .ui-icon-delete {
+#editStagePanel .ui-icon-delete, .deleteButton {
 	background-color: #FFaaaa;
 }
 

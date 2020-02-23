@@ -65,39 +65,9 @@ class FieldMap extends Matter {
 		this.mapVisualList.forEach(mapVisual => mapVisual.draw(ctx));
 	}
 
-	migrate() {
-		if (0 < this.mapVisualList.length) {
-			return;
-		}
-console.log('FieldMap#migrate');
-		let seq = 0;
-		let groundList = [
-			{id:this.bg1, radian:this.bg1dir, speed:this.bg1speed, blink:this.bg1blink},
-			{id:this.bg2, radian:this.bg2dir, speed:this.bg2speed, blink:this.bg2blink},
-			{id:this.bg3, radian:this.bg3dir, speed:this.bg3speed, blink:this.bg3blink},
-			{id:this.fg1, radian:this.fg1dir, speed:this.fg1speed, blink:this.fg1blink},
-			{id:this.fg2, radian:this.fg2dir, speed:this.fg2speed, blink:this.fg2blink},
-			{id:this.fg3, radian:this.fg3dir, speed:this.fg3speed, blink:this.fg3blink},
-		];
-
-		groundList.forEach(ground => {
-			if (ground.id != null && 0 < ground.id.length) {
-				let visual = Mediaset.Instance.getVisual(ground.id);
-
-				if (ground.id == this.fg1) {
-					this.mainSeq = seq;
-				}
-				this.mapVisualList.push(Object.assign(ground, visual, {seq:seq++}));
-			}
-		});
-console.log('this.mapVisualList:' + this.mapVisualList.length);
-console.log('this.mainSeq:' + this.mainSeq);
-	}
-
 	init() {
 		let visualList = [];
 
-		this.migrate();
 		// console.log('mainSeq:' + this.mainSeq);
 		this.mapVisualList.forEach(mapVisual => {
 			mapVisual._fieldMap = this;

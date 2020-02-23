@@ -1,23 +1,20 @@
-document.addEventListener('DOMContentLoaded', ()=> {
-	new EditMain();
-});
+document.addEventListener('DOMContentLoaded', ()=> new EditMain());
 
 class EditMain {
 	/**
 	 * インスタンス生成.
 	 */
 	constructor() {
-		let mediasetId = document.getElementById('mediasetId').value;
 		let mapId = document.getElementById('mapId').value;
 
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
-		Mediaset.create(mediasetId).then(mediaset => {
-			mediaset.loadVisual();
-			return FieldMapEditor.create(mapId);
-		}).then(fieldMap => {
+		FieldMapEditor.create(mapId).then(fieldMap => {
 			this.fieldMap = fieldMap;
+			return Mediaset.create(fieldMap.mediaset);
+		}).then(mediaset => {
+			mediaset.loadVisual();
 			this.checkLoading();
 		});
 	}
@@ -93,7 +90,7 @@ class EditMain {
 		let ul = imagePanel.querySelector('ul');
 		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
 
-		this.imageSelector = new ImageSelector();
+		this.imageSelector = new ImageSelector(this.fieldMap.mediaset.id);
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
 		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => {
 			let li = document.createElement('li');

@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Map;
-import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.Stage;
 import to.kit.shooter.service.MapService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ListItem;
@@ -59,6 +57,7 @@ public class MapController implements BasicControllerInterface<Map> {
 			item.setId(map.getId());
 			item.setName(map.getName());
 			item.setDescription(map.getDescription());
+			item.setCount(String.valueOf(map.getMapVisualList().size()));
 			resultList.add(item);
 		}
 		return result;
@@ -72,7 +71,7 @@ public class MapController implements BasicControllerInterface<Map> {
 	}
 
 	/**
-	 * パネルでの保存.
+	 * 保存.
 	 * @param map マップ
 	 * @return 結果
 	 */
@@ -85,7 +84,6 @@ public class MapController implements BasicControllerInterface<Map> {
 		if (customerId == null || customerId.isEmpty()) {
 			return result;
 		}
-		map.setOwner(customerId);
 		Map saved = this.mapService.save(map);
 
 		result.setResult(saved);
@@ -97,12 +95,8 @@ public class MapController implements BasicControllerInterface<Map> {
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		Map map = this.mapService.detail(id);
-		Stage detail = map.getStageList().get(0);
-		Product product = detail.getProduct();
 
-		model.addAttribute("mediasetId", product.getMediaset().getId());
 		model.addAttribute("map", map);
-		model.addAttribute("detail", new Stage());
 		return "editMap";
 	}
 }
