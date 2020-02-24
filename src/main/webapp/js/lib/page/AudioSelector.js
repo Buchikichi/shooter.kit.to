@@ -1,6 +1,6 @@
 class AudioSelector {
 	constructor() {
-		this.audioSelector = document.getElementById('audioSelector');
+		this.selectorPopup = document.getElementById('audioSelector');
 		this.mediasetId = document.getElementById('mediasetId').value;
 		this.entity = new AudioEntity();
 		this.targetButton = null;
@@ -8,21 +8,21 @@ class AudioSelector {
 	}
 
 	setupEvents() {
-		let audioSelectors = document.querySelectorAll('.audioSelector');
+		let buttons = document.querySelectorAll('.audioSelector');
 		let audioType = document.querySelector('[name=audioType]');
 
-		audioSelectors.forEach(button => {
+		buttons.forEach(button => {
 			button.addEventListener('click', ()=> {
 				this.targetButton = button;
-				$(this.audioSelector).popup('open', {});
+				$(this.selectorPopup).popup('open', {});
 			});
 		});
-		audioType.addEventListener('change', ()=> this.loadAudio(audioType.value));
-		this.loadAudio(audioType.value);
+		audioType.addEventListener('change', ()=> this.loadList(audioType.value));
+		this.loadList(audioType.value);
 	}
 
-	loadAudio(audioType) {
-		let ul = this.audioSelector.querySelector('ul');
+	loadList(audioType) {
+		let ul = this.selectorPopup.querySelector('ul');
 		let formData = new FormData();
 
 		formData.append('mediasetId', this.mediasetId);
@@ -41,7 +41,7 @@ class AudioSelector {
 					console.log(audio);
 					this.targetButton.textContent = rec.name;
 					this.targetButton.setAttribute('data-seq', audio.audioSeq);
-					$(this.audioSelector).popup('close');
+					$(this.selectorPopup).popup('close');
 				});
 				ul.appendChild(li);
 			});

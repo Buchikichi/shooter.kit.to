@@ -1,25 +1,29 @@
 class ImageSelector {
 	constructor(mediasetId) {
-		this.imageSelector = document.getElementById('imageSelector');
+		this.selectorPopup = document.getElementById('imageSelector');
 		this.mediasetId = mediasetId;
 		this.entity = new VisualEntity();
+		this.targetButton = null;
 		this.setupEvents();
 	}
 
 	setupEvents() {
-		let addImageButton = document.querySelector('#addImageButton');
+		let buttons = document.querySelectorAll('.imageSelector');
 		let visualType = document.querySelector('[name=visualType]');
 
-		addImageButton.addEventListener('click', ()=> {
-			$(this.imageSelector).popup('open', {
+		buttons.forEach(button => {
+			button.addEventListener('click', ()=> {
+				this.targetButton = button;
+				this.targetButton.removeAttribute('data-seq');
+				$(this.selectorPopup).popup('open', {});
 			});
 		});
-		visualType.addEventListener('change', ()=> this.loadVisual(visualType.value));
-		this.loadVisual(visualType.value);
+		visualType.addEventListener('change', ()=> this.loadList(visualType.value));
+		this.loadList(visualType.value);
 	}
 
-	loadVisual(visualType) {
-		let ul = this.imageSelector.querySelector('ul');
+	loadList(visualType) {
+		let ul = this.selectorPopup.querySelector('ul');
 		let formData = new FormData();
 
 		formData.append('mediasetId', this.mediasetId);
@@ -32,11 +36,14 @@ class ImageSelector {
 			list.forEach(rec => {
 				let row = new ListviewRow(rec);
 				let li = row.li;
-				let anchor = li.querySelector('a');
 
-				anchor.addEventListener('click', ()=> {
-console.log(rec);
-                });
+				li.querySelector('a').addEventListener('click', ()=> {
+					let visual = Mediaset.Instance.getVisual(rec.id);
+					console.log(visual);
+					this.targetButton.setAttribute('data-seq', visual.visualSeq);
+					this.targetButton.setAttribute('data-name', rec.name);
+					$(this.selectorPopup).popup('close');
+				});
 				ul.appendChild(li);
 			});
 			$(ul).listview('refresh');

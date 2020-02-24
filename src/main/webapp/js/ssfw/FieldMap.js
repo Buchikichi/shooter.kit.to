@@ -100,6 +100,11 @@ class FieldMap extends Matter {
 class MapVisual extends Matter {
 	constructor() {
 		super();
+		this.repeat = 0;
+		this.radian = 0;
+		this.speed = 0;
+		this.blink = 0;
+
 		this._img = null;
 		this._imgName = null;
 		this.isMain = false;

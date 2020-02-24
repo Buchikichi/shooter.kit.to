@@ -82,45 +82,35 @@ class EditMain {
 		this.setupImagePanel();
 		this.setupBrickPanel();
 		this.setupPointingDevice();
+		new ImageSelector(this.fieldMap.mediaset.id);
 	}
 
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
 		let mapName = imagePanel.querySelector('[name=name]');
 		let ul = imagePanel.querySelector('ul');
-		let fg = ul.querySelector('.sortable-item.ui-state-disabled');
+		let selectorPopup = document.getElementById('imageSelector');
+		let addImageButton = imagePanel.querySelector('.imageSelector');
 
-		this.imageSelector = new ImageSelector(this.fieldMap.mediaset.id);
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
-		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => {
-			let li = document.createElement('li');
-			let anchor = document.createElement('a');
-			let span = document.createElement('span');
+		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => this.addImage(ul, mapVisual, ix));
+		$(selectorPopup).popup({
+			afterclose: ()=> {
+				let seq = addImageButton.getAttribute('data-seq');
 
-			span.textContent = mapVisual.imageName;
-			anchor.append(span);
-			anchor.addEventListener('click', ()=> this.openMapVisualPopup(mapVisual));
-			li.append(anchor);
-			if (mapVisual.isMain) {
-				let mark = document.createElement('span');
-
-				mark.textContent = '*';
-				mark.classList.add('ui-li-count');
-				anchor.append(mark);
-			} else {
-				let deleteButton = document.createElement('a');
-
-				deleteButton.addEventListener('click', ()=> {
-console.log('delete');
+				if (!seq) {
+					return;
+				}
+				let mapVisual = MapVisual.create({
+					_fieldMap: this.fieldMap,
+					mapId: this.fieldMap.id,
+					visualSeq: parseInt(seq),
 				});
-				li.append(deleteButton);
-			}
-			li.setAttribute('data-index', ix);
-			li.classList.add('sortable-item', 'mapVisual');
-			if (mapVisual.seq <= 0) {
-				ul.insertBefore(li, fg)
-			} else {
-				ul.append(li);
+				let ix = this.fieldMap.mapVisualList.length;
+
+				this.addImage(ul, mapVisual, ix);
+				this.fieldMap.mapVisualList.push(mapVisual);
+				$(ul).listview('refresh');
 			}
 		});
 		$(ul).listview('refresh');
@@ -134,6 +124,42 @@ console.log('delete');
 				$(ul).listview('refresh');
 			}
 		});
+	}
+
+	addImage(ul, mapVisual, ix) {
+		// console.log('EditMain#addImage:');
+		// console.log(mapVisual);
+		let li = document.createElement('li');
+		let anchor = document.createElement('a');
+		let span = document.createElement('span');
+
+		span.textContent = mapVisual.imageName;
+		anchor.append(span);
+		anchor.addEventListener('click', ()=> this.openMapVisualPopup(mapVisual));
+		li.append(anchor);
+		if (mapVisual.isMain) {
+			let mark = document.createElement('span');
+
+			mark.textContent = '*';
+			mark.classList.add('ui-li-count');
+			anchor.append(mark);
+		} else {
+			let deleteButton = document.createElement('a');
+
+			deleteButton.addEventListener('click', ()=> {
+				console.log('delete');
+			});
+			li.append(deleteButton);
+		}
+		li.setAttribute('data-index', ix);
+		li.classList.add('sortable-item', 'mapVisual');
+		if (mapVisual.seq <= 0) {
+			let fg = ul.querySelector('.sortable-item.ui-state-disabled');
+
+			ul.insertBefore(li, fg)
+		} else {
+			ul.append(li);
+		}
 	}
 
 	sortMapVisual(ul) {
@@ -190,6 +216,15 @@ console.log('delete');
 		speed.value = mapVisual.speed;
 		blink.value = mapVisual.blink;
 		$(mapVisualPopup).popup('open');
+		$(mapVisualPopup).popup({
+			afterclose: () => {
+				// console.log('mapVisualPopup.afterclose');
+				mapVisual.repeat = parseInt(repeat.value);
+				mapVisual.radian = parseFloat(radian.value);
+				mapVisual.speed = parseFloat(speed.value);
+				mapVisual.blink = parseFloat(blink.value);
+			}
+		});
 	}
 
 	setupPointingDevice() {

@@ -41,13 +41,13 @@
     </fieldset>
     <fieldset id="visualType" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <select name="visualType" th:with="visualTypeList=${T(to.kit.shooter.entity.VisualType).List}">
+      <select name="visualType" th:with="visualTypeList=${T(to.kit.shooter.entity.type.VisualType).List}">
         <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
       </select>
     </fieldset>
     <fieldset id="audioType" data-role="controlgroup" data-type="horizontal" data-mini="true">
       <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <select name="audioType" th:with="audioTypeList=${T(to.kit.shooter.entity.AudioType).List}">
+      <select name="audioType" th:with="audioTypeList=${T(to.kit.shooter.entity.type.AudioType).List}">
         <option th:each="opt:${audioTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
       </select>
     </fieldset>
@@ -113,7 +113,7 @@
         <label><span>Horizontal</span><input type="radio" name="orientation" value="H"/></label>
       </fieldset>
       <label>Type:
-        <select name="visualType" required="required" th:with="visualTypeList=${T(to.kit.shooter.entity.VisualType).List}">
+        <select name="visualType" required="required" th:with="visualTypeList=${T(to.kit.shooter.entity.type.VisualType).List}">
           <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
         </select>
       </label>
@@ -137,7 +137,7 @@
       <label>Name:<input type="text" name="name" required="required"/></label>
       <fieldset class="access"></fieldset>
       <label>Type:
-        <select name="audioType" required="required" th:with="audioTypeList=${T(to.kit.shooter.entity.AudioType).List}">
+        <select name="audioType" required="required" th:with="audioTypeList=${T(to.kit.shooter.entity.type.AudioType).List}">
           <option th:each="opt:${audioTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
         </select>
       </label>
