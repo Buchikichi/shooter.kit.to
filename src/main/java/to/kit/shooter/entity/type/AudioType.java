@@ -1,4 +1,7 @@
-package to.kit.shooter.entity;
+package to.kit.shooter.entity.type;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Getter;
 
@@ -13,6 +16,7 @@ public enum AudioType {
 	Boss(6),
 	Ending(7),
 	;
+	@JsonValue
 	private int ix;
 
 	AudioType(int value) {
@@ -21,7 +25,8 @@ public enum AudioType {
 
 	public static AudioType[] List = { Action, Reaction, Explosion, Notice, Introduction, Theme, Boss, Ending };
 
-	public static AudioType getType(int value) {
+	@JsonCreator
+	public static AudioType fromValue(int value) {
 		AudioType result = Action;
 
 		for (AudioType type : values()) {
@@ -30,5 +35,9 @@ public enum AudioType {
 			}
 		}
 		return result;
+	}
+
+	public static AudioType fromString(String value) {
+		return fromValue(Integer.parseInt(value));
 	}
 }

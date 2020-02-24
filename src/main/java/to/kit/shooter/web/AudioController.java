@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Audio;
-import to.kit.shooter.entity.AudioType;
 import to.kit.shooter.entity.AudioView;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.AudioService;
@@ -56,12 +55,10 @@ public class AudioController extends BasicMediaController implements BasicContro
 
 		for (AudioView audio : list) {
 			ListItem item = new ListItem();
-			AudioType type = AudioType.getType(audio.getAudioType());
 
 			item.setId(audio.getId());
 			item.setName(audio.getName());
-			item.setCount(type.name());
-			item.setDescription(String.valueOf(audio.getAudioSeq()));
+			item.setCount(audio.getAudioType().name());
 			resultList.add(item);
 		}
 		return result;

@@ -104,6 +104,7 @@
     <form id="imageForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
       <input type="hidden" name="mediasetId"/>
+      <input type="hidden" name="visualSeq"/>
       <label for="imageName">Name:</label><input type="text" id="imageName" name="name" required="required"/>
       <fieldset class="access"></fieldset>
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -112,18 +113,8 @@
         <label><span>Horizontal</span><input type="radio" name="orientation" value="H"/></label>
       </fieldset>
       <label>Type:
-        <select name="visualType">
-          <option value="0" selected="selected">player</option>
-          <option value="1">shot</option>
-          <option value="2">item</option>
-          <option value="3">aerial</option>
-          <option value="4">subaerial</option>
-          <option value="5">boss</option>
-          <option value="6">ornament</option>
-          <option value="7">explosion</option>
-          <option value="8">background</option>
-          <option value="9">foreground</option>
-          <option value="10">other</option>
+        <select name="visualType" required="required" th:with="visualTypeList=${T(to.kit.shooter.entity.VisualType).List}">
+          <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
         </select>
       </label>
       <img id="image.thumbnail"/>
@@ -142,18 +133,12 @@
     <form id="audioForm" enctype="multipart/form-data">
       <input type="hidden" name="id"/>
       <input type="hidden" name="mediasetId"/>
+      <input type="hidden" name="audioSeq"/>
       <label>Name:<input type="text" name="name" required="required"/></label>
       <fieldset class="access"></fieldset>
       <label>Type:
-        <select id="audioType" name="audioType" required="required">
-          <option value="0" selected="selected">action</option>
-          <option value="1">reaction</option>
-          <option value="2">explosion</option>
-          <option value="3">notice</option>
-          <option value="4">introduction</option>
-          <option value="5">theme</option>
-          <option value="6">boss</option>
-          <option value="7">ending</option>
+        <select name="audioType" required="required" th:with="audioTypeList=${T(to.kit.shooter.entity.AudioType).List}">
+          <option th:each="opt:${audioTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
         </select>
       </label>
       <label>WebM:<input type="file" name="webm"/><a id="webmAnchor" href="#" target="_blank" class="ui-btn ui-corner-all ui-btn-icon-notext ui-icon-audio">Play</a></label>

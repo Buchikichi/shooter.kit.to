@@ -1,4 +1,7 @@
-package to.kit.shooter.entity;
+package to.kit.shooter.entity.type;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Getter;
 
@@ -16,6 +19,7 @@ public enum VisualType {
 	Foreground(9),
 	Other(10),
 	;
+	@JsonValue
 	private int ix;
 
 	VisualType(int value) {
@@ -24,7 +28,8 @@ public enum VisualType {
 
 	public static VisualType[] List = { Player, Shot, Item, Aerial, Subaerial, Boss, Ornament, Explosion, Background, Foreground, Other };
 
-	public static VisualType getType(int value) {
+	@JsonCreator
+	public static VisualType fromValue(int value) {
 		VisualType result = Player;
 
 		for (VisualType type : values()) {
@@ -33,5 +38,9 @@ public enum VisualType {
 			}
 		}
 		return result;
+	}
+
+	public static VisualType fromString(String value) {
+		return fromValue(Integer.parseInt(value));
 	}
 }

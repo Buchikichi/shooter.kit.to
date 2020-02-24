@@ -3,6 +3,7 @@ package to.kit.shooter.web.form;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.AudioType;
 
 /**
  * Audio form.
@@ -14,7 +15,8 @@ public final class AudioForm {
 	private String mediasetId;
 	private String owner;
 	private int access;
-	private int audioType;
+	private AudioType audioType;
+	private long audioSeq;
 	private String name;
 	private MultipartFile webm;
 	private MultipartFile audio;

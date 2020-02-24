@@ -49,7 +49,7 @@ public class MapController implements BasicControllerInterface<Map> {
 	public ResultListForm list(FilteringForm form) {
 		ResultListForm result = new ResultListForm();
 		List<ListItem> resultList = result.getResult();
-		List<Map> list = this.mapService.list();
+		List<Map> list = this.mapService.list(form.getMediasetId());
 
 		for (Map map : list) {
 			ListItem item = new ListItem();

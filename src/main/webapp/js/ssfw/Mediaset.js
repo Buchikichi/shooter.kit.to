@@ -14,9 +14,7 @@ class Mediaset {
 
 	loadVisual() {
 		this.visualList.forEach(visual => {
-			let key = visual.visualType + ':' + visual.visualSeq;
-
-			this.visualDic[key] = visual;
+			this.visualDic[visual.visualSeq] = visual;
 			VisualManager.Instance.reserve(visual.id, visual.name, visual.contentType);
 		});
 		return this;
@@ -77,15 +75,13 @@ class Mediaset {
 	}
 
 	getImage(rec) {
-		let key = rec.visualType + ':' + rec.visualSeq;
-		let visual = this.visualDic[key];
+		let visual = this.visualDic[rec.visualSeq];
 
 		return VisualManager.Instance.dic[visual.id];
 	}
 
 	getImageName(rec) {
-		let key = rec.visualType + ':' + rec.visualSeq;
-		let visual = this.visualDic[key];
+		let visual = this.visualDic[rec.visualSeq];
 
 		return visual.name;
 	}

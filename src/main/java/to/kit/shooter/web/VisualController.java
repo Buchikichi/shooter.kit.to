@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Visual;
-import to.kit.shooter.entity.VisualType;
 import to.kit.shooter.entity.VisualView;
 import to.kit.shooter.service.VisualService;
 import to.kit.shooter.web.form.FilteringForm;
@@ -68,10 +67,9 @@ public class VisualController extends BasicMediaController implements BasicContr
 
 		for (VisualView visual : this.visualService.list(form.getMediasetId(), form.getType())) {
 			ListItem item = new ListItem();
-			VisualType type = VisualType.getType(visual.getVisualType());
 
 			BeanUtils.copyProperties(visual, item);
-			item.setCount(type.name());
+			item.setCount(visual.getVisualType().name());
 			item.setAside(visual.getOrientation());
 			item.setDescription(String.valueOf(visual.getVisualSeq()));
 			resultList.add(item);

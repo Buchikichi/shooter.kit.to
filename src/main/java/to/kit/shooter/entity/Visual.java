@@ -4,11 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.VisualType;
 
 /**
  * Visual.
@@ -23,7 +26,8 @@ public class Visual {
 	private String mediasetId;
 	private String owner;
 	private int access;
-	private int visualType;
+	@Enumerated(EnumType.ORDINAL)
+	private VisualType visualType;
 	private long visualSeq;
 	private String orientation;
 	private String name;

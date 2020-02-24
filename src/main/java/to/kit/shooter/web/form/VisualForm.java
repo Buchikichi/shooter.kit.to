@@ -3,6 +3,7 @@ package to.kit.shooter.web.form;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.VisualType;
 
 /**
  * Visual form.
@@ -14,8 +15,8 @@ public final class VisualForm {
 	private String mediasetId;
 	private String owner;
 	private int access;
-	private int visualType;
-	private int visualSeq;
+	private VisualType visualType;
+	private long visualSeq;
 	private String orientation;
 	private String name;
 	private MultipartFile image;

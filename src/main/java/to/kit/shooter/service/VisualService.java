@@ -2,7 +2,9 @@ package to.kit.shooter.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.codec.digest.MurmurHash2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,7 +23,7 @@ public class VisualService {
 	private VisualViewRepository visualViewRepository;
 
 	public List<VisualView> list(String mediasetId, int type) {
-		Sort sort = Sort.by("visualType", "visualSeq", "name");
+		Sort sort = Sort.by("name");
 		Specification<VisualView> nameSpec = Specification.where((root, query, cb) -> {
 			return cb.like(root.get("mediaset").get("id"), '%' + mediasetId);
 		});
@@ -47,6 +49,11 @@ public class VisualService {
 		String id = entity.getId();
 		Visual prev = null;
 
+		if (entity.getVisualSeq() == 0) {
+			String text = UUID.randomUUID().toString();
+
+			entity.setVisualSeq(MurmurHash2.hash64(text));
+		}
 		if (id != null && !id.isEmpty()) {
 			prev = this.visualRepository.findById(id).get();
 			if (prev == null) {

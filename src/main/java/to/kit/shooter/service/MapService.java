@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Map;
@@ -21,9 +22,12 @@ public class MapService {
 	@Autowired
 	private MapVisualRepository mapVisualRepository;
 
-	public List<Map> list() {
+	public List<Map> list(String mediasetId) {
 		Sort sort = Sort.by("name");
-		return this.mapRepository.findAll(sort);
+		Specification<Map> spec = Specification.where((root, query, cb) -> {
+			return cb.equal(root.get("mediaset").get("id"), mediasetId);
+		});
+		return this.mapRepository.findAll(spec, sort);
 	}
 
 	public Map detail(String id) {

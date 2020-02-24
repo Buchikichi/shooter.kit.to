@@ -79,14 +79,14 @@ class RepositoryManager {
 		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
 		this.listView = document.getElementById('listView');
 		this.valueChangedevent = new Event('valueChanged');
-		$(this.listView).sortable({
-			update: (event, ui)=> {
-console.log('item:');
-console.log(ui.item);
-console.log('position:');
-console.log(ui.position);
-			},
-		});
+// 		$(this.listView).sortable({
+// 			update: (event, ui)=> {
+// console.log('item:');
+// console.log(ui.item);
+// console.log('position:');
+// console.log(ui.position);
+// 			},
+// 		});
 	}
 
 	get panelId() {
@@ -365,13 +365,11 @@ class ImageManager extends RepositoryManager {
 class AudioManager extends RepositoryManager {
 	constructor() {
 		super();
-		this.typeSelect = document.querySelector('#audioType [name="audioType"]');
-		this.typeSelect.addEventListener('change', ()=> {
-			this.list();
-		});
 		this.panel = document.getElementById('audioPanel');
 		this.form = document.getElementById('audioForm');
 		this.entity = new AudioEntity();
+		this.typeSelect = document.querySelector('#audioType [name="audioType"]');
+		this.typeSelect.addEventListener('change', ()=> this.list());
 		this.setupPanel();
 	}
 
