@@ -26,7 +26,7 @@ public class AudioView {
 	private String owner;
 	private int access;
 	private int audioType;
-	private int audioSeq;
+	private long audioSeq;
 	private String name;
 	private int webmlen;
 	private int audiolen;

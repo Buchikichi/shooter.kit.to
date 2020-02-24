@@ -7,7 +7,7 @@ CREATE TABLE map_visual(
 	map_id varchar(36) NOT NULL,
 	seq integer NOT NULL,
 	visual_type integer NOT NULL,
-	visual_seq integer NOT NULL,
+	visual_seq bigint NOT NULL,
 	repeat integer NOT NULL,
 	radian real NOT NULL,
 	speed real NOT NULL,

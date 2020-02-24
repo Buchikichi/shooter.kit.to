@@ -57,6 +57,7 @@
                 <span th:text="${productActor.className}" class="className"></span>
                 <span th:text="${actor.description}"></span>
               </p>
+              <span th:text="${actor.type}" class="ui-li-count"></span>
             </a>
             <a class="deleteButton"></a>
           </li>
@@ -143,6 +144,11 @@
     <span>Choose a map.</span>
     <ul data-role="listview" data-filter="true"></ul>
   </div>
+  <div id="ProductActorChoicePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
+    <span>Choose an actor.</span>
+    <select name="actorType"></select>
+    <ul data-role="listview" data-filter="true"></ul>
+  </div>
   <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
     <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
     <p>Product saved.</p>
@@ -211,11 +217,6 @@
       <li data-role="list-divider" class="divider">Ship<span class="ui-li-count">0</span></li>
     </ul>
 -->
-  </div>
-  <div id="ProductActorChoicePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <span>Choose an actor.</span>
-    <select name="actorType"></select>
-    <ul data-role="listview" data-filter="true"></ul>
   </div>
   <div id="ProductActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
     <form>

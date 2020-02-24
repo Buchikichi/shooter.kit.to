@@ -23,9 +23,9 @@ class EditStage {
 		return document.querySelector('[name="scale"]:checked').value;
 	}
 
-	get repeat() {
-		return document.querySelector('[name="repeat"]').value;
-	}
+	// get repeat() {
+	// 	return document.querySelector('[name="repeat"]').value;
+	// }
 
 	get hasMargin() {
 		return this.attrPanel.roll == Stage.SCROLL.OFF || this.attrPanel.roll == Stage.SCROLL.ON;
@@ -370,15 +370,13 @@ class AttrPanel {
 	init() {
 		let stage = Product.Instance.stage;
 		let startAudio = document.querySelector('[name="startAudio"]');
-		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioType, stage.startAudioSeq);
+		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioSeq);
 		let sequelAudio = document.querySelector('[name="sequelAudio"]');
-		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioType, stage.sequelAudioSeq);
+		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioSeq);
 
 		//console.log(startAudioData);
-		startAudio.setAttribute('data-type', stage.startAudioType);
 		startAudio.setAttribute('data-seq', stage.startAudioSeq);
 		startAudio.textContent = startAudioData ? startAudioData.name : null;
-		sequelAudio.setAttribute('data-type', stage.sequelAudioType);
 		sequelAudio.setAttribute('data-seq', stage.sequelAudioSeq);
 		sequelAudio.textContent = sequelAudioData ? sequelAudioData.name : null;
 	}
@@ -426,9 +424,7 @@ class AttrPanel {
 		$(this.panel).panel({
 			close: ()=> {
 				console.log('AttrPanel closed.');
-				stage.startAudioType = parseInt(startAudio.getAttribute('data-type'));
 				stage.startAudioSeq = parseInt(startAudio.getAttribute('data-seq'));
-				stage.sequelAudioType = parseInt(sequelAudio.getAttribute('data-type'));
 				stage.sequelAudioSeq = parseInt(sequelAudio.getAttribute('data-seq'));
 			}
 		});

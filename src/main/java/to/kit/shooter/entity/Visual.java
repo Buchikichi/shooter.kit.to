@@ -24,7 +24,7 @@ public class Visual {
 	private String owner;
 	private int access;
 	private int visualType;
-	private int visualSeq;
+	private long visualSeq;
 	private String orientation;
 	private String name;
 	private String image;

@@ -6,9 +6,7 @@ class Mediaset {
 
 	loadAudio() {
 		this.audioList.forEach(audio => {
-			let key = audio.audioType + ':' + audio.audioSeq;
-
-			this.audioDic[key] = audio;
+			this.audioDic[audio.audioSeq] = audio;
 			AudioMixer.INSTANCE.reserve(audio.id, audio.name);
 		});
 		return this;
@@ -55,14 +53,12 @@ class Mediaset {
 		return result;
 	}
 
-	getAudio(audioType, audioSeq) {
-		let key = audioType + ':' + audioSeq;
-
-		return this.audioDic[key];
+	getAudio(audioSeq) {
+		return this.audioDic[audioSeq];
 	}
 
-	playBgm(audioType, audioSeq) {
-		let audio = this.getAudio(audioType, audioSeq);
+	playBgm(audioSeq) {
+		let audio = this.getAudio(audioSeq);
 
 		if (audio) {
 			AudioMixer.INSTANCE.play(audio.id, .99, true);

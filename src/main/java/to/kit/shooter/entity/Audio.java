@@ -24,7 +24,7 @@ public class Audio {
 	private String owner;
 	private int access;
 	private int audioType;
-	private int audioSeq;
+	private long audioSeq;
 	private String name;
 	private String webm;
 	private String audio;

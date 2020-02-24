@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS visual(
 	owner varchar(36) NOT NULL,
 	access integer  NOT NULL DEFAULT 0,
 	visual_type integer NOT NULL,
-	visual_seq integer NOT NULL,
+	visual_seq bigint NOT NULL,
 	orientation char(1) NOT NULL DEFAULT 'V',
 	name text NOT NULL,
 	image text NOT NULL,
@@ -36,6 +36,6 @@ ALTER TABLE image RENAME TO visual;
 ALTER TABLE visual DROP COLUMN description CASCADE;
 ALTER TABLE visual RENAME type TO visual_type;
 ALTER TABLE visual ADD mediaset_id varchar(36) NOT NULL DEFAULT '';
-ALTER TABLE visual ADD visual_seq integer NOT NULL DEFAULT 0;
+ALTER TABLE visual ADD visual_seq bigint NOT NULL DEFAULT 0;
 ALTER TABLE visual ADD orientation char(1) NOT NULL DEFAULT 'V';
 ALTER TABLE visual ADD hash varchar(64) NOT NULL DEFAULT '';

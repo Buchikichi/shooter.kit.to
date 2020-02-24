@@ -49,7 +49,7 @@ class Stage {
 	start(isFirst) {
 		console.log('Stage#start :' + isFirst);
 		if (isFirst) {
-			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
+			Mediaset.Instance.playBgm(this.startAudioSeq);
 			Transition.Instance.play(this.startTransition, this.startSpeed);
 		} else {
 			let pos = this.startPos;
@@ -58,7 +58,7 @@ class Stage {
 				a.x -= pos
 				a._stage = this;
 			});
-			Mediaset.Instance.playBgm(this.sequelAudioType, this.sequelAudioSeq);
+			Mediaset.Instance.playBgm(this.sequelAudioSeq);
 		}
 		this.setupVisualList();
 	}
@@ -69,7 +69,7 @@ class Stage {
 		this.performersList.push(this.checkPoint.retrieve());
 		Transition.Instance.play(this.startTransition, this.startSpeed);
 		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
-			Mediaset.Instance.playBgm(this.startAudioType, this.startAudioSeq);
+			Mediaset.Instance.playBgm(this.startAudioSeq);
 		}
 	}
 
@@ -278,7 +278,7 @@ if (!isFront) enemy.dir = 0;
 			return true;
 		}
 		if (op == 'Apl') {
-			Mediaset.Instance.playBgm(rec.type, rec.number);
+			Mediaset.Instance.playBgm(rec.number);
 			return true;
 		}
 		return false;

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS audio(
 	owner varchar(36) NOT NULL,
 	access integer  NOT NULL DEFAULT 0,
 	audio_type integer NOT NULL,
-	audio_seq integer NOT NULL,
+	audio_seq bigint NOT NULL,
 	name text NOT NULL,
 	webm text,
 	audio text,
@@ -30,5 +30,5 @@ COMMENT ON COLUMN audio.updated IS '更新日';
 
 ALTER TABLE audio RENAME type TO audio_type;
 ALTER TABLE audio ADD mediaset_id varchar(36) NOT NULL DEFAULT '';
-ALTER TABLE audio ADD audio_seq integer NOT NULL DEFAULT 0;
+ALTER TABLE audio ADD audio_seq bigint NOT NULL DEFAULT 0;
 ALTER TABLE audio ADD hash varchar(64) NOT NULL DEFAULT '';

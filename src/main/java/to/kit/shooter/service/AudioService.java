@@ -2,7 +2,9 @@ package to.kit.shooter.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.codec.digest.MurmurHash2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,7 +23,7 @@ public class AudioService {
 	private AudioViewRepository audioViewRepository;
 
 	public List<AudioView> list(String mediasetId, int type) {
-		Sort sort = Sort.by("audioType", "audioSeq", "name");
+		Sort sort = Sort.by("name");
 		Specification<AudioView> mediasetIdSpec = Specification.where((root, query, cb) -> {
 			return cb.like(root.get("mediaset").get("id"), '%' + mediasetId);
 		});
@@ -47,6 +49,11 @@ public class AudioService {
 		String id = entity.getId();
 		Audio prev = null;
 
+		if (entity.getAudioSeq() == 0) {
+			String text = UUID.randomUUID().toString();
+
+			entity.setAudioSeq(MurmurHash2.hash64(text));
+		}
 		if (id != null && !id.isEmpty()) {
 			prev = this.audioRepository.findById(id).get();
 		}

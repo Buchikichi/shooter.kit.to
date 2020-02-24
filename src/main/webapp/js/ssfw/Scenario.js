@@ -146,7 +146,7 @@ class Scenario {
 
 	init() {
 		if (this.op == 'Apl') {
-			let audio = Mediaset.Instance.getAudio(this.type, this.number);
+			let audio = Mediaset.Instance.getAudio(this.number);
 
 			this.name = audio.name;
 		}

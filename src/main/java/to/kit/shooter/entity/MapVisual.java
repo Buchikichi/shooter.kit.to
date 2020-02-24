@@ -22,7 +22,7 @@ public class MapVisual {
 	private String id;
 	private int seq;
 	private int visualType;
-	private int visualSeq;
+	private long visualSeq;
 	private int repeat;
 	private double radian;
 	private double speed;

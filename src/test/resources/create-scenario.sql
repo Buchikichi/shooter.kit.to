@@ -9,7 +9,7 @@ CREATE TABLE scenario(
 	h integer NOT NULL,
 	target char(1) NOT NULL,
 	type integer NOT NULL DEFAULT 0,
-	number integer NOT NULL DEFAULT 0,
+	number bigint NOT NULL DEFAULT 0,
 	op text NOT NULL,
 	PRIMARY KEY (id)
 );

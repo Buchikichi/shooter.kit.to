@@ -36,12 +36,10 @@ public class Stage {
 	private int posV;
 	private int startTransition;
 	private int startSpeed;
-	private int startAudioType;
-	private int startAudioSeq;
+	private long startAudioSeq;
 	private int sequelTransition;
 	private int sequelSpeed;
-	private int sequelAudioType;
-	private int sequelAudioSeq;
+	private long sequelAudioSeq;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
