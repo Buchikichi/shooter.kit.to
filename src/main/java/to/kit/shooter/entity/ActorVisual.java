@@ -9,32 +9,36 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
 /**
- * ProductActor.
+ * ActorVisual.
  * @author H.Sasai
  */
 @Entity
 @Data
-public class ProductActor {
+public class ActorVisual {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
-	private int type;
 	private int seq;
-	private String className;
+	private String name;
+	private String description;
+	private String imageid;
+	private int visual_seq;
+	private String anim;
+	private String properties;
+	private String routine;
+	private String method;
+	private String script;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)
 	private Date updated;
 
 	@ManyToOne
-	@JsonBackReference
-	private Product product;
-
-	@ManyToOne
+	@JsonIgnore
 	private Actor actor;
 }

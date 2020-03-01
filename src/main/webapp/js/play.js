@@ -1,9 +1,7 @@
 /**
  * Shooterメイン処理.
  */
-document.addEventListener('DOMContentLoaded', ()=> {
-	new ShooterMain();
-});
+document.addEventListener('DOMContentLoaded', ()=> new ShooterMain());
 
 class ShooterMain {
 	constructor() {
@@ -62,13 +60,12 @@ class ShooterMain {
 			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
 			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 		];
-		actorList.forEach(productActor => {
-			let ix = productActor.seq;
-			let actor = productActor.actor;
-			let type = eval(productActor.className);
+		actorList.forEach(actor => {
+			let ix = actor.seq;
+			let type = eval(actor.className);
 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
-			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
+			Enemy.LIST[ix] = {name:actor.className, type:type, h:16, formation:formation};
 		});
 	}
 

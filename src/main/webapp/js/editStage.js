@@ -193,13 +193,12 @@ console.log('#setupActors:' + actorList);
 			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
 			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 		];
-		actorList.forEach(productActor => {
-			let ix = productActor.seq;
-			let actor = productActor.actor;
-			let type = eval(productActor.className);
+		actorList.forEach(actor => {
+			let ix = actor.seq;
+			let type = eval(actor.className);
 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
-console.log(ix + ':' + productActor.className + ':' + actor.name);
+console.log(ix + ':' + actor.className);
 //console.log(type);
 			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
 		});

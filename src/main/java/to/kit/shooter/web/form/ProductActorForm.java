@@ -1,7 +1,7 @@
 package to.kit.shooter.web.form;
 
 import lombok.Data;
-import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.ActorVisual;
 
 /**
  * Product actor form.
@@ -13,5 +13,5 @@ public class ProductActorForm {
 	private int type;
 	private int seq;
 
-	private Actor actor;
+	private ActorVisual actor;
 }

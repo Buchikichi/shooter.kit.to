@@ -42,20 +42,20 @@
         </li>
       </ul>
     </div>
-    <div data-role="collapsible" th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
+    <div data-role="collapsible" th:with="list=${T(to.kit.shooter.entity.type.VisualType).List}">
       <h4 th:text="#{actor}">Actor</h4>
       <div data-role="collapsible" data-inset="false" data-mini="true"
           th:each="e:${list}">
         <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(typeMap.get(e))}">0</span></h4>
         <ul data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
-          <li th:each="productActor:${typeMap.get(e)}">
-            <a th:with="actor=${productActor.actor}" href="#ProductActorPanel"
-                th:attr="data-id=${productActor.id}, data-class=${productActor.className}, data-actor=${actor.id}">
-              <img src="/img/icon.listview.png" th:src="'/visual/src/'+${actor.imageid}"/>
-              <span th:text="${actor.name}"></span>
+          <li th:each="actor:${typeMap.get(e)}">
+            <a th:with="actorVisual=${actor.actorVisualList}" href="#ProductActorPanel"
+                th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
+              <img src="/img/icon.listview.png" th:src="'/visual/src/'"/>
+              <span th:text="${actor.className}"></span>
               <p>
-                <span th:text="${productActor.className}" class="className"></span>
-                <span th:text="${actor.description}"></span>
+                <span th:text="${actor.className}" class="className"></span>
+                <span th:text="${#lists.size(actor.actorVisualList)}"></span>
               </p>
               <span th:text="${actor.type}" class="ui-li-count"></span>
             </a>
@@ -173,18 +173,18 @@
   </div>
   <div class="ui-bar ui-bar-a" th:text="#{actor}">Actor</div>
   <div data-role="content" style="padding-top:0"
-      th:with="list=${T(to.kit.shooter.entity.ActorType).List}">
+      th:with="list=${T(to.kit.shooter.entity.type.VisualType).List}">
     <div data-role="collapsible" data-inset="false" data-mini="true" th:each="e:${list}">
       <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit">0</span></h4>
       <ul data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
-        <li th:each="productActor:${typeMap.get(e)}">
-          <a th:with="actor=${productActor.actor}" href="#ProductActorPanel"
-              th:attr="data-id=${productActor.id}, data-class=${productActor.className}, data-actor=${actor.id}">
-            <img src="/img/icon.listview.png" th:src="'/visual/src/'+${actor.imageid}"/>
-            <span th:text="${actor.name}"></span>
+        <li th:each="actor:${typeMap.get(e)}">
+          <a th:with="visual=${actor.actorVisualList}" href="#ProductActorPanel"
+              th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
+            <img src="/img/icon.listview.png" th:src="'/visual/src/'"/>
+            <span th:text="${actor.className}"></span>
             <p>
-              <span th:text="${productActor.className}" class="className"></span>
-              <span th:text="${actor.description}"></span>
+              <span th:text="${actor.className}" class="className"></span>
+              <span th:text="${#lists.size(actor.actorVisualList)}"></span>
             </p>
           </a>
           <a class="deleteButton"></a>

@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import to.kit.shooter.entity.ActorType;
+import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.ProductActor;
 import to.kit.shooter.entity.Scores;
+import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.FilteringForm;
@@ -95,18 +95,25 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 		return product;
 	}
+	@RequestMapping("/json/{id}")
+	@ResponseBody
+	public Product json(@PathVariable("id") String id) {
+		Product product = this.productService.detail(id);
 
-	private Map<ActorType, List<ProductActor>> makeTypeMap(List<ProductActor> actorList) {
-		Map<ActorType, List<ProductActor>> map = new HashMap<>();
+		return product;
+	}
 
-		for (ActorType type : ActorType.List) {
+	private Map<VisualType, List<Actor>> makeTypeMap(List<Actor> actorList) {
+		Map<VisualType, List<Actor>> map = new HashMap<>();
+
+		for (VisualType type : VisualType.List) {
 			map.put(type, new ArrayList<>());
 		}
-		for (ProductActor productActor : actorList) {
-			ActorType type = ActorType.getType(productActor.getType());
-			List<ProductActor> list = map.get(type);
+		for (Actor actor : actorList) {
+			VisualType type = actor.getType();
+			List<Actor> list = map.get(type);
 
-			list.add(productActor);
+			list.add(actor);
 		}
 		return map;
 	}
@@ -119,7 +126,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		if (product == null) {
 			return "error";
 		}
-		Map<ActorType, List<ProductActor>> typeMap = makeTypeMap(product.getActorList());
+		Map<VisualType, List<Actor>> typeMap = makeTypeMap(product.getActorList());
 		List<Mediaset> mediasetList = this.mediasetService.list("");
 		model.addAttribute("product", product);
 		model.addAttribute("typeMap", typeMap);
@@ -130,7 +137,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/listActors")
 	@ResponseBody
-	public List<ProductActor> listActors(@RequestParam String id) {
+	public List<Actor> listActors(@RequestParam String id) {
 		Product product = this.productService.detail(id);
 
 		return product.getActorList();

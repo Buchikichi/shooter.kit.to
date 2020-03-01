@@ -49,7 +49,7 @@ public class Product {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("type, seq")
-	private List<ProductActor> actorList = new ArrayList<>();
+	private List<Actor> actorList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("score DESC")

@@ -4,32 +4,25 @@
 
 CREATE TABLE actor(
 	id varchar(36) NOT NULL DEFAULT gen_random_uuid(),
-	owner varchar(36) NOT NULL,
-	access integer  NOT NULL DEFAULT 0,
-	name text NOT NULL,
-	description text NOT NULL,
-	imageId varchar(36) NOT NULL,
-	type integer  NOT NULL DEFAULT 0,
-	anim text,
-	properties text,
-	routine text,
-	method text,
-	script text,
+	product_id varchar(36) NOT NULL,
+	actor_id varchar(36) NOT NULL,
+	type integer NOT NULL DEFAULT 0,
+	seq integer NOT NULL DEFAULT 0,
+	class_name varchar(32) NOT NULL DEFAULT 'Actor',
+	image_id varchar(36),
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
 );
+COMMENT ON TABLE actor IS 'プロダクト内アクター';
 COMMENT ON COLUMN actor.id IS 'ID';
-COMMENT ON COLUMN actor.owner IS '所有者';
-COMMENT ON COLUMN actor.access IS 'アクセスレベル{0:private, 1:public}';
-COMMENT ON COLUMN actor.name IS '名前';
-COMMENT ON COLUMN actor.description IS '説明';
-COMMENT ON COLUMN actor.imageId IS 'Image ID';
+COMMENT ON COLUMN actor.product_id IS 'プロダクトID';
 COMMENT ON COLUMN actor.type IS '種類';
-COMMENT ON COLUMN actor.anim IS 'anim';
-COMMENT ON COLUMN actor.properties IS 'プロパティ';
-COMMENT ON COLUMN actor.routine IS 'routine';
-COMMENT ON COLUMN actor.method IS 'method';
-COMMENT ON COLUMN actor.script IS 'script';
+COMMENT ON COLUMN actor.seq IS '番号';
+COMMENT ON COLUMN actor.class_name IS 'クラス名';
 COMMENT ON COLUMN actor.created IS '作成日';
 COMMENT ON COLUMN actor.updated IS '更新日';
+
+ALTER TABLE product_actor RENAME TO actor;
+ALTER TABLE actor DROP COLUMN actor_id;
+ALTER TABLE actor DROP COLUMN image_id;

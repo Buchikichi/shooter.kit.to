@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.ProductActor;
+import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Stage;
-import to.kit.shooter.repository.ProductActorRepository;
+import to.kit.shooter.repository.ActorRepository;
 import to.kit.shooter.repository.ProductRepository;
 import to.kit.shooter.repository.StageRepository;
 
@@ -24,7 +24,7 @@ public class ProductService {
 	@Autowired
 	private StageRepository stageRepository;
 	@Autowired
-	private ProductActorRepository productActorRepository;
+	private ActorRepository productActorRepository;
 
 	public List<Product> list() {
 		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
@@ -67,7 +67,7 @@ public class ProductService {
 	}
 
 	private void deleteActorByProductId(String productId) {
-		List<ProductActor> list = this.productActorRepository.findByProductId(productId);
+		List<Actor> list = this.productActorRepository.findByProductId(productId);
 
 		this.productActorRepository.deleteInBatch(list);
 	}
@@ -85,11 +85,11 @@ public class ProductService {
 
 		prepare(entity);
 
-		List<ProductActor> actorList = entity.getActorList();
+		List<Actor> actorList = entity.getActorList();
 //		actorList.removeIf(a -> {
 //			return a.getActor() == null;
 //		});
-		for (ProductActor actor : actorList) {
+		for (Actor actor : actorList) {
 			actor.setProduct(entity);
 			actor.setUpdated(new Date());
 		}
