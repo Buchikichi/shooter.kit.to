@@ -18,9 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.RegionType;
 import to.kit.shooter.entity.type.VisualType;
 
 /**
@@ -37,6 +37,16 @@ public class Actor {
 	private VisualType type;
 	private int seq;
 	private String className;
+	private int orientation;
+	private int width;
+	private int height;
+	@Enumerated(EnumType.ORDINAL)
+	private RegionType regionType;
+	private int regionSize;
+	private int speed;
+	private int hitpoint;
+	private int score;
+	private String behavior;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

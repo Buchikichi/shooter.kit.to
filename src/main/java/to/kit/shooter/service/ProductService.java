@@ -59,6 +59,11 @@ public class ProductService {
 			rec.setProduct(product);
 			rec.setUpdated(new Date());
 		}
+		for (Actor actor : product.getActorList()) {
+			actor.setProduct(product);
+			actor.setUpdated(new Date());
+			actor.getActorVisualList().clear();
+		}
 		Mediaset mediaset = product.getMediaset();
 
 		mediaset.getAudioList().clear();
@@ -85,14 +90,10 @@ public class ProductService {
 
 		prepare(entity);
 
-		List<Actor> actorList = entity.getActorList();
+//		List<Actor> actorList = entity.getActorList();
 //		actorList.removeIf(a -> {
 //			return a.getActor() == null;
 //		});
-		for (Actor actor : actorList) {
-			actor.setProduct(entity);
-			actor.setUpdated(new Date());
-		}
 		entity.setUpdated(new Date());
 		return this.productRepository.saveAndFlush(entity);
 	}

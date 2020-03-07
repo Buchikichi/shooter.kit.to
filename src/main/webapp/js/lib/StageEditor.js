@@ -109,18 +109,18 @@ class StageEditor extends Stage {
 		ctx.restore();
 	}
 
-	createFieldMap() {
-		return FieldMapEditor.create(this.map);
-	}
-
 	save() {
 		console.log('StageEditor#save');
 		this.scenarioList = this._eventList.concat();
 		return new StageEntity().save(this);
 	}
 
-	static create(rec) {
-		return Object.assign(new StageEditor(), rec).init();
+	createFieldMap() {
+		return FieldMapEditor.create(this.map);
+	}
+
+	static create(rec, product) {
+		return Object.assign(new StageEditor(), rec, { _product: product }).init();
 	}
 }
 StageEditor.CURSOR_TYPE = {

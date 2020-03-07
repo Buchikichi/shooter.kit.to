@@ -1,5 +1,5 @@
 class FlexibleView {
-	constructor(width, height) {
+	constructor(width = 256, height = 224) {
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = this.canvas.getContext('2d');

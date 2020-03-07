@@ -17,11 +17,7 @@ class ProductEditor extends Product {
 		return new ProductEntity().save(this);
 	}
 
-	static create(productId) {
-		return new ProductEntity().select(productId).then(product => {
-			Mediaset.create(product.mediaset).load();
-			Product.Instance = Object.assign(new ProductEditor(), product);
-			return Product.Instance.init();
-		});
+	static create(productId, callback) {
+		return Product.load(productId, callback, ProductEditor);
 	}
 }

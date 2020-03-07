@@ -35,7 +35,7 @@ class Scenario {
 
 	getActor() {
 		if (!this._actor) {
-			this._actor = Enemy.getActor(this.number);
+			this._actor = Product.Instance.getActor(this.number);
 			// console.log('this._actor:');
 			// console.log(this._actor);
 		}
@@ -52,7 +52,7 @@ class Scenario {
 			let actor = this.getActor();
 
 			if (actor) {
-				this.name = actor.name;
+				this.name = actor.className;
 			}
 		}
 		return prefix + (this.name ? ':' + this.name : '');
@@ -91,9 +91,13 @@ class Scenario {
 		let sx = this.v * bw + bh;
 		let sy = this.h * bw + bh;
 
-		// if (actor) {
-		// 	this._actor.draw(ctx);
-		// }
+		if (actor) {
+//			this._actor.draw(ctx);
+			if (actor.width) {
+				ctx.strokeStyle = 'rgba(80, 255, 80, 0.6)';
+				ctx.strokeRect(sx-actor.hW, sy-actor.hH, actor.width, actor.height);
+			}
+		}
 		if (this.op == 'Spw') {
 			ctx.fillStyle = 'orange';
 		} else {

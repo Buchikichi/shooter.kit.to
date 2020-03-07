@@ -166,12 +166,19 @@ console.log('sx:' + sx);
 		return new MapEntity().save(this);
 	}
 
-	static create(obj) {
+	static create(obj, callback = null) {
 		if ('string' == typeof obj) {
 			return new MapEntity().select(obj).then(map => {
-				return FieldMapEditor.create(map);
+				return FieldMapEditor.create(map, callback);
 			});
 		}
-		return Object.assign(new FieldMapEditor(), obj).init();
+		let fieldMapEditor = Object.assign(new FieldMapEditor(), obj);
+
+		if (callback == null) {
+			return fieldMapEditor.init();
+		}
+		return Mediaset.create(fieldMapEditor.mediaset).loadVisual().checkLoading(callback).then(()=> {
+			return fieldMapEditor.init();
+		});
 	}
 }

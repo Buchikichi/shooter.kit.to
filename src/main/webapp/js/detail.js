@@ -10,12 +10,11 @@ class AppMain {
 	constructor() {
 		let productId = document.querySelector('input[name=id]').value;
 		let loading = document.getElementById('loading');
+		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
-		ProductEditor.create(productId).then(product => {
+		ProductEditor.create(productId, callback).then(product => {
 //			this.setupActors(product);
 			this.product = product;
-			return Mediaset.Instance.checkLoading((loaded, max) => loading.innerHTML = loaded + '/' + max);
-		}).then(()=> {
 			loading.parentNode.removeChild(loading);
 //			this.start();
 		});

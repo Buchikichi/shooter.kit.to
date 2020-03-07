@@ -9,7 +9,17 @@ CREATE TABLE actor(
 	type integer NOT NULL DEFAULT 0,
 	seq integer NOT NULL DEFAULT 0,
 	class_name varchar(32) NOT NULL DEFAULT 'Actor',
-	image_id varchar(36),
+
+	orientation integer NOT NULL DEFAULT 0,
+	width integer NOT NULL DEFAULT 0,
+	height integer NOT NULL DEFAULT 0,
+	region_type integer NOT NULL DEFAULT 0,
+	region_size integer NOT NULL DEFAULT 0,
+	speed integer NOT NULL DEFAULT 0,
+	hitpoint integer NOT NULL DEFAULT 1,
+	score integer NOT NULL DEFAULT 0,
+	behavior text NOT NULL DEFAULT '',
+
 	created date NOT NULL DEFAULT now(),
 	updated date NOT NULL DEFAULT now(),
 	PRIMARY KEY (id)
@@ -20,9 +30,29 @@ COMMENT ON COLUMN actor.product_id IS 'プロダクトID';
 COMMENT ON COLUMN actor.type IS '種類';
 COMMENT ON COLUMN actor.seq IS '番号';
 COMMENT ON COLUMN actor.class_name IS 'クラス名';
+
+COMMENT ON COLUMN actor.orientation IS '向き(水平/垂直)';
+COMMENT ON COLUMN actor.width IS '幅';
+COMMENT ON COLUMN actor.height IS '高さ';
+COMMENT ON COLUMN actor.region_type IS '領域タイプ';
+COMMENT ON COLUMN actor.region_size IS '領域サイズ';
+COMMENT ON COLUMN actor.speed IS 'speed';
+COMMENT ON COLUMN actor.hitpoint IS 'hitpoint';
+COMMENT ON COLUMN actor.score IS 'score';
+COMMENT ON COLUMN actor.behavior IS 'behavior';
+
 COMMENT ON COLUMN actor.created IS '作成日';
 COMMENT ON COLUMN actor.updated IS '更新日';
 
 ALTER TABLE product_actor RENAME TO actor;
 ALTER TABLE actor DROP COLUMN actor_id;
 ALTER TABLE actor DROP COLUMN image_id;
+ALTER TABLE actor ADD orientation integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD width integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD height integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD region_type integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD region_size integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD speed integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD hitpoint integer NOT NULL DEFAULT 1;
+ALTER TABLE actor ADD score integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD behavior text NOT NULL DEFAULT '';

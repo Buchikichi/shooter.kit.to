@@ -7,17 +7,13 @@ class ShooterMain {
 	constructor() {
 		let productId = document.getElementById('productId').value;
 		let loading = document.getElementById('loading');
+		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
-		Product.create(productId).then(product => {
-			this.view = new FlexibleView(product.width, product.height);
-			this.field = new Field(this.view);
+		this.view = new FlexibleView();
+		Product.create(productId, callback).then(product => {
+			this.view.setSize(product.width, product.height);
+			// this.field = new Field(this.view);
 			this.setupActors(product);
-			return Mediaset.Instance.checkLoading((loaded, max) => {
-				let msg = loaded + '/' + max;
-
-				loading.innerHTML = msg;
-			});
-		}).then(()=> {
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});

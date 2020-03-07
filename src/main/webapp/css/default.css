@@ -85,7 +85,6 @@ form [type=image] {
 	background-repeat: no-repeat;
 	background-image: url("../img/ajax-loader.gif");
 	background-color: #222;
-	opacity: 0.9;
 	z-index: 1200;
 }
 #gameOver {

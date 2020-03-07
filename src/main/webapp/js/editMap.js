@@ -6,16 +6,16 @@ class EditMain {
 	 */
 	constructor() {
 		let mapId = document.getElementById('mapId').value;
+		let loading = document.getElementById('loading');
+		let callBack = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
-		FieldMapEditor.create(mapId).then(fieldMap => {
+		FieldMapEditor.create(mapId, callBack).then(fieldMap => {
 			this.fieldMap = fieldMap;
-			return Mediaset.create(fieldMap.mediaset);
-		}).then(mediaset => {
-			mediaset.loadVisual();
-			this.checkLoading();
+			loading.parentNode.removeChild(loading);
+			this.start();
 		});
 	}
 
@@ -29,19 +29,6 @@ class EditMain {
 
 	get brickNum() {
 		return parseInt(document.querySelector('[name="brick"]:checked').value);
-	}
-
-	checkLoading() {
-		let loading = document.getElementById('loading');
-
-		Mediaset.Instance.checkLoading((loaded, max) => {
-			let msg = loaded + '/' + max;
-
-			loading.innerHTML = msg;
-		}).then(()=> {
-			loading.parentNode.removeChild(loading);
-			this.start();
-		});
 	}
 
 	start() {

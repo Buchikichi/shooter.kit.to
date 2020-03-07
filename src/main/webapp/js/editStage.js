@@ -34,20 +34,16 @@ class EditStage {
 	loadStage() {
 		let productId = document.getElementById('productId').value;
 		let loading = document.getElementById('loading');
+		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
-		Product.create(productId).then(product => {
-			let stage = null;
+		Product.create(productId, callback).then(product => {
+			this.product = product;
+//			let stage = null;
 
 //			this.view = new FlexibleView(512, 224);
 //			this.field = new FieldEditor(this.view, stage);
 			product.selectStage(this.stageId);
 //			this.setupStage(stage);
-			return Mediaset.Instance.checkLoading((loaded, max) => {
-				let msg = loaded + '/' + max;
-
-				loading.innerHTML = msg;
-			});
-		}).then(()=> {
 			loading.parentNode.removeChild(loading);
 			this.setupEvents();
 			this.resetCanvas();
@@ -56,7 +52,7 @@ class EditStage {
 	}
 
 	resetCanvas() {
-		let product = Product.Instance;
+		let product = this.product;
 		let stage = product.stage;
 		let scale = this.scale;
 		let width = product.width / 2 * stage.posV + stage.length;
@@ -74,53 +70,52 @@ class EditStage {
 		this.ctx = this.canvas.getContext('2d');
 	}
 
-	setupStage(stage) {
-		let form = document.getElementById('inputBox');
-		let propList = {
-			'speed':{min:0, max:1, step:0.1},
-			'dir':{min:0, max:1, step:0.01},
-			'blink':{min:0, max:1, step:0.01},
-		}
+	// setupStage(stage) {
+	// 	let form = document.getElementById('inputBox');
+	// 	let propList = {
+	// 		'speed':{min:0, max:1, step:0.1},
+	// 		'dir':{min:0, max:1, step:0.01},
+	// 		'blink':{min:0, max:1, step:0.01},
+	// 	}
 
-		this.stage = Stage.create(stage);
-		Stage.VIEWS.forEach(key => {
-			let imageId = stage[key];
+	// 	this.stage = Stage.create(stage);
+	// 	Stage.VIEWS.forEach(key => {
+	// 		let imageId = stage[key];
 
-			if (!imageId || imageId.length == 0) {
-				return;
-			}
-			let fieldset = document.createElement('fieldset');
-			let legend = document.createElement('legend');
+	// 		if (!imageId || imageId.length == 0) {
+	// 			return;
+	// 		}
+	// 		let fieldset = document.createElement('fieldset');
+	// 		let legend = document.createElement('legend');
 
-			legend.textContent = key.toUpperCase() + ':';
-			fieldset.appendChild(legend);
-			Object.keys(propList).forEach(prop => {
-				let attr = propList[prop];
-				let name = key + prop;
-				let input = document.createElement('input');
-				let value = stage[name].toFixed(2);
+	// 		legend.textContent = key.toUpperCase() + ':';
+	// 		fieldset.appendChild(legend);
+	// 		Object.keys(propList).forEach(prop => {
+	// 			let attr = propList[prop];
+	// 			let name = key + prop;
+	// 			let input = document.createElement('input');
+	// 			let value = stage[name].toFixed(2);
 
-				input.setAttribute('type', 'number');
-				input.setAttribute('name', name);
-				Object.keys(attr).forEach(attrName => {
-					input.setAttribute(attrName, attr[attrName]);
-				});
-				input.value = value;
-				input.addEventListener('change', ()=> {
-					let ground = this.stage.getGround(key);
+	// 			input.setAttribute('type', 'number');
+	// 			input.setAttribute('name', name);
+	// 			Object.keys(attr).forEach(attrName => {
+	// 				input.setAttribute(attrName, attr[attrName]);
+	// 			});
+	// 			input.value = value;
+	// 			input.addEventListener('change', ()=> {
+	// 				let ground = this.stage.getGround(key);
 
-					ground[prop] = input.value;
-				});
-				fieldset.appendChild(input);
-				$(input).textinput();
-			});
-			form.appendChild(fieldset);
-			$(fieldset).controlgroup({mini: true});
-		})
-	}
+	// 				ground[prop] = input.value;
+	// 			});
+	// 			fieldset.appendChild(input);
+	// 			$(input).textinput();
+	// 		});
+	// 		form.appendChild(fieldset);
+	// 		$(fieldset).controlgroup({mini: true});
+	// 	})
+	// }
 
 	start() {
-		let product = Product.Instance;
 //		let view = FlexibleView.Instance;
 //		let landform = this.field.landform;
 		let activate = ()=> {
@@ -148,7 +143,7 @@ class EditStage {
 			this.ctx.save();
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 //			this.ctx.scale(this.scale, this.scale);
-			product.draw(this.ctx);
+			this.product.draw(this.ctx);
 			this.ctx.restore();
 			requestAnimationFrame(activate);
 		};
@@ -158,7 +153,7 @@ class EditStage {
 	}
 
 	setupActors(actorList) {
-console.log('#setupActors:' + actorList);
+console.log('EditStage#setupActors:' + actorList);
 		Enemy.LIST = [
 			{name:'', type:Waver, img:''},
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
@@ -211,7 +206,7 @@ console.log(ix + ':' + actor.className);
 
 	setupEvents() {
 console.log('EditStage#setupEvents');
-		let stage = Product.Instance.stage;
+		let stage = this.product.stage;
 		let changeGuide = ()=> {
 			stage.hasGuide = document.querySelector('[name="guide"]:checked').value == '1';
 		};
@@ -228,9 +223,9 @@ console.log('EditStage#setupEvents');
 //		this.controller = new Controller();
 		this.attrPanel = new AttrPanel(this);
 		this.actorPanel = new ActorPanel();
-//		this.actorPanel.setupActors(Product.Instance.actorList);
+//		this.actorPanel.setupActors(this.product.actorList);
 		this.eventPanel = new EventPanel(this);
-		this.setupActors(Product.Instance.actorList);
+		this.setupActors(this.product.actorList);
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
@@ -280,7 +275,7 @@ console.log('EditStage#setupEvents');
 	}
 
 	setupPointingDevice() {
-		let product = Product.Instance;
+		let product = this.product;
 		let stage = product.stage;
 		let canvas = document.getElementById('canvas');
 		let calcPos = e => {
@@ -325,7 +320,7 @@ console.log('EditStage#setupEvents');
 		let content = messagePopup.querySelector('p');
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-		Product.Instance.stage.save().then(data => {
+		this.product.stage.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Stage saved.';
@@ -367,7 +362,7 @@ class AttrPanel {
 	}
 
 	init() {
-		let stage = Product.Instance.stage;
+		let stage = this.stageEditor.product.stage;
 		let startAudio = document.querySelector('[name="startAudio"]');
 		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioSeq);
 		let sequelAudio = document.querySelector('[name="sequelAudio"]');
@@ -381,7 +376,7 @@ class AttrPanel {
 	}
 
 	setupEvent() {
-		let stage = Product.Instance.stage;
+		let stage = this.stageEditor.product.stage;
 		let roll = document.querySelector('[name="roll"]');
 		let repeat = document.querySelector('[name="repeat"]');
 		let posV = document.querySelector('[name="posV"]');

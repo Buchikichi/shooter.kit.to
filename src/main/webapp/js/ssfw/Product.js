@@ -65,7 +65,7 @@ class Product extends Matter {
 			if (stage.id != stageId) {
 				return;
 			}
-			this.stage = StageEditor.create(stage);
+			this.stage = StageEditor.create(stage, this);
 		});
 //		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
 		this.stage.start();
@@ -212,27 +212,40 @@ class Product extends Matter {
 		});
 	}
 
-	init() {
-		let stageList = [];
+	getActor(seq) {
+		let actor = this._actorMap[seq];
 
+		if (!actor) {
+			actor = Enemy.getActor(seq);
+			console.log('Pseudo:' + seq);
+			console.log(actor);
+		}
+		return actor;
+	}
+
+	init() {
 		this.setRect(this.width, this.height);
-		this.stageList.forEach(stage => {
-			stage._product = this;
-			stageList.push(Stage.create(stage))
-		});
-		this.stageList = stageList;
+		this.stageList = this.stageList.map(stage => Stage.create(stage, this));
+		this.actorList = this.actorList.map(actor => Actor.create(actor));
+		this._actorMap = {};
+		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;
 		}
 		return this;
 	}
 
-	static create(productId) {
+	static load(productId, callback, clazz) {
 		return new ProductEntity().select(productId).then(product => {
-			Mediaset.create(product.mediaset).load();
-			Product.Instance = Object.assign(new Product(), product);
-			return Product.Instance.init();
+			return Mediaset.create(product.mediaset).load().checkLoading(callback).then(() => {
+				Product.Instance = Object.assign(new clazz(), product);
+				return Product.Instance.init();
+			});
 		});
+	}
+
+	static create(productId, callback) {
+		return Product.load(productId, callback, Product);
 	}
 }
 Product.Instance = null;

@@ -20,13 +20,15 @@ console.log('*Not implement*');
 	}
 
 	draw(ctx) {
+		let size = this.matter.regionSize;
+
 		ctx.save();
 		ctx.strokeStyle = 'rgba(80, 255, 80, 0.6)';
 		if (this.type == Region.Type.RECTANGLE) {
-			ctx.strokeRect(-this.size, -this.size, this.width, this.width);
+			ctx.strokeRect(-size, -size, this.width, this.width);
 		} else {
 			ctx.beginPath();
-			ctx.arc(0, 0, this.size, 0, Math.PI2, false);
+			ctx.arc(0, 0, size, 0, Math.PI2, false);
 			ctx.stroke();
 		}
 		ctx.restore();
@@ -34,6 +36,6 @@ console.log('*Not implement*');
 }
 Region.DefaultSize = 4;
 Region.Type = {
-	CIRCLE: 1,
-	RECTANGLE: 2,
+	CIRCLE: 0,
+	RECTANGLE: 1,
 };

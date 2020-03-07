@@ -20,7 +20,7 @@
 <!--
     <a href="/" data-ajax="false" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
 -->
-    <h1 th:text="#{product}">Product</h1>
+    <h1 th:text="${product.name} + ' - '  + #{product}">Product</h1>
     <a href="#infoPanel" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-info">Info</a>
     <div data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
       <a href="#stagePanel" class="ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{stage}">Stage</a>
@@ -47,19 +47,19 @@
       <div data-role="collapsible" data-inset="false" data-mini="true"
           th:each="e:${list}">
         <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(typeMap.get(e))}">0</span></h4>
-        <ul data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
+        <ul data-role="listview" data-split-icon="bars" class="actorList" th:id="${e+'View'}">
           <li th:each="actor:${typeMap.get(e)}">
             <a th:with="actorVisual=${actor.actorVisualList}" href="#ProductActorPanel"
                 th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
               <img src="/img/icon.listview.png" th:src="'/visual/src/'"/>
               <span th:text="${actor.className}"></span>
               <p>
-                <span th:text="${actor.className}" class="className"></span>
+                <span th:text="${actor.id}" class="className"></span>
                 <span th:text="${#lists.size(actor.actorVisualList)}"></span>
               </p>
               <span th:text="${actor.type}" class="ui-li-count"></span>
             </a>
-            <a class="deleteButton"></a>
+            <a class="deleteButton sortable"></a>
           </li>
         </ul>
       </div>

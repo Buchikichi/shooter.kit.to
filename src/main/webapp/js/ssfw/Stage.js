@@ -336,7 +336,7 @@ if (!isFront) enemy.dir = 0;
 	}
 
 	reset(phase = Stage.PHASE.INIT) {
-		console.log('Stage#reset');
+		console.log('Stage#reset:' + phase);
 		this.phase = phase;
 		this.hibernate = this._product.maxHibernate;
 		this.scroll = this.roll;
@@ -356,13 +356,13 @@ if (!isFront) enemy.dir = 0;
 		// console.log('Stage#init map:' + this.map.constructor.name);
 		this.scenarioList = this.scenarioList.map(s => Scenario.create(s, this));
 		this.progress = this.startProgress;
-		Mediaset.Instance.checkLoading().then(() => this.reset());
+		this.reset();
 		this.checkPoint = new CheckPoint(this);
 		return this;
 	}
 
-	static create(rec) {
-		return Object.assign(new Stage(), rec).init();
+	static create(rec, product) {
+		return Object.assign(new Stage(), rec, { _product: product }).init();
 	}
 }
 Stage.SCROLL = {
@@ -379,7 +379,7 @@ Stage.PHASE = {
 	BOSS: 2,
 	NEXT_STAGE: 3,
 };
-Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
+//Stage.VIEWS = ['bg1', 'bg2', 'bg3', 'fg1', 'fg2', 'fg3'];
 
 class CheckPoint {
 	constructor(stage) {

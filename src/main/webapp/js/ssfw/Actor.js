@@ -388,6 +388,17 @@ class Actor extends Matter {
 			AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 		}
 	}
+
+	init() {
+		console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
+		this.region = new Region(this);
+		this.setRect(this.width, this.height);
+		return this;
+	}
+
+	static create(rec) {
+		return Object.assign(new Actor(), rec).init();
+	}
 }
 Actor.MAX_EXPLOSION = 12;
 Actor.DEG_STEP = Math.PI / 180;
