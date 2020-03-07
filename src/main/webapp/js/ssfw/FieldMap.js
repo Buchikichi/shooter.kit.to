@@ -124,14 +124,14 @@ this.effectV = 0;
 
 	get image() {
 		if (!this._img) {
-			this._img = Mediaset.Instance.getImage(this);
+			this._img = this._fieldMap._mediaset.getImage(this);
 		}
 		return this._img;
 	}
 
 	get imageName() {
 		if (!this._imgName) {
-			this._imgName = Mediaset.Instance.getImageName(this);
+			this._imgName = this._fieldMap._mediaset.getImageName(this);
 		}
 		return this._imgName;
 	}

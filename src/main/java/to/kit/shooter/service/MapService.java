@@ -25,7 +25,7 @@ public class MapService {
 	public List<Map> list(String mediasetId) {
 		Sort sort = Sort.by("name");
 		Specification<Map> spec = Specification.where((root, query, cb) -> {
-			return cb.equal(root.get("mediaset").get("id"), mediasetId);
+			return cb.equal(root.get("mediasetId"), mediasetId);
 		});
 		return this.mapRepository.findAll(spec, sort);
 	}

@@ -9,9 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.Mediaset;
-import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.Stage;
 import to.kit.shooter.repository.ActorRepository;
 import to.kit.shooter.repository.ProductRepository;
@@ -64,10 +63,6 @@ public class ProductService {
 			actor.setUpdated(new Date());
 			actor.getActorVisualList().clear();
 		}
-		Mediaset mediaset = product.getMediaset();
-
-		mediaset.getAudioList().clear();
-		mediaset.getVisualList().clear();
 		product.getScoreList().clear();
 	}
 

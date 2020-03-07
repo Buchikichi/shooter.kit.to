@@ -69,7 +69,7 @@ class EditMain {
 		this.setupImagePanel();
 		this.setupBrickPanel();
 		this.setupPointingDevice();
-		new ImageSelector(this.fieldMap.mediaset.id);
+		new ImageSelector(this.fieldMap._mediaset.id);
 	}
 
 	setupImagePanel() {

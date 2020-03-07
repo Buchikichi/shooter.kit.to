@@ -362,11 +362,12 @@ class AttrPanel {
 	}
 
 	init() {
+		let mediaset = this.stageEditor.product._mediaset;
 		let stage = this.stageEditor.product.stage;
 		let startAudio = document.querySelector('[name="startAudio"]');
-		let startAudioData = Mediaset.Instance.getAudio(stage.startAudioSeq);
+		let startAudioData = mediaset.getAudio(stage.startAudioSeq);
 		let sequelAudio = document.querySelector('[name="sequelAudio"]');
-		let sequelAudioData = Mediaset.Instance.getAudio(stage.sequelAudioSeq);
+		let sequelAudioData = mediaset.getAudio(stage.sequelAudioSeq);
 
 		//console.log(startAudioData);
 		startAudio.setAttribute('data-seq', stage.startAudioSeq);

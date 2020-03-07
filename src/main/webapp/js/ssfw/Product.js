@@ -225,10 +225,10 @@ class Product extends Matter {
 
 	init() {
 		this.setRect(this.width, this.height);
-		this.stageList = this.stageList.map(stage => Stage.create(stage, this));
 		this.actorList = this.actorList.map(actor => Actor.create(actor));
 		this._actorMap = {};
 		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
+		this.stageList = this.stageList.map(stage => Stage.create(stage, this));
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;
 		}
@@ -237,7 +237,9 @@ class Product extends Matter {
 
 	static load(productId, callback, clazz) {
 		return new ProductEntity().select(productId).then(product => {
-			return Mediaset.create(product.mediaset).load().checkLoading(callback).then(() => {
+			product._mediaset = Mediaset.create(product.mediaset).load();
+			product.mediaset = { id: product._mediaset.id };
+			return product._mediaset.checkLoading(callback).then(() => {
 				Product.Instance = Object.assign(new clazz(), product);
 				return Product.Instance.init();
 			});

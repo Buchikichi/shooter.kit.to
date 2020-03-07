@@ -35,7 +35,7 @@ class Scenario {
 
 	getActor() {
 		if (!this._actor) {
-			this._actor = Product.Instance.getActor(this.number);
+			this._actor = this._stage._product.getActor(this.number);
 			// console.log('this._actor:');
 			// console.log(this._actor);
 		}
@@ -47,13 +47,6 @@ class Scenario {
 
 		if (0 < this.type || 0 < this.number) {
 			prefix += ':' + this.type + '.' + this.number;
-		}
-		if (this.target == 'E') {
-			let actor = this.getActor();
-
-			if (actor) {
-				this.name = actor.className;
-			}
 		}
 		return prefix + (this.name ? ':' + this.name : '');
 	}
@@ -120,8 +113,9 @@ class Scenario {
 			this.drawActor(ctx);
 			return;
 		}
-		let width = this._stage.map.brickSize;
-		let height = Product.Instance.height;
+		let stage = this._stage;
+		let width = stage.map.brickSize;
+		let height = stage._product.height;
 		let sx = this.v * width;
 
 		ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
@@ -149,8 +143,15 @@ class Scenario {
 	}
 
 	init() {
+		if (this.target == 'E') {
+			let actor = this.getActor();
+
+			if (actor) {
+				this.name = actor.className;
+			}
+		}
 		if (this.op == 'Apl') {
-			let audio = Mediaset.Instance.getAudio(this.number);
+			let audio = this._stage._product._mediaset.getAudio(this.number);
 
 			this.name = audio.name;
 		}

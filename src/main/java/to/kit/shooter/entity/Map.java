@@ -11,7 +11,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -30,6 +29,7 @@ public class Map {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
+	private String mediasetId;
 	private String name;
 	private String description;
 	private String map;
@@ -40,9 +40,6 @@ public class Map {
 	private Date created;
 	@Column(insertable = false)
 	private Date updated;
-
-	@ManyToOne
-	private Mediaset mediaset;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "map", cascade = CascadeType.ALL)
 	@OrderBy("seq")

@@ -177,7 +177,10 @@ console.log('sx:' + sx);
 		if (callback == null) {
 			return fieldMapEditor.init();
 		}
-		return Mediaset.create(fieldMapEditor.mediaset).loadVisual().checkLoading(callback).then(()=> {
+		return Mediaset.create(fieldMapEditor.mediasetId).then(mediaset => {
+			fieldMapEditor._mediaset = mediaset.loadVisual();
+			return fieldMapEditor._mediaset.checkLoading(callback);
+		}).then(() => {
 			return fieldMapEditor.init();
 		});
 	}
