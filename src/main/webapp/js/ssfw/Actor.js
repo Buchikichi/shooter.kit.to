@@ -390,7 +390,7 @@ class Actor extends Matter {
 	}
 
 	init() {
-		console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
+		// console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
 		return this;

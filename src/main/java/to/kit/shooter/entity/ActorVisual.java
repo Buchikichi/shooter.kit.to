@@ -3,6 +3,7 @@ package to.kit.shooter.entity;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,8 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.SeqType;
+import to.kit.shooter.entity.type.SeqTypeConverter;
 
 /**
  * ActorVisual.
@@ -27,7 +30,8 @@ public class ActorVisual {
 	private String name;
 	private String description;
 	private String imageid;
-	private int visual_seq;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType visualSeq;
 	private String anim;
 	private String properties;
 	private String routine;

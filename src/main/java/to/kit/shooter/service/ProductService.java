@@ -2,8 +2,10 @@ package to.kit.shooter.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.digest.MurmurHash2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
@@ -62,6 +64,12 @@ public class ProductService {
 			actor.setProduct(product);
 			actor.setUpdated(new Date());
 			actor.getActorVisualList().clear();
+			// TODO: remove
+//			if (0 <= actor.getSeq() && actor.getSeq() < 256) {
+//				String text = UUID.randomUUID().toString();
+//
+//				actor.setSeq(MurmurHash2.hash64(text));
+//			}
 		}
 		product.getScoreList().clear();
 	}

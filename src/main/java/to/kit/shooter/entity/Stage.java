@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,8 @@ import javax.persistence.OrderBy;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.SeqType;
+import to.kit.shooter.entity.type.SeqTypeConverter;
 
 /**
  * Stage.
@@ -36,10 +39,12 @@ public class Stage {
 	private int posV;
 	private int startTransition;
 	private int startSpeed;
-	private long startAudioSeq;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType startAudioSeq;
 	private int sequelTransition;
 	private int sequelSpeed;
-	private long sequelAudioSeq;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType sequelAudioSeq;
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

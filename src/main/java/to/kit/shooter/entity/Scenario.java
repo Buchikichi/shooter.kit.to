@@ -1,5 +1,6 @@
 package to.kit.shooter.entity;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,8 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.SeqType;
+import to.kit.shooter.entity.type.SeqTypeConverter;
 
 /**
  * Scenario.
@@ -26,7 +29,8 @@ public class Scenario {
 	private int h;
 	private String target;
 	private int type;
-	private long number;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType number;
 	@Enumerated(EnumType.STRING)
 	private ScenarioType op;
 

@@ -52,7 +52,7 @@ class Scenario {
 	getText() {
 		let prefix = this.op;
 
-		if (0 < this.type || 0 < this.number) {
+		if (this.target == 'E') {
 			prefix += ':' + this.type + '.' + this.number;
 		}
 		return prefix + (this.name ? ':' + this.name : '');
@@ -150,6 +150,8 @@ class Scenario {
 	}
 
 	init() {
+		// console.log('Scenario#init');
+		// console.log(this);
 		if (this.target == 'E') {
 			let actor = this.getActor();
 
@@ -160,7 +162,9 @@ class Scenario {
 		if (this.op == 'Apl') {
 			let audio = this._stage._product._mediaset.getAudio(this.number);
 
-			this.name = audio.name;
+			if (audio) {
+				this.name = audio.name;
+			}
 		}
 		return this;
 	}

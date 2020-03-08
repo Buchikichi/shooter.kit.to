@@ -7,7 +7,7 @@ CREATE TABLE actor(
 	product_id varchar(36) NOT NULL,
 	actor_id varchar(36) NOT NULL,
 	type integer NOT NULL DEFAULT 0,
-	seq integer NOT NULL DEFAULT 0,
+	seq bigint NOT NULL DEFAULT 0,
 	class_name varchar(32) NOT NULL DEFAULT 'Actor',
 
 	orientation integer NOT NULL DEFAULT 0,

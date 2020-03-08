@@ -74,14 +74,30 @@ class Mediaset {
 		return result;
 	}
 
-	getImage(rec) {
+	getVisualBySeq(rec) {
 		let visual = this.visualDic[rec.visualSeq];
+
+		if (visual == null) {
+			console.log('Mediaset#getVisualBySeq');
+			console.log(rec);
+
+			let key12 = rec.visualSeq.substr(0, 12);
+			let key = Object.keys(this.visualDic).find(key => key.substr(0, 12) == key12);
+			visual = this.visualDic[key];
+			rec.visualSeq = visual.visualSeq;
+			console.log(visual);
+		}
+		return visual;
+	}
+
+	getImage(rec) {
+		let visual = this.getVisualBySeq(rec);
 
 		return VisualManager.Instance.dic[visual.id];
 	}
 
 	getImageName(rec) {
-		let visual = this.visualDic[rec.visualSeq];
+		let visual = this.getVisualBySeq(rec);
 
 		return visual.name;
 	}

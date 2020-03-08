@@ -216,12 +216,19 @@ class Product extends Matter {
 		let actor = this._actorMap[seq];
 
 		if (!actor) {
-			let pseudo = Enemy.getActor(seq);
+			let key12 = seq.substr(0, 12);
+			let key = Object.keys(this._actorMap).find(key => key.substr(0, 12) == key12);
+			actor = this._actorMap[key];
 
-			if (pseudo) {
-				actor = this.actorList.find(a => a.className = pseudo.name);
-			}
-			// else console.log('Product#getActor fail:' + seq);
+			if (!actor) {
+				let dec = parseInt(seq, 16)
+				let pseudo = Enemy.getActor(dec);
+
+				if (pseudo) {
+					actor = this.actorList.find(a => a.className = pseudo.name);
+				}
+				// else console.log('Product#getActor fail:' + seq);
+				}
 		}
 		return actor;
 	}
@@ -231,6 +238,7 @@ class Product extends Matter {
 		this.actorList = this.actorList.map(actor => Actor.create(actor));
 		this._actorMap = {};
 		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
+this.actorList.forEach(actor => this._actorMap[actor.seqOld] = actor); // TODO: remove
 		this.stageList = this.stageList.map(stage => Stage.create(stage, this));
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;

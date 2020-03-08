@@ -7,7 +7,7 @@ CREATE TABLE actor_visual(
 	actor_id varchar(36) NOT NULL,
 	seq integer  NOT NULL DEFAULT 0,
 	imageId varchar(36) NOT NULL,
-	visual_seq integer  NOT NULL DEFAULT 0,
+	visual_seq bigint NOT NULL DEFAULT 0,
 	anim text,
 	properties text,
 	routine text,
@@ -20,7 +20,7 @@ CREATE TABLE actor_visual(
 COMMENT ON TABLE actor_visual IS 'アクター画像';
 COMMENT ON COLUMN actor_visual.id IS 'ID';
 COMMENT ON COLUMN actor_visual.actor_id IS 'アクターID';
-COMMENT ON COLUMN actor_visual.seq IS 'seq';
+COMMENT ON COLUMN actor_visual.seq IS '順序';
 COMMENT ON COLUMN actor_visual.imageId IS 'Image ID';
 COMMENT ON COLUMN actor_visual.visual_seq IS '画像番号';
 COMMENT ON COLUMN actor_visual.anim IS 'anim';

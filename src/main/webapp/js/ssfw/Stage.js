@@ -219,16 +219,19 @@ console.log(s);
 			// spawn
 			let x = gx + (isFront ? this._product.width + bw * 1.5 : 16);
 			let y = (s.h + 1) * bw;
-			let reserve = Enemy.assign(s.number, x, y);
+			// let reserve = Enemy.assign(s.number, x, y);
+			let reserve = this._product.getActor(s.number);
 
 			if (reserve != null) {
-				let enemy;
+				// let enemy;
 
-				if (reserve.formation) {
-					enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
-				} else {
-					enemy = new reserve.type(reserve.x, reserve.y);
-				}
+				// if (reserve.formation) {
+				// 	enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
+				// } else {
+				// 	enemy = new reserve.type(reserve.x, reserve.y);
+				// }
+				let clazz = eval(reserve.className);
+				let enemy = new clazz(x, y);
 if (!isFront) enemy.dir = 0;
 				enemy._stage = this;
 				result.push(enemy);

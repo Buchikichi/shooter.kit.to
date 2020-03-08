@@ -8,6 +8,9 @@
     <li th:each="actor:${actorList}" th:attr="data-id=${actor.id}, data-seq=${actor.seq}">
       <a>
         <span th:text="${actor.className}"></span>
+<!--
+        <span th:text="${actor.seq}"></span>
+-->
       </a>
     </li>
   </ul>

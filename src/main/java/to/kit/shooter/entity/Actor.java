@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 import to.kit.shooter.entity.type.RegionType;
+import to.kit.shooter.entity.type.SeqType;
+import to.kit.shooter.entity.type.SeqTypeConverter;
 import to.kit.shooter.entity.type.VisualType;
 
 /**
@@ -35,7 +38,8 @@ public class Actor {
 	private String id;
 	@Enumerated(EnumType.ORDINAL)
 	private VisualType type;
-	private int seq;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType seq;
 	private String className;
 	private int orientation;
 	private int width;
@@ -59,4 +63,6 @@ public class Actor {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "actor", cascade = CascadeType.ALL)
 	@OrderBy("seq")
 	private List<ActorVisual> actorVisualList = new ArrayList<>();
+
+	private int seqOld; // TODO: remove
 }

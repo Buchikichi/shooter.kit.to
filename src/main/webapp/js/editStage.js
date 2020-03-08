@@ -417,9 +417,8 @@ class AttrPanel {
 		$(sequelSpeed).change(()=> stage.sequelSpeed = sequelSpeed.value);
 		$(this.panel).panel({
 			close: ()=> {
-				console.log('AttrPanel closed.');
-				stage.startAudioSeq = parseInt(startAudio.getAttribute('data-seq'));
-				stage.sequelAudioSeq = parseInt(sequelAudio.getAttribute('data-seq'));
+				stage.startAudioSeq = startAudio.getAttribute('data-seq');
+				stage.sequelAudioSeq = sequelAudio.getAttribute('data-seq');
 			}
 		});
 	}
