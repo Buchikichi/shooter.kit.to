@@ -51,13 +51,14 @@
           <li th:each="actor:${typeMap.get(e)}">
             <a th:with="actorVisual=${actor.actorVisualList}" href="#ProductActorPanel"
                 th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
-              <img src="/img/icon.listview.png" th:src="'/visual/src/'"/>
+              <img src="/img/icon.listview.png"/>
               <span th:text="${actor.className}"></span>
               <p>
                 <span th:text="${actor.id}" class="className"></span>
-                <span th:text="${#lists.size(actor.actorVisualList)}"></span>
+                <span th:text="${actor.seq}"></span>
               </p>
               <span th:text="${actor.type}" class="ui-li-count"></span>
+              <span class="ui-li-aside" th:text="${#lists.size(actor.actorVisualList)}"></span>
             </a>
             <a class="deleteButton sortable"></a>
           </li>

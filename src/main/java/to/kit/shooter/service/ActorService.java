@@ -3,8 +3,6 @@ package to.kit.shooter.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
@@ -15,9 +13,10 @@ public class ActorService {
 	@Autowired
 	private ActorRepository repository;
 
-	public List<Actor> list() {
-		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
-		return this.repository.findAll(sort);
+	public List<Actor> list(Actor criteria) {
+		String productId = criteria.getProduct().getId();
+
+		return this.repository.findByProductIdAndTypeOrderByClassName(productId, criteria.getType());
 	}
 
 	public Actor detail(String id) {

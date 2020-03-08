@@ -39,12 +39,12 @@ body {
 	position: absolute;
 	z-index: 1001;
 }
-#actorPanel img {
+/* #actorPanel img {
 	min-width: 1em;
 	max-width: 2em;
 	min-height: 1em;
 	max-height: 2em;
-}
+} */
 </style>
 </head>
 
@@ -156,7 +156,20 @@ body {
       </form>
     </div>
     <div id="actorPanel" data-role="panel" data-position="left" data-display="overlay">
-      <div data-role="controlgroup" data-filter="true"></div>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+        <select name="actorType" th:with="typeList=${T(to.kit.shooter.entity.type.VisualType).List}">
+          <option th:each="opt:${typeList}" th:value="${opt.ix}" th:text="${opt}">opt</option>
+        </select>
+      </fieldset>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <label>Reverse<input type="radio" name="actor_op" value="Rev"/></label>
+        <label>Forward<input type="radio" name="actor_op" value="Spw" checked="checked"/></label>
+      </fieldset>
+      <div>
+        <ul id="actorList" data-role="listview" data-filter="true" data-inset="true">
+        </ul>
+      </div>
     </div>
     <div id="eventPanel" data-role="panel" data-position="left" data-display="overlay">
       <div data-role="collapsibleset" data-mini="true">

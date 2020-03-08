@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <ul data-role="listview" data-filter="true" data-inset="true">
+    <li th:each="actor:${actorList}" th:attr="data-id=${actor.id}, data-seq=${actor.seq}">
+      <a>
+        <span th:text="${actor.className}"></span>
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

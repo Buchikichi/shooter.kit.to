@@ -36,8 +36,15 @@ class Scenario {
 	getActor() {
 		if (!this._actor) {
 			this._actor = this._stage._product.getActor(this.number);
-			// console.log('this._actor:');
-			// console.log(this._actor);
+			if (this._actor) {
+				if (this.number != this._actor.seq) {
+					console.log('Scenario#getActor:'
+						+ this.number + '>' + this._actor.seq + ':' + this._actor.className);
+					console.log(this._actor);
+					this.number = this._actor.seq;
+					this.name = this._actor.className;
+				}
+			}
 		}
 		return this._actor;
 	}

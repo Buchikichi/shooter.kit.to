@@ -216,9 +216,12 @@ class Product extends Matter {
 		let actor = this._actorMap[seq];
 
 		if (!actor) {
-			actor = Enemy.getActor(seq);
-			console.log('Pseudo:' + seq);
-			console.log(actor);
+			let pseudo = Enemy.getActor(seq);
+
+			if (pseudo) {
+				actor = this.actorList.find(a => a.className = pseudo.name);
+			}
+			// else console.log('Product#getActor fail:' + seq);
 		}
 		return actor;
 	}

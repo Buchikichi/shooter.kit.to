@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -32,13 +34,16 @@ public class ActorController {
 
 	/**
 	 * 一覧取得.
-	 * @param form フォーム
+	 * @param model Model
+	 * @param criteria 条件
 	 * @return 一覧
 	 */
 	@RequestMapping("/list")
-	@ResponseBody
-	public List<Actor> list(ActorForm form) {
-		return this.service.list();
+	public String list(Model model, @RequestBody Actor criteria) {
+		List<Actor> actorList = this.service.list(criteria);
+
+		model.addAttribute("actorList", actorList);
+		return "_actorList";
 	}
 
 	@RequestMapping("/select/{id}")

@@ -152,8 +152,8 @@ class EditStage {
 		activate();
 	}
 
-	setupActors(actorList) {
-console.log('EditStage#setupActors:' + actorList);
+	setupDummyActors() {
+console.log('EditStage#setupDummyActors:');
 		Enemy.LIST = [
 			{name:'', type:Waver, img:''},
 			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
@@ -188,15 +188,15 @@ console.log('EditStage#setupActors:' + actorList);
 			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
 			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 		];
-		actorList.forEach(actor => {
-			let ix = actor.seq;
-			let type = eval(actor.className);
-			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
+// 		actorList.forEach(actor => {
+// 			let ix = actor.seq;
+// 			let type = eval(actor.className);
+// 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
 
-console.log(ix + ':' + actor.className);
-//console.log(type);
-			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
-		});
+// console.log(ix + ':' + actor.className);
+// //console.log(type);
+// 			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
+// 		});
 		Enemy.LIST.forEach(actor => {
 			let dummy = {x:0, y:0};
 
@@ -222,10 +222,9 @@ console.log('EditStage#setupEvents');
 
 //		this.controller = new Controller();
 		this.attrPanel = new AttrPanel(this);
-		this.actorPanel = new ActorPanel();
-//		this.actorPanel.setupActors(this.product.actorList);
+		this.actorPanel = new ActorPanel(this);
 		this.eventPanel = new EventPanel(this);
-		this.setupActors(this.product.actorList);
+		this.setupDummyActors();
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
@@ -242,7 +241,7 @@ console.log('EditStage#setupEvents');
 		changeColor();
 		resize();
 		this.setupPointingDevice();
-		new AudioSelector();
+		new AudioSelector(this.product._mediaset);
 	}
 
 	moveLandform(delta) {
@@ -427,111 +426,54 @@ class AttrPanel {
 }
 
 class ActorPanel {
-	constructor() {
+	constructor(stageEditor) {
+		this.stageEditor = stageEditor;
 		this.panel = document.getElementById('actorPanel');
+		this.actorType = this.panel.querySelector('[name=actorType]');
+		this.setupEvent();
 	}
 
-	setupActors(actorList) {
-		let typeMap = {};
+	loadActors() {
+		let listView = this.panel.querySelector('[data-role=listview]');
+		let data = { product: { id: this.stageEditor.product.id }, type: this.actorType.value };
 
-		actorList.forEach(productActor => {
-			let type = productActor.type;
-			let list = typeMap[type];
-
-			if (!list) {
-				list = [];
-				typeMap[type] = list;
-			}
-			list.push(productActor);
-		});
-		//
-		let listView = this.panel.querySelector('[data-role="controlgroup"] > div');
-
-		Actor.TypeList.forEach(typeName => {
-			let type = Actor.Type[typeName];
-			let list = typeMap[type];
-
-			if (!list) {
-				return;
-			}
-			// <button data-filtertext="Enemy Cats Dogs" class="ui-btn ui-btn-b" disabled="disabled">Enemy</button>
-			let enemyType = document.createElement('button');
-			let textList = [];
-
-			enemyType.textContent = typeName;
-			enemyType.setAttribute('disabled', 'disabled');
-			enemyType.classList.add('ui-btn');
-			enemyType.classList.add('ui-btn-b');
-			enemyType.classList.add('ui-mini');
-			textList.push(typeName);
-			listView.appendChild(enemyType);
-			list.forEach(productActor => {
-				let actor = productActor.actor;
-				// <div data-filtertext="Enemy Cats"><label>Cats<input type="radio" name="actor" value="1"/></label></div>
-				let div = document.createElement('div');
-				let label = document.createElement('label');
-				let radio = document.createElement('input');
-				let img = document.createElement('img');
-				let name = actor.name;
-
-//console.log(productActor);
-//console.log(actor);
-				img.setAttribute('src', '/visual/src/' + actor.imageid);
-				radio.setAttribute('type', 'radio');
-				radio.setAttribute('name', 'actor');
-				radio.setAttribute('value', productActor.seq);
-				label.appendChild(img);
-				label.appendChild(document.createTextNode(name));
-				label.appendChild(radio);
-				div.classList.add('ui-radio');
-				div.setAttribute('data-filtertext', [typeName, name].join(' '));
-				div.appendChild(label);
-				listView.appendChild(div);
-				textList.push(name);
+		listView.textContent = null;
+		new ActorEntity().list(data).then(doc => {
+			doc.querySelectorAll('li').forEach(li => {
+				li.querySelector('a').addEventListener('click', () => {
+					this.createScenario(li);
+					$(this.panel).panel('close');
+				});
+				listView.appendChild(li)
 			});
-			enemyType.setAttribute('data-filtertext', textList.join(' '));
+			$(listView).listview('refresh');
 		});
-		this.setupEvent();
-		$(listView).parent().trigger('create');
 	}
 
 	setupEvent() {
-		$('[name="actor"]').click(()=> {
-			let val = $('[name="actor"]:checked').val();
-			let landform = this.field.landform;
-
-			landform.selection = val;
+		this.actorType.addEventListener('change', () => this.loadActors());
+		$(this.actorType).val([3]).selectmenu('refresh')
+		this.loadActors();
+		$(this.panel).panel({
+			close: ()=> {
+				this.stageEditor.scenario = this.scenario;
+			}
 		});
+	}
+
+	createScenario(li) {
+		let op = this.panel.querySelector('[name=actor_op]:checked').value;
+		let seq = li.getAttribute('data-seq');
+		let stage = this.stageEditor.product.stage;
+
+		// console.log('seq:' + seq);
+		this.scenario = Scenario.create({op: op, target: 'E', type: 0, number: seq}, stage);
+		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
 	}
 
 	open() {
 		$(this.panel).panel('open');
 	}
-}
-
-function setupActorList(landform) {
-	let actorList = $('#actorList');
-	let container = actorList.controlgroup('container');
-
-	Enemy.LIST.forEach(function(rec, ix) {
-		let id = 'actor' + ix;
-		let input = $('<input type="radio" name="actor"/>').attr('id', id).val(ix + 1);
-		let label = $('<label></label>').text(rec.name).attr('for', id);
-		let img = $('<img/>').attr('src', 'img/' + rec.img);
-
-		label.css('background-image', 'url("./img/' + rec.img + '")');
-		if (rec.h) {
-			img.attr('width', rec.h);
-			img.attr('height', rec.h);
-		}
-		rec.instance = new rec.type(landform);
-		container.appendChild(input);
-		container.appendChild(label.prepend(img));
-	});
-	actorList.parent().trigger('create');
-	actorList.find('input').click(function() {
-		landform.selection = this.value;
-	});
 }
 
 class EventPanel {
@@ -547,6 +489,7 @@ class EventPanel {
 		let cursorType = chk.getAttribute('data-type');
 		let type = 0;
 		let number = 0;
+		let stage = this.stageEditor.product.stage;
 
 		if (op == 'Apl') {
 			let audioSelector = document.querySelector('#audioSelectorButton .audioSelector');
@@ -555,7 +498,7 @@ class EventPanel {
 			number = audioSelector.getAttribute('data-seq');
 			console.log('type:' + type + '/number:' + number);
 		}
-		return Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number});
+		return Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number}, stage);
 	}
 
 	setupEvent() {

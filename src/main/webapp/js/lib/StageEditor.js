@@ -48,23 +48,26 @@ class StageEditor extends Stage {
 		let v = scenario.v;
 		let h = scenario.h;
 
-		console.log('removeScenario op:' + op + '/v:' + v + ',h:' + h);
-		if (scenario.target == 'E') {
-			h = 0;
-		}
+		console.log('StageEditor#removeScenario:');
+		console.log(scenario);
+		// if (scenario.target == 'E') {
+		// 	h = 0;
+		// }
 		this._eventList = this._eventList.filter(s => s.op != op || s.v != v || s.h != h);
 	}
 
-	addScenario(pos, scenario) {
+	addScenario(pos, rec) {
+		let scenario = Scenario.create(rec, this);
 		let bw = this.map.brickSize;
 		let x = parseInt(pos.x / bw);
 		let y = scenario.target == 'E' ? parseInt(pos.y / bw) : 0;
 
 		scenario.v = x;
 		scenario.h = y;
-		scenario._stage = this;
 		this.removeScenario(scenario);
 		this._eventList.push(scenario);
+		console.log('StageEditor#addScenario:');
+		console.log(scenario);
 	}
 
 	changeRoll(roll) {
@@ -82,6 +85,10 @@ class StageEditor extends Stage {
 		// let y = parseInt(this.cursorY / bw) * bw;
 
 		if (this.cursorType == StageEditor.CURSOR_TYPE.ACTOR) {
+			let y = parseInt(this.pos.y / bw) * bw;
+
+			ctx.fillStyle = 'rgba(120, 60, 255, .5)';
+			ctx.fillRect(x, y, bw, bw);
 			return;
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {

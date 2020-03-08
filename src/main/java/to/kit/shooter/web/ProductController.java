@@ -135,14 +135,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return "detail";
 	}
 
-	@RequestMapping("/listActors")
-	@ResponseBody
-	public List<Actor> listActors(@RequestParam String id) {
-		Product product = this.productService.detail(id);
-
-		return product.getActorList();
-	}
-
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm<Product> save(@RequestBody Product product) {
