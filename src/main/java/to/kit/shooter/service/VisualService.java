@@ -4,31 +4,29 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Visual;
 import to.kit.shooter.entity.VisualView;
+import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.repository.VisualRepository;
 import to.kit.shooter.repository.VisualViewRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class VisualService {
+public class VisualService implements BasicServiceInterface<VisualView> {
 	@Autowired
 	private VisualRepository visualRepository;
 	@Autowired
 	private VisualViewRepository visualViewRepository;
 
-	public List<VisualView> list(String mediasetId, int type) {
-		Sort sort = Sort.by("name");
-		Specification<VisualView> nameSpec = Specification.where((root, query, cb) -> {
-			return cb.like(root.get("mediaset").get("id"), '%' + mediasetId);
-		});
-		Specification<VisualView> spec = Specification.where(nameSpec).and((root, query, cb) -> {
-			return type == -1 ? null : cb.equal(root.get("visualType"), Integer.valueOf(type));
-		});
-		return this.visualViewRepository.findAll(spec, sort);
+	@Override
+	public List<VisualView> list(FilteringForm<VisualView> form) {
+		VisualView criteria = form.getCriteria();
+		String mediasetId = criteria.getMediaset().getId();
+		VisualType type = criteria.getVisualType();
+
+		return this.visualViewRepository.findByMediasetIdAndVisualTypeOrderByName(mediasetId, type);
 	}
 
 	public VisualView detail(String id) {

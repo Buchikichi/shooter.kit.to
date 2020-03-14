@@ -91,7 +91,7 @@ class EditMain {
 				let mapVisual = MapVisual.create({
 					_fieldMap: this.fieldMap,
 					mapId: this.fieldMap.id,
-					visualSeq: parseInt(seq),
+					visualSeq: seq,
 				});
 				let ix = this.fieldMap.mapVisualList.length;
 

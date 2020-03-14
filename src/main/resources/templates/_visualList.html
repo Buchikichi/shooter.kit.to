@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <ul data-role="listview" data-filter="true" data-inset="true">
+    <li th:each="visual:${list}" th:attr="data-id=${visual.id}, data-seq=${visual.visualSeq}">
+      <a href="#imagePanel">
+        <img th:src="'/visual/src/' + ${visual.id}"/>
+        <span th:text="${visual.name}"></span>
+        <p>
+          <span th:text="${visual.visualSeq}"></span>
+        </p>
+        <p class="ui-li-aside">
+          <span th:text="${visual.orientation}"></span>
+        </p>
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

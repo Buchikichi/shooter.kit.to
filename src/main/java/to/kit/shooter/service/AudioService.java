@@ -4,31 +4,29 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Audio;
 import to.kit.shooter.entity.AudioView;
+import to.kit.shooter.entity.type.AudioType;
 import to.kit.shooter.repository.AudioRepository;
 import to.kit.shooter.repository.AudioViewRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class AudioService {
+public class AudioService implements BasicServiceInterface<AudioView> {
 	@Autowired
 	private AudioRepository audioRepository;
 	@Autowired
 	private AudioViewRepository audioViewRepository;
 
-	public List<AudioView> list(String mediasetId, int type) {
-		Sort sort = Sort.by("name");
-		Specification<AudioView> mediasetIdSpec = Specification.where((root, query, cb) -> {
-			return cb.like(root.get("mediaset").get("id"), '%' + mediasetId);
-		});
-		Specification<AudioView> spec = Specification.where(mediasetIdSpec).and((root, query, cb) -> {
-			return type == -1 ? null : cb.equal(root.get("audioType"), Integer.valueOf(type));
-		});
-		return this.audioViewRepository.findAll(spec, sort);
+	@Override
+	public List<AudioView> list(FilteringForm<AudioView> form) {
+		AudioView criteria = form.getCriteria();
+		String mediasetId = criteria.getMediaset().getId();
+		AudioType type = criteria.getAudioType();
+
+		return this.audioViewRepository.findByMediasetIdAndAudioTypeOrderByName(mediasetId, type);
 	}
 
 	public AudioView detail(String id) {

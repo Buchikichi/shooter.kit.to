@@ -1,6 +1,5 @@
 package to.kit.shooter.web;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,15 +21,12 @@ import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.Scores;
 import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * プロダクト.
@@ -59,32 +55,12 @@ public class ProductController implements BasicControllerInterface<Product> {
 	private MediasetService mediasetService;
 
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
-		List<Product> list = this.productService.list();
-		NumberFormat formatter = NumberFormat.getNumberInstance(); 
+	public String list(Model model, @RequestBody FilteringForm<Product> form) {
+		List<Product> list = this.productService.list(form);
 
-		for (Product product : list) {
-			ListItem item = new ListItem();
-			String count = String.valueOf(product.getCount());
-			List<Scores> scoreList = product.getScoreList();
-
-			item.setId(product.getId());
-			item.setName(product.getName());
-			item.setDescription(product.getDescription());
-			item.setCount(count);
-			if (0 < scoreList.size()) {
-				Scores score = scoreList.get(0);
-				String text = formatter.format(Integer.valueOf(score.getScore()));
-
-				item.setAside(text);
-			}
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("productList", list);
+		return "_productList";
 	}
 
 	@RequestMapping("/select")
@@ -118,7 +94,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return map;
 	}
 
-	@RequestMapping("/detail/{id}")
+	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
 		Product product = this.productService.detail(id);
@@ -137,6 +113,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/save")
 	@ResponseBody
+	@Override
 	public ResultForm<Product> save(@RequestBody Product product) {
 		ResultForm<Product> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();

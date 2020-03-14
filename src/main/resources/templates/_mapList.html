@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <ul data-role="listview" data-filter="true" data-inset="true">
+    <li th:each="map:${list}" th:attr="data-id=${map.id}">
+      <a th:href="'/map/edit/' + ${map.id}" target="_blank">
+        <span th:text="${map.name}"></span>
+        <span class="ui-li-count" th:text="${map.brickSize}"></span>
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

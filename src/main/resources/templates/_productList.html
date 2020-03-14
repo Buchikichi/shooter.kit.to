@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <ul>
+    <li th:each="product:${productList}" th:attr="data-id=${product.id}">
+      <a th:href="'/product/play/' + ${product.id}" target="_blank">
+        <img src="img/icon.listview.png"/>
+        <span th:text="${product.name}"></span>
+        <p>
+          <span th:text="${product.description}"></span>
+        </p>
+        <span class="ui-li-count" th:text="${product.count}"></span>
+        <th:block th:if="!${#lists.isEmpty(product.scoreList)}">
+          <p class="ui-li-aside" th:with="score=${product.scoreList.get(0).score}">
+            <span>High score: </span>
+            <span th:text="${#numbers.formatInteger(score, 1, 'COMMA')}"></span>
+          </p>
+        </th:block>
+      </a>
+      <a th:href="'/product/edit/' + ${product.id}" target="_blank"></a>
+    </li>
+  </ul>
+</body>
+</html>

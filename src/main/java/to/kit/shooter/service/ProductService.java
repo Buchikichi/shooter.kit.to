@@ -2,10 +2,8 @@ package to.kit.shooter.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.digest.MurmurHash2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
@@ -17,9 +15,10 @@ import to.kit.shooter.entity.Stage;
 import to.kit.shooter.repository.ActorRepository;
 import to.kit.shooter.repository.ProductRepository;
 import to.kit.shooter.repository.StageRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class ProductService {
+public class ProductService implements BasicServiceInterface<Product> {
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
@@ -27,7 +26,8 @@ public class ProductService {
 	@Autowired
 	private ActorRepository productActorRepository;
 
-	public List<Product> list() {
+	@Override
+	public List<Product> list(FilteringForm<Product> form) {
 		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
 		List<Product> list = this.productRepository.findAll(sort);
 

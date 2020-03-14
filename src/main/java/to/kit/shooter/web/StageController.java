@@ -16,10 +16,8 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Stage;
 import to.kit.shooter.service.StageService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * プロダクト詳細.
@@ -44,20 +42,12 @@ public class StageController implements BasicControllerInterface<Stage> {
 	}
 
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
-		List<Stage> list = this.stageService.list();
+	public String list(Model model, @RequestBody FilteringForm<Stage> form) {
+		List<Stage> list = this.stageService.list(form);
 
-		for (Stage stage : list) {
-			ListItem item = new ListItem();
-
-			item.setId(stage.getId());
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("productList", list);
+		return "_stageList";
 	}
 
 	@RequestMapping("/select")
@@ -67,8 +57,18 @@ public class StageController implements BasicControllerInterface<Stage> {
 		return this.stageService.detail(id);
 	}
 
+	@RequestMapping("/edit/{id}")
+	@Override
+	public String edit(Model model, @PathVariable("id") String id) {
+		Stage stage = this.stageService.detail(id);
+
+		model.addAttribute("stage", stage);
+		return "editStage";
+	}
+
 	@RequestMapping("/save")
 	@ResponseBody
+	@Override
 	public ResultForm<Stage> save(@RequestBody Stage stage) {
 		ResultForm<Stage> result = new ResultForm<>();
 		String customerId = getCustomerId();
@@ -81,14 +81,5 @@ public class StageController implements BasicControllerInterface<Stage> {
 		result.setResult(saved);
 		result.setOk(true);
 		return result;
-	}
-
-	@RequestMapping("/edit/{id}")
-	@Override
-	public String edit(Model model, @PathVariable("id") String id) {
-		Stage stage = this.stageService.detail(id);
-
-		model.addAttribute("stage", stage);
-		return "editStage";
 	}
 }

@@ -12,15 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Customer;
+import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.web.form.AudioSetForm;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * メディアセット.
@@ -45,19 +43,12 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 	}
 
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
+	public String list(Model model, FilteringForm<Mediaset> form) {
+		List<Mediaset> list = this.mediasetService.list("");
 
-		for (Mediaset mediaset : this.mediasetService.list("")) {
-			ListItem item = new ListItem();
-
-			BeanUtils.copyProperties(mediaset, item);
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("list", list);
+		return "_mediasetList";
 	}
 
 	@RequestMapping("/select")

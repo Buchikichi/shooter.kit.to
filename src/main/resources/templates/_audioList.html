@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <ul data-role="listview" data-filter="true" data-inset="true">
+    <li th:each="audio:${list}" th:attr="data-id=${audio.id}, data-seq=${audio.audioSeq}">
+      <a href="#audioPanel">
+        <span th:text="${audio.name}"></span>
+<!--
+        <span th:text="${audio.seq}"></span>
+-->
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

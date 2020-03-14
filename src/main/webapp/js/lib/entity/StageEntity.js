@@ -3,6 +3,6 @@
  */
 class StageEntity extends EntityBase {
 	constructor() {
-		super();
+		super('stage');
 	}
 }

@@ -22,30 +22,24 @@ class AudioSelector {
 	}
 
 	loadList(audioType) {
-		let ul = this.selectorPopup.querySelector('ul');
-		let formData = new FormData();
+		let listView = this.selectorPopup.querySelector('ul');
+		let data = { criteria: { mediaset: { id: this.mediasetId }, audioType: audioType } };
 
-		formData.append('mediasetId', this.mediasetId);
-		formData.append('type', audioType);
-		ul.textContent = 'Loadling...';
-		this.entity.list(formData).then(data => {
-			let list = Array.isArray(data) ? data : data.result;
+		listView.textContent = 'Loadling...';
+		this.entity.list(data).then(doc => {
+			listView.textContent = null;
+			doc.querySelectorAll('li').forEach(li => {
+				let name = li.querySelector('span').textContent;
+				let audioSeq = li.getAttribute('data-seq');
 
-			ul.textContent = null;
-			list.forEach(rec => {
-				let row = new ListviewRow(rec);
-				let li = row.li;
-
-				li.querySelector('a').addEventListener('click', ()=> {
-					let audio = Mediaset.Instance.getAudioById(rec.id);
-					console.log(audio);
-					this.targetButton.textContent = rec.name;
-					this.targetButton.setAttribute('data-seq', audio.audioSeq);
+				li.querySelector('a').addEventListener('click', () => {
+					this.targetButton.textContent = name;
+					this.targetButton.setAttribute('data-seq', audioSeq);
 					$(this.selectorPopup).popup('close');
 				});
-				ul.appendChild(li);
+				listView.appendChild(li)
 			});
-			$(ul).listview('refresh');
+			$(listView).listview('refresh');
 		});
 	}
 }

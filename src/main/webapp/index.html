@@ -33,7 +33,7 @@
       <label for="radio-choice-h-2d">Own</label>
     </fieldset>
 -->
-    <ul id="listView" data-role="listview" data-filter="true">
+    <ul id="listView" data-role="listview" data-filter="true" data-split-icon="edit">
 <!--
       <li><a href="detail.html"><img src="img/icon.listview.png"><span>Apple</span><p>To make a list filterable, simply add the data-filter="true" attribute to the list. The framework will then append a search box above the list and add the behavior to filter out list items that don't contain the current search string as the user types.</p><span class="ui-li-count">30</span></a></li>
       <li><a><img src="img/icon.listview.png"/><span>Banana</span><p>にゃんこ</p><span class="ui-li-count">30</span></a></li>
@@ -49,18 +49,6 @@
     </form>
     <a id="repositoryButton" href="/repository.html" target="_blank" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets ui-state-disabled">Edit repository</a>
     <div class="message"></div>
-  </div>
-  <div id="detailPopup" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <form>
-      <label for="productName">Name:</label>
-      <input id="productName" name="name" type="text" placeholder="Loading..." readonly="readonly"/>
-      <label for="productDescription">Description:</label>
-      <textarea id="productDescription" name="description" placeholder="Loading..." readonly="readonly"></textarea>
-      <div id="updated" class="ui-body ui-body-a ui-corner-all"></div>
-      <ul id="stageView" data-role="listview"></ul>
-    </form>
-    <a id="playButton" href="#" target="_blank" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-power">Play</a>
-    <a id="editButton" href="#" target="_blank" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-edit ui-state-disabled">Edit product</a>
   </div>
   <div id="infoPanel" data-role="panel" data-position="left" data-position-fixed="true">
    <div class="ui-corner-all custom-corners">

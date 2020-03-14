@@ -7,11 +7,8 @@ class AppMain {
 	constructor() {
 		this.selectedId = '';
 		this.product = new ProductEntity();
-		$.mobile.loading('show', {theme: 'b', text: 'Loading...', textVisible: true});
-		this.product.list().then(data => {
-			this.setResult(data.result);
-			$.mobile.loading('hide');
-		});
+		this.loadProducts();
+
 		// Customer
 		this.customer = new Customer();
 		$('#loginForm').submit(()=> {
@@ -30,6 +27,17 @@ class AppMain {
 			return false;
 		});
 		this.checkCustomer();
+	}
+
+	loadProducts() {
+		let listView = document.getElementById('listView');
+
+		$.mobile.loading('show', { theme: 'b', text: 'Loading...', textVisible: true });
+		this.product.list().then(doc => {
+			doc.querySelectorAll('li').forEach(li => listView.appendChild(li));
+			$(listView).listview('refresh');
+			$.mobile.loading('hide');
+		});
 	}
 
 	checkCustomer() {
@@ -51,54 +59,5 @@ class AppMain {
 		let messageArea = document.querySelector('#loginPanel .message');
 
 		messageArea.textContent = msg;
-	}
-
-	setResult(list) {
-		// <li><a><img src="img/icon.listview.png"/><span>プロダクト</span><p>説明</p><span class="ui-li-count">22</span></a></li>
-		let listView = document.getElementById('listView');
-
-		list.forEach(rec => {
-			rec['href'] = '#detailPopup';
-			let listviewRow = new ListviewRow(rec, 'img/icon.listview.png');
-
-			listView.appendChild(listviewRow.li);
-			listviewRow.anchor.addEventListener('click', e => {
-				e.preventDefault();
-				this.clearDetailInfo();
-				this.product.select(rec.id).then(data => {
-					this.fillDetailInfo(data);
-				});
-				this.selectedId = rec.id;
-			});
-		});
-		$(listView).listview('refresh');
-	}
-
-	clearDetailInfo() {
-		let rec = {
-			name: null,
-			description: null,
-			updated: '',
-		};
-		this.fillDetailInfo(rec);
-	}
-
-	fillDetailInfo(rec) {
-		let updated = rec.updated ? new Date(rec.updated).toISOString() : '';
-		let playUri = rec.id ? '/product/play/' + rec.id : '';
-		let playButton = document.getElementById('playButton');
-		let editUri = rec.id ? '/product/detail/' + rec.id : '';
-		let editButton = document.getElementById('editButton');
-
-		document.getElementById('productName').value = rec.name;
-		document.getElementById('productDescription').value = rec.description;
-		document.getElementById('updated').textContent = updated;
-		playButton.setAttribute('href', playUri);
-		editButton.setAttribute('href', editUri);
-		if (rec.id) {
-			playButton.classList.remove('ui-state-disabled');
-		} else {
-			playButton.classList.add('ui-state-disabled');
-		}
 	}
 }

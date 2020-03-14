@@ -7,13 +7,16 @@ import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
 import to.kit.shooter.repository.ActorRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class ActorService {
+public class ActorService implements BasicServiceInterface<Actor> {
 	@Autowired
 	private ActorRepository repository;
 
-	public List<Actor> list(Actor criteria) {
+	@Override
+	public List<Actor> list(FilteringForm<Actor> form) {
+		Actor criteria = form.getCriteria();
 		String productId = criteria.getProduct().getId();
 
 		return this.repository.findByProductIdAndTypeOrderByClassName(productId, criteria.getType());

@@ -6,28 +6,26 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Map;
 import to.kit.shooter.entity.MapVisual;
 import to.kit.shooter.repository.MapRepository;
 import to.kit.shooter.repository.MapVisualRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class MapService {
+public class MapService implements BasicServiceInterface<Map> {
 	@Autowired
 	private MapRepository mapRepository;
 	@Autowired
 	private MapVisualRepository mapVisualRepository;
 
-	public List<Map> list(String mediasetId) {
-		Sort sort = Sort.by("name");
-		Specification<Map> spec = Specification.where((root, query, cb) -> {
-			return cb.equal(root.get("mediasetId"), mediasetId);
-		});
-		return this.mapRepository.findAll(spec, sort);
+	@Override
+	public List<Map> list(FilteringForm<Map> form) {
+		String mediasetId = form.getCriteria().getMediasetId();
+
+		return this.mapRepository.findByMediasetIdOrderByName(mediasetId);
 	}
 
 	public Map detail(String id) {

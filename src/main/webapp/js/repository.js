@@ -118,9 +118,12 @@ console.log('RepositoryManager: saveResource');
 		});
 	}
 
-	select(rec) {
-		$.mobile.loading('show', {textVisible: true});
-		this.entity.select(rec.id).then(data => {
+	select(li) {
+		let id = li.getAttribute('data-id');
+
+		console.log('RepositoryManager#select: ' + id);
+		$.mobile.loading('show', { textVisible: true });
+		this.entity.select(id).then(data => {
 			this.resetPanel(data);
 			$.mobile.loading('hide');
 		});
@@ -178,20 +181,13 @@ console.log('RepositoryManager: saveResource');
 		let param = this.createParameter();
 
 		this.listView.textContent = 'Loadling...';
-		this.entity.list(param).then(data => {
-			let list = Array.isArray(data) ? data : data.result;
-
-			this.listView.textContent = null;
-			list.forEach(rec => {
-				let li = this.createRow(rec);
-				let anchor = li.querySelector('a:last-child');
-
-				anchor.addEventListener('click', ()=> {
-					this.resetPanel(this.select(rec));
-				});
-				this.listView.appendChild(li);
+		this.entity.list(param).then(doc => {
+			listView.textContent = null;
+			doc.querySelectorAll('li').forEach(li => {
+				li.querySelector('a').addEventListener('click', () => this.select(li));
+				listView.appendChild(li)
 			});
-			$(this.listView).listview('refresh');
+			$(listView).listview('refresh');
 		});
 	}
 
@@ -215,6 +211,10 @@ class MapManager extends RepositoryManager {
 		this.form = document.getElementById('stageForm');
 		this.entity = new MapEntity();
 		this.setupPanel();
+	}
+
+	createParameter() {
+		return { criteria: { mediasetId: this.mediasetId } };
 	}
 
 	setupPanel() {
@@ -332,13 +332,18 @@ class ImageManager extends RepositoryManager {
 	constructor() {
 		super();
 		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
-		this.typeSelect.addEventListener('change', ()=> {
-			this.list();
-		});
+		this.typeSelect.addEventListener('change', () => this.list());
 		this.panel = document.getElementById('imagePanel');
 		this.form = document.getElementById('imageForm');
 		this.entity = new VisualEntity();
 		this.setupPanel();
+	}
+
+	createParameter() {
+		let options = this.typeSelect.querySelectorAll('option');
+		let type = options[this.typeSelect.selectedIndex].value;
+
+		return { criteria: { mediaset: { id: this.mediasetId }, visualType: type } };
 	}
 
 	resetPanel(rec = {}) {
@@ -371,6 +376,13 @@ class AudioManager extends RepositoryManager {
 		this.typeSelect = document.querySelector('#audioType [name="audioType"]');
 		this.typeSelect.addEventListener('change', ()=> this.list());
 		this.setupPanel();
+	}
+
+	createParameter() {
+		let options = this.typeSelect.querySelectorAll('option');
+		let type = options[this.typeSelect.selectedIndex].value;
+
+		return { criteria: { mediaset: { id: this.mediasetId }, audioType: type } };
 	}
 
 	resetPanel(rec = {}) {

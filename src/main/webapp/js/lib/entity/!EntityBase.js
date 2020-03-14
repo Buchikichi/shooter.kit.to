@@ -1,19 +1,26 @@
 class EntityBase {
-	constructor() {
-		this.base = this.constructor.name.slice(0, -('Entity'.length)).toLowerCase();
+	constructor(base) {
+		if (base) {
+			this.base = base;
+		} else {
+			this.base = this.constructor.name.slice(0, -('Entity'.length)).toLowerCase();
+		}
 	}
 
 	/**
 	 * 一覧取得.
 	 */
 	list(data = {}) {
-		return AjaxUtils.post('/' + this.base + '/list', data);
-//		return $.ajax({
-//			type: 'post',
-//			url: '/' + this.base + '/list',
-//			dataType: 'json',
-//			data: data,
-//		});
+		return fetch('/' + this.base + '/list', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json;charset=UTF-8'},
+			body: JSON.stringify(data),
+			credentials: 'include',
+		}).then(res => {
+			return res.text();
+		}).then(text => {
+			return new DOMParser().parseFromString(text, 'text/html');
+		});
 	}
 
 	/**

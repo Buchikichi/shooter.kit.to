@@ -75,6 +75,7 @@ class Mediaset {
 	}
 
 	getVisualBySeq(rec) {
+		// console.log('Mediaset#getVisualBySeq:' + rec.visualSeq);
 		let visual = this.visualDic[rec.visualSeq];
 
 		if (visual == null) {

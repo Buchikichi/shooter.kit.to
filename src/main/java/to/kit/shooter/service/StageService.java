@@ -14,15 +14,17 @@ import to.kit.shooter.entity.Scenario;
 import to.kit.shooter.entity.Stage;
 import to.kit.shooter.repository.ScenarioRepository;
 import to.kit.shooter.repository.StageRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class StageService {
+public class StageService implements BasicServiceInterface<Stage> {
 	@Autowired
 	private StageRepository stageRepository;
 	@Autowired
 	private ScenarioRepository scenarioRepository;
 
-	public List<Stage> list() {
+	@Override
+	public List<Stage> list(FilteringForm<Stage> form) {
 		Sort sort = Sort.by(Order.desc("updated"), Order.asc("name"));
 		return this.stageRepository.findAll(sort);
 	}

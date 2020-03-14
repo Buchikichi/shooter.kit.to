@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,10 +23,8 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.AudioService;
 import to.kit.shooter.web.form.AudioForm;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * オーディオ.
@@ -40,28 +39,13 @@ public class AudioController extends BasicMediaController implements BasicContro
 	@Autowired
 	private LoginInfo loginInfo;
 
-	/**
-	 * 一覧取得.
-	 * @param form フォーム
-	 * @return 一覧
-	 */
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
-		List<AudioView> list = this.audioService.list(form.getMediasetId(), form.getType());
+	public String list(Model model, FilteringForm<AudioView> form) {
+		List<AudioView> list = this.audioService.list(form);
 
-		for (AudioView audio : list) {
-			ListItem item = new ListItem();
-
-			item.setId(audio.getId());
-			item.setName(audio.getName());
-			item.setCount(audio.getAudioType().name());
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("list", list);
+		return "_audioList";
 	}
 
 	/**

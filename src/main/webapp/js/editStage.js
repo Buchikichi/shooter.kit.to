@@ -434,7 +434,7 @@ class ActorPanel {
 
 	loadActors() {
 		let listView = this.panel.querySelector('[data-role=listview]');
-		let data = { product: { id: this.stageEditor.product.id }, type: this.actorType.value };
+		let data = { criteria: { product: { id: this.stageEditor.product.id }, type: this.actorType.value } };
 
 		listView.textContent = null;
 		new ActorEntity().list(data).then(doc => {

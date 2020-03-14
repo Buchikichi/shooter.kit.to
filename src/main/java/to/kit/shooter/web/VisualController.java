@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,10 +26,8 @@ import to.kit.shooter.entity.Visual;
 import to.kit.shooter.entity.VisualView;
 import to.kit.shooter.service.VisualService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 import to.kit.shooter.web.form.VisualForm;
 
 /**
@@ -53,28 +52,13 @@ public class VisualController extends BasicMediaController implements BasicContr
 		return customer.getId();
 	}
 
-	/**
-	 * 一覧取得.
-	 * @param form フォーム
-	 * @return 一覧
-	 */
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
+	public String list(Model model, FilteringForm<VisualView> form) {
+		List<VisualView> list = this.visualService.list(form);
 
-		for (VisualView visual : this.visualService.list(form.getMediasetId(), form.getType())) {
-			ListItem item = new ListItem();
-
-			BeanUtils.copyProperties(visual, item);
-			item.setCount(visual.getVisualType().name());
-			item.setAside(visual.getOrientation());
-			item.setDescription(String.valueOf(visual.getVisualSeq()));
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("list", list);
+		return "_visualList";
 	}
 
 	@RequestMapping("/select")

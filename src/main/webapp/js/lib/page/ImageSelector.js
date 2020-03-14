@@ -23,30 +23,26 @@ class ImageSelector {
 	}
 
 	loadList(visualType) {
-		let ul = this.selectorPopup.querySelector('ul');
-		let formData = new FormData();
+		let listView = this.selectorPopup.querySelector('ul');
+		let data = { criteria: { mediaset: { id: this.mediasetId }, visualType: visualType } };
 
-		formData.append('mediasetId', this.mediasetId);
-		formData.append('type', visualType);
-		ul.textContent = 'Loadling...';
-		this.entity.list(formData).then(data => {
-			let list = Array.isArray(data) ? data : data.result;
+		listView.textContent = 'Loadling...';
+		this.entity.list(data).then(doc => {
+			listView.textContent = null;
+			doc.querySelectorAll('li').forEach(li => {
+				let name = li.querySelector('span').textContent;
+				let visualSeq = li.getAttribute('data-seq');
 
-			ul.textContent = null;
-			list.forEach(rec => {
-				let row = new ListviewRow(rec);
-				let li = row.li;
-
-				li.querySelector('a').addEventListener('click', ()=> {
-					let visual = Mediaset.Instance.getVisual(rec.id);
-					console.log(visual);
-					this.targetButton.setAttribute('data-seq', visual.visualSeq);
-					this.targetButton.setAttribute('data-name', rec.name);
+				li.querySelector('a').addEventListener('click', () => {
+					console.log('visualSeq:' + visualSeq);
+					this.targetButton.textContent = name;
+					this.targetButton.setAttribute('data-seq', visualSeq);
+					this.targetButton.setAttribute('data-name', name);
 					$(this.selectorPopup).popup('close');
 				});
-				ul.appendChild(li);
+				listView.appendChild(li)
 			});
-			$(ul).listview('refresh');
+			$(listView).listview('refresh');
 		});
 	}
 }

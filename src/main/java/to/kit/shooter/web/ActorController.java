@@ -16,6 +16,7 @@ import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.ActorService;
 import to.kit.shooter.web.form.ActorForm;
+import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
 
@@ -26,7 +27,7 @@ import to.kit.shooter.web.form.ResultForm;
 @Controller
 @RequestMapping("/actor")
 @SessionAttributes(types = LoginInfo.class)
-public class ActorController {
+public class ActorController implements BasicControllerInterface<Actor> {
 	@Autowired
 	private ActorService service;
 	@Autowired
@@ -39,7 +40,8 @@ public class ActorController {
 	 * @return 一覧
 	 */
 	@RequestMapping("/list")
-	public String list(Model model, @RequestBody Actor criteria) {
+	@Override
+	public String list(Model model, @RequestBody FilteringForm<Actor> criteria) {
 		List<Actor> actorList = this.service.list(criteria);
 
 		model.addAttribute("actorList", actorList);
@@ -48,6 +50,7 @@ public class ActorController {
 
 	@RequestMapping("/select/{id}")
 	@ResponseBody
+	@Override
 	public Actor select(@PathVariable("id") String id) {
 		return this.service.detail(id);
 	}

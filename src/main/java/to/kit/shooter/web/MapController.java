@@ -16,10 +16,8 @@ import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Map;
 import to.kit.shooter.service.MapService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.ListItem;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
-import to.kit.shooter.web.form.ResultListForm;
 
 /**
  * マップ.
@@ -44,23 +42,12 @@ public class MapController implements BasicControllerInterface<Map> {
 	}
 
 	@RequestMapping("/list")
-	@ResponseBody
 	@Override
-	public ResultListForm list(FilteringForm form) {
-		ResultListForm result = new ResultListForm();
-		List<ListItem> resultList = result.getResult();
-		List<Map> list = this.mapService.list(form.getMediasetId());
+	public String list(Model model, @RequestBody FilteringForm<Map> form) {
+		List<Map> list = this.mapService.list(form);
 
-		for (Map map : list) {
-			ListItem item = new ListItem();
-
-			item.setId(map.getId());
-			item.setName(map.getName());
-			item.setDescription(map.getDescription());
-			item.setCount(String.valueOf(map.getMapVisualList().size()));
-			resultList.add(item);
-		}
-		return result;
+		model.addAttribute("list", list);
+		return "_mapList";
 	}
 
 	@RequestMapping("/select")
@@ -70,6 +57,15 @@ public class MapController implements BasicControllerInterface<Map> {
 		return this.mapService.detail(id);
 	}
 
+	@RequestMapping("/edit/{id}")
+	@Override
+	public String edit(Model model, @PathVariable("id") String id) {
+		Map map = this.mapService.detail(id);
+
+		model.addAttribute("map", map);
+		return "editMap";
+	}
+
 	/**
 	 * 保存.
 	 * @param map マップ
@@ -77,6 +73,7 @@ public class MapController implements BasicControllerInterface<Map> {
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
+	@Override
 	public ResultForm<Map> save(@RequestBody Map map) {
 		ResultForm<Map> result = new ResultForm<>();
 		String customerId = getCustomerId();
@@ -89,14 +86,5 @@ public class MapController implements BasicControllerInterface<Map> {
 		result.setResult(saved);
 		result.setOk(true);
 		return result;
-	}
-
-	@RequestMapping("/edit/{id}")
-	@Override
-	public String edit(Model model, @PathVariable("id") String id) {
-		Map map = this.mapService.detail(id);
-
-		model.addAttribute("map", map);
-		return "editMap";
 	}
 }

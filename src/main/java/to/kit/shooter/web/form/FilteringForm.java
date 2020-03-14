@@ -4,12 +4,12 @@ import lombok.Data;
 
 /**
  * Filtering form.
+ * @param <T> criteria type
  * @author H.Sasai
  */
 @Data
-public final class FilteringForm {
-	private String mediasetId;
+public final class FilteringForm<T> {
+	T criteria;
 	private String owner;
 	private int access;
-	private int type;
 }
