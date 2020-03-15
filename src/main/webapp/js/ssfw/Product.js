@@ -202,13 +202,11 @@ class Product extends Matter {
 	}
 
 	registerScore() {
-		let formData = new FormData();
+		let data = { product: { id: this.id }, score: this.score, name: '' };
 
-		formData.append('productId', this.id);
-		formData.append('score', this.score);
-		formData.append('name', '');
-		new ScoreEntity().register(formData).then(rec => {
-			console.log('registerScore:' + rec.ok);
+		new ScoreEntity().save(data).then(rec => {
+			// console.log('Product#registerScore:');
+			// console.log(rec);
 		});
 	}
 

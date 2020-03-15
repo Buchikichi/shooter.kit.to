@@ -329,23 +329,6 @@ console.log('EditStage#setupEvents');
 			$(messagePopup).popup('open', {});
 		});
 	}
-
-	saveDetailMap() {
-		let formData = new FormData();
-		let landform = this.field.landform;
-		let prefix = 'scenarioList[';
-		let ix = 0;
-
-		formData.append('id', this.stageId);
-		formData.append('map.id', this.stage.map.id);
-		landform.scenarioList.forEach(scenario => {
-			Object.keys(scenario).forEach(key => {
-				formData.append(prefix + ix + '].' + key, scenario[key]);
-			});
-			ix++;
-		});
-		return new ProductEntity().saveMap(formData);
-	}
 }
 
 class AttrPanel {

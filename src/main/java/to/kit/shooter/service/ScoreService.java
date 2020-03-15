@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.Scores;
 import to.kit.shooter.repository.ScoreRepository;
 
@@ -17,16 +16,16 @@ public class ScoreService {
 
 	/**
 	 * スコア登録.
-	 * @param productId プロダクトID
-	 * @param score スコア
+	 * @param entity スコア
 	 * @return ランク
 	 */
-	public int register(String productId, int score) {
+	public int save(Scores entity) {
+		String productId = entity.getProduct().getId();
 		List<Scores> list = this.scoreRepository.findAllByProductIdOrderByScoreDesc(productId);
 		int rank = 1;
 
 		for (Scores rec : list) {
-			if (rec.getScore() < score) {
+			if (rec.getScore() < entity.getScore()) {
 				break;
 			}
 			rank++;
@@ -35,13 +34,7 @@ public class ScoreService {
 			// 圏外
 			return 0;
 		}
-		Product product = new Product();
-		Scores newScore = new Scores();
-
-		product.setId(productId);
-		newScore.setProduct(product);
-		newScore.setScore(score);
-		this.scoreRepository.save(newScore);
+		this.scoreRepository.save(entity);
 		for (int ix = MAX_RANK; ix <= list.size(); ix++) {
 			Scores rec = list.get(ix - 1);
 
