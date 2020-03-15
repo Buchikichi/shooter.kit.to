@@ -42,14 +42,16 @@
         </li>
       </ul>
     </div>
-    <div data-role="collapsible" th:with="list=${T(to.kit.shooter.entity.type.VisualType).List}">
+    <div data-role="collapsible" th:with="typeList=${T(to.kit.shooter.entity.type.VisualType).List}">
       <h4 th:text="#{actor}">Actor</h4>
       <div data-role="collapsible" data-inset="false" data-mini="true"
-          th:each="e:${list}">
-        <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(typeMap.get(e))}">0</span></h4>
-        <ul data-role="listview" data-split-icon="bars" class="actorList" th:id="${e+'View'}">
-          <li th:each="actor:${typeMap.get(e)}">
-            <a th:with="actorVisual=${actor.actorVisualList}" href="#ProductActorPanel"
+          th:each="actorType:${typeList}" th:with="actorList=${typeMap.get(actorType)}">
+        <h4>
+          <span th:text="${actorType}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(actorList)}">0</span>
+        </h4>
+        <ul data-role="listview" data-split-icon="bars" class="actorList" th:id="${actorType+'View'}">
+          <li th:each="actor:${actorList}">
+            <a th:with="actorVisual=${actor.actorVisualList}" th:href="'/actor/edit/' + ${actor.id}" target="_blank"
                 th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
               <img src="/img/icon.listview.png"/>
               <span th:text="${actor.className}"></span>

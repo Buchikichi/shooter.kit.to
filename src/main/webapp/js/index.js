@@ -47,7 +47,7 @@ class AppMain {
 				let editButton = document.getElementById('editButton');
 
 				repositoryButton.classList.remove('ui-state-disabled');
-				editButton.classList.remove('ui-state-disabled');
+				// editButton.classList.remove('ui-state-disabled');
 				$('#loginPanel [name=passwd]').hide();
 				$('#loginPanel button').hide();
 //				$('#loginForm').hide();

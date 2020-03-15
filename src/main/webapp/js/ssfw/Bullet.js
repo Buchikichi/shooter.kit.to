@@ -10,7 +10,6 @@ class Bullet extends Actor {
 		this.anim = new Animator('bullet');
 		this.activityAreaType = Actor.ActivityAreaType.EJECT;
 		this.collidingWallType = Actor.CollidingWallType.EJECT;
-		this.recalculation();
 	}
 
 	move(target) {

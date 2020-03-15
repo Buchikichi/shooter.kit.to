@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title th:text="${actor.className}"></title>
+<link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="/js/ssfw-min.js"></script>
+<script type="text/javascript" src="/js/editActor-min.js"></script>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+#view {
+	position: relative;
+	overflow: auto;
+	z-index: 0;
+	transform-origin: 0px 0px;
+	color: white;
+	background-color: black;
+	/*border: 1px blue dotted;*/
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+</style>
+</head>
+
+<body>
+  <div data-role="page">
+    <div id="view">
+      <canvas id="canvas"></canvas>
+      <div id="loading"></div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+      <div id="panel">
+        <fieldset data-role="controlgroup" data-type="horizontal">
+          <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
+          <a href="#imagePanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Images</a>
+          <a href="#audioPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-audio">Audios</a>
+          <button disabled="disabled" data-theme="b">Scale</button>
+          <label>1<input type="radio" name="scale" value="1"/></label>
+          <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
+          <label>3<input type="radio" name="scale" value="3"/></label>
+          <label>4<input type="radio" name="scale" value="4"/></label>
+          <button id="saveButton" type="button" data-icon="check" class="ui-btn ui-btn-b">Save</button>
+        </fieldset>
+        <input type="hidden" th:field="${actor.id}"/>
+        <input type="hidden" name="mediasetId" th:value="${actor.product.mediaset.id}"/>
+      </div>
+    </div>
+    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
+      <input type="text" th:field="${actor.className}"/>
+      <fieldset class="ui-grid-a">
+        <div class="ui-block-a">
+          <label>Width:<input type="number" required="required" th:field="${actor.width}"/></label>
+        </div>
+        <div class="ui-block-b">
+          <label>Height:<input type="number" required="required" th:field="${actor.height}"/></label>
+        </div>
+      </fieldset>
+    </div>
+    <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
+      <input type="text" th:field="${actor.className}" readonly/>
+      <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
+        <li th:each="actorVisual:${actor.actorVisualList}">
+          <a href="#">
+<!--
+            <img src="/img/icon.listview.png"/>
+-->
+            <span th:text="${actorVisual.name}"></span>
+            <span class="ui-li-count" th:text="${actorVisual.visualSeq}"></span>
+            <p th:text="${actorVisual.description}"></p>
+          </a>
+          <a href="#" class="sortable"></a>
+        </li>
+      </ul>
+      <button class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus imageSelector">Add image</button>
+    </div>
+<!--
+    <div id="mapVisualPopup" data-role="popup" data-theme="a" data-overlay-theme="b" class="ui-corner-all ui-content">
+      <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+      <div>
+        <h3>Visual</h3>
+        <label>repeat:
+          <input type="text" name="repeat"/>
+        </label>
+        <label>radian:
+          <input type="text" name="radian"/>
+        </label>
+        <label>speed:
+          <input type="text" name="speed"/>
+        </label>
+        <label>blink:
+          <input type="text" name="blink"/>
+        </label>
+      </div>
+    </div>
+    <div id="brickPanel" data-role="panel" data-position="left" data-display="overlay">
+      <label>Brick size:
+      <input id="brickSize" type="range" th:value="${actor.brickSize}" min="2" max="16" step="2"/>
+      </label>
+      <fieldset data-role="controlgroup" data-mini="true">
+        <button class="ui-btn ui-btn-b" disabled="disabled" th:text="#{brick.type}">Brick</button>
+        <label>Brick<input type="radio" name="brick" value="255" checked="checked"/></label>
+        <label>Plate<input type="radio" name="brick" value="254"/></label>
+        <label>Rebirth<input type="radio" name="brick" value="253"/></label>
+      </fieldset>
+      <label>Rebirth:
+        <input type="number" name="rebirth" th:value="${actor.rebirth}" class="numeric"/>
+      </label>
+      <ul data-role="listview" data-inset="true">
+        <li class="ui-field-contain">
+          <button id="generateButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid">Generate brick</button>
+        </li>
+        <li class="ui-field-contain">
+          <button id="clearButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-recycle">Clear all</button>
+        </li>
+      </ul>
+    </div>
+-->
+  <div th:replace="_imageSelector"></div>
+    <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
+      <div data-role="controlgroup" data-filter="true"></div>
+    </div>
+    <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
+      <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+      <p></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,11 +3,14 @@ package to.kit.shooter.service;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Visual;
 import to.kit.shooter.entity.VisualView;
+import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.repository.VisualRepository;
 import to.kit.shooter.repository.VisualViewRepository;
@@ -42,15 +45,14 @@ public class VisualService implements BasicServiceInterface<VisualView> {
 		return this.visualRepository.findByName(name);
 	}
 
+	@Transactional
 	public Visual save(Visual entity) {
 		String id = entity.getId();
 		Visual prev = null;
 
-//		if (entity.getVisualSeq() == 0) {
-//			String text = UUID.randomUUID().toString();
-//
-//			entity.setVisualSeq(MurmurHash2.hash64(text));
-//		}
+		if (entity.getVisualSeq().longValue() == 0) {
+			entity.setVisualSeq(new SeqType());
+		}
 		if (id != null && !id.isEmpty()) {
 			prev = this.visualRepository.findById(id).get();
 			if (prev == null) {

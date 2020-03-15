@@ -79,14 +79,16 @@ class Mediaset {
 		let visual = this.visualDic[rec.visualSeq];
 
 		if (visual == null) {
-			console.log('Mediaset#getVisualBySeq');
-			console.log(rec);
-
 			let key12 = rec.visualSeq.substr(0, 12);
 			let key = Object.keys(this.visualDic).find(key => key.substr(0, 12) == key12);
+
+			// console.log('Mediaset#getVisualBySeq:' + key12);
+			// console.log(rec);
 			visual = this.visualDic[key];
-			rec.visualSeq = visual.visualSeq;
-			console.log(visual);
+			if (visual) {
+				rec.visualSeq = visual.visualSeq;
+				// console.log(visual);
+			}
 		}
 		return visual;
 	}

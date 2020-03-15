@@ -55,6 +55,15 @@ public class ActorController implements BasicControllerInterface<Actor> {
 		return this.service.select(id);
 	}
 
+	@RequestMapping("/edit/{id}")
+	@Override
+	public String edit(Model model, @PathVariable("id") String id) {
+		Actor actor = this.service.select(id);
+
+		model.addAttribute("actor", actor);
+		return "editActor";
+	}
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ResultForm<Actor> save(ActorForm form) {

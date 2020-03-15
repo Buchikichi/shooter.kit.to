@@ -10,16 +10,6 @@ class Ship extends Actor {
 		this.reset();
 	}
 
-	recalculation() {
-		let product = Product.Instance;
-
-		super.recalculation();
-		if (product) {
-			this.right = product.width - this.width * 2;
-			this.bottom = product.height - this.hH;
-		}
-	}
-
 	reset() {
 		this.speed = Ship.MIN_SPEED;
 		this.triggered = false;

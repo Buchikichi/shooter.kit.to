@@ -43,9 +43,6 @@ class CascadeChild extends Chain {
 		this.radian = Math.SQ * .9;
 		this.radius = Cascade.RADIUS;
 		this.step = 0;
-		if (Product.Instance) {
-			this.maxX = Product.Instance.width + 100;
-		}
 	}
 
 	addRadian(rad) {

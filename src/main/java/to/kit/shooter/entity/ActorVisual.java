@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -43,6 +44,6 @@ public class ActorVisual {
 	private Date updated;
 
 	@ManyToOne
-	@JsonIgnore
+	@JsonBackReference
 	private Actor actor;
 }

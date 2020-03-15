@@ -1,6 +1,9 @@
 package to.kit.shooter.entity.type;
 
 import java.math.BigInteger;
+import java.util.UUID;
+
+import org.apache.commons.codec.digest.MurmurHash2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -42,5 +45,9 @@ public final class SeqType extends Number {
 	@JsonCreator
 	public SeqType(String source) {
 		this.value = new BigInteger(source, 16).longValue();
+	}
+
+	public SeqType() {
+		this.value = MurmurHash2.hash64(UUID.randomUUID().toString());
 	}
 }

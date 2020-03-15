@@ -43,12 +43,10 @@ class Actor extends Matter {
 		this.score = 0;
 		this.walled = false;
 		this.isInverse = false;
-		this.recalculation();
 //		this.img = new Image();
 //		this.img.addEventListener('load', ()=> {
 //			this.width = this.img.width;
 //			this.height = this.img.height;
-//			this.recalculation();
 //		});
 		this.fillStyle = null;
 		this.sfx = 'sfx-explosion';
@@ -71,17 +69,6 @@ class Actor extends Matter {
 			height = Math.max(height, anim.height);
 		});
 		this.setRect(width, height);
-		this.recalculation();
-	}
-
-	recalculation() {
-		let product = Product.Instance;
-		let margin = this.hasBounds ? 0 : product.width;
-
-		this.minX = -this.width - margin;
-		this.minY = -this.height - margin;
-		this.maxX = product.width + this.width + margin;
-		this.maxY = product.height + this.height + margin;
 	}
 
 	checkInverse() {
@@ -393,6 +380,7 @@ class Actor extends Matter {
 		// console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
+		this.actorVisualList = this.actorVisualList.map(v => ActorVisual.create(v, this));
 		return this;
 	}
 
