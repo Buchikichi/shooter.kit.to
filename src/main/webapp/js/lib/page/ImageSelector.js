@@ -35,7 +35,7 @@ class ImageSelector {
 
 				li.querySelector('a').addEventListener('click', () => {
 					console.log('visualSeq:' + visualSeq);
-					this.targetButton.textContent = name;
+					// this.targetButton.textContent = name;
 					this.targetButton.setAttribute('data-seq', visualSeq);
 					this.targetButton.setAttribute('data-name', name);
 					$(this.selectorPopup).popup('close');

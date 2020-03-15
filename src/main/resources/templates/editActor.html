@@ -51,6 +51,7 @@
           <button id="saveButton" type="button" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
         <input type="hidden" th:field="${actor.id}"/>
+        <input type="hidden" name="productId" th:value="${actor.product.id}"/>
         <input type="hidden" name="mediasetId" th:value="${actor.product.mediaset.id}"/>
       </div>
     </div>
@@ -68,14 +69,14 @@
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
       <input type="text" th:field="${actor.className}" readonly/>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
-        <li th:each="actorVisual:${actor.actorVisualList}">
+        <li th:each="actorVisual:${actor.actorVisualList}" th:attr="data-index=${actorVisual.seq}" class="sortable-item">
           <a href="#">
 <!--
             <img src="/img/icon.listview.png"/>
 -->
             <span th:text="${actorVisual.name}"></span>
-            <span class="ui-li-count" th:text="${actorVisual.visualSeq}"></span>
-            <p th:text="${actorVisual.description}"></p>
+            <span class="ui-li-count" th:text="${actorVisual.seq}"></span>
+            <p th:text="${actorVisual.visualSeq}"></p>
           </a>
           <a href="#" class="sortable"></a>
         </li>

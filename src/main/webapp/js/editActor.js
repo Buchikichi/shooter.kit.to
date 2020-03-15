@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', ()=> new ActorEditorMain());
 class ActorEditorMain extends Matter {
 	constructor() {
 		super();
+		let productId = document.querySelector('[name=productId]').value;
 		let actorId = document.querySelector('[name=id]').value;
 		let loading = document.getElementById('loading');
 		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
@@ -18,6 +19,7 @@ class ActorEditorMain extends Matter {
 			return ActorEditor.create(actorId);
 		}).then(actor => {
 			this.actor = actor;
+			this.actor.product = { id: productId };
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});
@@ -59,22 +61,27 @@ class ActorEditorMain extends Matter {
 		// this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
 		// $('[name="color"]').click(()=> this.changeColor());
 		$('[name="scale"]').click(()=> this.changeScale());
-		// document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
-		// this.setupImagePanel();
+		document.getElementById('saveButton').addEventListener('click', ()=> this.saveActor());
+		this.setupAttrPanel();
+		this.setupImagePanel();
 		// this.setupBrickPanel();
 		// this.setupPointingDevice();
 		new ImageSelector(this.mediasetId);
 	}
 
+	setupAttrPanel() {
+		let className = imagePanel.querySelector('[name=className]');
+
+		className.addEventListener('change', () => this.actor.className = className.value);
+	}
+
 	setupImagePanel() {
 		let imagePanel = document.getElementById('imagePanel');
-		let mapName = imagePanel.querySelector('[name=name]');
 		let ul = imagePanel.querySelector('ul');
 		let selectorPopup = document.getElementById('imageSelector');
 		let addImageButton = imagePanel.querySelector('.imageSelector');
 
-		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
-		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => this.addImage(ul, mapVisual, ix));
+		// this.fieldMap.mapVisualList.forEach((mapVisual, ix) => this.addImage(ul, mapVisual, ix));
 		$(selectorPopup).popup({
 			afterclose: ()=> {
 				let seq = addImageButton.getAttribute('data-seq');
@@ -82,15 +89,16 @@ class ActorEditorMain extends Matter {
 				if (!seq) {
 					return;
 				}
-				let mapVisual = MapVisual.create({
-					_fieldMap: this.fieldMap,
-					mapId: this.fieldMap.id,
+				let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: seq });
+console.log(visual);
+				let actorVisual = ActorVisual.create({
 					visualSeq: seq,
-				});
-				let ix = this.fieldMap.mapVisualList.length;
+					name: visual.name,
+				}, this.actor);
+				let ix = this.actor.actorVisualList.length;
 
-				this.addImage(ul, mapVisual, ix);
-				this.fieldMap.mapVisualList.push(mapVisual);
+				this.addImage(ul, actorVisual, ix);
+				this.actor.actorVisualList.push(actorVisual);
 				$(ul).listview('refresh');
 			}
 		});
@@ -101,87 +109,47 @@ class ActorEditorMain extends Matter {
 			items: '> li.sortable-item',
 			update: (ev, ui) => {
 				// console.log('sortable#update');
-				this.sortMapVisual(ul);
+				this.sortListView(ul);
 				$(ul).listview('refresh');
 			}
 		});
 	}
 
-	addImage(ul, mapVisual, ix) {
+	addImage(ul, actorVisual, ix) {
 		// console.log('EditMain#addImage:');
 		// console.log(mapVisual);
 		let li = document.createElement('li');
 		let anchor = document.createElement('a');
 		let span = document.createElement('span');
 
-		span.textContent = mapVisual.imageName;
+		span.textContent = actorVisual.name;
 		anchor.append(span);
-		anchor.addEventListener('click', ()=> this.openMapVisualPopup(mapVisual));
+		anchor.addEventListener('click', () => this.openMapVisualPopup(actorVisual));
 		li.append(anchor);
-		if (mapVisual.isMain) {
-			let mark = document.createElement('span');
+		let deleteButton = document.createElement('a');
 
-			mark.textContent = '*';
-			mark.classList.add('ui-li-count');
-			anchor.append(mark);
-		} else {
-			let deleteButton = document.createElement('a');
-
-			deleteButton.addEventListener('click', ()=> {
-				console.log('delete');
-			});
-			li.append(deleteButton);
-		}
+		deleteButton.addEventListener('click', () => {
+			console.log('delete');
+		});
+		li.append(deleteButton);
 		li.setAttribute('data-index', ix);
-		li.classList.add('sortable-item', 'mapVisual');
-		if (mapVisual.seq <= 0) {
-			let fg = ul.querySelector('.sortable-item.ui-state-disabled');
-
-			ul.insertBefore(li, fg)
-		} else {
-			ul.append(li);
-		}
+		li.classList.add('sortable-item');
+		ul.append(li);
 	}
 
-	sortMapVisual(ul) {
-		let list = [];
-		let lis = ul.querySelectorAll('.mapVisual');
-		let fgs = ul.querySelectorAll('li.fg ~ *').length;
-		let start = fgs - lis.length + 1;
+	sortListView(ul) {
+		let lis = ul.querySelectorAll('.sortable-item');
 
 		// console.log('start:' + start);
-		lis.forEach((li, seq) => {
+		this.actor.actorVisualList = Array.prototype.map.call(lis, (li, seq) => {
 			let ix = li.getAttribute('data-index');
-			let mapVisual = this.fieldMap.mapVisualList[ix];
+			let actorVisual = this.actor.actorVisualList[ix];
+			let count = li.querySelector('.ui-li-count');
 
-			mapVisual.seq = start + seq;
-			mapVisual.z = mapVisual.seq * 10000 - 1;
-			if (mapVisual.isMain) {
-				this.fieldMap.mainSeq = mapVisual.seq;
-			}
-			// console.log('seq:' + mapVisual.seq + '/z:' + mapVisual.z);
-			list.push(mapVisual);
-		});
-		this.fieldMap.mapVisualList = list;
-	}
-
-	setupBrickPanel() {
-		let brickSize = document.getElementById('brickSize');
-
-		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
-		// generateButton
-		document.getElementById('generateButton').addEventListener('click', ()=> {
-			if (!confirm('Sure?')) {
-				return;
-			}
-			this.fieldMap.generateBrick(this.ctx);
-		});
-		// generateButton
-		document.getElementById('clearButton').addEventListener('click', ()=> {
-			if (!confirm('Sure?')) {
-				return;
-			}
-			this.fieldMap.clear();
+			li.setAttribute('data-index', seq);
+			actorVisual.seq = seq;
+			count.textContent = seq;
+			return actorVisual;
 		});
 	}
 
@@ -238,15 +206,15 @@ class ActorEditorMain extends Matter {
 		canvas.addEventListener('mouseleave', ()=> leave());
 	}
 
-	saveMap() {
+	saveActor() {
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
-		this.fieldMap.save().then(data => {
+		this.actor.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
-				content.textContent = 'Stage saved.';
+				content.textContent = 'Actor saved.';
 			} else {
 				content.textContent = 'Save failed.';
 			}

@@ -2,6 +2,8 @@ package to.kit.shooter.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,8 @@ public class ActorService implements BasicServiceInterface<Actor> {
 		return this.repository.findById(id).get();
 	}
 
+	@Transactional
 	public Actor save(Actor actor) {
-		return actor;
+		return this.repository.saveAndFlush(actor);
 	}
 }

@@ -18,7 +18,14 @@ class ActorEditor extends Actor {
         ctx.restore();
     }
 
-	static create(obj) {
+    save() {
+        // console.log('ActorEditor#save');
+        // console.log(this);
+        this.actorVisualList.forEach(v => v.actor = { id: this.id });
+        return new ActorEntity().save(this);
+    }
+
+    static create(obj) {
 		if ('string' == typeof obj) {
 			return new ActorEntity().select(obj).then(actor => {
 				return ActorEditor.create(actor);

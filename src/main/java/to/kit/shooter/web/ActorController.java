@@ -2,7 +2,6 @@ package to.kit.shooter.web;
 
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.ActorService;
-import to.kit.shooter.web.form.ActorForm;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
@@ -66,23 +64,18 @@ public class ActorController implements BasicControllerInterface<Actor> {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Actor> save(ActorForm form) {
+	@Override
+	public ResultForm<Actor> save(@RequestBody Actor actor) {
 		ResultForm<Actor> result = new ResultForm<>();
 		Customer customer = this.loginInfo.getCustomer();
 
 		if (customer == null) {
 			return result;
 		}
-		String loginId = customer.getId();
+		Actor saved = this.service.save(actor);
 
-		if (loginId != null && !loginId.isEmpty()) {
-			Actor actor = new Actor();
-			BeanUtils.copyProperties(form, actor);
-			Actor saved = this.service.save(actor);
-
-			result.setResult(saved);
-			result.setOk(true);
-		}
+		result.setResult(saved);
+		result.setOk(true);
 		return result;
 	}
 }
