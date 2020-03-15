@@ -37,10 +37,9 @@ public class ProductService implements BasicServiceInterface<Product> {
 		return list;
 	}
 
-	public Product detail(String id) {
-		Product product = this.productRepository.findById(id).get();
-
-		return product;
+	@Override
+	public Product select(String id) {
+		return this.productRepository.findById(id).get();
 	}
 
 	public void deleteUnusedStage(Product product) {

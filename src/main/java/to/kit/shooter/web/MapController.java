@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -50,17 +49,17 @@ public class MapController implements BasicControllerInterface<Map> {
 		return "_mapList";
 	}
 
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public Map select(@RequestParam String id) {
-		return this.mapService.detail(id);
+	public Map select(@PathVariable("id") String id) {
+		return this.mapService.select(id);
 	}
 
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		Map map = this.mapService.detail(id);
+		Map map = this.mapService.select(id);
 
 		model.addAttribute("map", map);
 		return "editMap";

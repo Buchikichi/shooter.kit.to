@@ -29,7 +29,8 @@ public class VisualService implements BasicServiceInterface<VisualView> {
 		return this.visualViewRepository.findByMediasetIdAndVisualTypeOrderByName(mediasetId, type);
 	}
 
-	public VisualView detail(String id) {
+	@Override
+	public VisualView select(String id) {
 		return this.visualViewRepository.findById(id).get();
 	}
 

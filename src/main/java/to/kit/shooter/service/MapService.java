@@ -28,7 +28,8 @@ public class MapService implements BasicServiceInterface<Map> {
 		return this.mapRepository.findByMediasetIdOrderByName(mediasetId);
 	}
 
-	public Map detail(String id) {
+	@Override
+	public Map select(String id) {
 		return this.mapRepository.findById(id).get();
 	}
 

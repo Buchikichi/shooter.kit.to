@@ -29,7 +29,8 @@ public class StageService implements BasicServiceInterface<Stage> {
 		return this.stageRepository.findAll(sort);
 	}
 
-	public Stage detail(String id) {
+	@Override
+	public Stage select(String id) {
 		return this.stageRepository.findById(id).get();
 	}
 

@@ -22,7 +22,8 @@ public class ActorService implements BasicServiceInterface<Actor> {
 		return this.repository.findByProductIdAndTypeOrderByClassName(productId, criteria.getType());
 	}
 
-	public Actor detail(String id) {
+	@Override
+	public Actor select(String id) {
 		return this.repository.findById(id).get();
 	}
 

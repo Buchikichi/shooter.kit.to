@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,11 +60,11 @@ public class VisualController extends BasicMediaController implements BasicContr
 		return "_visualList";
 	}
 
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public VisualView select(@RequestParam String id) {
-		return this.visualService.detail(id);
+	public VisualView select(@PathVariable("id") String id) {
+		return this.visualService.select(id);
 	}
 
 	private ResponseEntity<Resource> createResponseEntity(Visual visual) {

@@ -7,62 +7,55 @@ class EntityBase {
 		}
 	}
 
-	/**
-	 * 一覧取得.
-	 */
-	list(data = {}) {
-		return fetch('/' + this.base + '/list', {
+	fetch(path, body = '{}') {
+		return fetch('/' + this.base + path, {
 			method: 'POST',
-			headers: {'Content-Type': 'application/json;charset=UTF-8'},
-			body: JSON.stringify(data),
+			headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+			body: body,
 			credentials: 'include',
-		}).then(res => {
+		});
+	}
+
+	list(data = {}) {
+		return this.fetch('/list', JSON.stringify(data)).then(res => {
 			return res.text();
 		}).then(text => {
 			return new DOMParser().parseFromString(text, 'text/html');
 		});
 	}
 
-	/**
-	 * レコード取得.
-	 */
 	select(id) {
-		let formData = new FormData();
-
-		formData.append('id', id);
-		return AjaxUtils.post('/' + this.base + '/select', formData);
-	}
-
-	save(data) {
-		let appears = [];
-
-		return fetch('/' + this.base + '/save', {
-			method: 'POST',
-			headers: {'Content-Type': 'application/json;charset=UTF-8'},
-			body: JSON.stringify(data, (key, value) => {
-				if (key.startsWith('_')) {
-					return;
-				}
-				if (value != null && typeof value == 'object') {
-					if (0 <= appears.indexOf(value)) {
-//console.log('appears:' + key);
-//console.log(value);
-						return;
-					}
-					appears.push(value);
-				}
-				return value;
-			}),
-			credentials: 'include',
-		}).then(res => {
+		return this.fetch('/select/'+ id).then(res => {
 			return res.json();
 		});
 	}
 
-	saveResource(data) {
+	save(data) {
+		let appears = [];
+		let body = JSON.stringify(data, (key, value) => {
+			if (key.startsWith('_')) {
+				return;
+			}
+			if (value != null && typeof value == 'object') {
+				if (0 <= appears.indexOf(value)) {
+					//console.log('appears:' + key);
+					//console.log(value);
+					return;
+				}
+				appears.push(value);
+			}
+			return value;
+		});
+
+		return this.fetch('/save', body).then(res => {
+			return res.json();
+		});
+	}
+
+	saveResource(formData) {
 		return fetch('/' + this.base + '/save', {
 			method: 'post',
-			body: data,
+			body: formData,
 			credentials: 'include',
 		}).then(res => {
 			return res.json();

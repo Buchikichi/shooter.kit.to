@@ -63,20 +63,11 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return "_productList";
 	}
 
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public Product select(@RequestParam String id) {
-		Product product = this.productService.detail(id);
-
-		return product;
-	}
-	@RequestMapping("/json/{id}")
-	@ResponseBody
-	public Product json(@PathVariable("id") String id) {
-		Product product = this.productService.detail(id);
-
-		return product;
+	public Product select(@PathVariable("id") String id) {
+		return this.productService.select(id);
 	}
 
 	private Map<VisualType, List<Actor>> makeTypeMap(List<Actor> actorList) {
@@ -97,13 +88,13 @@ public class ProductController implements BasicControllerInterface<Product> {
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		Product product = this.productService.detail(id);
+		Product product = this.productService.select(id);
 
 		if (product == null) {
 			return "error";
 		}
 		Map<VisualType, List<Actor>> typeMap = makeTypeMap(product.getActorList());
-		List<Mediaset> mediasetList = this.mediasetService.list("");
+		List<Mediaset> mediasetList = this.mediasetService.list();
 		model.addAttribute("product", product);
 		model.addAttribute("typeMap", typeMap);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
@@ -140,7 +131,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/play/{id}")
 	public String play(Model model, @PathVariable("id") String id) {
-		Product product = this.productService.detail(id);
+		Product product = this.productService.select(id);
 
 		if (product == null) {
 			return "error";

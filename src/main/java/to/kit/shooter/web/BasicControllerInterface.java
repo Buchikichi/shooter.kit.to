@@ -3,7 +3,6 @@ package to.kit.shooter.web;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ResultForm;
@@ -27,7 +26,7 @@ interface BasicControllerInterface<T> {
 	 * @param id レコードID
 	 * @return レコード
 	 */
-	T select(@RequestParam String id);
+	T select(@PathVariable("id") String id);
 
 	/**
 	 * 編集画面表示.

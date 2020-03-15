@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -50,17 +49,17 @@ public class StageController implements BasicControllerInterface<Stage> {
 		return "_stageList";
 	}
 
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public Stage select(@RequestParam String id) {
-		return this.stageService.detail(id);
+	public Stage select(@PathVariable("id") String id) {
+		return this.stageService.select(id);
 	}
 
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		Stage stage = this.stageService.detail(id);
+		Stage stage = this.stageService.select(id);
 
 		model.addAttribute("stage", stage);
 		return "editStage";

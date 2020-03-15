@@ -52,7 +52,7 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@ResponseBody
 	@Override
 	public Actor select(@PathVariable("id") String id) {
-		return this.service.detail(id);
+		return this.service.select(id);
 	}
 
 	@RequestMapping("/save")

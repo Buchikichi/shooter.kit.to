@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,11 +52,11 @@ public class AudioController extends BasicMediaController implements BasicContro
 	 * @param id オーディオID
 	 * @return オーディオ
 	 */
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public AudioView select(@RequestParam String id) {
-		return this.audioService.detail(id);
+	public AudioView select(@PathVariable("id") String id) {
+		return this.audioService.select(id);
 	}
 
 	private Resource decodeAudio(String base64) {

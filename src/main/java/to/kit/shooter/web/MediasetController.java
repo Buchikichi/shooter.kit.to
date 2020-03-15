@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -45,23 +44,23 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 	@RequestMapping("/list")
 	@Override
 	public String list(Model model, FilteringForm<Mediaset> form) {
-		List<Mediaset> list = this.mediasetService.list("");
+		List<Mediaset> list = this.mediasetService.list(form);
 
 		model.addAttribute("list", list);
 		return "_mediasetList";
 	}
 
-	@RequestMapping("/select")
+	@RequestMapping("/select/{id}")
 	@ResponseBody
 	@Override
-	public Mediaset select(@RequestParam String id) {
-		return this.mediasetService.detail(id);
+	public Mediaset select(@PathVariable("id") String id) {
+		return this.mediasetService.select(id);
 	}
 
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
-		Mediaset mediaset = this.mediasetService.detail(id);
+		Mediaset mediaset = this.mediasetService.select(id);
 
 		model.addAttribute("mediaset", mediaset);
 		return "editMediaset";

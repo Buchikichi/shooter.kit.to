@@ -10,13 +10,16 @@ import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.repository.MediasetRepository;
+import to.kit.shooter.web.form.FilteringForm;
 
 @Service
-public class MediasetService {
+public class MediasetService implements BasicServiceInterface<Mediaset> {
 	@Autowired
 	private MediasetRepository mediasetRepository;
 
-	public List<Mediaset> list(String keyword) {
+	@Override
+	public List<Mediaset> list(FilteringForm<Mediaset> form) {
+		String keyword = "";
 		Sort sort = Sort.by("updated", "name");
 		Specification<Mediaset> nameSpec = Specification.where((root, query, cb) -> {
 			return cb.like(root.get("name"), "%" + keyword + "%");
@@ -24,7 +27,12 @@ public class MediasetService {
 		return this.mediasetRepository.findAll(nameSpec, sort);
 	}
 
-	public Mediaset detail(String id) {
+	public List<Mediaset> list() {
+		return list(new FilteringForm<>());
+	}
+
+	@Override
+	public Mediaset select(String id) {
 		return this.mediasetRepository.findById(id).get();
 	}
 

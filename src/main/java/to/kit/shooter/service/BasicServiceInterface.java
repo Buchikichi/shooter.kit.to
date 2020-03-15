@@ -11,4 +11,5 @@ import to.kit.shooter.web.form.FilteringForm;
  */
 interface BasicServiceInterface<T> {
 	List<T> list(FilteringForm<T> form);
+	T select(String id);
 }

@@ -29,7 +29,8 @@ public class AudioService implements BasicServiceInterface<AudioView> {
 		return this.audioViewRepository.findByMediasetIdAndAudioTypeOrderByName(mediasetId, type);
 	}
 
-	public AudioView detail(String id) {
+	@Override
+	public AudioView select(String id) {
 		return this.audioViewRepository.findById(id).get();
 	}
 
