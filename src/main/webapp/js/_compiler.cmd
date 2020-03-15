@@ -4,7 +4,7 @@ set COMP=c:\application\closure-compiler-v20200204.jar
 set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
 set JAVA_HOME=C:\Program Files\Java\jdk-10.0.1
 set PATH=%JAVA_HOME%\bin;%PATH%
-set LIBS=lib\*.js lib\entity\*.js lib\page\*.js lib\util\*.js
+set LIBS=lib\*.js lib\page\*.js
 set DIR_OUT=../../resources/static/js
 
 cd %CUR%

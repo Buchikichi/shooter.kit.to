@@ -2,7 +2,7 @@
 set CUR=%~dp0
 set COMP=c:\application\closure-compiler-v20190709.jar
 set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
-set SSFW=ssfw\*.js
+set SSFW=ssfw\entity\*.js ssfw\*.js
 set OUTPUT=../../resources/static/js
 set JAVA_HOME=C:\Program Files\Java\jdk-10.0.1
 set PATH=%JAVA_HOME%\bin;%PATH%

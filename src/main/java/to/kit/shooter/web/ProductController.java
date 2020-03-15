@@ -98,7 +98,7 @@ public class ProductController implements BasicControllerInterface<Product> {
 		model.addAttribute("typeMap", typeMap);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		model.addAttribute("mediasetList", mediasetList);
-		return "detail";
+		return "editProduct";
 	}
 
 	@RequestMapping("/save")
