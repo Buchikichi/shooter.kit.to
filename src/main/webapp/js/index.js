@@ -1,9 +1,6 @@
-document.addEventListener('DOMContentLoaded', ()=> {
-	new AppMain();
-	new TitleBg();
-});
+document.addEventListener('DOMContentLoaded', () => new ProductIndexMain());
 
-class AppMain {
+class ProductIndexMain {
 	constructor() {
 		this.selectedId = '';
 		this.product = new ProductEntity();
@@ -11,7 +8,7 @@ class AppMain {
 
 		// Customer
 		this.customer = new Customer();
-		$('#loginForm').submit(()=> {
+		$('#loginForm').submit(() => {
 			let userid = $('#loginPanel [name=userid]').val();
 			let passwd = $('#loginPanel [name=passwd]').val();
 
@@ -50,7 +47,7 @@ class AppMain {
 				// editButton.classList.remove('ui-state-disabled');
 				$('#loginPanel [name=passwd]').hide();
 				$('#loginPanel button').hide();
-//				$('#loginForm').hide();
+				//				$('#loginForm').hide();
 			}
 		});
 	}

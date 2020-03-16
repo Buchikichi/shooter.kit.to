@@ -1,9 +1,6 @@
-document.addEventListener('DOMContentLoaded', ()=> {
-	new AppMain();
-	new TitleBg();
-});
+document.addEventListener('DOMContentLoaded', () => new ProductEditorMain());
 
-class AppMain {
+class ProductEditorMain {
 	/**
 	 * インスタンス生成.
 	 */

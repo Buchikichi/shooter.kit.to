@@ -1,9 +1,6 @@
-document.addEventListener('DOMContentLoaded', ()=> {
-	new AppMain();
-	new TitleBg();
-});
+document.addEventListener('DOMContentLoaded', () => new MediasetEditorMain());
 
-class AppMain {
+class MediasetEditorMain {
 	constructor() {
 		this.customer = new Customer();
 		this.mapManager = new MapManager();
@@ -14,11 +11,10 @@ class AppMain {
 		this.audioChooser = new AudioChooser();
 		this.setupPanel();
 		this.checkCustomer();
-		AppMain.Instance = this;
 	}
 
 	setupPanel() {
-//console.log('AppMain::setupPanel');
+		// console.log('MediasetEditorMain::setupPanel');
 		let plusButton = document.querySelector('[data-role="header"] a');
 		let mapButton = document.getElementById('mapButton');
 		let actorButton = document.getElementById('actorButton');
