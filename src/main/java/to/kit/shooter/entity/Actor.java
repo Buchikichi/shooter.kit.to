@@ -21,6 +21,7 @@ import javax.persistence.OrderBy;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.DirType;
 import to.kit.shooter.entity.type.RegionType;
 import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.entity.type.SeqTypeConverter;
@@ -47,6 +48,9 @@ public class Actor {
 	@Enumerated(EnumType.ORDINAL)
 	private RegionType regionType;
 	private int regionSize;
+	@Enumerated(EnumType.ORDINAL)
+	private DirType dirType;
+	private int dirSpeed;
 	private int speed;
 	private int hitpoint;
 	private int score;

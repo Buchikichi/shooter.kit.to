@@ -69,9 +69,33 @@
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
           th:with="typeList=${T(to.kit.shooter.entity.type.RegionType).List}">
         <legend>RegionType:</legend>
-        <label th:each="type:${typeList}"><span th:text="${type}"></span></span>
+        <label th:each="type:${typeList}"><span th:text="${type}"></span>
           <input type="radio" th:field="*{regionType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
         </label>
+      </fieldset>
+      <label><span>RegionSize:</span>
+        <input type="number" required="required" th:field="*{regionSize}"/>
+      </label>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
+          th:with="dirTypes=${T(to.kit.shooter.entity.type.DirType).List}">
+        <legend>DirType:</legend>
+        <label th:each="type:${dirTypes}"><span th:text="${type}"></span>
+          <input type="radio" th:field="*{dirType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
+        </label>
+      </fieldset>
+      <label><span>DirSpeed:</span>
+        <input type="number" required="required" th:field="*{dirSpeed}"/>
+      </label>
+      <label><span>Speed:</span>
+        <input type="number" required="required" th:field="*{speed}"/>
+      </label>
+      <fieldset class="ui-grid-a">
+        <div class="ui-block-a">
+          <label>Hitpoint:<input type="number" required="required" th:field="*{hitpoint}"/></label>
+        </div>
+        <div class="ui-block-b">
+          <label>Score:<input type="number" required="required" th:field="*{score}"/></label>
+        </div>
       </fieldset>
     </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
@@ -79,7 +103,7 @@
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
         <li th:each="actorVisual:*{actorVisualList}" th:object="${actorVisual}"
             th:attr="data-index=*{seq}, data-visualSeq=*{visualSeq}" class="sortable-item">
-          <a href="#actorVisualPopup" data-rel="popup">
+          <a href="#actorVisualPopup" data-rel="popup" data-position-to="window">
   <!--
             <img src="/img/icon.listview.png"/>
             <span class="ui-li-count" th:text="${actorVisual.seq}"></span>

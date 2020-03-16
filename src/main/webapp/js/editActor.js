@@ -121,14 +121,20 @@ class ActorEditorAttrPanel extends PanelBase {
 	}
 
 	setupEvents() {
-		let className = this.panel.querySelector('[name=className]');
-		let width = this.panel.querySelector('[name=width]');
-		let height = this.panel.querySelector('[name=height]');
+		let inputList = this.panel.querySelectorAll('[type=text], [type=number]');
 
 		this.actor = this.parent.actor;
-		className.addEventListener('change', () => this.actor.className = className.value);
-		width.addEventListener('change', () => this.actor.width = width.value);
-		height.addEventListener('change', () => this.actor.height = height.value);
+		inputList.forEach(i => i.addEventListener('change', () => this.actor[i.name] = i.value));
+		$('[name=regionType]').change(() => {
+			let type = this.panel.querySelector('[name=regionType]:checked');
+
+			this.actor.regionType = type.getAttribute('data-value');
+		});
+		$('[name=dirType]').change(() => {
+			let type = this.panel.querySelector('[name=dirType]:checked');
+
+			this.actor.dirType = type.getAttribute('data-value');
+		});
 	}
 }
 
