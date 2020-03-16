@@ -35,7 +35,7 @@ class ActorEditorMain extends Matter {
 			this.ctx.save();
 			this.ctx.clearRect(0, 0, this.ctx.width, this.ctx.height);
 			this.ctx.scale(this.scale, this.scale);
-			this.ctx.translate(this.hW, this.hH);
+			this.ctx.translate(this.actor.hW, this.actor.hH);
 			this.actor.draw(this.ctx);
 			this.ctx.restore();
 			requestAnimationFrame(activate);
@@ -51,8 +51,8 @@ class ActorEditorMain extends Matter {
 	}
 
 	changeScale() {
-		this.canvas.width = this.width * this.scale;
-		this.canvas.height = this.height * this.scale;
+		this.canvas.width = this.actor.width * this.scale;
+		this.canvas.height = this.actor.height * this.scale;
 		this.ctx.width = this.canvas.width;
 		this.ctx.height = this.canvas.height;
 	}
@@ -62,118 +62,10 @@ class ActorEditorMain extends Matter {
 		// $('[name="color"]').click(()=> this.changeColor());
 		$('[name="scale"]').click(()=> this.changeScale());
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveActor());
-		this.setupAttrPanel();
-		this.setupImagePanel();
-		// this.setupBrickPanel();
 		// this.setupPointingDevice();
+		new ActorEditorAttrPanel('attrPanel', this);
+		new ActorEditorImagePanel('imagePanel', this);
 		new ImageSelector(this.mediasetId);
-	}
-
-	setupAttrPanel() {
-		let className = imagePanel.querySelector('[name=className]');
-
-		className.addEventListener('change', () => this.actor.className = className.value);
-	}
-
-	setupImagePanel() {
-		let imagePanel = document.getElementById('imagePanel');
-		let ul = imagePanel.querySelector('ul');
-		let selectorPopup = document.getElementById('imageSelector');
-		let addImageButton = imagePanel.querySelector('.imageSelector');
-
-		// this.fieldMap.mapVisualList.forEach((mapVisual, ix) => this.addImage(ul, mapVisual, ix));
-		$(selectorPopup).popup({
-			afterclose: ()=> {
-				let seq = addImageButton.getAttribute('data-seq');
-
-				if (!seq) {
-					return;
-				}
-				let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: seq });
-console.log(visual);
-				let actorVisual = ActorVisual.create({
-					visualSeq: seq,
-					name: visual.name,
-				}, this.actor);
-				let ix = this.actor.actorVisualList.length;
-
-				this.addImage(ul, actorVisual, ix);
-				this.actor.actorVisualList.push(actorVisual);
-				$(ul).listview('refresh');
-			}
-		});
-		$(ul).listview('refresh');
-		$(ul).sortable({
-			//cancel: '.sortable-item',
-			helper: 'clone',
-			items: '> li.sortable-item',
-			update: (ev, ui) => {
-				// console.log('sortable#update');
-				this.sortListView(ul);
-				$(ul).listview('refresh');
-			}
-		});
-	}
-
-	addImage(ul, actorVisual, ix) {
-		// console.log('EditMain#addImage:');
-		// console.log(mapVisual);
-		let li = document.createElement('li');
-		let anchor = document.createElement('a');
-		let span = document.createElement('span');
-
-		span.textContent = actorVisual.name;
-		anchor.append(span);
-		anchor.addEventListener('click', () => this.openMapVisualPopup(actorVisual));
-		li.append(anchor);
-		let deleteButton = document.createElement('a');
-
-		deleteButton.addEventListener('click', () => {
-			console.log('delete');
-		});
-		li.append(deleteButton);
-		li.setAttribute('data-index', ix);
-		li.classList.add('sortable-item');
-		ul.append(li);
-	}
-
-	sortListView(ul) {
-		let lis = ul.querySelectorAll('.sortable-item');
-
-		// console.log('start:' + start);
-		this.actor.actorVisualList = Array.prototype.map.call(lis, (li, seq) => {
-			let ix = li.getAttribute('data-index');
-			let actorVisual = this.actor.actorVisualList[ix];
-			let count = li.querySelector('.ui-li-count');
-
-			li.setAttribute('data-index', seq);
-			actorVisual.seq = seq;
-			count.textContent = seq;
-			return actorVisual;
-		});
-	}
-
-	openMapVisualPopup(mapVisual) {
-		let mapVisualPopup = document.getElementById('mapVisualPopup');
-		let repeat = mapVisualPopup.querySelector('[name=repeat]');
-		let radian = mapVisualPopup.querySelector('[name=radian]');
-		let speed = mapVisualPopup.querySelector('[name=speed]');
-		let blink = mapVisualPopup.querySelector('[name=blink]');
-
-		repeat.value = mapVisual.repeat;
-		radian.value = mapVisual.radian;
-		speed.value = mapVisual.speed;
-		blink.value = mapVisual.blink;
-		$(mapVisualPopup).popup('open');
-		$(mapVisualPopup).popup({
-			afterclose: () => {
-				// console.log('mapVisualPopup.afterclose');
-				mapVisual.repeat = parseInt(repeat.value);
-				mapVisual.radian = parseFloat(radian.value);
-				mapVisual.speed = parseFloat(speed.value);
-				mapVisual.blink = parseFloat(blink.value);
-			}
-		});
 	}
 
 	setupPointingDevice() {
@@ -219,6 +111,140 @@ console.log(visual);
 				content.textContent = 'Save failed.';
 			}
 			$(messagePopup).popup('open', {});
+		});
+	}
+}
+
+class ActorEditorAttrPanel extends PanelBase {
+	constructor(panelId, parent) {
+		super(panelId, parent);
+	}
+
+	setupEvents() {
+		let className = this.panel.querySelector('[name=className]');
+		let width = this.panel.querySelector('[name=width]');
+		let height = this.panel.querySelector('[name=height]');
+
+		this.actor = this.parent.actor;
+		className.addEventListener('change', () => this.actor.className = className.value);
+		width.addEventListener('change', () => this.actor.width = width.value);
+		height.addEventListener('change', () => this.actor.height = height.value);
+	}
+}
+
+class ActorEditorImagePanel extends PanelBase {
+	constructor(panelId, parent) {
+		super(panelId, parent);
+	}
+
+	setupEvents() {
+		let ul = this.panel.querySelector('ul');
+		let selectorPopup = document.getElementById('imageSelector');
+		let addImageButton = this.panel.querySelector('.imageSelector');
+
+		this.actor = this.parent.actor;
+		ul.querySelectorAll('li').forEach(li => this.setupMapVisualEvent(li));
+		$(selectorPopup).popup({
+			afterclose: () => {
+				let seq = addImageButton.getAttribute('data-seq');
+
+				if (!seq) {
+					return;
+				}
+				let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: seq });
+				// console.log(visual);
+				let actorVisual = ActorVisual.create({
+					visualSeq: seq,
+					name: visual.name,
+				}, this.actor);
+				let ix = this.actor.actorVisualList.length;
+
+				this.addImage(ul, actorVisual, ix);
+				$(ul).listview('refresh');
+			}
+		});
+		$(ul).listview('refresh');
+		$(ul).sortable({
+			//cancel: '.sortable-item',
+			helper: 'clone',
+			items: '> li.sortable-item',
+			update: (ev, ui) => {
+				// console.log('sortable#update');
+				this.sortListView(ul);
+				$(ul).listview('refresh');
+			}
+		});
+	}
+
+	setupMapVisualEvent(li) {
+		let ix = li.getAttribute('data-index');
+		let actorVisual = this.actor.actorVisualList[ix];
+		let anchor = li.querySelector('a');
+		let deleteButton = li.querySelector('a:last-child');
+		let name = anchor.querySelector('span');
+		let visualSeq = li.getAttribute('data-visualSeq');
+		let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: visualSeq });
+
+		name.textContent = visual.name;
+		anchor.addEventListener('click', () => this.openActorVisualPopup(actorVisual));
+		deleteButton.addEventListener('click', () => {
+			console.log('delete');
+		});
+	}
+
+	addImage(ul, actorVisual, ix) {
+		// console.log('EditMain#addImage:');
+		// console.log(mapVisual);
+		let li = document.createElement('li');
+		let anchor = document.createElement('a');
+
+		anchor.append(document.createElement('span'));
+		li.append(anchor);
+		li.append(document.createElement('a'));
+		li.setAttribute('data-index', ix);
+		li.setAttribute('data-visualSeq', actorVisual.visualSeq);
+		li.classList.add('sortable-item');
+		ul.append(li);
+		this.actor.actorVisualList.push(actorVisual);
+		this.setupMapVisualEvent(li);
+	}
+
+	sortListView(ul) {
+		let lis = ul.querySelectorAll('.sortable-item');
+
+		// console.log('start:' + start);
+		this.actor.actorVisualList = Array.prototype.map.call(lis, (li, seq) => {
+			let ix = li.getAttribute('data-index');
+			let actorVisual = this.actor.actorVisualList[ix];
+
+			li.setAttribute('data-index', seq);
+			actorVisual.seq = seq;
+			return actorVisual;
+		});
+	}
+
+	openActorVisualPopup(actorVisual) {
+		console.log('ActorEditorMain#openActorVisualPopup');
+		console.log(actorVisual);
+		let actorVisualPopup = document.getElementById('actorVisualPopup');
+		let repeat = actorVisualPopup.querySelector('[name=repeat]');
+		let radian = actorVisualPopup.querySelector('[name=radian]');
+		let speed = actorVisualPopup.querySelector('[name=speed]');
+		let blink = actorVisualPopup.querySelector('[name=blink]');
+
+		repeat.value = actorVisual.repeat;
+		radian.value = actorVisual.radian;
+		speed.value = actorVisual.speed;
+		blink.value = actorVisual.blink;
+		$(actorVisualPopup).popup('open');
+		$(actorVisualPopup).popup({
+			afterclose: () => {
+				// console.log('actorVisualPopup.afterclose');
+				actorVisual.repeat = parseInt(repeat.value);
+				actorVisual.radian = parseFloat(radian.value);
+				actorVisual.speed = parseFloat(speed.value);
+				actorVisual.blink = parseFloat(blink.value);
+			}
 		});
 	}
 }

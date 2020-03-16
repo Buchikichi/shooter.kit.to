@@ -26,12 +26,13 @@
 	/*border: 1px blue dotted;*/
 	-moz-user-select: none;
 	-webkit-user-select: none;
-	-ms-user-select: none;
+  -ms-user-select: none;
+  text-align: center;
 }
 </style>
 </head>
 
-<body>
+<body th:object="${actor}">
   <div data-role="page">
     <div id="view">
       <canvas id="canvas"></canvas>
@@ -46,45 +47,52 @@
           <button disabled="disabled" data-theme="b">Scale</button>
           <label>1<input type="radio" name="scale" value="1"/></label>
           <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
-          <label>3<input type="radio" name="scale" value="3"/></label>
           <label>4<input type="radio" name="scale" value="4"/></label>
+          <label>8<input type="radio" name="scale" value="8"/></label>
           <button id="saveButton" type="button" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
-        <input type="hidden" th:field="${actor.id}"/>
-        <input type="hidden" name="productId" th:value="${actor.product.id}"/>
-        <input type="hidden" name="mediasetId" th:value="${actor.product.mediaset.id}"/>
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" name="productId" th:value="*{product.id}"/>
+        <input type="hidden" name="mediasetId" th:value="*{product.mediaset.id}"/>
       </div>
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
-      <input type="text" th:field="${actor.className}"/>
+      <input type="text" th:field="*{className}"/>
       <fieldset class="ui-grid-a">
         <div class="ui-block-a">
-          <label>Width:<input type="number" required="required" th:field="${actor.width}"/></label>
+          <label>Width:<input type="number" required="required" th:field="*{width}"/></label>
         </div>
         <div class="ui-block-b">
-          <label>Height:<input type="number" required="required" th:field="${actor.height}"/></label>
+          <label>Height:<input type="number" required="required" th:field="*{height}"/></label>
         </div>
+      </fieldset>
+      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
+          th:with="typeList=${T(to.kit.shooter.entity.type.RegionType).List}">
+        <legend>RegionType:</legend>
+        <label th:each="type:${typeList}"><span th:text="${type}"></span></span>
+          <input type="radio" th:field="*{regionType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
+        </label>
       </fieldset>
     </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
-      <input type="text" th:field="${actor.className}" readonly/>
+      <label>Images:</label>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
-        <li th:each="actorVisual:${actor.actorVisualList}" th:attr="data-index=${actorVisual.seq}" class="sortable-item">
-          <a href="#">
-<!--
+        <li th:each="actorVisual:*{actorVisualList}" th:object="${actorVisual}"
+            th:attr="data-index=*{seq}, data-visualSeq=*{visualSeq}" class="sortable-item">
+          <a href="#actorVisualPopup" data-rel="popup">
+  <!--
             <img src="/img/icon.listview.png"/>
--->
-            <span th:text="${actorVisual.name}"></span>
             <span class="ui-li-count" th:text="${actorVisual.seq}"></span>
-            <p th:text="${actorVisual.visualSeq}"></p>
+  -->
+            <span th:text="*{name}"></span>
+            <p th:text="*{visualSeq}"></p>
           </a>
           <a href="#" class="sortable"></a>
         </li>
       </ul>
       <button class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus imageSelector">Add image</button>
     </div>
-<!--
-    <div id="mapVisualPopup" data-role="popup" data-theme="a" data-overlay-theme="b" class="ui-corner-all ui-content">
+    <div id="actorVisualPopup" data-role="popup" data-theme="a" data-overlay-theme="b" class="ui-corner-all ui-content">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
       <div>
         <h3>Visual</h3>
@@ -102,30 +110,7 @@
         </label>
       </div>
     </div>
-    <div id="brickPanel" data-role="panel" data-position="left" data-display="overlay">
-      <label>Brick size:
-      <input id="brickSize" type="range" th:value="${actor.brickSize}" min="2" max="16" step="2"/>
-      </label>
-      <fieldset data-role="controlgroup" data-mini="true">
-        <button class="ui-btn ui-btn-b" disabled="disabled" th:text="#{brick.type}">Brick</button>
-        <label>Brick<input type="radio" name="brick" value="255" checked="checked"/></label>
-        <label>Plate<input type="radio" name="brick" value="254"/></label>
-        <label>Rebirth<input type="radio" name="brick" value="253"/></label>
-      </fieldset>
-      <label>Rebirth:
-        <input type="number" name="rebirth" th:value="${actor.rebirth}" class="numeric"/>
-      </label>
-      <ul data-role="listview" data-inset="true">
-        <li class="ui-field-contain">
-          <button id="generateButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid">Generate brick</button>
-        </li>
-        <li class="ui-field-contain">
-          <button id="clearButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-recycle">Clear all</button>
-        </li>
-      </ul>
-    </div>
--->
-  <div th:replace="_imageSelector"></div>
+    <div th:replace="_imageSelector"></div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>
     </div>
