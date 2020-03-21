@@ -1,4 +1,6 @@
+.gradle
+.idea
 .settings
-/.gradle/
 /bin/
+/build/
 /target/

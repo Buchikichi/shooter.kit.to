@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import to.kit.shooter.entity.Actor;
-import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.ActorService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
 
 /**
@@ -24,12 +21,9 @@ import to.kit.shooter.web.form.ResultForm;
  */
 @Controller
 @RequestMapping("/actor")
-@SessionAttributes(types = LoginInfo.class)
 public class ActorController implements BasicControllerInterface<Actor> {
 	@Autowired
 	private ActorService service;
-	@Autowired
-	private LoginInfo loginInfo;
 
 	/**
 	 * 一覧取得.
@@ -67,11 +61,6 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@Override
 	public ResultForm<Actor> save(@RequestBody Actor actor) {
 		ResultForm<Actor> result = new ResultForm<>();
-		Customer customer = this.loginInfo.getCustomer();
-
-		if (customer == null) {
-			return result;
-		}
 		Actor saved = this.service.save(actor);
 
 		result.setResult(saved);

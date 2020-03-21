@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
@@ -79,6 +81,8 @@ public class ProductService implements BasicServiceInterface<Product> {
 		this.productActorRepository.deleteInBatch(list);
 	}
 
+	@Transactional
+	@Override
 	public Product save(Product entity) {
 		String id = entity.getId();
 

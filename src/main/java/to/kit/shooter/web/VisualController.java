@@ -12,20 +12,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Visual;
 import to.kit.shooter.entity.VisualView;
 import to.kit.shooter.service.VisualService;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
 import to.kit.shooter.web.form.VisualForm;
 
@@ -35,21 +33,9 @@ import to.kit.shooter.web.form.VisualForm;
  */
 @Controller
 @RequestMapping("/visual")
-@SessionAttributes(types = LoginInfo.class)
 public class VisualController extends BasicMediaController implements BasicControllerInterface<VisualView> {
 	@Autowired
 	private VisualService visualService;
-	@Autowired
-	private LoginInfo loginInfo;
-
-	private String getCustomerId() {
-		Customer customer = this.loginInfo.getCustomer();
-
-		if (customer == null) {
-			return null;
-		}
-		return customer.getId();
-	}
 
 	@RequestMapping("/list")
 	@Override
@@ -110,13 +96,9 @@ public class VisualController extends BasicMediaController implements BasicContr
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Visual> save(VisualForm form) {
+	public ResultForm<Visual> save(VisualForm form, OAuth2AuthenticationToken token) {
 		ResultForm<Visual> result = new ResultForm<>();
-		String customerId = getCustomerId();
-
-		if (customerId == null || customerId.isEmpty()) {
-			return result;
-		}
+		String customerId = token.getPrincipal().getName();
 		MultipartFile imageFile = form.getImage();
 		String contentType = imageFile.getContentType();
 		Visual entity = new Visual();

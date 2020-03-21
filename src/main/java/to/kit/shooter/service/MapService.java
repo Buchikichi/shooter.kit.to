@@ -51,6 +51,7 @@ public class MapService implements BasicServiceInterface<Map> {
 	}
 
 	@Transactional
+	@Override
 	public Map save(Map map) {
 		String id = map.getId();
 		Map saved;

@@ -35,7 +35,8 @@ public class StageService implements BasicServiceInterface<Stage> {
 	}
 
 	@Transactional
-	public Stage saveMap(Stage stage) {
+	@Override
+	public Stage save(Stage stage) {
 		String id = stage.getId();
 
 		if (id == null || id.isEmpty()) {

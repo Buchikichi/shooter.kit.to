@@ -4,19 +4,17 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
-import to.kit.shooter.entity.Customer;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.web.form.AudioSetForm;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
 
 /**
@@ -25,21 +23,9 @@ import to.kit.shooter.web.form.ResultForm;
  */
 @Controller
 @RequestMapping("/mediaset")
-@SessionAttributes(types = LoginInfo.class)
 public class MediasetController implements BasicControllerInterface<Mediaset> {
 	@Autowired
 	private MediasetService mediasetService;
-	@Autowired
-	private LoginInfo loginInfo;
-
-	private String getCustomerId() {
-		Customer customer = this.loginInfo.getCustomer();
-
-		if (customer == null) {
-			return null;
-		}
-		return customer.getId();
-	}
 
 	@RequestMapping("/list")
 	@Override
@@ -69,17 +55,14 @@ public class MediasetController implements BasicControllerInterface<Mediaset> {
 	/**
 	 * パネルでの保存.
 	 * @param form フォーム
+	 * @param token 
 	 * @return 結果
 	 */
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Mediaset> save(AudioSetForm form) {
+	public ResultForm<Mediaset> save(AudioSetForm form, OAuth2AuthenticationToken token) {
 		ResultForm<Mediaset> result = new ResultForm<>();
-		String customerId = getCustomerId();
-
-		if (customerId == null || customerId.isEmpty()) {
-			return result;
-		}
+		String customerId = token.getPrincipal().getName();
 		Mediaset audioSet = new Mediaset();
 		BeanUtils.copyProperties(form, audioSet);
 		audioSet.setOwner(customerId);

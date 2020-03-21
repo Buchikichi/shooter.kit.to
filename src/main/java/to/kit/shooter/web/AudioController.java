@@ -1,29 +1,26 @@
 package to.kit.shooter.web;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
-
 import to.kit.shooter.entity.Audio;
 import to.kit.shooter.entity.AudioView;
-import to.kit.shooter.entity.Customer;
 import to.kit.shooter.service.AudioService;
 import to.kit.shooter.web.form.AudioForm;
 import to.kit.shooter.web.form.FilteringForm;
-import to.kit.shooter.web.form.LoginInfo;
 import to.kit.shooter.web.form.ResultForm;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * オーディオ.
@@ -31,12 +28,9 @@ import to.kit.shooter.web.form.ResultForm;
  */
 @Controller
 @RequestMapping("/audio")
-@SessionAttributes(types = LoginInfo.class)
 public class AudioController extends BasicMediaController implements BasicControllerInterface<AudioView> {
 	@Autowired
 	private AudioService audioService;
-	@Autowired
-	private LoginInfo loginInfo;
 
 	@RequestMapping("/list")
 	@Override
@@ -162,18 +156,9 @@ public class AudioController extends BasicMediaController implements BasicContro
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Audio> save(AudioForm form) {
+	public ResultForm<Audio> save(AudioForm form, OAuth2AuthenticationToken token) {
 		ResultForm<Audio> result = new ResultForm<>();
-		Customer customer = this.loginInfo.getCustomer();
-
-		if (customer == null) {
-			return result;
-		}
-		String loginId = customer.getId();
-
-		if (loginId == null || loginId.isEmpty()) {
-			return result;
-		}
+		String loginId = token.getPrincipal().getName();
 		Audio entity = new Audio();
 		BeanUtils.copyProperties(form, entity);
 		entity.setWebm(getAudioString(form.getWebm(), "webm"));

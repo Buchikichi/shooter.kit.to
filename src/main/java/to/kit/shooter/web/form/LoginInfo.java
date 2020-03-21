@@ -12,6 +12,7 @@ import to.kit.shooter.entity.Customer;
 @Component
 @Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Data
+@Deprecated
 public class LoginInfo implements Serializable {
 	/** serialVersionUID. */
 	private static final long serialVersionUID = -6225816471349175165L;

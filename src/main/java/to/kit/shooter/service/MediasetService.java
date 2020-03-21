@@ -36,6 +36,7 @@ public class MediasetService implements BasicServiceInterface<Mediaset> {
 		return this.mediasetRepository.findById(id).get();
 	}
 
+	@Override
 	public Mediaset save(Mediaset entity) {
 		String id = entity.getId();
 		Mediaset prev = this.mediasetRepository.findById(id).get();

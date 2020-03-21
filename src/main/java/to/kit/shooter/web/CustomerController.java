@@ -17,6 +17,7 @@ import to.kit.shooter.web.form.ResultForm;
  */
 @Controller
 @RequestMapping("/customer")
+@Deprecated
 public class CustomerController {
 	@Autowired
 	private CustomerService customerService;
