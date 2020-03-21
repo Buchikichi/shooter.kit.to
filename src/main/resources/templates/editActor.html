@@ -54,6 +54,7 @@
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" name="productId" th:value="*{product.id}"/>
         <input type="hidden" name="mediasetId" th:value="*{product.mediaset.id}"/>
+        <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
       </div>
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">

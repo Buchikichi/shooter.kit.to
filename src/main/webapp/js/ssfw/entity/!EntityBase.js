@@ -8,9 +8,13 @@ class EntityBase {
 	}
 
 	fetch(path, body = '{}') {
+		let headers = { 'Content-Type': 'application/json;charset=UTF-8' };
+		let csrf = document.querySelector('[name*=CSRF]');
+
+		headers[csrf.name] = csrf.value;
 		return fetch('/' + this.base + path, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+			headers: headers,
 			body: body,
 			credentials: 'include',
 		});

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>login</title>
+<link rel="icon" type="image/x-icon" href="/img/icon.shooter.ico"/>
+</head>
+
+<body>
+  <h3>You need to log in to edit.</h3>
+  <ul data-role="listview" data-filter="true" data-inset="true">
+    <li th:each="url : ${urls}">
+      <a th:href="${url.value}">
+        <span th:text="${url.key}"></span>
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

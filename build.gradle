@@ -7,7 +7,7 @@
  * user guide available at https://docs.gradle.org/2.14.1/userguide/tutorial_java_projects.html
  */
 plugins {
-  id 'org.springframework.boot' version '2.1.9.RELEASE'
+  id 'org.springframework.boot' version '2.2.5.RELEASE'
   id 'java'
   id 'eclipse'
 }
@@ -43,6 +43,9 @@ dependencies {
 	}
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-jetty')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.security:spring-security-oauth2-client')
+	compile('org.springframework.security:spring-security-oauth2-jose')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	runtime('org.postgresql:postgresql')
 	compile('org.projectlombok:lombok:1.16.14')

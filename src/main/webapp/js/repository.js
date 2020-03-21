@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => new MediasetEditorMain());
 
 class MediasetEditorMain {
 	constructor() {
-		this.customer = new Customer();
 		this.mapManager = new MapManager();
 		this.actorManager = new ActorManager();
 		this.imageManager = new ImageManager();
@@ -10,7 +9,6 @@ class MediasetEditorMain {
 		this.imageChooser = new ImageChooser();
 		this.audioChooser = new AudioChooser();
 		this.setupPanel();
-		this.checkCustomer();
 	}
 
 	setupPanel() {
@@ -58,14 +56,6 @@ class MediasetEditorMain {
 		$('#actorType-select').hide();
 		$('#visualType').hide();
 		$('#audioType').hide();
-	}
-
-	checkCustomer() {
-		this.customer.check().then(data => {
-//			if (data.ok) {
-//				$('[href=#loginPanel]').hide();
-//			}
-		});
 	}
 }
 

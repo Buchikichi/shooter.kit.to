@@ -84,6 +84,7 @@ body {
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data"
            th:with="transitionList=${T(to.kit.shooter.entity.TransitionType).LIST}">
+        <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
         <input id="productId" type="hidden" th:value="${stage.product.id}"/>
         <input id="width" type="hidden" th:value="${stage.product.width}"/>
         <input id="height" type="hidden" th:value="${stage.product.height}"/>

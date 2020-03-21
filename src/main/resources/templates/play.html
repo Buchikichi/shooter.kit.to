@@ -27,6 +27,7 @@
     <canvas id="transition"></canvas>
     <div id="loading"></div>
   </div>
-  <input id="productId" type="hidden" th:value="${product.id}"/>
+  <input type="hidden" th:field="${product.id}"/>
+  <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
 </body>
 </html>

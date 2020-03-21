@@ -25,6 +25,7 @@
   </div>
   <div data-role="content">
     <input type="hidden" name="mediasetId" th:value="${mediaset.id}"/>
+    <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
 <!--
     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
       <input name="filter" id="radio-choice-h-2a" value="on" checked="checked" type="radio">

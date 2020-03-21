@@ -17,11 +17,9 @@ class ProductEditorMain {
 		});
 
 		this.productStageView = document.getElementById('productStageView');
-		this.customer = new Customer();
 		this.stagePanel = new StagePanel();
 		this.productActorPage = new ProductActorPage();
 		this.setupEvents();
-		this.checkCustomer();
 		$(this.productStageView).sortable({handle: '.sortable'});
 	}
 
@@ -52,7 +50,6 @@ class ProductEditorMain {
 		let saveButton = document.getElementById('saveButton');
 
 		saveButton.addEventListener('click', ()=> this.saveProduct());
-		$(saveButton).addClass('ui-state-disabled');
 	}
 
 	getRec(anchor) {
@@ -118,17 +115,6 @@ class ProductEditorMain {
 		let li = this.getLi(stageId);
 
 		this.productStageView.removeChild(li);
-	}
-
-	checkCustomer() {
-		let saveButton = document.getElementById('saveButton');
-
-		this.customer.check().then(data => {
-			if (data.ok) {
-				$(saveButton).removeClass('ui-state-disabled');
-				$('#footerNav a:eq(1)').removeClass('ui-state-disabled');
-			}
-		});
 	}
 
 	listStages() {

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', ()=> new ShooterMain());
 
 class ShooterMain {
 	constructor() {
-		let productId = document.getElementById('productId').value;
+		let productId = document.getElementById('id').value;
 		let loading = document.getElementById('loading');
 		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
