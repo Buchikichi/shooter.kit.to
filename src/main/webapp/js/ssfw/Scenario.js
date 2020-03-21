@@ -88,14 +88,16 @@ class Scenario {
 		let actor = this.getActor();
 		let bw = this._stage.map.brickSize;
 		let bh = bw / 2;
-		let sx = this.v * bw + bh;
-		let sy = this.h * bw + bh;
+		let sx = this.v * bw;
+		let sy = this.h * bw;
 
 		if (actor) {
-//			this._actor.draw(ctx);
+			actor.x = sx + actor.hW;
+			actor.y = sy + actor.hH;
+			actor.draw(ctx);
 			if (actor.width) {
 				ctx.strokeStyle = 'rgba(80, 255, 80, 0.6)';
-				ctx.strokeRect(sx-actor.hW, sy-actor.hH, actor.width, actor.height);
+				ctx.strokeRect(sx, sy, actor.width, actor.height);
 			}
 		}
 		if (this.op == 'Spw') {
@@ -104,14 +106,16 @@ class Scenario {
 			ctx.fillStyle = 'tomato';
 		}
 		ctx.beginPath();
-		ctx.arc(sx, sy, bh, 0, Math.PI2);
+		ctx.arc(sx + bh, sy + bh, bh, 0, Math.PI2);
 		ctx.fill();
 
 		if (this.hasFocus) {
-			ctx.strokeStyle = 'white';
-			ctx.beginPath();
-			ctx.arc(sx, sy, bh, 0, Math.PI2);
-			ctx.stroke();
+			// ctx.strokeStyle = 'white';
+			// ctx.beginPath();
+			// ctx.arc(sx + bh, sy + bh, bh, 0, Math.PI2);
+			// ctx.stroke();
+			ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+			ctx.fillRect(sx, sy, actor.width, actor.height);
 		}
 	}
 

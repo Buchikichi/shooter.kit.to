@@ -8,11 +8,11 @@ class ActorEditor extends Actor {
         let top = -this.hH;
 
         ctx.save();
+        super.draw(ctx);
         // ctx.fillStyle = 'orange';
 		// ctx.beginPath();
 		// ctx.arc(0, 0, 64, 0, Math.PI2);
         // ctx.fill();
-        this.actorVisualList.forEach(v => v.draw(ctx));
         ctx.strokeStyle = 'rgba(255, 255, 255, .8)';
         ctx.strokeRect(left, top, this.width, this.height);
         ctx.restore();

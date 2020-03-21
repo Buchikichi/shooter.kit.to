@@ -36,7 +36,7 @@ class EditStage {
 		let loading = document.getElementById('loading');
 		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
-		Product.create(productId, callback).then(product => {
+		ProductEditor.create(productId, callback).then(product => {
 			this.product = product;
 //			let stage = null;
 
@@ -47,6 +47,7 @@ class EditStage {
 			loading.parentNode.removeChild(loading);
 			this.setupEvents();
 			this.resetCanvas();
+			this.initView();
 			this.start();
 		});
 	}
@@ -68,6 +69,12 @@ class EditStage {
 		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
 		// console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
 		this.ctx = this.canvas.getContext('2d');
+	}
+
+	initView() {
+		let remainH = this.view.scrollHeight - this.view.clientHeight;
+
+		this.view.scrollTop = remainH / 2;
 	}
 
 	// setupStage(stage) {
@@ -470,7 +477,7 @@ class EventPanel {
 		let op = chk.value;
 		let cursorType = chk.getAttribute('data-type');
 		let type = 0;
-		let number = 0;
+		let number = '0';
 		let stage = this.stageEditor.product.stage;
 
 		if (op == 'Apl') {

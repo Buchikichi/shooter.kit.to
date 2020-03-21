@@ -51,6 +51,8 @@ class Actor extends Matter {
 		this.fillStyle = null;
 		this.sfx = 'sfx-explosion';
 		this.sfxAbsorb = 'sfx-absorb';
+
+		this.actorVisualList = [];
 		this.enter();
 	}
 
@@ -273,6 +275,7 @@ class Actor extends Matter {
 	}
 
 	drawNormal(ctx) {
+        this.actorVisualList.forEach(v => v.draw(ctx));
 		this.animList.forEach(anim => {
 			anim.draw(ctx);
 		});
