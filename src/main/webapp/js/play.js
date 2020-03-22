@@ -13,7 +13,7 @@ class ShooterMain {
 		Product.create(productId, callback).then(product => {
 			this.view.setSize(product.width, product.height);
 			// this.field = new Field(this.view);
-			this.setupActors(product);
+			// this.setupActors(product);
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});

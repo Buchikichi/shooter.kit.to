@@ -59,45 +59,58 @@
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <input type="text" th:field="*{className}"/>
-      <fieldset class="ui-grid-a">
-        <div class="ui-block-a">
-          <label>Width:<input type="number" required="required" th:field="*{width}"/></label>
+      <div data-role="collapsibleset" data-mini="true">
+        <div data-role="collapsible" data-collapsed="false">
+          <h4 th:text="#{basic}">Basic</h4>
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a">
+              <label>Width:<input type="number" required="required" th:field="*{width}"/></label>
+            </div>
+            <div class="ui-block-b">
+              <label>Height:<input type="number" required="required" th:field="*{height}"/></label>
+            </div>
+          </fieldset>
+          <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
+              th:with="typeList=${T(to.kit.shooter.entity.type.RegionType).List}">
+            <legend>RegionType:</legend>
+            <label th:each="type:${typeList}"><span th:text="${type}"></span>
+              <input type="radio" th:field="*{regionType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
+            </label>
+          </fieldset>
+          <label><span>RegionSize:</span>
+            <input type="number" required="required" th:field="*{regionSize}"/>
+          </label>
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a">
+              <label>Hitpoint:<input type="number" required="required" th:field="*{hitpoint}"/></label>
+            </div>
+            <div class="ui-block-b">
+              <label>Score:<input type="number" required="required" th:field="*{score}"/></label>
+            </div>
+          </fieldset>
         </div>
-        <div class="ui-block-b">
-          <label>Height:<input type="number" required="required" th:field="*{height}"/></label>
+        <div data-role="collapsible">
+          <h4 th:text="#{movement}">Movement</h4>
+          <label><span>Speed:</span>
+            <input type="number" required="required" th:field="*{speed}"/>
+          </label>
+          <fieldset data-role="controlgroup" data-mini="true">
+            <legend>DirType:</legend>
+            <select th:field="*{dirType}" th:with="dirTypes=${T(to.kit.shooter.entity.type.DirType).List}">
+              <option th:each="type:${dirTypes}" th:value="${type}" th:attr="data-value=${type.ix}" th:text="${type}"></option>
+            </select>
+          </fieldset>
+          <label><span>DirSpeed:</span>
+            <input type="number" required="required" th:field="*{dirSpeed}"/>
+          </label>
         </div>
-      </fieldset>
-      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
-          th:with="typeList=${T(to.kit.shooter.entity.type.RegionType).List}">
-        <legend>RegionType:</legend>
-        <label th:each="type:${typeList}"><span th:text="${type}"></span>
-          <input type="radio" th:field="*{regionType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
-        </label>
-      </fieldset>
-      <label><span>RegionSize:</span>
-        <input type="number" required="required" th:field="*{regionSize}"/>
-      </label>
-      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
-          th:with="dirTypes=${T(to.kit.shooter.entity.type.DirType).List}">
-        <legend>DirType:</legend>
-        <label th:each="type:${dirTypes}"><span th:text="${type}"></span>
-          <input type="radio" th:field="*{dirType}" th:value="${type}" th:attr="data-value=${type.ix}"/>
-        </label>
-      </fieldset>
-      <label><span>DirSpeed:</span>
-        <input type="number" required="required" th:field="*{dirSpeed}"/>
-      </label>
-      <label><span>Speed:</span>
-        <input type="number" required="required" th:field="*{speed}"/>
-      </label>
-      <fieldset class="ui-grid-a">
-        <div class="ui-block-a">
-          <label>Hitpoint:<input type="number" required="required" th:field="*{hitpoint}"/></label>
+        <div data-role="collapsible">
+          <h4 th:text="#{react}">React</h4>
         </div>
-        <div class="ui-block-b">
-          <label>Score:<input type="number" required="required" th:field="*{score}"/></label>
+        <div data-role="collapsible">
+          <h4 th:text="#{explosion}">Explosion</h4>
         </div>
-      </fieldset>
+      </div>
     </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
       <label>Images:</label>
@@ -121,6 +134,16 @@
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
       <div>
         <h3>Visual</h3>
+        <fieldset data-role="controlgroup" data-mini="true">
+          <legend>DirType:</legend>
+          <select name="dirType" th:with="dirTypes=${T(to.kit.shooter.entity.type.DirType).VisualList}">
+            <option th:each="type:${dirTypes}" th:value="${type.ix}" th:text="${type}"></option>
+          </select>
+        </fieldset>
+        <label><span>DirSpeed:</span>
+          <input type="number" name="dirSpeed" required="required"/>
+        </label>
+<!--
         <label>repeat:
           <input type="text" name="repeat"/>
         </label>
@@ -133,6 +156,7 @@
         <label>blink:
           <input type="text" name="blink"/>
         </label>
+-->
       </div>
     </div>
     <div th:replace="_imageSelector"></div>

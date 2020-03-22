@@ -231,7 +231,7 @@ console.log('EditStage#setupEvents');
 		this.attrPanel = new AttrPanel(this);
 		this.actorPanel = new ActorPanel(this);
 		this.eventPanel = new EventPanel(this);
-		this.setupDummyActors();
+		// this.setupDummyActors();
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());

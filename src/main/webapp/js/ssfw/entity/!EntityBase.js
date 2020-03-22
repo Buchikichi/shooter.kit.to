@@ -7,8 +7,7 @@ class EntityBase {
 		}
 	}
 
-	fetch(path, body = '{}') {
-		let headers = { 'Content-Type': 'application/json;charset=UTF-8' };
+	fetch(path, body = '{}', headers = { 'Content-Type': 'application/json;charset=UTF-8' }) {
 		let csrf = document.querySelector('[name*=CSRF]');
 
 		headers[csrf.name] = csrf.value;
@@ -29,7 +28,7 @@ class EntityBase {
 	}
 
 	select(id) {
-		return this.fetch('/select/'+ id).then(res => {
+		return this.fetch('/select/' + id).then(res => {
 			return res.json();
 		});
 	}
@@ -57,11 +56,7 @@ class EntityBase {
 	}
 
 	saveResource(formData) {
-		return fetch('/' + this.base + '/save', {
-			method: 'post',
-			body: formData,
-			credentials: 'include',
-		}).then(res => {
+		return this.fetch('/save', formData, {}).then(res => {
 			return res.json();
 		});
 	}

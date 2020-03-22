@@ -12,11 +12,15 @@ class Enemy extends Actor {
 	}
 
 	checkInverse() {
-		let map = Product.Instance.stage.map;
-		let y = this.y + this.hH + map.brickSize / 2;
-		let src = Object.assign({}, this, {y:y});
+		if (!this._stage || !this._stage.map) {
+			return;
+		}
+		let map = this._stage.map;
+		let margin = this.hH + map.brickSize / 2;
+		let srcTop = Object.assign({}, this, { y: this.y - margin });
+		let srcBottom = Object.assign({}, this, { y: this.y + margin });
 
-		this.isInverse = !map.bricks.isHit(src);
+		this.isInverse = map.bricks.isHit(srcTop) && !map.bricks.isHit(srcBottom);
 	}
 
 	move(target) {
@@ -50,6 +54,10 @@ class Enemy extends Actor {
 		enemy.x = x;
 		enemy.y = y;
 		return enemy;
+	}
+
+	static create(rec, params = {}) {
+		return Object.assign(new Enemy(), rec, params).init();
 	}
 }
 Enemy.TRIGGER_CYCLE = 50;

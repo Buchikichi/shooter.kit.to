@@ -1,7 +1,7 @@
 /**
  * Hanker.
  */
-class Hanker extends Enemy {
+class Hanker_bk extends Enemy {
 	constructor(x, y) {
 		super(x, y);
 		this.speed = .7;

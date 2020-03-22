@@ -210,7 +210,7 @@ class Product extends Matter {
 		});
 	}
 
-	getActor(seq) {
+	getActor(seq, params = {}) {
 		let actor = this._actorMap[seq];
 
 		if (!actor) {
@@ -228,12 +228,12 @@ class Product extends Matter {
 				// else console.log('Product#getActor fail:' + seq);
 				}
 		}
-		return actor;
+		return Enemy.create(actor, Object.assign(params, { _stage: this.stage }));
 	}
 
 	init() {
 		this.setRect(this.width, this.height);
-		this.actorList = this.actorList.map(actor => Actor.create(actor));
+//		this.actorList = this.actorList.map(actor => Actor.create(actor));
 		this._actorMap = {};
 		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
 this.actorList.forEach(actor => this._actorMap[actor.seqOld] = actor); // TODO: remove

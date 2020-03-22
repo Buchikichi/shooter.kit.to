@@ -117,27 +117,29 @@ console.log('RepositoryManager: saveResource');
 	}
 
 	resetPanel(rec = {}) {
-		let id = '#' + this.panelId;
-
 		rec.mediasetId = this.mediasetId;
-		$(id + ' :input').each((ix, input) => {
+		this.panel.querySelectorAll('input, select').forEach(input => {
 			let name = input.getAttribute('name');
 
 			if (!name) {
 				return;
 			}
 			let element = $(input);
-			let val = '';
+			let val = rec[name];
+			let defaultData = input.getAttribute('data-default');
 
+			if (defaultData && !val) {
+				val = defaultData;
+			}
 //console.log(name + ':' + element.attr('type'));
 			if (element.is(':radio')) {
-				element.val([rec[name]]).checkboxradio('refresh')
+				element.val([val]).checkboxradio('refresh')
 			} else if (element.is('select')) {
-				element.val(rec[name]).selectmenu('refresh', false);
+				element.val(val).selectmenu('refresh', false);
 			} else if (element.is(':file')) {
 				element.val(null);
 			} else {
-				element.val(rec[name]);
+				element.val(val);
 			}
 			if (element.is(':hidden')) {
 				input.dispatchEvent(this.valueChangedevent);
@@ -175,15 +177,6 @@ console.log('RepositoryManager: saveResource');
 			});
 			$(listView).listview('refresh');
 		});
-	}
-
-	createRow(rec, imgsrc = null) {
-		let listviewRow = new ListviewRow(rec, imgsrc);
-		let anchor = document.createElement('a');
-
-		anchor.setAttribute('href', '#' + this.panelId);
-		listviewRow.li.appendChild(anchor);
-		return listviewRow.li;
 	}
 }
 
@@ -230,15 +223,6 @@ class MapManager extends RepositoryManager {
 			return '/img/icon.listview.png';
 		}
 		return '/visual/src/' + imageId;
-	}
-
-	createRow(rec) {
-		let row = super.createRow(rec, this.getImgsrc(rec));
-
-		row.querySelector('a:first-child').addEventListener('click', ()=> {
-			window.open('/map/edit/' + rec.id);
-		});
-		return row;
 	}
 }
 
@@ -305,10 +289,6 @@ class ActorManager extends RepositoryManager {
 		formData.append('type', type);
 		return formData;
 	}
-
-	createRow(rec) {
-		return super.createRow(rec, '/visual/src/' + rec.imageid);
-	}
 }
 
 /**
@@ -341,12 +321,6 @@ class ImageManager extends RepositoryManager {
 		} else {
 			img.removeAttribute('src');
 		}
-	}
-
-	createRow(rec) {
-		let imgsrc = rec.contentType.startsWith('image') ? '/visual/src/' + rec.id : '/img/icon.listview.png';
-
-		return super.createRow(rec, imgsrc);
 	}
 }
 

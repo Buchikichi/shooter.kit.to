@@ -201,6 +201,22 @@ class Actor extends Matter {
 		}
 	}
 
+	processDirType(target) {
+		if (!target) {
+			return;
+		}
+		let dx = target.x - this.x;
+		let dy = target.y - this.y;
+
+		if (this.dirType == Actor.DirType.Aim) {
+			this.dir = Math.atan2(dy, dx);
+		} else if (this.dirType == Actor.DirType.Chase) {
+			let step = Math.PI / 180 * this.dirSpeed;
+
+			this.dir = Math.close(this.dir, Math.atan2(dy, dx), step);
+		}
+	}
+
 	/**
 	 * Move.
 	 * @param target
@@ -213,6 +229,8 @@ class Actor extends Matter {
 				return;
 			}
 		}
+		this.processDirType(target);
+		this.actorVisualList.forEach(v => v.move(target));
 		this.svX = this.x;
 		this.svY = this.y;
 		if (this.dir != null) {
@@ -384,11 +402,13 @@ class Actor extends Matter {
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
 		this.actorVisualList = this.actorVisualList.map(v => ActorVisual.create(v, this));
+		this.checkInverse();
+		this.speed /= 10;
 		return this;
 	}
 
-	static create(rec) {
-		return Object.assign(new Actor(), rec).init();
+	static create(rec, params = {}) {
+		return Object.assign(new Actor(), rec, params).init();
 	}
 }
 Actor.MAX_EXPLOSION = 12;
@@ -430,4 +450,11 @@ Actor.CollidingWallType = {
 	EJECT: 4,
 	CRUSH: 8,
 	SMASH_CRUSH: 1 | 8,
+};
+Actor.DirType = {
+	Manual: 0,
+	Own: 1,
+	Aim: 2,
+	Chase: 3,
+	Fit: 4,
 };

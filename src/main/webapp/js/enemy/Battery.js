@@ -1,7 +1,7 @@
 /**
  * Battery.
  */
-class Battery extends Enemy {
+class Battery_bk extends Enemy {
 	constructor(x, y) {
 		super(x, y);
 		this.speed = 0;

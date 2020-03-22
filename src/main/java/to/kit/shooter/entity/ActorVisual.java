@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
+import to.kit.shooter.entity.type.DirType;
 import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.entity.type.SeqTypeConverter;
 
@@ -29,9 +32,12 @@ public class ActorVisual {
 	private int seq;
 	private String name;
 	private String description;
-	private String imageid;
 	@Convert(converter = SeqTypeConverter.class)
 	private SeqType visualSeq;
+	@Enumerated(EnumType.ORDINAL)
+	private DirType dirType;
+	private int dirSpeed;
+
 	private String anim;
 	private String properties;
 	private String routine;

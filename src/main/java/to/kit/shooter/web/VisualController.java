@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -96,7 +97,7 @@ public class VisualController extends BasicMediaController implements BasicContr
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Visual> save(VisualForm form, OAuth2AuthenticationToken token) {
+	public ResultForm<Visual> save(@Validated VisualForm form, OAuth2AuthenticationToken token) {
 		ResultForm<Visual> result = new ResultForm<>();
 		String customerId = token.getPrincipal().getName();
 		MultipartFile imageFile = form.getImage();

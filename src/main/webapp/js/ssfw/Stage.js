@@ -181,15 +181,13 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		}
 		//
 		let front = Math.round((gx + this._product.width) / bw);
-		let newList = [];
 
-		this._eventList.forEach(s => {
+		this._eventList = this._eventList.filter(s => {
 			if (front < s.v) {
-				newList.push(s);
-				return;
+				return true;
 			}
 			if (s.v < rear) {
-				return;
+				return false;
 			}
 			s.isFront = rear < s.v;
 			s.x = s.v * bw;
@@ -200,7 +198,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				if (evt instanceof Actor) {
 					result.push(evt);
 				}
-				return;
+				return false;
 			}
 			let spawn = false;
 			let isFront = s.op == 'Spw';
@@ -213,14 +211,15 @@ console.log(s);
 				spawn = true;
 			}
 			if (!spawn) {
-				newList.push(s);
-				return;
+				return true;
 			}
 			// spawn
 			let x = gx + (isFront ? this._product.width + bw * 1.5 : 16);
 			let y = (s.h + 1) * bw;
 			// let reserve = Enemy.assign(s.number, x, y);
-			let reserve = this._product.getActor(s.number);
+			let reserve = this._product.getActor(s.number, { x: x, y: y });
+			// console.log('reserve:');
+			// console.log(reserve);
 
 			if (reserve != null) {
 				// let enemy;
@@ -230,14 +229,26 @@ console.log(s);
 				// } else {
 				// 	enemy = new reserve.type(reserve.x, reserve.y);
 				// }
-				let clazz = eval(reserve.className);
-				let enemy = new clazz(x, y);
-if (!isFront) enemy.dir = 0;
-				enemy._stage = this;
-				result.push(enemy);
+				let clazz = null;
+
+				try {
+					clazz = eval(reserve.className);
+				} catch (e) {
+					// nop
+				}
+				if (clazz) {
+					let enemy = new clazz(x, y);
+
+					if (!isFront) enemy.dir = 0;
+					enemy._stage = this;
+					result.push(enemy);
+					return false;
+				}
 			}
+			if (!isFront) reserve.dir = 0;
+			result.push(reserve);
+			return false;
 		});
-		this._eventList = newList;
 		this.lastScan = rear;
 		return result;
 	}

@@ -5,9 +5,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Getter;
 
+/**
+ * Direction type.
+ * <ul>
+ *   <li>Manual: Change direction manually.</li>
+ *   <li>Spin: Rotate self.</li>
+ *   <li>Aim: Face the target.</li>
+ *   <li>Chase: Face the target slowly.</li>
+ *   <li>Fit: Match the direction to actor.</li>
+ * </ul>
+ * @author H.Sasai
+ */
 @Getter
 public enum DirType {
-	Manual(0), Fit(1), ByDegrees(2);
+	Manual(0), Spin(1), Aim(2), Chase(3), Fit(4);
 
 	@JsonValue
 	private int ix;
@@ -16,7 +27,8 @@ public enum DirType {
 		this.ix = value;
 	}
 
-	public static DirType[] List = { Manual, Fit, ByDegrees };
+	public static DirType[] List = { Manual, Spin, Aim, Chase };
+	public static DirType[] VisualList = { Manual, Spin, Aim, Chase, Fit };
 
 	@JsonCreator
 	public static DirType fromValue(int value) {

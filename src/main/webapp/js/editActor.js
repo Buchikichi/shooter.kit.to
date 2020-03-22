@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', ()=> new ActorEditorMain());
+document.addEventListener('DOMContentLoaded', () => new ActorEditorMain());
 
 class ActorEditorMain extends Matter {
 	constructor() {
@@ -31,9 +31,9 @@ class ActorEditorMain extends Matter {
 
 	start() {
 		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-		let activate = ()=> {
+		let activate = () => {
 			this.ctx.save();
-			this.ctx.clearRect(0, 0, this.ctx.width, this.ctx.height);
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.ctx.scale(this.scale, this.scale);
 			this.ctx.translate(this.actor.hW, this.actor.hH);
 			this.actor.draw(this.ctx);
@@ -41,7 +41,6 @@ class ActorEditorMain extends Matter {
 			requestAnimationFrame(activate);
 		};
 
-		this.changeScale();
 		this.setupEvents();
 		activate();
 	}
@@ -50,21 +49,20 @@ class ActorEditorMain extends Matter {
 		this.fieldMap.brickColor = this.brickColor;
 	}
 
-	changeScale() {
-		this.canvas.width = this.actor.width * this.scale;
-		this.canvas.height = this.actor.height * this.scale;
-		this.ctx.width = this.canvas.width;
-		this.ctx.height = this.canvas.height;
-	}
-
 	setupEvents() {
+		let changeScale = () => {
+			this.canvas.width = this.actor.width * this.scale;
+			this.canvas.height = this.actor.height * this.scale;
+		};
+
+		changeScale();
 		// this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
 		// $('[name="color"]').click(()=> this.changeColor());
-		$('[name="scale"]').click(()=> this.changeScale());
-		document.getElementById('saveButton').addEventListener('click', ()=> this.saveActor());
+		$('[name="scale"]').click(() => changeScale());
+		document.getElementById('saveButton').addEventListener('click', () => this.saveActor());
 		// this.setupPointingDevice();
-		new ActorEditorAttrPanel('attrPanel', this);
-		new ActorEditorImagePanel('imagePanel', this);
+		new ActorEditorAttrPanel('attrPanel', this.actor);
+		new ActorEditorImagePanel('imagePanel', this.actor);
 		new ImageSelector(this.mediasetId);
 	}
 
@@ -75,13 +73,13 @@ class ActorEditorMain extends Matter {
 			if (!isValid) {
 				return;
 			}
-//console.log('scrollTop:' + document.body.scrollTop);
+			//console.log('scrollTop:' + document.body.scrollTop);
 			let x = (this.view.scrollLeft + e.clientX) / this.scale;
 			let y = (e.pageY) / this.scale;
 
 			this.fieldMap.touch(x, y, this.brickNum);
 		}
-		let leave = ()=> {
+		let leave = () => {
 			isValid = false;
 			this.fieldMap.leave();
 		}
@@ -94,15 +92,15 @@ class ActorEditorMain extends Matter {
 			}
 			touch(e);
 		});
-		canvas.addEventListener('mouseup', ()=> leave());
-		canvas.addEventListener('mouseleave', ()=> leave());
+		canvas.addEventListener('mouseup', () => leave());
+		canvas.addEventListener('mouseleave', () => leave());
 	}
 
 	saveActor() {
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
-		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		$.mobile.loading('show', { text: 'Save...', textVisible: true });
 		this.actor.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
@@ -116,31 +114,24 @@ class ActorEditorMain extends Matter {
 }
 
 class ActorEditorAttrPanel extends PanelBase {
-	constructor(panelId, parent) {
-		super(panelId, parent);
+	constructor(panelId, target) {
+		super(panelId, target);
 	}
 
 	setupEvents() {
-		let inputList = this.panel.querySelectorAll('[type=text], [type=number]');
-
-		this.actor = this.parent.actor;
-		inputList.forEach(i => i.addEventListener('change', () => this.actor[i.name] = i.value));
+		super.setupEvents();
 		$('[name=regionType]').change(() => {
 			let type = this.panel.querySelector('[name=regionType]:checked');
 
 			this.actor.regionType = type.getAttribute('data-value');
 		});
-		$('[name=dirType]').change(() => {
-			let type = this.panel.querySelector('[name=dirType]:checked');
-
-			this.actor.dirType = type.getAttribute('data-value');
-		});
 	}
 }
 
 class ActorEditorImagePanel extends PanelBase {
-	constructor(panelId, parent) {
-		super(panelId, parent);
+	constructor(panelId, target) {
+		super(panelId, target);
+		this.actorVisualPopup = new ActorVisualPopup('actorVisualPopup');
 	}
 
 	setupEvents() {
@@ -148,7 +139,7 @@ class ActorEditorImagePanel extends PanelBase {
 		let selectorPopup = document.getElementById('imageSelector');
 		let addImageButton = this.panel.querySelector('.imageSelector');
 
-		this.actor = this.parent.actor;
+		this.actor = this.target;
 		ul.querySelectorAll('li').forEach(li => this.setupMapVisualEvent(li));
 		$(selectorPopup).popup({
 			afterclose: () => {
@@ -184,6 +175,7 @@ class ActorEditorImagePanel extends PanelBase {
 
 	setupMapVisualEvent(li) {
 		let ix = li.getAttribute('data-index');
+		// console.log('setupMapVisualEvent|ix:' + ix);
 		let actorVisual = this.actor.actorVisualList[ix];
 		let anchor = li.querySelector('a');
 		let deleteButton = li.querySelector('a:last-child');
@@ -230,27 +222,15 @@ class ActorEditorImagePanel extends PanelBase {
 	}
 
 	openActorVisualPopup(actorVisual) {
-		console.log('ActorEditorMain#openActorVisualPopup');
-		console.log(actorVisual);
-		let actorVisualPopup = document.getElementById('actorVisualPopup');
-		let repeat = actorVisualPopup.querySelector('[name=repeat]');
-		let radian = actorVisualPopup.querySelector('[name=radian]');
-		let speed = actorVisualPopup.querySelector('[name=speed]');
-		let blink = actorVisualPopup.querySelector('[name=blink]');
+		// console.log('openActorVisualPopup:');
+		// console.log(actorVisual);
+		this.actorVisualPopup.target = actorVisual;
+		this.actorVisualPopup.resetInputs();
+	}
+}
 
-		repeat.value = actorVisual.repeat;
-		radian.value = actorVisual.radian;
-		speed.value = actorVisual.speed;
-		blink.value = actorVisual.blink;
-		$(actorVisualPopup).popup('open');
-		$(actorVisualPopup).popup({
-			afterclose: () => {
-				// console.log('actorVisualPopup.afterclose');
-				actorVisual.repeat = parseInt(repeat.value);
-				actorVisual.radian = parseFloat(radian.value);
-				actorVisual.speed = parseFloat(speed.value);
-				actorVisual.blink = parseFloat(blink.value);
-			}
-		});
+class ActorVisualPopup extends PanelBase {
+	constructor(editorId) {
+		super(editorId);
 	}
 }
