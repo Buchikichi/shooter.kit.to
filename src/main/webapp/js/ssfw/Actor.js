@@ -231,6 +231,9 @@ class Actor extends Matter {
 		}
 		this.processDirType(target);
 		this.actorVisualList.forEach(v => v.move(target));
+		if (this.behaviorIterator) {
+			this.behaviorIterator.next();
+		}
 		this.svX = this.x;
 		this.svY = this.y;
 		if (this.dir != null) {
@@ -397,13 +400,32 @@ class Actor extends Matter {
 		}
 	}
 
+	initBehavior() {
+		let behavior = this.behavior.trim();
+
+		if (!behavior) {
+			return;
+		}
+		if (!behavior.includes('yield')) {
+			behavior += ';yield;';
+		}
+		behavior = 'function* declaredScript(actor) { while(true) {' + behavior + '}}';
+		try {
+			eval(behavior);
+			this.behaviorIterator = declaredScript(this);
+			//console.log(this.behaviorIterator);
+		} catch (e) {
+			// nop
+		}
+	}
+
 	init() {
 		// console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
 		this.actorVisualList = this.actorVisualList.map(v => ActorVisual.create(v, this));
 		this.checkInverse();
-		this.speed /= 10;
+		this.initBehavior();
 		return this;
 	}
 

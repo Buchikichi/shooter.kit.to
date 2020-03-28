@@ -26,7 +26,7 @@ class ActorEditorMain extends Matter {
 	}
 
 	get scale() {
-		return document.querySelector('[name="scale"]:checked').value;
+		return document.querySelector('[name="scale"]').value;
 	}
 
 	start() {
@@ -58,11 +58,12 @@ class ActorEditorMain extends Matter {
 		changeScale();
 		// this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
 		// $('[name="color"]').click(()=> this.changeColor());
-		$('[name="scale"]').click(() => changeScale());
+		document.querySelector('[name="scale"]').addEventListener('change', () => changeScale());
 		document.getElementById('saveButton').addEventListener('click', () => this.saveActor());
 		// this.setupPointingDevice();
 		new ActorEditorAttrPanel('attrPanel', this.actor);
 		new ActorEditorImagePanel('imagePanel', this.actor);
+		new BehaviorPage('behaviorPage', this.actor);
 		new ImageSelector(this.mediasetId);
 	}
 
@@ -123,7 +124,7 @@ class ActorEditorAttrPanel extends PanelBase {
 		$('[name=regionType]').change(() => {
 			let type = this.panel.querySelector('[name=regionType]:checked');
 
-			this.actor.regionType = type.getAttribute('data-value');
+			this.target.regionType = type.getAttribute('data-value');
 		});
 	}
 }
@@ -232,5 +233,11 @@ class ActorEditorImagePanel extends PanelBase {
 class ActorVisualPopup extends PanelBase {
 	constructor(editorId) {
 		super(editorId);
+	}
+}
+
+class BehaviorPage extends PanelBase {
+	constructor(pageId, target) {
+		super(pageId, target);
 	}
 }

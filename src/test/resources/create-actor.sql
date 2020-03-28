@@ -17,7 +17,7 @@ CREATE TABLE actor(
 	region_size integer NOT NULL DEFAULT 0,
 	dir_type integer NOT NULL DEFAULT 0,
 	dir_speed integer NOT NULL DEFAULT 100,
-	speed integer NOT NULL DEFAULT 0,
+	speed numeric NOT NULL DEFAULT 0,
 	hitpoint integer NOT NULL DEFAULT 1,
 	score integer NOT NULL DEFAULT 0,
 	behavior text NOT NULL DEFAULT '',
@@ -56,7 +56,7 @@ ALTER TABLE actor ADD region_type integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD region_size integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD dir_type integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD dir_speed integer NOT NULL DEFAULT 100;
-ALTER TABLE actor ADD speed integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD speed numeric NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD hitpoint integer NOT NULL DEFAULT 1;
 ALTER TABLE actor ADD score integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD behavior text NOT NULL DEFAULT '';

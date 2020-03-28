@@ -16,11 +16,10 @@ class ProductEditorMain {
 //			this.start();
 		});
 
-		this.productStageView = document.getElementById('productStageView');
 		this.stagePanel = new StagePanel();
 		this.productActorPage = new ProductActorPage();
 		this.setupEvents();
-		$(this.productStageView).sortable({handle: '.sortable'});
+		this.setupListView();
 	}
 
 	setupEvents() {
@@ -35,7 +34,13 @@ class ProductEditorMain {
 
 			window.open('/mediaset/edit/' + mediasetSelect.value);
 		});
-		//
+		let saveButton = document.getElementById('saveButton');
+
+		saveButton.addEventListener('click', ()=> this.saveProduct());
+	}
+
+	setupListView() {
+		this.productStageView = document.getElementById('productStageView');
 		this.productStageView.querySelectorAll('li').forEach(li => {
 			let anchor = li.querySelector('a:first-child');
 			let delButton = li.querySelector('a:last-child');
@@ -46,10 +51,29 @@ class ProductEditorMain {
 //				this.productStageView.removeChild(li);
 			});
 		});
-		//
-		let saveButton = document.getElementById('saveButton');
+		$(this.productStageView).sortable({handle: '.sortable'});
+		this.actorList = document.querySelectorAll('.actorList');
+		this.actorList.forEach(ul => {
+			$(ul).sortable({
+				connectWith: '.actorList',
+				items: 'li:not(.divider)',
+				stop: (event, ui)=> {
+					// ソート終了時
+console.log(event);
+console.log(ui);
+					this.actorList.forEach(e => {
+						this.refreshCounter(e);
+					});
+				}
+			});
+		});
+	}
 
-		saveButton.addEventListener('click', ()=> this.saveProduct());
+	refreshCounter(ul) {
+		let liList = ul.querySelectorAll('li:not(.divider)');
+		let span = ul.previousElementSibling.querySelector('.ui-li-count');
+
+		span.textContent = liList.length;
 	}
 
 	getRec(anchor) {

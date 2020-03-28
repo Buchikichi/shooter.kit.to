@@ -1,7 +1,7 @@
 class PanelBase {
 	constructor(panelId, target = null) {
 		this.panel = document.getElementById(panelId);
-		this.inputList = this.panel.querySelectorAll('[type=text], [type=number], select');
+		this.inputList = this.panel.querySelectorAll('[type=text], [type=number], textarea, select');
 		this.target = target;
 		this.setupEvents();
 	}

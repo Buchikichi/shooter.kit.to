@@ -50,7 +50,7 @@
           <span th:text="${actorType}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(actorList)}">0</span>
         </h4>
         <ul data-role="listview" data-split-icon="bars" class="actorList" th:id="${actorType+'View'}">
-          <li th:each="actor:${actorList}">
+          <li th:each="actor:${actorList}" th:attr="data-type=${actorType}">
             <a th:with="actorVisual=${actor.actorVisualList}" th:href="'/actor/edit/' + ${actor.id}" target="_blank"
                 th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
               <img src="/img/icon.listview.png"/>

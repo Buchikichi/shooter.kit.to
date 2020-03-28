@@ -1,6 +1,7 @@
 /**
  * Waver.
  */
+/*
 class Waver extends Enemy {
 	constructor(x, y) {
 		super(x, y);
@@ -19,3 +20,4 @@ class Waver extends Enemy {
 	}
 }
 Waver.RANGE = 18;
+//*/

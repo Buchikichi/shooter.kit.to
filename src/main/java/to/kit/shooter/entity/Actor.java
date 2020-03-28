@@ -1,5 +1,6 @@
 package to.kit.shooter.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,7 +52,7 @@ public class Actor {
 	@Enumerated(EnumType.ORDINAL)
 	private DirType dirType;
 	private int dirSpeed;
-	private int speed;
+	private BigDecimal speed;
 	private int hitpoint;
 	private int score;
 	private String behavior;

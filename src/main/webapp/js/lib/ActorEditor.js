@@ -4,17 +4,20 @@ class ActorEditor extends Actor {
     }
 
     draw(ctx) {
-        let left = -this.hW;
-        let top = -this.hH;
-
         ctx.save();
         super.draw(ctx);
-        // ctx.fillStyle = 'orange';
-		// ctx.beginPath();
-		// ctx.arc(0, 0, 64, 0, Math.PI2);
-        // ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, .8)';
-        ctx.strokeRect(left, top, this.width, this.height);
+        ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
+        if (this.regionType == 0) {
+            ctx.beginPath();
+            ctx.arc(0, 0, this.regionSize / 2, 0, Math.PI2, false);
+            ctx.stroke();
+        } else {
+            let half = this.regionSize / 2;
+            let left = -half;
+            let top = -half;
+
+            ctx.strokeRect(left, top, this.regionSize, this.regionSize);
+        }
         ctx.restore();
     }
 
