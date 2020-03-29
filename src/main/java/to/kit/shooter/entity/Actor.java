@@ -53,7 +53,7 @@ public class Actor {
 	private DirType dirType;
 	private int dirSpeed;
 	private BigDecimal speed;
-	private int hitpoint;
+	private int hitPoint;
 	private int score;
 	private String behavior;
 	@Column(insertable = false, updatable = false)

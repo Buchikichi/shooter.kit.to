@@ -77,9 +77,9 @@ body {
           <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
           <label>3<input type="radio" name="scale" value="3"/></label>
           <label>4<input type="radio" name="scale" value="4"/></label>
-          <button id="saveButton" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
       </div>
+      <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
     </div>
     <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
       <form id="attrForm" enctype="multipart/form-data"

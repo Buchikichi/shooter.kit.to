@@ -1,6 +1,7 @@
 /**
  * Juno.
  */
+/*
 class Juno extends Enemy {
 	constructor(x, y) {
 		super(x, y);
@@ -16,3 +17,4 @@ class Juno extends Enemy {
 		];
 	}
 }
+//*/

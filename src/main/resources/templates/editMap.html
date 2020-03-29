@@ -37,7 +37,7 @@
       <canvas id="canvas"></canvas>
       <div id="loading"></div>
     </div>
-    <div data-role="footer" data-position="fixed">
+    <div data-role="header" data-position="fixed">
       <div id="panel">
         <fieldset data-role="controlgroup" data-type="horizontal">
           <a href="#imagePanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Images</a>
@@ -51,12 +51,12 @@
           <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
           <label>3<input type="radio" name="scale" value="3"/></label>
           <label>4<input type="radio" name="scale" value="4"/></label>
-          <button id="saveButton" type="button" data-icon="check" class="ui-btn ui-btn-b">Save</button>
         </fieldset>
-        <input id="mapId" type="hidden" th:value="${map.id}"/>
-        <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
       </div>
-    </div>
+      <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
+      <input id="mapId" type="hidden" th:value="${map.id}"/>
+      <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
+  </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
       <input type="text" th:field="${map.name}"/>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">

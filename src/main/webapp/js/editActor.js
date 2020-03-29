@@ -65,6 +65,7 @@ class ActorEditorMain extends Matter {
 		new ActorEditorImagePanel('imagePanel', this.actor);
 		new BehaviorPage('behaviorPage', this.actor);
 		new ImageSelector(this.mediasetId);
+		PotController.create();
 	}
 
 	setupPointingDevice() {

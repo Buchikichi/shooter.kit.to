@@ -41,7 +41,7 @@ input[type=number] {
       <canvas id="canvas"></canvas>
       <div id="loading"></div>
     </div>
-    <div data-role="footer" data-position="fixed">
+    <div data-role="header" data-position="fixed">
       <div>
         <fieldset data-role="controlgroup" data-type="horizontal">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-info">Attributes</a>
@@ -64,7 +64,7 @@ input[type=number] {
         <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
       </div>
     </div>
-    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
+    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay" data-swipe-close="false">
       <input type="text" th:field="*{className}"/>
       <div data-role="collapsibleset" data-mini="true">
         <div data-role="collapsible" data-collapsed="false">
@@ -89,7 +89,7 @@ input[type=number] {
           </label>
           <fieldset class="ui-grid-a">
             <div class="ui-block-a">
-              <label>Hitpoint:<input type="number" required="required" th:field="*{hitpoint}"/></label>
+              <label>Hitpoint:<input type="number" required="required" th:field="*{hitPoint}"/></label>
             </div>
             <div class="ui-block-b">
               <label>Score:<input type="number" required="required" th:field="*{score}"/></label>
@@ -108,7 +108,8 @@ input[type=number] {
             </select>
           </fieldset>
           <label><span>DirSpeed:</span>
-            <input type="number" required="required" th:field="*{dirSpeed}"/>
+            <input type="number" required="required" min="-179" max="180" th:field="*{dirSpeed}"/>
+            <div th:replace="_potController"></div>
           </label>
         </div>
       </div>
@@ -189,6 +190,13 @@ input[type=number] {
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-notext ui-btn-left ui-icon-back">Back</a>
     </div>
     <textarea th:field="*{behavior}"></textarea>
+    <div data-role="footer" data-position="fixed">
+      <div>
+        <fieldset data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-left">
+          <input type="checkbox" name="loop" data-role="flipswitch" data-mini="true"/>
+        </fieldset>
+      </div>
+    </div>
   </div>
 </body>
 </html>
