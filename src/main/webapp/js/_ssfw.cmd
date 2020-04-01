@@ -10,5 +10,6 @@ set PATH=%JAVA_HOME%\bin;%PATH%
 echo SSFW...
 cd %CUR%
 type %SSFW% > ssfw-all.js 2> nul
-java -jar %COMP% %COMP_OPT% --js ssfw-all.js --js_output_file %OUTPUT%/ssfw-min.js
+java -jar %COMP% %COMP_OPT% --js ssfw-all.js --js_output_file ssfw-gen-all.js
+type GeneratorFunction.js ssfw-gen-all.js > %OUTPUT%/ssfw-min.js 2> nul
 :pause

@@ -29,6 +29,7 @@ class PanelBase {
 			if (i.tagName == 'SELECT') {
 				$(i).selectmenu('refresh', false);
 			}
+			i.dispatchEvent(new Event('change'));
 		});
 	}
 }

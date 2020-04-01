@@ -8,10 +8,14 @@ class PotController {
 		let collapsed = null;
 
 		while (node) {
-			if (node.classList.contains('ui-collapsible-content-collapsed')) {
-				node.classList.remove('ui-collapsible-content-collapsed');
-				collapsed = node;
-				break;
+			if (node.classList) {
+				// console.log(node);
+				// console.log(node.classList);
+				if (node.classList.contains('ui-collapsible-content-collapsed')) {
+					node.classList.remove('ui-collapsible-content-collapsed');
+					collapsed = node;
+					break;
+				}
 			}
 			node = node.parentNode;
 		}
@@ -39,6 +43,8 @@ class PotKnob {
 		let ovalRect = oval.getBoundingClientRect();
 		let knobRect = knob.getBoundingClientRect();
 
+		// console.log('ovalRect:');
+		// console.log(ovalRect);
 		this.number = number;
 		this.oval = oval;
 		this.hand = hand;

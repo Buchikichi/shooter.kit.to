@@ -11,5 +11,6 @@ set PATH=%JAVA_HOME%\bin;%PATH%
 echo Implementor...
 cd %CUR%
 type %SSFW% %IMPL% > implementor-all.js 2> nul
-java -jar %COMP% %COMP_OPT% --js implementor-all.js --js_output_file %OUTPUT%/implementor-min.js
+java -jar %COMP% %COMP_OPT% --js implementor-all.js --js_output_file implementor-gen-all.js
+type GeneratorFunction.js implementor-gen-all.js > %OUTPUT%/implementor-min.js 2> nul
 :pause

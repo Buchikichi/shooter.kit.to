@@ -1,9 +1,13 @@
 package to.kit.shooter.web.form;
 
+import javax.persistence.Convert;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Data;
 import to.kit.shooter.entity.type.AudioType;
+import to.kit.shooter.entity.type.SeqType;
+import to.kit.shooter.entity.type.SeqTypeConverter;
 
 /**
  * Audio form.
@@ -16,7 +20,8 @@ public final class AudioForm {
 	private String owner;
 	private int access;
 	private AudioType audioType;
-	private long audioSeq;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType audioSeq;
 	private String name;
 	private MultipartFile webm;
 	private MultipartFile audio;

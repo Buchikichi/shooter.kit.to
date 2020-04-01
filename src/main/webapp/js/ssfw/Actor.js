@@ -222,6 +222,9 @@ class Actor extends Matter {
 	 * @param target
 	 */
 	move(target) {
+		if (target) {
+			this.target = target;
+		}
 		if (0 < this.explosion) {
 			this.explosion--;
 			if (this.explosion == 0) {
@@ -409,13 +412,15 @@ class Actor extends Matter {
 		if (!behavior.includes('yield')) {
 			behavior += ';yield;';
 		}
-		behavior = 'function* declaredScript(actor) { while(true) {' + behavior + '}}';
+		behavior = '{ while(true) {' + behavior + '}}';
 		try {
-			eval(behavior);
-			this.behaviorIterator = declaredScript(this);
-			//console.log(this.behaviorIterator);
+			let func = new GeneratorFunction('actor', behavior);
+
+			this.behaviorIterator = func(this);
 		} catch (e) {
 			// nop
+			console.log('Actor#initBehavior:');
+			console.log(e.name + ': ' + e.message);
 		}
 	}
 
@@ -475,7 +480,7 @@ Actor.CollidingWallType = {
 };
 Actor.DirType = {
 	Manual: 0,
-	Own: 1,
+	Spin: 1,
 	Aim: 2,
 	Chase: 3,
 	Fit: 4,

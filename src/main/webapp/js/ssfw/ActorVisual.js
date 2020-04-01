@@ -2,15 +2,18 @@ class ActorVisual extends Matter {
 	constructor() {
 		super();
 		this.dir = 0;
+		this.dirType = Actor.DirType.Manual;
+		this.dirSpeed = 0;
 	}
 
 	move(target) {
+		let step = Math.PI / 180 * this.dirSpeed;
 		let dx = target.x - this._actor.x;
 		let dy = target.y - this._actor.y;
 
-		if (this.dirType == Actor.DirType.Chase) {
-			let step = Math.PI / 180 * this.dirSpeed;
-
+		if (this.dirType == Actor.DirType.Spin) {
+			this.dir += step;
+		} else if (this.dirType == Actor.DirType.Chase) {
 			this.dir = Math.close(this.dir, Math.atan2(dy, dx), step);
 		} else if (this.dirType == Actor.DirType.Fit) {
 			this.dir = this._actor.dir;
