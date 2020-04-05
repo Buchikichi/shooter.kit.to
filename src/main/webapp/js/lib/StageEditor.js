@@ -16,7 +16,7 @@ class StageEditor extends Stage {
 		this.progress = progress;
 	}
 
-	setCursorPos(pos) {
+	setCursorPos(pos = { x: 0, y: 0 }) {
 		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.target == 'E' && s.includes(pos));
 
@@ -134,5 +134,6 @@ StageEditor.CURSOR_TYPE = {
 	NONE: 0,
 	ACTOR: 1,
 	EVENT: 2,
-	REMOVE: 3,
+	EDIT: 3,
+	REMOVE: 4,
 }

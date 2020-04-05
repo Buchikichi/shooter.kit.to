@@ -16,9 +16,11 @@
 	margin: 0;
 	padding: 0;
 }
+/*
 body {
 	overflow: hidden;
 }
+*/
 #view {
 	position: relative;
 	overflow: auto;
@@ -62,8 +64,8 @@ body {
         <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
           <a href="#attrPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Attributes</a>
           <button disabled="disabled" data-theme="b">Event</button>
-          <label>Actor<input type="radio" name="behavior" value="a" checked="checked"/></label>
-          <label>Effect<input type="radio" name="behavior" value="e"/></label>
+          <label>Select<input type="radio" name="behavior" value="e"/></label>
+          <label>Edit<input type="radio" name="behavior" value="s" checked="checked"/></label>
           <label>Remove<input type="radio" name="behavior" value="r"/></label>
           <button disabled="disabled" data-theme="b">Guide</button>
           <label>ON<input type="radio" name="guide" value="1" checked="checked"/></label>
@@ -156,28 +158,11 @@ body {
 -->
       </form>
     </div>
-    <div id="actorPanel" data-role="panel" data-position="left" data-display="overlay">
-      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-        <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-        <select name="actorType" th:with="typeList=${T(to.kit.shooter.entity.type.VisualType).List}">
-          <option th:each="opt:${typeList}" th:value="${opt.ix}" th:text="${opt}">opt</option>
-        </select>
-      </fieldset>
-      <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-        <label>Reverse<input type="radio" name="actor_op" value="Rev"/></label>
-        <label>Forward<input type="radio" name="actor_op" value="Spw" checked="checked"/></label>
-      </fieldset>
-      <div>
-        <ul id="actorList" data-role="listview" data-filter="true" data-inset="true">
-        </ul>
-      </div>
-    </div>
     <div id="eventPanel" data-role="panel" data-position="left" data-display="overlay">
-      <div data-role="collapsibleset" data-mini="true">
-        <div data-role="collapsible">
+      <div data-role="collapsibleset" data-mini="true" data-inset="false">
+        <div data-role="collapsible" th:with="modeList=${T(to.kit.shooter.entity.ScenarioType).MODE_LIST}">
           <h3>Mode</h3>
-          <fieldset data-role="controlgroup" data-mini="true" data-inset="false"
-              th:with="modeList=${T(to.kit.shooter.entity.ScenarioType).MODE_LIST}">
+          <fieldset data-role="controlgroup" data-mini="true">
             <label th:each="opt:${modeList}"><input type="radio" name="op" th:value="${opt}" data-type="mode"/>
               <span th:text="#{${opt.value}}"></span>
             </label>
@@ -204,7 +189,27 @@ body {
             <button class="ui-btn ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
           </fieldset>
         </div>
+        <div data-role="collapsible" data-collapsed="false">
+          <h3>Actor</h3>
+          <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+            <select name="actorType" th:with="typeList=${T(to.kit.shooter.entity.type.VisualType).List}">
+              <option th:each="opt:${typeList}" th:value="${opt.ix}" th:text="${opt}">opt</option>
+            </select>
+          </fieldset>
+          <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <label>Reverse<input type="radio" name="actor_op" value="Rev"/></label>
+            <label>Forward<input type="radio" name="actor_op" value="Spw" checked="checked"/></label>
+          </fieldset>
+          <div>
+            <ul id="actorList" data-role="listview" data-filter="true" data-inset="true">
+            </ul>
+          </div>
+        </div>
       </div>
+    </div>
+    <div id="editEventPanel" data-role="panel" data-position="left" data-display="overlay">
+
     </div>
     <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>

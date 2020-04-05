@@ -10,7 +10,7 @@ class EditStage {
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
 		this.footer = document.querySelector('[data-role=footer]');
-		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
 		this.scenario = null;
 		this.loadStage();
 	}
@@ -229,13 +229,14 @@ console.log('EditStage#setupEvents');
 
 //		this.controller = new Controller();
 		this.attrPanel = new AttrPanel(this);
-		this.actorPanel = new ActorPanel(this);
+//		this.actorPanel = new ActorPanel(this);
 		this.eventPanel = new EventPanel(this);
+		this.editEventPanel = new EditEventPanel(this);
 		// this.setupDummyActors();
 		stage.setProgress(0);
 
-		$('[name="behavior"]:eq(0)').click(()=> this.actorPanel.open());
-		$('[name="behavior"]:eq(1)').click(()=> this.eventPanel.open());
+		$('[name="behavior"]:eq(0)').click(()=> this.eventPanel.open());
+		$('[name="behavior"]:eq(1)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.EDIT);
 		$('[name="behavior"]:eq(2)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
 		// $('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		$('[name="guide"]').click(()=> changeGuide());
@@ -295,28 +296,31 @@ console.log('EditStage#setupEvents');
 		}
 
 		canvas.addEventListener('mousedown', e => {
-			if (this.cursorType == StageEditor.CURSOR_TYPE.NONE) {
+			if (this.cursorType == StageEditor.CURSOR_TYPE.NONE
+				|| this.cursorType == StageEditor.CURSOR_TYPE.EDIT) {
 				return;
 			}
-			let pos = calcPos(e);
-
 			if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
 				stage.removeScenario();
 			} else {
-				stage.addScenario(pos, this.scenario);
+				stage.addScenario(calcPos(e), this.scenario);
 			}
 			if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
 				this.cursorType = StageEditor.CURSOR_TYPE.NONE;
-				return;
 			}
 		});
 		canvas.addEventListener('mousemove', e => {
-			let pos = calcPos(e);
 			// console.log('scrollLeft:' + this.view.scrollLeft + '/scrollTop:' + this.view.scrollTop);
 			// console.log('clientX:' + e.clientX + '/clientY:' + e.clientY);
 			// console.log('x:' + pos.x + '/y:' + pos.y);
 			stage.cursorType = this.cursorType;
-			stage.setCursorPos(pos);
+			stage.setCursorPos(calcPos(e));
+		});
+		canvas.addEventListener('mouseup', () => {
+			if (this.cursorType == StageEditor.CURSOR_TYPE.EDIT && stage._currentScenario) {
+				this.editEventPanel.open(stage._currentScenario);
+				stage._currentScenario = null;
+			}
 		});
 		canvas.addEventListener('mouseout', e => stage.cursorType = StageEditor.CURSOR_TYPE.NONE);
 	}
@@ -414,65 +418,15 @@ class AttrPanel {
 	}
 }
 
-class ActorPanel {
-	constructor(stageEditor) {
-		this.stageEditor = stageEditor;
-		this.panel = document.getElementById('actorPanel');
-		this.actorType = this.panel.querySelector('[name=actorType]');
-		this.setupEvent();
-	}
-
-	loadActors() {
-		let listView = this.panel.querySelector('[data-role=listview]');
-		let data = { criteria: { product: { id: this.stageEditor.product.id }, type: this.actorType.value } };
-
-		listView.textContent = null;
-		new ActorEntity().list(data).then(doc => {
-			doc.querySelectorAll('li').forEach(li => {
-				li.querySelector('a').addEventListener('click', () => {
-					this.createScenario(li);
-					$(this.panel).panel('close');
-				});
-				listView.appendChild(li)
-			});
-			$(listView).listview('refresh');
-		});
-	}
-
-	setupEvent() {
-		this.actorType.addEventListener('change', () => this.loadActors());
-		$(this.actorType).val([3]).selectmenu('refresh')
-		this.loadActors();
-		$(this.panel).panel({
-			close: ()=> {
-				this.stageEditor.scenario = this.scenario;
-			}
-		});
-	}
-
-	createScenario(li) {
-		let op = this.panel.querySelector('[name=actor_op]:checked').value;
-		let seq = li.getAttribute('data-seq');
-		let stage = this.stageEditor.product.stage;
-
-		// console.log('seq:' + seq);
-		this.scenario = Scenario.create({op: op, target: 'E', type: 0, number: seq}, stage);
-		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
-	}
-
-	open() {
-		$(this.panel).panel('open');
-	}
-}
-
 class EventPanel {
 	constructor(stageEditor) {
 		this.stageEditor = stageEditor;
 		this.panel = document.getElementById('eventPanel');
+		this.actorType = this.panel.querySelector('[name=actorType]');
 		this.setupEvent();
 	}
 
-	get scenario() {
+	createEffectScenario() {
 		let chk = this.panel.querySelector('[name=op]:checked');
 		let op = chk.value;
 		let cursorType = chk.getAttribute('data-type');
@@ -487,13 +441,41 @@ class EventPanel {
 			number = audioSelector.getAttribute('data-seq');
 			console.log('type:' + type + '/number:' + number);
 		}
-		return Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number}, stage);
+		this.scenario = Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number}, stage);
+		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
+	}
+
+	createActorScenario(li) {
+		let op = this.panel.querySelector('[name=actor_op]:checked').value;
+		let seq = li.getAttribute('data-seq');
+		let stage = this.stageEditor.product.stage;
+
+		// console.log('seq:' + seq);
+		this.scenario = Scenario.create({op: op, target: 'E', type: 0, number: seq}, stage);
+		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EDIT;
+	}
+
+	loadActors() {
+		let listView = this.panel.querySelector('[data-role=listview]');
+		let data = { criteria: { product: { id: this.stageEditor.product.id }, type: this.actorType.value } };
+
+		listView.textContent = null;
+		new ActorEntity().list(data).then(doc => {
+			doc.querySelectorAll('li').forEach(li => {
+				li.querySelector('a').addEventListener('click', () => {
+					this.createActorScenario(li);
+					$(this.panel).panel('close');
+				});
+				listView.appendChild(li)
+			});
+			$(listView).listview('refresh');
+		});
 	}
 
 	setupEvent() {
 		let op = $('[name="op"]');
 		let audioSelectorButton = document.getElementById('audioSelectorButton');
-		let firstOp = this.panel.querySelector('[name=op]');
+//		let firstOp = this.panel.querySelector('[name=op]');
 
 		op.click(()=> {
 			let chk = this.panel.querySelector('[name=op]:checked');
@@ -505,10 +487,13 @@ class EventPanel {
 				$(audioSelectorButton).hide();
 				// $(this.panel).panel('close');
 			}
-			this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
+			this.createEffectScenario();
 		});
-		$(firstOp).prop('checked', true).checkboxradio('refresh');
+//		$(firstOp).prop('checked', true).checkboxradio('refresh');
 		$(audioSelectorButton).hide();
+		this.actorType.addEventListener('change', () => this.loadActors());
+		$(this.actorType).val([3]).selectmenu('refresh')
+		this.loadActors();
 		$(this.panel).panel({
 			close: ()=> {
 				this.stageEditor.scenario = this.scenario;
@@ -517,6 +502,29 @@ class EventPanel {
 	}
 
 	open() {
+		$(this.panel).panel('open');
+	}
+}
+
+class EditEventPanel extends PanelBase {
+	constructor(stageEditor) {
+		super('editEventPanel');
+		this.stageEditor = stageEditor;
+//		this.panel = document.getElementById('editEventPanel');
+//		this.setupEvent();
+	}
+
+	setupEvents() {
+		super.setupEvents();
+		$(this.panel).panel({
+			close: ()=> {
+				this.stageEditor.product.stage.setCursorPos();
+			}
+		});
+	}
+
+	open(scenario) {
+		console.log(scenario);
 		$(this.panel).panel('open');
 	}
 }
