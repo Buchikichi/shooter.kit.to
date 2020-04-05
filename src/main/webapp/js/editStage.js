@@ -452,7 +452,7 @@ class EventPanel {
 
 		// console.log('seq:' + seq);
 		this.scenario = Scenario.create({op: op, target: 'E', type: 0, number: seq}, stage);
-		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EDIT;
+		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
 	}
 
 	loadActors() {

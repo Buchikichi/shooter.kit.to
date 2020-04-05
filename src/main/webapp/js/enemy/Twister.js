@@ -1,6 +1,7 @@
 /**
  * Twister.
  */
+/*
 class Twister extends Enemy {
 	constructor(x, y) {
 		super(x, y);
@@ -20,3 +21,4 @@ class Twister extends Enemy {
 	}
 }
 Twister.RANGE = 13;
+*/

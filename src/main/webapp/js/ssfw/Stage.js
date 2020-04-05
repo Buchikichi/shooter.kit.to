@@ -218,10 +218,10 @@ console.log(s);
 			let y = (s.h + 1) * bw;
 			// let reserve = Enemy.assign(s.number, x, y);
 			let reserve = this._product.getActor(s.number, { x: x, y: y });
-			// console.log('reserve:');
-			// console.log(reserve);
 
 			if (reserve != null) {
+				// console.log('reserve:' + reserve.className);
+				// console.log(reserve);
 				// let enemy;
 
 				// if (reserve.formation) {
