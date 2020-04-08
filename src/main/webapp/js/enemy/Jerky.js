@@ -1,6 +1,7 @@
 /**
  * Jerky.
  */
+/*
 class Jerky extends Enemy {
 	constructor(x, y) {
 		super(x, y);
@@ -14,3 +15,4 @@ class Jerky extends Enemy {
 		];
 	}
 }
+*/

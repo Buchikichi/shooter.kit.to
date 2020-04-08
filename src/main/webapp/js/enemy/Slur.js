@@ -1,7 +1,8 @@
 /**
  * Slur.
  */
-class Slur extends Enemy {
+/*
+ class Slur extends Enemy {
 	constructor(x, y) {
 		super(x, y);
 		this.hasBounds = false;
@@ -20,3 +21,4 @@ class Slur extends Enemy {
 	}
 }
 Slur.RANGE = 4;
+*/
