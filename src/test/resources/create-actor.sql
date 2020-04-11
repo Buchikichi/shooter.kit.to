@@ -15,9 +15,12 @@ CREATE TABLE actor(
 	height integer NOT NULL DEFAULT 0,
 	region_type integer NOT NULL DEFAULT 0,
 	region_size integer NOT NULL DEFAULT 0,
+	deg integer NOT NULL DEFAULT 0,
 	dir_type integer NOT NULL DEFAULT 0,
 	dir_speed integer NOT NULL DEFAULT 100,
 	speed numeric NOT NULL DEFAULT 0,
+	gravity numeric NOT NULL DEFAULT 0,
+	reaction numeric NOT NULL DEFAULT 0,
 	hit_point integer NOT NULL DEFAULT 1,
 	score integer NOT NULL DEFAULT 0,
 	behavior text NOT NULL DEFAULT '',
@@ -38,7 +41,10 @@ COMMENT ON COLUMN actor.width IS '幅';
 COMMENT ON COLUMN actor.height IS '高さ';
 COMMENT ON COLUMN actor.region_type IS '領域タイプ';
 COMMENT ON COLUMN actor.region_size IS '領域サイズ';
+COMMENT ON COLUMN actor.deg IS 'degree';
 COMMENT ON COLUMN actor.speed IS 'speed';
+COMMENT ON COLUMN actor.gravity IS 'gravity';
+COMMENT ON COLUMN actor.reaction IS 'reaction';
 COMMENT ON COLUMN actor.hit_point IS 'hit point';
 COMMENT ON COLUMN actor.score IS 'score';
 COMMENT ON COLUMN actor.behavior IS 'behavior';
@@ -54,9 +60,12 @@ ALTER TABLE actor ADD width integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD height integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD region_type integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD region_size integer NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD deg integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD dir_type integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD dir_speed integer NOT NULL DEFAULT 100;
 ALTER TABLE actor ADD speed numeric NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD gravity numeric NOT NULL DEFAULT 0;
+ALTER TABLE actor ADD reaction numeric NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD hit_point integer NOT NULL DEFAULT 1;
 ALTER TABLE actor ADD score integer NOT NULL DEFAULT 0;
 ALTER TABLE actor ADD behavior text NOT NULL DEFAULT '';

@@ -126,6 +126,7 @@ class Actor extends Matter {
 		this.y = y;
 		this.dy *= -this.reaction;
 		this.radian = this._stage.map.getHorizontalAngle(this);
+		this.reacted = true;
 	}
 
 	trigger(target, force = false) {
@@ -232,11 +233,8 @@ class Actor extends Matter {
 				return;
 			}
 		}
+		this.reacted = false;
 		this.processDirType(target);
-		this.actorVisualList.forEach(v => v.move(target));
-		if (this.behaviorIterator) {
-			this.behaviorIterator.next();
-		}
 		this.svX = this.x;
 		this.svY = this.y;
 		if (this.dir != null) {
@@ -277,6 +275,10 @@ class Actor extends Matter {
 			anim.next(this.dir);
 		});
 		this.checkActivityArea();
+		this.actorVisualList.forEach(v => v.move(target));
+		if (this.behaviorIterator) {
+			this.behaviorIterator.next();
+		}
 		return this.trigger(target);
 	}
 
@@ -409,10 +411,7 @@ class Actor extends Matter {
 		if (!behavior) {
 			return;
 		}
-		if (!behavior.includes('yield')) {
-			behavior += ';yield;';
-		}
-		behavior = '{ while(true) {' + behavior + '}}';
+		behavior = '{ while(true) {' + behavior + ';yield;}}';
 		try {
 			let func = new GeneratorFunction('actor', behavior);
 
@@ -428,6 +427,7 @@ class Actor extends Matter {
 		// console.log('Actor#init:' + this.id + '/' + this.className + ':' + this.seq);
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
+		this.dir = this.deg / 180 * Math.PI;
 		this.actorVisualList = this.actorVisualList.map(v => ActorVisual.create(v, this));
 		this.checkInverse();
 		this.initBehavior();

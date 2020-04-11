@@ -49,10 +49,13 @@ public class Actor {
 	@Enumerated(EnumType.ORDINAL)
 	private RegionType regionType;
 	private int regionSize;
+	private int deg;
 	@Enumerated(EnumType.ORDINAL)
 	private DirType dirType;
 	private int dirSpeed;
 	private BigDecimal speed;
+	private BigDecimal gravity;
+	private BigDecimal reaction;
 	private int hitPoint;
 	private int score;
 	private String behavior;

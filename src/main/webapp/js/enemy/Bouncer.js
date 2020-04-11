@@ -1,6 +1,7 @@
 /**
  * Bouncer.
  */
+/*
 class Bouncer extends Enemy {
 	constructor(x, y) {
 		super(x, y);
@@ -30,3 +31,4 @@ class Bouncer extends Enemy {
 		return result;
 	}
 }
+*/
