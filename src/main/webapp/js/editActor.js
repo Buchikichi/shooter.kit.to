@@ -4,6 +4,7 @@ class ActorEditorMain extends Matter {
 	constructor() {
 		super();
 		let productId = document.querySelector('[name=productId]').value;
+		let mediasetId = document.querySelector('[name=mediasetId]').value;
 		let actorId = document.querySelector('[name=id]').value;
 		let loading = document.getElementById('loading');
 		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
@@ -12,8 +13,7 @@ class ActorEditorMain extends Matter {
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
 		this.setRect(256, 256);
-		this.mediasetId = document.querySelector('[name=mediasetId]').value;
-		Mediaset.create(this.mediasetId).then(mediaset => {
+		Mediaset.create(mediasetId).then(mediaset => {
 			return mediaset.load().checkLoading(callback);
 		}).then(() => {
 			return ActorEditor.create(actorId);
@@ -64,7 +64,7 @@ class ActorEditorMain extends Matter {
 		new ActorEditorAttrPanel('attrPanel', this.actor);
 		new ActorEditorImagePanel('imagePanel', this.actor);
 		new BehaviorPage('behaviorPage', this.actor);
-		new ImageSelector(this.mediasetId);
+		new ImageSelector();
 		PotController.create();
 	}
 
@@ -144,21 +144,23 @@ class ActorEditorImagePanel extends PanelBase {
 		this.actor = this.target;
 		ul.querySelectorAll('li').forEach(li => this.setupMapVisualEvent(li));
 		$(selectorPopup).popup({
+			afteropen: () => addImageButton.value = '',
 			afterclose: () => {
-				let seq = addImageButton.getAttribute('data-seq');
+				let seq = addImageButton.value;
 
 				if (!seq) {
 					return;
 				}
 				let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: seq });
+				let ix = this.actor.actorVisualList.length;
 				// console.log(visual);
 				let actorVisual = ActorVisual.create({
+					seq: ix,
 					visualSeq: seq,
 					name: visual.name,
 				}, this.actor);
-				let ix = this.actor.actorVisualList.length;
 
-				this.addImage(ul, actorVisual, ix);
+				this.addImage(ul, actorVisual);
 				$(ul).listview('refresh');
 			}
 		});
@@ -167,17 +169,12 @@ class ActorEditorImagePanel extends PanelBase {
 			//cancel: '.sortable-item',
 			helper: 'clone',
 			items: '> li.sortable-item',
-			update: (ev, ui) => {
-				// console.log('sortable#update');
-				this.sortListView(ul);
-				$(ul).listview('refresh');
-			}
+			update: (ev, ui) => this.sortListView(ul)
 		});
 	}
 
 	setupMapVisualEvent(li) {
 		let ix = li.getAttribute('data-index');
-		// console.log('setupMapVisualEvent|ix:' + ix);
 		let actorVisual = this.actor.actorVisualList[ix];
 		let anchor = li.querySelector('a');
 		let deleteButton = li.querySelector('a:last-child');
@@ -186,13 +183,16 @@ class ActorEditorImagePanel extends PanelBase {
 		let visual = Mediaset.Instance.getVisualBySeq({ visualSeq: visualSeq });
 
 		name.textContent = visual.name;
-		anchor.addEventListener('click', () => this.openActorVisualPopup(actorVisual));
+		anchor.addEventListener('click', () => this.actorVisualPopup.open(actorVisual));
 		deleteButton.addEventListener('click', () => {
-			console.log('delete');
+			let dataIndex = li.getAttribute('data-index');
+
+			this.actor.actorVisualList = this.actor.actorVisualList.filter(v => v.seq != dataIndex);
+			li.parentNode.removeChild(li);
 		});
 	}
 
-	addImage(ul, actorVisual, ix) {
+	addImage(ul, actorVisual) {
 		// console.log('EditMain#addImage:');
 		// console.log(mapVisual);
 		let li = document.createElement('li');
@@ -201,7 +201,7 @@ class ActorEditorImagePanel extends PanelBase {
 		anchor.append(document.createElement('span'));
 		li.append(anchor);
 		li.append(document.createElement('a'));
-		li.setAttribute('data-index', ix);
+		li.setAttribute('data-index', actorVisual.seq);
 		li.setAttribute('data-visualSeq', actorVisual.visualSeq);
 		li.classList.add('sortable-item');
 		ul.append(li);
@@ -221,13 +221,7 @@ class ActorEditorImagePanel extends PanelBase {
 			actorVisual.seq = seq;
 			return actorVisual;
 		});
-	}
-
-	openActorVisualPopup(actorVisual) {
-		// console.log('openActorVisualPopup:');
-		// console.log(actorVisual);
-		this.actorVisualPopup.target = actorVisual;
-		this.actorVisualPopup.resetInputs();
+		$(ul).listview('refresh');
 	}
 }
 

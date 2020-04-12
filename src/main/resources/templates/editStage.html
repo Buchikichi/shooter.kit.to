@@ -83,29 +83,29 @@ body {
       </div>
       <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
     </div>
-    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay">
+    <div id="attrPanel" data-role="panel" data-position="left" data-display="overlay" th:object="${stage}">
       <form id="attrForm" enctype="multipart/form-data"
            th:with="transitionList=${T(to.kit.shooter.entity.TransitionType).LIST}">
         <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
-        <input id="productId" type="hidden" th:value="${stage.product.id}"/>
-        <input id="width" type="hidden" th:value="${stage.product.width}"/>
-        <input id="height" type="hidden" th:value="${stage.product.height}"/>
-        <input id="mediasetId" type="hidden" th:value="${stage.product.mediaset.id}"/>
-        <input id="stageId" type="hidden" th:value="${stage.id}"/>
-        <input id="stageName" type="text" required="required" th:value="${stage.map.name}"/>
+        <input id="productId" type="hidden" th:value="*{product.id}"/>
+        <input id="width" type="hidden" th:value="*{product.width}"/>
+        <input id="height" type="hidden" th:value="*{product.height}"/>
+        <input id="mediasetId" type="hidden" th:value="*{product.mediaset.id}"/>
+        <input id="stageId" type="hidden" th:value="*{id}"/>
+        <input id="stageName" type="text" required="required" th:value="*{map.name}"/>
         <label><span>V-Scroll type:</span>
-          <select name="roll" data-mini="true" th:field="${stage.roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
+          <select name="roll" data-mini="true" th:field="*{roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
             <option th:each="opt:${scrollList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
           </select>
         </label>
         <label><span>V-Start pos:</span>
-          <input type="text" th:field="${stage.posH}" disabled="disabled"/>
+          <input type="text" th:field="*{posH}" disabled="disabled"/>
         </label>
         <label><span>H-Repeat:</span>
-          <input type="number" min="1" th:field="${stage.repeat}" />
+          <input type="number" min="1" th:field="*{repeat}" />
         </label>
         <label><span>H-Start pos:</span>
-          <input type="range" min="0" max="4" th:field="${stage.posV}"/>
+          <input type="range" min="0" max="4" th:field="*{posV}"/>
         </label>
         <div data-role="collapsibleset">
           <div data-role="collapsible" data-mini="true">
@@ -113,15 +113,17 @@ body {
             <ul data-role="listview">
               <li data-role="list-divider">Transition:</li>
               <li class="ui-field-contain">
-                <select data-mini="true" th:field="${stage.startTransition}">
+                <select data-mini="true" th:field="*{startTransition}">
                   <option th:each="opt:${transitionList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
-                <input type="range" min="1" max="30" th:field="${stage.startSpeed}"/>
+                <input type="range" min="1" max="30" th:field="*{startSpeed}"/>
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <button type="button" name="startAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+                <button type="button" name="startAudio" th:value="*{startAudioSeq}"
+                    th:attr="data-type=${T(to.kit.shooter.entity.type.AudioType).Theme.ix}"
+                    class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -130,15 +132,17 @@ body {
             <ul data-role="listview">
               <li data-role="list-divider">Transition:</li>
               <li class="ui-field-contain">
-                <select data-mini="true" th:field="${stage.sequelTransition}">
+                <select data-mini="true" th:field="*{sequelTransition}">
                   <option th:each="opt:${transitionList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
                 </select>
-                <input type="range" min="1" max="30" th:field="${stage.sequelSpeed}">
+                <input type="range" min="1" max="30" th:field="*{sequelSpeed}">
                 <button type="button" data-rel="close" class="ui-btn ui-mini ui-corner-all">Preview</button>
               </li>
               <li data-role="list-divider">BGM:</li>
               <li class="ui-field-contain">
-                <button type="button" name="sequelAudio" class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+                <button type="button" name="sequelAudio" th:value="*{sequelAudioSeq}"
+                    th:attr="data-type=${T(to.kit.shooter.entity.type.AudioType).Theme.ix}"
+                    class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
               </li>
             </ul>
           </div>
@@ -209,12 +213,18 @@ body {
       </div>
     </div>
     <div id="editEventPanel" data-role="panel" data-position="left" data-display="overlay">
-
+      <input type="text" name="op" readonly/>
+      <label><span>Belongings:</span>
+        <button type="button" name="belongings"
+          th:attr="data-type=${T(to.kit.shooter.entity.type.VisualType).Item.ix}"
+          class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d actorSelector">&nbsp;</button>
+      </label>
     </div>
     <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
       <p></p>
     </div>
+    <div th:replace="_actorSelector"></div>
     <div th:replace="_audioSelector"></div>
   </div>
 </body>

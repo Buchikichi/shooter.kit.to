@@ -7,6 +7,7 @@ public enum ScenarioType {
 	// Actor
 	Spw("op.spawn"),
 	Rev("op.reverse"),
+	Frm("op.formation"),
 	// Mode
 	Ent("op.enter"),
 	Ckp("op.checkpoint"),

@@ -1,14 +1,6 @@
 class Capsule extends Actor {
-	constructor(target) {
-		super(target.x, target.y, -1);
-		this.region = new Region(this, 8);
-		this.speed = 0;
-//		this.routine = [
-//			new Movement(Capsule.RANGE).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_L),
-//			new Movement(Capsule.RANGE).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_R),
-//			new Movement(Capsule.RANGE).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_R),
-//			new Movement(Capsule.RANGE).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_L)
-//		];
+	constructor() {
+		super(0, 0, -1);
 	}
 
 	move(target) {
@@ -17,5 +9,18 @@ class Capsule extends Actor {
 			this.fate(target);
 		}
 	}
+
+	fate(target) {
+		if (this.className == 'SpeedupCapsule') {
+			target.speedup();
+		}
+		if (this.className == 'MissileCapsule') {
+			target.powerUpMissile();
+		}
+		this.eject();
+	}
+
+	static create(rec, params = {}) {
+		return Object.assign(new Capsule(), rec, params).init();
+	}
 }
-Capsule.RANGE = 20;

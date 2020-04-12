@@ -29,6 +29,7 @@ public class ActorService implements BasicServiceInterface<Actor> {
 		return this.repository.findById(id).get();
 	}
 
+	@Override
 	@Transactional
 	public Actor save(Actor actor) {
 		return this.repository.saveAndFlush(actor);

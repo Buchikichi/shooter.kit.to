@@ -68,7 +68,7 @@ class Product extends Matter {
 			this.stage = StageEditor.create(stage, this);
 		});
 //		this.stage.map.mapVisualList.forEach(v => this.performersList.push(v));
-		this.stage.start();
+		this.stage.setupVisualList();
 	}
 
 	move() {
@@ -110,10 +110,14 @@ class Product extends Matter {
 			} else if (actor instanceof Shot || actor instanceof Missile) {
 				shotList.push(actor);
 			}
-			let child = actor.move(ship);
+			let children = actor.move(ship);
 
-			if (child instanceof Array) {
-				child.forEach(c => {c._stage = this.stage; validActors.push(c);});
+			if (children instanceof Array) {
+				children.forEach(child => { child._stage = this.stage; validActors.push(child); });
+			}
+			if (actor.spawn && actor.spawn.length) {
+				actor.spawn.forEach(child => { child._stage = this.stage; validActors.push(child); });
+				actor.spawn = [];
 			}
 			this.stage.effect(actor);
 			validActors.push(actor);
@@ -227,6 +231,10 @@ class Product extends Matter {
 				}
 				// else console.log('Product#getActor fail:' + seq);
 				}
+		}
+		if (actor.type == Actor.Type.Item) {
+			// console.log('Product#getActor Actor.Type.Item');
+			return Capsule.create(actor, Object.assign(params, { _stage: this.stage }));
 		}
 		return Enemy.create(actor, Object.assign(params, { _stage: this.stage }));
 	}

@@ -69,7 +69,7 @@ class EditMain {
 		this.setupImagePanel();
 		this.setupBrickPanel();
 		this.setupPointingDevice();
-		new ImageSelector(this.fieldMap._mediaset.id);
+		new ImageSelector();
 	}
 
 	setupImagePanel() {
@@ -82,8 +82,9 @@ class EditMain {
 		mapName.addEventListener('change',()=> this.fieldMap.name = mapName.value);
 		this.fieldMap.mapVisualList.forEach((mapVisual, ix) => this.addImage(ul, mapVisual, ix));
 		$(selectorPopup).popup({
+			afteropen: () => addImageButton.value = '',
 			afterclose: ()=> {
-				let seq = addImageButton.getAttribute('data-seq');
+				let seq = addImageButton.value;
 
 				if (!seq) {
 					return;

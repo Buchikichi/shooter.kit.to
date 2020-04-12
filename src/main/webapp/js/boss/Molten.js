@@ -78,13 +78,13 @@ class MoltenRock extends Enemy {
 	}
 
 	move(target) {
-		let result = [];
 		let parent = this.parent;
 
 		if (parent.phase == Molten.PHASE.OWN) {
-			result = super.move(parent);
+			super.move(parent);
 		} else {
 			super.move(target);
+			this.spawn = [];
 		}
 		if (this.absorbed && this.hitPoint) {
 			let dir = Math.trim(this.dir + Math.SQ);
@@ -94,12 +94,11 @@ class MoltenRock extends Enemy {
 				child.dir = dir;
 				child.speed = this.speed * 1.2;
 				child.hitPoint = this.hitPoint;
-				result.push(child);
+				this.spawn.push(child);
 				parent.rock.push(child);
 				dir = Math.trim(dir + Math.SQ);
 			}
 		}
 		this.absorbed = false;
-		return result;
 	}
 }

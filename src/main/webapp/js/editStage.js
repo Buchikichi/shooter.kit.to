@@ -212,7 +212,7 @@ console.log('EditStage#setupDummyActors:');
 	}
 
 	setupEvents() {
-console.log('EditStage#setupEvents');
+		// console.log('EditStage#setupEvents');
 		let stage = this.product.stage;
 		let changeGuide = ()=> {
 			stage.hasGuide = document.querySelector('[name="guide"]:checked').value == '1';
@@ -249,7 +249,8 @@ console.log('EditStage#setupEvents');
 		changeColor();
 		resize();
 		this.setupPointingDevice();
-		new AudioSelector(this.product._mediaset);
+		new ActorSelector();
+		new AudioSelector();
 	}
 
 	moveLandform(delta) {
@@ -342,12 +343,11 @@ console.log('EditStage#setupEvents');
 	}
 }
 
-class AttrPanel {
+class AttrPanel extends PanelBase {
 	constructor(stageEditor) {
+		super('attrPanel', stageEditor.product.stage);
 		this.stageEditor = stageEditor;
-		this.panel = document.getElementById('attrPanel');
 		this.init();
-		this.setupEvent();
 	}
 
 	get roll() {
@@ -363,22 +363,17 @@ class AttrPanel {
 		let sequelAudioData = mediaset.getAudio(stage.sequelAudioSeq);
 
 		//console.log(startAudioData);
-		startAudio.setAttribute('data-seq', stage.startAudioSeq);
 		startAudio.textContent = startAudioData ? startAudioData.name : null;
-		sequelAudio.setAttribute('data-seq', stage.sequelAudioSeq);
 		sequelAudio.textContent = sequelAudioData ? sequelAudioData.name : null;
 	}
 
-	setupEvent() {
-		let stage = this.stageEditor.product.stage;
+	setupEvents() {
+		super.setupEvents();
+		let stage = this.target;
 		let roll = document.querySelector('[name="roll"]');
 		let repeat = document.querySelector('[name="repeat"]');
 		let posV = document.querySelector('[name="posV"]');
-		let startTransition = document.querySelector('[name="startTransition"]');
-		let startSpeed = document.querySelector('[name="startSpeed"]');
 		let startAudio = document.querySelector('[name="startAudio"]');
-		let sequelTransition = document.querySelector('[name="sequelTransition"]');
-		let sequelSpeed = document.querySelector('[name="sequelSpeed"]');
 		let sequelAudio = document.querySelector('[name="sequelAudio"]');
 
 		roll.addEventListener('change', ()=> {
@@ -405,14 +400,10 @@ class AttrPanel {
 			stage.posV = posV.value;
 			this.stageEditor.resetCanvas();
 		});
-		startTransition.addEventListener('change', ()=> stage.startTransition = startTransition.value);
-		$(startSpeed).change(()=> stage.startSpeed = startSpeed.value);
-		sequelTransition.addEventListener('change', ()=> stage.sequelTransition = sequelTransition.value);
-		$(sequelSpeed).change(()=> stage.sequelSpeed = sequelSpeed.value);
 		$(this.panel).panel({
 			close: ()=> {
-				stage.startAudioSeq = startAudio.getAttribute('data-seq');
-				stage.sequelAudioSeq = sequelAudio.getAttribute('data-seq');
+				stage.startAudioSeq = startAudio.value;
+				stage.sequelAudioSeq = sequelAudio.value;
 			}
 		});
 	}
@@ -429,19 +420,15 @@ class EventPanel {
 	createEffectScenario() {
 		let chk = this.panel.querySelector('[name=op]:checked');
 		let op = chk.value;
-		let cursorType = chk.getAttribute('data-type');
-		let type = 0;
 		let number = '0';
 		let stage = this.stageEditor.product.stage;
 
 		if (op == 'Apl') {
 			let audioSelector = document.querySelector('#audioSelectorButton .audioSelector');
 
-			type = audioSelector.getAttribute('data-type');
-			number = audioSelector.getAttribute('data-seq');
-			console.log('type:' + type + '/number:' + number);
+			number = audioSelector.value;
 		}
-		this.scenario = Scenario.create({op: op, target: cursorType.charAt(0), type: type, number: number}, stage);
+		this.scenario = Scenario.create({op: op, number: number}, stage);
 		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
 	}
 
@@ -451,7 +438,7 @@ class EventPanel {
 		let stage = this.stageEditor.product.stage;
 
 		// console.log('seq:' + seq);
-		this.scenario = Scenario.create({op: op, target: 'E', type: 0, number: seq}, stage);
+		this.scenario = Scenario.create({op: op, number: seq}, stage);
 		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
 	}
 
@@ -473,29 +460,29 @@ class EventPanel {
 	}
 
 	setupEvent() {
-		let op = $('[name="op"]');
 		let audioSelectorButton = document.getElementById('audioSelectorButton');
-//		let firstOp = this.panel.querySelector('[name=op]');
 
-		op.click(()=> {
-			let chk = this.panel.querySelector('[name=op]:checked');
+		this.panel.querySelectorAll('[name="op"]').forEach(op => {
+			op.addEventListener('click', () => {
+				let chk = this.panel.querySelector('[name=op]:checked');
 
-			if (chk.value.toLowerCase() == 'apl') {
-				// Play BGM
-				$(audioSelectorButton).show();
-			} else {
-				$(audioSelectorButton).hide();
-				// $(this.panel).panel('close');
-			}
-			this.createEffectScenario();
+				if (chk.value.toLowerCase() == 'apl') {
+					// Play BGM
+					$(audioSelectorButton).show();
+				} else {
+					$(audioSelectorButton).hide();
+					// $(this.panel).panel('close');
+				}
+				this.createEffectScenario();
+			});
 		});
-//		$(firstOp).prop('checked', true).checkboxradio('refresh');
+		// $(firstOp).prop('checked', true).checkboxradio('refresh');
 		$(audioSelectorButton).hide();
 		this.actorType.addEventListener('change', () => this.loadActors());
 		$(this.actorType).val([3]).selectmenu('refresh')
 		this.loadActors();
 		$(this.panel).panel({
-			close: ()=> {
+			close: () => {
 				this.stageEditor.scenario = this.scenario;
 			}
 		});
@@ -515,16 +502,22 @@ class EditEventPanel extends PanelBase {
 	}
 
 	setupEvents() {
+		this.belongings = this.panel.querySelector('[name=belongings]');
 		super.setupEvents();
-		$(this.panel).panel({
-			close: ()=> {
-				this.stageEditor.product.stage.setCursorPos();
-			}
-		});
 	}
 
-	open(scenario) {
-		console.log(scenario);
-		$(this.panel).panel('open');
+	resetInputs(target) {
+		// console.log('EditEventPanel#resetInputs');
+		// console.log(target);
+		super.resetInputs(target);
+		let actor = this.stageEditor.product._actorMap[target.belongings];
+		let name = actor ? actor.className : null;
+
+		this.belongings.textContent = name;
+	}
+
+	onClose() {
+		this.stageEditor.product.stage.setCursorPos();
+		this.target.belongings = this.belongings.value;
 	}
 }

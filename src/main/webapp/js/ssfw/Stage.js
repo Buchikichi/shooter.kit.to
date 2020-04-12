@@ -220,6 +220,7 @@ console.log(s);
 			let reserve = this._product.getActor(s.number, { x: x, y: y });
 
 			if (reserve != null) {
+				reserve.belongings = s.belongings;
 				// console.log('reserve:' + reserve.className);
 				// console.log(reserve);
 				// let enemy;

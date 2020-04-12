@@ -52,6 +52,7 @@ class Actor extends Matter {
 		this.sfx = 'sfx-explosion';
 		this.sfxAbsorb = 'sfx-absorb';
 
+		this.spawn = [];
 		this.actorVisualList = [];
 		this.enter();
 	}
@@ -130,8 +131,6 @@ class Actor extends Matter {
 	}
 
 	trigger(target, force = false) {
-		let result = [];
-
 		this.chamberList.forEach(chamber => chamber.probe());
 		if ((target == null || !target.isGone) && (this.triggered || force)) {
 			this.triggered = false;
@@ -139,11 +138,10 @@ class Actor extends Matter {
 				let shot = chamber.fire(this, target);
 
 				if (shot) {
-					result.push(shot);
+					this.spawn.push(shot);
 				}
 			});
 		}
-		return result;
 	}
 
 	checkActivityArea() {
@@ -218,6 +216,21 @@ class Actor extends Matter {
 		}
 	}
 
+	processExplosion() {
+		if (this.explosion <= 0) {
+			return;
+		}
+		this.explosion--;
+		if (this.explosion == 0) {
+			this.eject();
+			if (this.belongings && this.belongings != '0') {
+				let actor = this._stage._product.getActor(this.belongings, { x: this.x, y: this.y });
+
+				this.spawn.push(actor);
+			}
+		}
+	}
+
 	/**
 	 * Move.
 	 * @param target
@@ -226,13 +239,7 @@ class Actor extends Matter {
 		if (target) {
 			this.target = target;
 		}
-		if (0 < this.explosion) {
-			this.explosion--;
-			if (this.explosion == 0) {
-				this.eject();
-				return;
-			}
-		}
+		this.processExplosion();
 		this.reacted = false;
 		this.processDirType(target);
 		this.svX = this.x;
@@ -279,7 +286,7 @@ class Actor extends Matter {
 		if (this.behaviorIterator) {
 			this.behaviorIterator.next();
 		}
-		return this.trigger(target);
+		this.trigger(target);
 	}
 
 	drawCircle(ctx) {
@@ -406,16 +413,14 @@ class Actor extends Matter {
 	}
 
 	initBehavior() {
-		let behavior = this.behavior.trim();
-
-		if (!behavior) {
+		if (!this.behavior) {
 			return;
 		}
-		behavior = '{ while(true) {' + behavior + ';yield;}}';
-		try {
-			let func = new GeneratorFunction('actor', behavior);
+		let behavior = '{ while(true) {' + this.behavior.trim() + ';yield;}}';
 
-			this.behaviorIterator = func(this);
+		try {
+			this.func = new GeneratorFunction('actor', behavior);
+			this.behaviorIterator = this.func(this);
 		} catch (e) {
 			// nop
 			console.log('Actor#initBehavior:');
@@ -441,16 +446,17 @@ class Actor extends Matter {
 Actor.MAX_EXPLOSION = 12;
 Actor.DEG_STEP = Math.PI / 180;
 Actor.Type = {
-	None: 0,
-	Ship: 1,
-	Shot: 16,
-	Missile: 32,
-	Capsule: 48,
-	Bullet: 64,
-	Material: 80,
-	Enemy: 128,
-	Formation: 192,
-	Boss: 224,
+	Player: 0,
+	Shot: 1,
+	Item: 2,
+	Aerial: 3,
+	Subaerial: 4,
+	Boss: 5,
+	Ornament: 6,
+	Explosion: 7,
+	Background: 8,
+	Foreground: 9,
+	Other: 10,
 }
 //List = { Enemy, Formation, Boss, Material, Bullet, Capsule, Shot, Missile, Ship };
 Actor.TypeList = [

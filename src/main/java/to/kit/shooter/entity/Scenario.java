@@ -27,12 +27,15 @@ public class Scenario {
 	private String id;
 	private int v;
 	private int h;
+	@Enumerated(EnumType.STRING)
+	private ScenarioType op;
 	private String target;
 	private int type;
 	@Convert(converter = SeqTypeConverter.class)
 	private SeqType number;
-	@Enumerated(EnumType.STRING)
-	private ScenarioType op;
+	private String formationId;
+	@Convert(converter = SeqTypeConverter.class)
+	private SeqType belongings;
 
 	@ManyToOne
 	@JsonIgnore

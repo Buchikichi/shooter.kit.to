@@ -18,7 +18,7 @@ class StageEditor extends Stage {
 
 	setCursorPos(pos = { x: 0, y: 0 }) {
 		this._eventList.forEach(s => s.hasFocus = false);
-		let act = this._eventList.find(s => s.target == 'E' && s.includes(pos));
+		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
 
 		this.pos = pos;
 		if (act) {
@@ -29,7 +29,7 @@ class StageEditor extends Stage {
 			return;
 		}
 		//
-		let event = this._eventList.find(s => s.target != 'E' && s.isHit(pos));
+		let event = this._eventList.find(s => s.type != Scenario.Type.Actor && s.isHit(pos));
 
 		if (event) {
 			// console.log('event:');
@@ -50,7 +50,7 @@ class StageEditor extends Stage {
 
 		console.log('StageEditor#removeScenario:');
 		console.log(scenario);
-		// if (scenario.target == 'E') {
+		// if (scenario.type == Scenario.Type.Actor) {
 		// 	h = 0;
 		// }
 		this._eventList = this._eventList.filter(s => s.op != op || s.v != v || s.h != h);
@@ -60,7 +60,7 @@ class StageEditor extends Stage {
 		let scenario = Scenario.create(rec, this);
 		let bw = this.map.brickSize;
 		let x = parseInt(pos.x / bw);
-		let y = scenario.target == 'E' ? parseInt(pos.y / bw) : 0;
+		let y = scenario.type == Scenario.Type.Actor ? parseInt(pos.y / bw) : 0;
 
 		scenario.v = x;
 		scenario.h = y;

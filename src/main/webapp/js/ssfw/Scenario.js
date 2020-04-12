@@ -22,7 +22,7 @@ class Scenario {
 		let x = this.v * bw + bh;
 		let y = this.h * bw + bh;
 
-		if (this.target == 'E') {
+		if (this.type == Scenario.Type.Actor) {
 			let width = this._stage.map.brickSize * 2; // FIXME:
 			let hW = width / 2;
 
@@ -52,8 +52,8 @@ class Scenario {
 	getText() {
 		let prefix = this.op;
 
-		if (this.target == 'E') {
-			prefix += ':' + this.type + '.' + this.number;
+		if (this.type == Scenario.Type.Actor) {
+			prefix += ':' + this.number;
 		}
 		return prefix + (this.name ? ':' + this.name : '');
 	}
@@ -120,7 +120,7 @@ class Scenario {
 	}
 
 	draw(ctx) {
-		if (this.target == 'E') {
+		if (this.type == Scenario.Type.Actor) {
 			this.drawActor(ctx);
 			return;
 		}
@@ -133,20 +133,20 @@ class Scenario {
 		ctx.strokeRect(sx, 0, width, height);
 		ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
 		ctx.strokeRect(sx + 1, 1, width - 2, height - 2);
-		if (this.target == 'm') {
+		if (this.type == Scenario.Type.Mode) {
 			// Mode
 			ctx.fillStyle = 'rgba(255, 100, 100, .5)';
 			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
 			// this.drawMode(ctx, this);
 			return;
 		}
-		if (this.target == 'e') {
+		if (this.type == Scenario.Type.Effect) {
 			// Effect
 			ctx.fillStyle = 'rgba(100, 255, 100, .5)';
 			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
 			return;
 		}
-		if (this.target == 'a') {
+		if (this.type == Scenario.Type.Audio) {
 			// Audio
 			ctx.fillStyle = 'rgba(100, 100, 255, .5)';
 			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
@@ -154,9 +154,10 @@ class Scenario {
 	}
 
 	init() {
+		this.type = Scenario.TypeMap[this.op];
 		// console.log('Scenario#init');
 		// console.log(this);
-		if (this.target == 'E') {
+		if (this.type == Scenario.Type.Actor) {
 			let actor = this.getActor();
 
 			if (actor) {
@@ -182,3 +183,14 @@ Scenario.Balloon = {
 	Margin: 4,
 	Padding: 4,
 }
+Scenario.Type = {
+	Actor: 0, Mode: 1, Effect: 2, Audio: 3,
+}
+Scenario.TypeList = [
+	['Spw', 'Rev'],
+	['Ent', 'Ckp', 'Bos', 'Stp', 'Nxt'],
+	['Efi', 'Efo'],
+	['Apa', 'Are', 'Afa', 'Apl'],
+]
+Scenario.TypeMap = {}
+Scenario.TypeList.forEach((a, i) => a.forEach(v => Scenario.TypeMap[v] = i));
