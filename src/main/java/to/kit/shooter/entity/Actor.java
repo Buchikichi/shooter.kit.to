@@ -72,5 +72,8 @@ public class Actor {
 	@OrderBy("seq")
 	private List<ActorVisual> actorVisualList = new ArrayList<>();
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "actor", cascade = CascadeType.ALL)
+	private List<ActorAudio> actorAudioList = new ArrayList<>();
+
 	private int seqOld; // TODO: remove
 }

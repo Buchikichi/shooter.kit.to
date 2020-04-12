@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import to.kit.shooter.entity.Audio;
 import to.kit.shooter.entity.AudioView;
 import to.kit.shooter.entity.type.AudioType;
+import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.repository.AudioRepository;
 import to.kit.shooter.repository.AudioViewRepository;
 import to.kit.shooter.web.form.FilteringForm;
@@ -46,11 +47,9 @@ public class AudioService implements BasicServiceInterface<AudioView> {
 		String id = entity.getId();
 		Audio prev = null;
 
-//		if (entity.getAudioSeq() == 0) {
-//			String text = UUID.randomUUID().toString();
-//
-//			entity.setAudioSeq(MurmurHash2.hash64(text));
-//		}
+		if (entity.getAudioSeq().longValue() == 0) {
+			entity.setAudioSeq(new SeqType());
+		}
 		if (id != null && !id.isEmpty()) {
 			prev = this.audioRepository.findById(id).get();
 		}

@@ -149,13 +149,37 @@ input[type=number] {
       <div data-role="collapsibleset" data-mini="true">
         <div data-role="collapsible">
           <h4 th:text="#{enter}">Enter</h4>
+          <ul data-role="listview">
+            <li data-role="list-divider">Audio:</li>
+            <li class="ui-field-contain">
+              <button type="button" name="entranceAudioSeq"
+                  th:attr="data-type=${T(to.kit.shooter.entity.type.AudioType).Theme.ix}"
+                  class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+            </li>
+          </ul>
         </div>
         <div data-role="collapsible">
           <h4 th:text="#{react}">React</h4>
+          <ul data-role="listview">
+            <li data-role="list-divider">Audio:</li>
+            <li class="ui-field-contain">
+              <button type="button" name="reactionAudioSeq"
+                  th:attr="data-type=${T(to.kit.shooter.entity.type.AudioType).Theme.ix}"
+                  class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+            </li>
+          </ul>
         </div>
         <div data-role="collapsible">
           <h4 th:text="#{explosion}">Explosion</h4>
-        </div>
+          <ul data-role="listview">
+            <li data-role="list-divider">Audio:</li>
+            <li class="ui-field-contain">
+              <button type="button" name="explosionAudioSeq"
+                  th:attr="data-type=${T(to.kit.shooter.entity.type.AudioType).Theme.ix}"
+                  class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d audioSelector">&nbsp;</button>
+            </li>
+          </ul>
+      </div>
       </div>
     </div>
     <div id="actorVisualPopup" data-role="popup" data-theme="a" data-overlay-theme="b" class="ui-corner-all ui-content">
@@ -188,6 +212,7 @@ input[type=number] {
 -->
       </div>
     </div>
+    <div th:replace="_audioSelector"></div>
     <div th:replace="_imageSelector"></div>
     <div id="actorPanel" data-role="panel" data-position="right" data-display="overlay">
       <div data-role="controlgroup" data-filter="true"></div>

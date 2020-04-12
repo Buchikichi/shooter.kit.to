@@ -399,8 +399,10 @@ class Actor extends Matter {
 			return;
 		}
 		this.explosion = Actor.MAX_EXPLOSION;
-		let pan = Product.Instance.calcPan(this);
-		AudioMixer.INSTANCE.play(this.sfx, .2, false, pan);
+		if (!this.playAudio(ActorAudio.AudioType.Explosion)) {
+			let pan = Product.Instance.calcPan(this);
+			AudioMixer.INSTANCE.play(this.sfx, .2, false, pan);
+		}
 	}
 
 	absorb(target) {
@@ -410,6 +412,19 @@ class Actor extends Matter {
 			let pan = Product.Instance.calcPan(this);
 			AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 		}
+	}
+
+	playAudio(type) {
+		if (!this._audioMap) {
+			return false;
+		}
+		let audio = this._audioMap[type];
+
+		if (audio) {
+			audio.play();
+			return true;
+		}
+		return false;
 	}
 
 	initBehavior() {
@@ -433,6 +448,8 @@ class Actor extends Matter {
 		this.region = new Region(this);
 		this.setRect(this.width, this.height);
 		this.dir = this.deg / 180 * Math.PI;
+		this._audioMap = {};
+		this.actorAudioList.forEach(a => this._audioMap[a.audioType] = ActorAudio.create(a, this));
 		this.actorVisualList = this.actorVisualList.map(v => ActorVisual.create(v, this));
 		this.checkInverse();
 		this.initBehavior();

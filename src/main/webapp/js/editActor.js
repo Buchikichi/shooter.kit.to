@@ -64,6 +64,7 @@ class ActorEditorMain extends Matter {
 		new ActorEditorAttrPanel('attrPanel', this.actor);
 		new ActorEditorImagePanel('imagePanel', this.actor);
 		new BehaviorPage('behaviorPage', this.actor);
+		new AudioSelector();
 		new ImageSelector();
 		PotController.create();
 	}
