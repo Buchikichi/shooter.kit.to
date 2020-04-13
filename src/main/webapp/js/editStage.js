@@ -9,7 +9,7 @@ class EditStage {
 		this.view = document.getElementById('view');
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
-		this.footer = document.querySelector('[data-role=footer]');
+		this.header = document.querySelector('[data-role=header]');
 		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
 		this.scenario = null;
 		this.loadStage();
@@ -43,11 +43,9 @@ class EditStage {
 //			this.view = new FlexibleView(512, 224);
 //			this.field = new FieldEditor(this.view, stage);
 			product.selectStage(this.stageId);
-//			this.setupStage(stage);
 			loading.parentNode.removeChild(loading);
 			this.setupEvents();
 			this.resetCanvas();
-			this.initView();
 			this.start();
 		});
 	}
@@ -69,6 +67,7 @@ class EditStage {
 		this.canvas.style.transform = 'scale(' + scale + ', ' + scale + ')';
 		// console.log('stage width:' + this.canvas.width + '/height:' + this.canvas.height);
 		this.ctx = this.canvas.getContext('2d');
+		this.initView();
 	}
 
 	initView() {
@@ -77,74 +76,14 @@ class EditStage {
 		this.view.scrollTop = remainH / 2;
 	}
 
-	// setupStage(stage) {
-	// 	let form = document.getElementById('inputBox');
-	// 	let propList = {
-	// 		'speed':{min:0, max:1, step:0.1},
-	// 		'dir':{min:0, max:1, step:0.01},
-	// 		'blink':{min:0, max:1, step:0.01},
-	// 	}
-
-	// 	this.stage = Stage.create(stage);
-	// 	Stage.VIEWS.forEach(key => {
-	// 		let imageId = stage[key];
-
-	// 		if (!imageId || imageId.length == 0) {
-	// 			return;
-	// 		}
-	// 		let fieldset = document.createElement('fieldset');
-	// 		let legend = document.createElement('legend');
-
-	// 		legend.textContent = key.toUpperCase() + ':';
-	// 		fieldset.appendChild(legend);
-	// 		Object.keys(propList).forEach(prop => {
-	// 			let attr = propList[prop];
-	// 			let name = key + prop;
-	// 			let input = document.createElement('input');
-	// 			let value = stage[name].toFixed(2);
-
-	// 			input.setAttribute('type', 'number');
-	// 			input.setAttribute('name', name);
-	// 			Object.keys(attr).forEach(attrName => {
-	// 				input.setAttribute(attrName, attr[attrName]);
-	// 			});
-	// 			input.value = value;
-	// 			input.addEventListener('change', ()=> {
-	// 				let ground = this.stage.getGround(key);
-
-	// 				ground[prop] = input.value;
-	// 			});
-	// 			fieldset.appendChild(input);
-	// 			$(input).textinput();
-	// 		});
-	// 		form.appendChild(fieldset);
-	// 		$(fieldset).controlgroup({mini: true});
-	// 	})
-	// }
-
 	start() {
 //		let view = FlexibleView.Instance;
-//		let landform = this.field.landform;
 		let activate = ()=> {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 			let delta = this.controller.delta;
 			let move = this.controller.move;
 			let point = this.controller.point;
 
-//			landform.target = null;
-//			landform.which = false;
-//			if (move) {
-//				landform.target = move;
-//			}
-//			if (delta) {
-//				if (this.isMove) {
-//					landform.selection = '0';
-//					this.moveLandform(delta);
-//				}
-//				if (this.isActor) {
-//					landform.which = true;
-//				}
-//			}
 //			view.clear();
 //			product.draw(view.ctx);
 			this.ctx.save();
@@ -159,58 +98,6 @@ class EditStage {
 		activate();
 	}
 
-	setupDummyActors() {
-console.log('EditStage#setupDummyActors:');
-		Enemy.LIST = [
-			{name:'', type:Waver, img:''},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Battery', type:Battery, img:'enemy/battery.png'},
-			{name:'Bouncer', type:Bouncer, img:'enemy/bouncer.png'},
-			{name:'Hanker', type:Hanker, img:'enemy/hanker.png'},
-			{name:'Jerky', type:Jerky, img:'enemy/jerky.png'},
-			{name:'Juno', type:Juno, img:'enemy/juno.png'},
-			{name:'Crab', type:Crab, img:'enemy/crab.png'},
-			{name:'Hatch', type:Hatch, img:'enemy/hatch.png', h:16},
-			{name:'Charger', type:Charger, img:'enemy/charger.png', h:16},
-			{name:'Twister', type:Twister, img:'enemy/twister.png', h:16},
-			{name:'Slur', type:Slur, img:'enemy/slur.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-			{name:'Waver', type:Waver, img:'enemy/waver.png', h:16},
-
-			{name:'Tentacle', type:Tentacle, img:'enemy/tentacle.png'},
-			{name:'Dragon', type:DragonHead, img:'enemy/dragonHead.png'},
-			{name:'Waver(formation)', type:Waver, img:'enemy/waver.png', h:16, formation: true},
-//			{name:'Twister(formation)', type:Twister, img:'enemy/waver.png', h:16, formation: true},
-
-			{name:'Molten', type:Molten, img:'boss/molten.png'},
-			{name:'Winding', type:Winding, img:'boss/winding.png'},
-			{name:'Titan', type:Titan, img:'boss/titan.icon.png'},
-			{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
-			{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
-		];
-// 		actorList.forEach(actor => {
-// 			let ix = actor.seq;
-// 			let type = eval(actor.className);
-// 			let formation = Actor.Type.Formation <= ix && ix < Actor.Type.Boss;
-
-// console.log(ix + ':' + actor.className);
-// //console.log(type);
-// 			Enemy.LIST[ix] = {name:actor.name, type:type, h:16, formation:formation};
-// 		});
-		Enemy.LIST.forEach(actor => {
-			let dummy = {x:0, y:0};
-
-			actor.instance = new actor.type(dummy);
-		});
-	}
-
 	setupEvents() {
 		// console.log('EditStage#setupEvents');
 		let stage = this.product.stage;
@@ -221,9 +108,9 @@ console.log('EditStage#setupDummyActors:');
 			stage.map.brickColor = document.querySelector('[name="color"]:checked').value;
 		};
 		let resize = ()=> {
-			let height = window.innerHeight - this.footer.clientHeight - 8;
+			let height = window.innerHeight - this.header.clientHeight - 8;
 // console.log('resize:' + window.innerHeight);
-// console.log('footer:' + this.footer.clientHeight);
+// console.log('header:' + this.header.clientHeight);
 			this.view.style.height = height + 'px';
 		};
 
@@ -232,7 +119,6 @@ console.log('EditStage#setupDummyActors:');
 //		this.actorPanel = new ActorPanel(this);
 		this.eventPanel = new EventPanel(this);
 		this.editEventPanel = new EditEventPanel(this);
-		// this.setupDummyActors();
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(()=> this.eventPanel.open());
@@ -253,35 +139,6 @@ console.log('EditStage#setupDummyActors:');
 		new AudioSelector();
 	}
 
-	moveLandform(delta) {
-		let landform = this.field.landform;
-		let dx = parseInt(delta.x / Landform.BRICK_WIDTH);
-		let dy = parseInt(delta.y / Landform.BRICK_WIDTH);
-
-		if (dx != 0) {
-			let slider = $('#slider');
-			let min = parseInt(slider.attr('min'));
-			let max = parseInt(slider.attr('max'));
-			let val = parseInt(slider.val()) - dx;
-
-//console.log('delta:' + delta.x + ' dx:' + dx + ' val:' + val + '(' + max + '/' + min + ')');
-			if (val < min) {
-				val = min;
-			}
-			if (max < val) {
-				val = max;
-			}
-			let h = val * Landform.BRICK_WIDTH;
-
-			slider.val(val).slider('refresh');
-			landform.stage.setProgress(h);
-		}
-		if (dy != 0) {
-			landform.wheel(dy);
-		}
-		this.controller.decPoint(dx * Landform.BRICK_WIDTH, dy * Landform.BRICK_WIDTH);
-	}
-
 	setupPointingDevice() {
 		let product = this.product;
 		let stage = product.stage;
@@ -291,7 +148,8 @@ console.log('EditStage#setupDummyActors:');
 			let scrollTop = this.view.scrollTop;
 			let width = this.view.clientWidth / this.scale;
 			let x = -stage.startPos + scrollLeft + e.clientX / this.scale;
-			let y = (scrollTop + e.clientY) / this.scale - (this.hasMargin ? product.height : 0);
+			let y = (scrollTop + e.clientY - this.header.clientHeight) / this.scale
+					- (this.hasMargin ? product.height : 0);
 
 			return { x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop, width: width };
 		}
