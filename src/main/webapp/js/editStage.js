@@ -1,16 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => new EditStage());
 
 class EditStage {
-	/**
-	 * インスタンス生成.
-	 */
 	constructor() {
 		this.stageId = document.getElementById('stageId').value;
 		this.view = document.getElementById('view');
 		this.frame = document.getElementById('frame');
 		this.canvas = document.getElementById('canvas');
 		this.header = document.querySelector('[data-role=header]');
-		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
 		this.scenario = null;
 		this.loadStage();
 	}
@@ -38,10 +34,6 @@ class EditStage {
 
 		ProductEditor.create(productId, callback).then(product => {
 			this.product = product;
-//			let stage = null;
-
-//			this.view = new FlexibleView(512, 224);
-//			this.field = new FieldEditor(this.view, stage);
 			product.selectStage(this.stageId);
 			loading.parentNode.removeChild(loading);
 			this.setupEvents();
@@ -77,18 +69,11 @@ class EditStage {
 	}
 
 	start() {
-//		let view = FlexibleView.Instance;
-		let activate = ()=> {
+		let activate = () => {
 			let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-			let delta = this.controller.delta;
-			let move = this.controller.move;
-			let point = this.controller.point;
 
-//			view.clear();
-//			product.draw(view.ctx);
 			this.ctx.save();
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-//			this.ctx.scale(this.scale, this.scale);
 			this.product.draw(this.ctx);
 			this.ctx.restore();
 			requestAnimationFrame(activate);
@@ -101,34 +86,32 @@ class EditStage {
 	setupEvents() {
 		// console.log('EditStage#setupEvents');
 		let stage = this.product.stage;
-		let changeGuide = ()=> {
+		let changeGuide = () => {
 			stage.hasGuide = document.querySelector('[name="guide"]:checked').value == '1';
 		};
-		let changeColor = ()=> {
+		let changeColor = () => {
 			stage.map.brickColor = document.querySelector('[name="color"]:checked').value;
 		};
-		let resize = ()=> {
+		let resize = () => {
 			let height = window.innerHeight - this.header.clientHeight - 8;
-// console.log('resize:' + window.innerHeight);
-// console.log('header:' + this.header.clientHeight);
+			// console.log('resize:' + window.innerHeight);
+			// console.log('header:' + this.header.clientHeight);
 			this.view.style.height = height + 'px';
 		};
 
-//		this.controller = new Controller();
 		this.attrPanel = new AttrPanel(this);
-//		this.actorPanel = new ActorPanel(this);
 		this.eventPanel = new EventPanel(this);
 		this.editEventPanel = new EditEventPanel(this);
 		stage.setProgress(0);
 
-		$('[name="behavior"]:eq(0)').click(()=> this.eventPanel.open());
-		$('[name="behavior"]:eq(1)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.EDIT);
-		$('[name="behavior"]:eq(2)').click(()=> this.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
+		$('[name="behavior"]:eq(0)').click(() => this.eventPanel.open());
+		$('[name="behavior"]:eq(1)').click(() => stage.cursorType = StageEditor.CURSOR_TYPE.EDIT);
+		$('[name="behavior"]:eq(2)').click(() => stage.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
 		// $('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
-		$('[name="guide"]').click(()=> changeGuide());
-		$('[name="scale"]').click(()=> this.resetCanvas());
-		$('[name="color"]').click(()=> changeColor());
-		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
+		$('[name="guide"]').click(() => changeGuide());
+		$('[name="scale"]').click(() => this.resetCanvas());
+		$('[name="color"]').click(() => changeColor());
+		document.getElementById('saveButton').addEventListener('click', () => this.saveMap());
 		window.addEventListener('resize', resize);
 		//
 		changeGuide();
@@ -149,46 +132,27 @@ class EditStage {
 			let width = this.view.clientWidth / this.scale;
 			let x = -stage.startPos + scrollLeft + e.clientX / this.scale;
 			let y = (scrollTop + e.clientY - this.header.clientHeight) / this.scale
-					- (this.hasMargin ? product.height : 0);
+				- (this.hasMargin ? product.height : 0);
 
 			return { x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop, width: width };
 		}
 
-		canvas.addEventListener('mousedown', e => {
-			if (this.cursorType == StageEditor.CURSOR_TYPE.NONE
-				|| this.cursorType == StageEditor.CURSOR_TYPE.EDIT) {
-				return;
-			}
-			if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
-				stage.removeScenario();
-			} else {
-				stage.addScenario(calcPos(e), this.scenario);
-			}
-			if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
-				this.cursorType = StageEditor.CURSOR_TYPE.NONE;
-			}
-		});
-		canvas.addEventListener('mousemove', e => {
-			// console.log('scrollLeft:' + this.view.scrollLeft + '/scrollTop:' + this.view.scrollTop);
-			// console.log('clientX:' + e.clientX + '/clientY:' + e.clientY);
-			// console.log('x:' + pos.x + '/y:' + pos.y);
-			stage.cursorType = this.cursorType;
-			stage.setCursorPos(calcPos(e));
-		});
+		canvas.addEventListener('mousedown', e => stage.onMousedown(calcPos(e), this.scenario));
+		canvas.addEventListener('mousemove', e => stage.onMousemove(calcPos(e)));
 		canvas.addEventListener('mouseup', () => {
-			if (this.cursorType == StageEditor.CURSOR_TYPE.EDIT && stage._currentScenario) {
+			if (stage.cursorType == StageEditor.CURSOR_TYPE.EDIT && stage._currentScenario) {
 				this.editEventPanel.open(stage._currentScenario);
 				stage._currentScenario = null;
 			}
 		});
-		canvas.addEventListener('mouseout', e => stage.cursorType = StageEditor.CURSOR_TYPE.NONE);
+		canvas.addEventListener('mouseout', e => stage.onMousemove());
 	}
 
 	saveMap() {
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
-		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		$.mobile.loading('show', { text: 'Save...', textVisible: true });
 		this.product.stage.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
@@ -234,12 +198,12 @@ class AttrPanel extends PanelBase {
 		let startAudio = document.querySelector('[name="startAudio"]');
 		let sequelAudio = document.querySelector('[name="sequelAudio"]');
 
-		roll.addEventListener('change', ()=> {
+		roll.addEventListener('change', () => {
 			// console.log('roll:' + this.roll);
 			stage.changeRoll(this.roll);
 			this.stageEditor.resetCanvas();
 		});
-		repeat.addEventListener('change', ()=> {
+		repeat.addEventListener('change', () => {
 			let repeatValue = parseInt(repeat.value);
 
 			if (!repeatValue) {
@@ -254,12 +218,12 @@ class AttrPanel extends PanelBase {
 			}
 			this.stageEditor.resetCanvas();
 		});
-		$(posV).change(()=> {
+		$(posV).change(() => {
 			stage.posV = posV.value;
 			this.stageEditor.resetCanvas();
 		});
 		$(this.panel).panel({
-			close: ()=> {
+			close: () => {
 				stage.startAudioSeq = startAudio.value;
 				stage.sequelAudioSeq = sequelAudio.value;
 			}
@@ -286,8 +250,9 @@ class EventPanel {
 
 			number = audioSelector.value;
 		}
-		this.scenario = Scenario.create({op: op, number: number}, stage);
-		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.EVENT;
+		this.scenario = Scenario.create({ op: op, number: number }, stage);
+		stage.cursorType = StageEditor.CURSOR_TYPE.EVENT;
+		console.log('createEffectScenario');
 	}
 
 	createActorScenario(li) {
@@ -296,8 +261,8 @@ class EventPanel {
 		let stage = this.stageEditor.product.stage;
 
 		// console.log('seq:' + seq);
-		this.scenario = Scenario.create({op: op, number: seq}, stage);
-		this.stageEditor.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
+		this.scenario = Scenario.create({ op: op, number: seq }, stage);
+		stage.cursorType = StageEditor.CURSOR_TYPE.ACTOR;
 	}
 
 	loadActors() {
@@ -355,8 +320,6 @@ class EditEventPanel extends PanelBase {
 	constructor(stageEditor) {
 		super('editEventPanel');
 		this.stageEditor = stageEditor;
-//		this.panel = document.getElementById('editEventPanel');
-//		this.setupEvent();
 	}
 
 	setupEvents() {
@@ -375,7 +338,7 @@ class EditEventPanel extends PanelBase {
 	}
 
 	onClose() {
-		this.stageEditor.product.stage.setCursorPos();
+		this.stageEditor.product.stage.onMousemove();
 		this.target.belongings = this.belongings.value;
 	}
 }

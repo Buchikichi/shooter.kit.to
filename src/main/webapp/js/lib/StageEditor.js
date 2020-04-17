@@ -1,7 +1,7 @@
 class StageEditor extends Stage {
 	constructor() {
 		super();
-		this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
 		this.pos = {x:0, y:0};
 		this._currentScenario = null;
 	}
@@ -16,7 +16,23 @@ class StageEditor extends Stage {
 		this.progress = progress;
 	}
 
-	setCursorPos(pos = { x: 0, y: 0 }) {
+	onMousedown(pos, scenario) {
+		// console.log('StageEditor#onMousedown');
+		if (this.cursorType == StageEditor.CURSOR_TYPE.NONE
+			|| this.cursorType == StageEditor.CURSOR_TYPE.EDIT) {
+			return;
+		}
+		if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
+			this.removeScenario();
+		} else {
+			this.addScenario(pos, scenario);
+		}
+		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
+			this.cursorType = StageEditor.CURSOR_TYPE.NONE;
+		}
+	}
+
+	onMousemove(pos = { x: 0, y: 0 }) {
 		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
 
