@@ -4,15 +4,23 @@
 </head>
 
 <body>
+  <th:block th:with="lastType=${T(to.kit.shooter.entity.type.VisualType).None}" />
   <ul data-role="listview" data-filter="true" data-inset="true">
-    <li th:each="actor:${actorList}" th:attr="data-id=${actor.id}, data-seq=${actor.seq}">
-      <a>
-        <span th:text="${actor.className}"></span>
+    <th:block th:each="actor,stat:${actorList}" th:object="${actor}"
+        th:with="divider=${hasDivider && (stat.index == 0 || actor.type != actorList[stat.index - 1].type)}">
+      <th:block th:if="${divider}">
+        <li data-role="list-divider" th:text="*{type}"></li>
+      </th:block>
+      <li th:attr="data-id=*{id}, data-seq=*{seq}">
+        <a th:href="'/actor/edit/' + *{id}" target="_blank">
+          <span th:text="*{className}"></span>
 <!--
-        <span th:text="${actor.seq}"></span>
+          <span th:text="*{seq}"></span>
 -->
-      </a>
-    </li>
+          <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>
+        </a>
+      </li>
+    </th:block>
   </ul>
 </body>
 </html>

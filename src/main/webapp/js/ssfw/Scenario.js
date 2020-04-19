@@ -35,7 +35,7 @@ class Scenario {
 
 	getActor() {
 		if (!this._actor) {
-			this._actor = this._stage._product.getActor(this.number);
+			this._actor = this._stage._product._mediaset.getActor(this.number);
 			if (this._actor) {
 				if (this.number != this._actor.seq) {
 					console.log('Scenario#getActor:'

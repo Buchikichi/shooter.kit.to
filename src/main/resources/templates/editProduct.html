@@ -24,7 +24,6 @@
     <a href="#infoPanel" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-info">Info</a>
     <div data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
       <a href="#stagePanel" class="ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{stage}">Stage</a>
-      <a href="#ProductActorChoicePanel" class="ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{actor}">Actor</a>
     </div>
   </div>
   <div data-role="collapsibleset">
@@ -42,36 +41,12 @@
         </li>
       </ul>
     </div>
-    <div data-role="collapsible" th:with="typeList=${T(to.kit.shooter.entity.type.VisualType).List}">
-      <h4 th:text="#{actor}">Actor</h4>
-      <div data-role="collapsible" data-inset="false" data-mini="true"
-          th:each="actorType:${typeList}" th:with="actorList=${typeMap.get(actorType)}">
-        <h4>
-          <span th:text="${actorType}"></span><span class="ui-li-count ui-body-inherit" th:text="${#lists.size(actorList)}">0</span>
-        </h4>
-        <ul data-role="listview" data-split-icon="bars" class="actorList" th:id="${actorType+'View'}">
-          <li th:each="actor:${actorList}" th:attr="data-type=${actorType}">
-            <a th:with="actorVisual=${actor.actorVisualList}" th:href="'/actor/edit/' + ${actor.id}" target="_blank"
-                th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
-              <img src="/img/icon.listview.png"/>
-              <span th:text="${actor.className}"></span>
-              <p>
-                <span th:text="${actor.seq}" class="className"></span>
-              </p>
-              <span th:text="${actor.type}" class="ui-li-count"></span>
-              <span class="ui-li-aside" th:text="${#lists.size(actor.actorVisualList)}"></span>
-            </a>
-            <a class="deleteButton sortable"></a>
-          </li>
-        </ul>
-      </div>
-    </div>
   </div>
   <button id="saveButton" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check">Save</button>
     <div id="message"></div>
     <div id="loading"></div>
   <div id="infoPanel" data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay">
-    <form id="productForm">
+    <form>
       <input type="hidden" th:field="${product.id}"/>
       <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
       <input id="name" name="name" type="text" required="required" th:value="${product.name}"/>
@@ -147,11 +122,6 @@
     <span>Choose a map.</span>
     <ul data-role="listview" data-filter="true"></ul>
   </div>
-  <div id="ProductActorChoicePanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <span>Choose an actor.</span>
-    <select name="actorType"></select>
-    <ul data-role="listview" data-filter="true"></ul>
-  </div>
   <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
     <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
     <p>Product saved.</p>
@@ -166,67 +136,6 @@
         <li><a data-icon="grid" href="/repository.html" target="_blank" class="ui-state-disabled">Repository</a></li>
       </ul>
     </div>
-  </div>
-</div>
-<div id="productActor" data-role="page">
-  <div data-role="header" data-theme="b" data-position="fixed">
-    <a data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
-    <h1>Actors in product</h1>
-    <a href="#ProductActorChoicePanel" class="ui-btn-right ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{actor}">Actor</a>
-  </div>
-  <div class="ui-bar ui-bar-a" th:text="#{actor}">Actor</div>
-  <div data-role="content" style="padding-top:0"
-      th:with="list=${T(to.kit.shooter.entity.type.VisualType).List}">
-    <div data-role="collapsible" data-inset="false" data-mini="true" th:each="e:${list}">
-      <h4><span th:text="${e}"></span><span class="ui-li-count ui-body-inherit">0</span></h4>
-      <ul data-role="listview" data-split-icon="delete" class="actorList" th:id="${e+'View'}">
-        <li th:each="actor:${typeMap.get(e)}">
-          <a th:with="visual=${actor.actorVisualList}" href="#ProductActorPanel"
-              th:attr="data-id=${actor.id}, data-class=${actor.className}, data-actor=${actor.id}">
-            <img src="/img/icon.listview.png" th:src="'/visual/src/'"/>
-            <span th:text="${actor.className}"></span>
-            <p>
-              <span th:text="${actor.className}" class="className"></span>
-              <span th:text="${#lists.size(actor.actorVisualList)}"></span>
-            </p>
-          </a>
-          <a class="deleteButton"></a>
-        </li>
-      </ul>
-    </div>
-<!--
-    <ul id="formationView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Formation<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="bossView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Boss<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="materialView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Material<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="bulletView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Bullet<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="capsuleView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Capsule<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="shotView" data-role="listview" class="actorList">
-      <li data-role="list-divider" class="divider">Shot<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="missileView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Missile<span class="ui-li-count">0</span></li>
-    </ul>
-    <ul id="shipView" data-role="listview" data-split-icon="delete" class="actorList">
-      <li data-role="list-divider" class="divider">Ship<span class="ui-li-count">0</span></li>
-    </ul>
--->
-  </div>
-  <div id="ProductActorPanel" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
-    <form>
-      <input type="text" name="actorName" disabled="disabled"/>
-      <label>Class name:<input type="text" name="className" required="required"/></label>
-      <button type="button" data-rel="close">OK</button>
-    </form>
   </div>
 </div>
 </body>

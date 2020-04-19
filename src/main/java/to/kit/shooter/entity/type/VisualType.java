@@ -18,6 +18,7 @@ public enum VisualType {
 	Background(8),
 	Foreground(9),
 	Other(10),
+	None(-1),
 	;
 	@JsonValue
 	private int ix;
@@ -30,11 +31,12 @@ public enum VisualType {
 
 	@JsonCreator
 	public static VisualType fromValue(int value) {
-		VisualType result = Player;
+		VisualType result = None;
 
 		for (VisualType type : values()) {
-			if (type.ix <= value) {
+			if (type.ix == value) {
 				result = type;
+				break;
 			}
 		}
 		return result;

@@ -31,7 +31,7 @@
 </style>
 </head>
 
-<body>
+<body th:object="${map}">
   <div data-role="page">
     <div id="view">
       <canvas id="canvas"></canvas>
@@ -55,10 +55,11 @@
       </div>
       <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
       <input id="mapId" type="hidden" th:value="${map.id}"/>
+      <input type="hidden" th:field="*{mediasetId}"/>
       <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
-  </div>
+    </div>
     <div id="imagePanel" data-role="panel" data-position="left" data-display="overlay">
-      <input type="text" th:field="${map.name}"/>
+      <input type="text" th:field="*{name}"/>
       <ul data-role="listview" data-split-icon="minus" data-split-theme="a" data-inset="true">
         <li data-role="list-divider" class="ui-state-disabled">BG</li>
         <li data-role="list-divider" class="fg sortable-item ui-state-disabled">FG</li>
@@ -85,7 +86,7 @@
     </div>
     <div id="brickPanel" data-role="panel" data-position="left" data-display="overlay">
       <label>Brick size:
-      <input id="brickSize" type="range" th:value="${map.brickSize}" min="2" max="16" step="2"/>
+      <input type="range" th:field="*{brickSize}" min="2" max="16" step="2"/>
       </label>
       <fieldset data-role="controlgroup" data-mini="true">
         <button class="ui-btn ui-btn-b" disabled="disabled" th:text="#{brick.type}">Brick</button>
@@ -94,7 +95,7 @@
         <label>Rebirth<input type="radio" name="brick" value="253"/></label>
       </fieldset>
       <label>Rebirth:
-        <input type="number" name="rebirth" th:value="${map.rebirth}" class="numeric"/>
+        <input type="number" th:field="*{rebirth}" class="numeric"/>
       </label>
       <ul data-role="listview" data-inset="true">
         <li class="ui-field-contain">

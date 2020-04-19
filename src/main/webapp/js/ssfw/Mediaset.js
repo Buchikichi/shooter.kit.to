@@ -2,6 +2,7 @@ class Mediaset {
 	constructor() {
 		this.audioDic = {};
 		this.visualDic = {};
+		this._actorMap = {};
 	}
 
 	loadAudio() {
@@ -105,13 +106,51 @@ class Mediaset {
 		return visual.name;
 	}
 
+	getActor(seq, params = {}) {
+		let actor = this._actorMap[seq];
+
+		if (actor && actor.score == -123) {
+			console.log('Product#getActor -123:' + seq);
+			actor = this.actorList.find(a => a.score != -123 && a.className == actor.className);
+		}
+		if (!actor) {
+			let key12 = seq.substr(0, 12);
+			let key = Object.keys(this._actorMap).find(key => key.substr(0, 12) == key12);
+
+			actor = this._actorMap[key];
+			if (!actor) {
+				let dec = parseInt(seq, 16)
+				let pseudo = Enemy.getActor(dec);
+
+				if (pseudo) {
+					actor = this.actorList.find(a => a.className == pseudo.name);
+				}
+			}
+		}
+		if (!actor) {
+			console.log('Product#getActor fail:' + seq);
+			return;
+		}
+		if (actor.type == Actor.Type.Item) {
+			// console.log('Product#getActor Actor.Type.Item');
+			return Capsule.create(actor, Object.assign(params));
+		}
+		return Enemy.create(actor, Object.assign(params));
+	}
+
+	init() {
+		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
+		this.actorList.forEach(actor => this._actorMap[actor.seqOld] = actor); // TODO: remove
+		return this;
+	}
+
 	static create(obj) {
 		if ('string' == typeof obj) {
 			return new MediasetEntity().select(obj).then(mediaset => {
 				return Mediaset.create(mediaset);
 			});
 		}
-		Mediaset.Instance = Object.assign(new Mediaset(), obj);
+		Mediaset.Instance = Object.assign(new Mediaset(), obj).init();
 		return Mediaset.Instance;
 	}
 }

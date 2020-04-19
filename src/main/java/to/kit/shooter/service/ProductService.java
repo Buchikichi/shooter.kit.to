@@ -11,10 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
-import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Product;
 import to.kit.shooter.entity.Stage;
-import to.kit.shooter.repository.ActorRepository;
 import to.kit.shooter.repository.ProductRepository;
 import to.kit.shooter.repository.StageRepository;
 import to.kit.shooter.web.form.FilteringForm;
@@ -25,8 +23,6 @@ public class ProductService implements BasicServiceInterface<Product> {
 	private ProductRepository productRepository;
 	@Autowired
 	private StageRepository stageRepository;
-	@Autowired
-	private ActorRepository productActorRepository;
 
 	@Override
 	public List<Product> list(FilteringForm<Product> form) {
@@ -61,24 +57,7 @@ public class ProductService implements BasicServiceInterface<Product> {
 			rec.setProduct(product);
 			rec.setUpdated(new Date());
 		}
-		for (Actor actor : product.getActorList()) {
-			actor.setProduct(product);
-			actor.setUpdated(new Date());
-			actor.getActorVisualList().clear();
-			// TODO: remove
-//			if (0 <= actor.getSeq() && actor.getSeq() < 256) {
-//				String text = UUID.randomUUID().toString();
-//
-//				actor.setSeq(MurmurHash2.hash64(text));
-//			}
-		}
 		product.getScoreList().clear();
-	}
-
-	private void deleteActorByProductId(String productId) {
-		List<Actor> list = this.productActorRepository.findByProductId(productId);
-
-		this.productActorRepository.deleteInBatch(list);
 	}
 
 	@Transactional

@@ -66,7 +66,7 @@ public class Actor {
 
 	@ManyToOne
 	@JsonBackReference
-	private Product product;
+	private Mediaset mediaset;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "actor", cascade = CascadeType.ALL)
 	@OrderBy("seq")

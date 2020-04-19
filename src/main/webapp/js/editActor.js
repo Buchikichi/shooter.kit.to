@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => new ActorEditorMain());
 class ActorEditorMain extends Matter {
 	constructor() {
 		super();
-		let productId = document.querySelector('[name=productId]').value;
 		let mediasetId = document.querySelector('[name=mediasetId]').value;
 		let actorId = document.querySelector('[name=id]').value;
 		let loading = document.getElementById('loading');
@@ -19,7 +18,7 @@ class ActorEditorMain extends Matter {
 			return ActorEditor.create(actorId);
 		}).then(actor => {
 			this.actor = actor;
-			this.actor.product = { id: productId };
+			this.actor.mediaset = { id: mediasetId };
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});

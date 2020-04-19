@@ -179,7 +179,8 @@ class Product extends Matter {
 			if (10 <= actorNames.length || !(actor instanceof Enemy)) {
 				return;
 			}
-			actorNames.push(actor.constructor.name);
+			let name = actor.className ? actor.className : actor.constructor.name;
+			actorNames.push(name);
 		});
 		ctx.save();
 		ctx.strokeStyle = 'white';
@@ -214,37 +215,8 @@ class Product extends Matter {
 		});
 	}
 
-	getActor(seq, params = {}) {
-		let actor = this._actorMap[seq];
-
-		if (!actor) {
-			let key12 = seq.substr(0, 12);
-			let key = Object.keys(this._actorMap).find(key => key.substr(0, 12) == key12);
-			actor = this._actorMap[key];
-
-			if (!actor) {
-				let dec = parseInt(seq, 16)
-				let pseudo = Enemy.getActor(dec);
-
-				if (pseudo) {
-					actor = this.actorList.find(a => a.className = pseudo.name);
-				}
-				// else console.log('Product#getActor fail:' + seq);
-				}
-		}
-		if (actor.type == Actor.Type.Item) {
-			// console.log('Product#getActor Actor.Type.Item');
-			return Capsule.create(actor, Object.assign(params, { _stage: this.stage }));
-		}
-		return Enemy.create(actor, Object.assign(params, { _stage: this.stage }));
-	}
-
 	init() {
 		this.setRect(this.width, this.height);
-//		this.actorList = this.actorList.map(actor => Actor.create(actor));
-		this._actorMap = {};
-		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
-this.actorList.forEach(actor => this._actorMap[actor.seqOld] = actor); // TODO: remove
 		this.stageList = this.stageList.map(stage => Stage.create(stage, this));
 		if (0 < this.scoreList.length) {
 			this.hiscore = this.scoreList[0].score;

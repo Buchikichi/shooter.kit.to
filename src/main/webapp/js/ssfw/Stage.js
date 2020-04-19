@@ -170,6 +170,10 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		}
 	}
 
+	getActor(seq, x = 0, y = 0) {
+		return this._product._mediaset.getActor(seq, { x: x, y: y, _stage: this });
+	}
+
 	scanEvent() {
 		let result = [];
 		let gx = -this.map._mainVisual.x;
@@ -217,7 +221,7 @@ console.log(s);
 			let x = gx + (isFront ? this._product.width + bw * 1.5 : 16);
 			let y = (s.h + 1) * bw;
 			// let reserve = Enemy.assign(s.number, x, y);
-			let reserve = this._product.getActor(s.number, { x: x, y: y });
+			let reserve = this.getActor(s.number, x, y);
 
 			if (reserve != null) {
 				reserve.belongings = s.belongings;

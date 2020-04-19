@@ -224,8 +224,7 @@ class Actor extends Matter {
 		if (this.explosion == 0) {
 			this.eject();
 			if (this.belongings && this.belongings != '0') {
-				let actor = this._stage._product.getActor(this.belongings, { x: this.x, y: this.y });
-
+				let actor = this._stage.getActor(this.belongings, this.x, this.y);
 				this.spawn.push(actor);
 			}
 		}

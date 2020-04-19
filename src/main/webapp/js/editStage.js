@@ -267,15 +267,19 @@ class EventPanel {
 
 	loadActors() {
 		let listView = this.panel.querySelector('[data-role=listview]');
-		let data = { criteria: { product: { id: this.stageEditor.product.id }, type: this.actorType.value } };
+		let mediasetId = this.stageEditor.product._mediaset.id;
+		let data = { criteria: { mediaset: { id: mediasetId }, type: this.actorType.value } };
 
 		listView.textContent = null;
 		new ActorEntity().list(data).then(doc => {
 			doc.querySelectorAll('li').forEach(li => {
-				li.querySelector('a').addEventListener('click', () => {
+				let anchor = li.querySelector('a');
+
+				anchor.addEventListener('click', () => {
 					this.createActorScenario(li);
 					$(this.panel).panel('close');
 				});
+				anchor.removeAttribute('href');
 				listView.appendChild(li)
 			});
 			$(listView).listview('refresh');
@@ -298,6 +302,7 @@ class EventPanel {
 				}
 				this.createEffectScenario();
 			});
+			op.parentNode.addEventListener('click', () => op.click());
 		});
 		// $(firstOp).prop('checked', true).checkboxradio('refresh');
 		$(audioSelectorButton).hide();
@@ -331,7 +336,7 @@ class EditEventPanel extends PanelBase {
 		// console.log('EditEventPanel#resetInputs');
 		// console.log(target);
 		super.resetInputs(target);
-		let actor = this.stageEditor.product._actorMap[target.belongings];
+		let actor = this.stageEditor.product._mediaset._actorMap[target.belongings];
 		let name = actor ? actor.className : null;
 
 		this.belongings.textContent = name;

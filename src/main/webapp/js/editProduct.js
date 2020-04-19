@@ -17,7 +17,6 @@ class ProductEditorMain {
 		});
 
 		this.stagePanel = new StagePanel();
-		this.productActorPage = new ProductActorPage();
 		this.setupEvents();
 		this.setupListView();
 	}
@@ -155,28 +154,9 @@ console.log(ui);
 	}
 
 	saveProduct() {
-		let form = document.getElementById('productForm');
-		let formData = new FormData(form);
 		let stageList = this.listStages();
-		let actorList = this.productActorPage.listActor();
 
 		this.product.updateStageSeq(stageList);
-// 		stageList.forEach(rec => {
-// 			let prefix = 'stageList[' + rec.seq + '].';
-
-// console.log(rec);
-// 		});
-		// actorList.forEach((rec, ix) => {
-		// 	if (!rec) {
-		// 		return;
-		// 	}
-		// 	let prefix = 'actorList[' + ix + '].';
-
-		// 	formData.append(prefix + 'actor.id', rec.actorId);
-		// 	formData.append(prefix + 'seq', ix);
-		// 	formData.append(prefix + 'type', rec.productType);
-		// 	formData.append(prefix + 'className', rec.className);
-		// });
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		this.product.save().then(data => {
 			let messagePopup = document.getElementById('messagePopup');

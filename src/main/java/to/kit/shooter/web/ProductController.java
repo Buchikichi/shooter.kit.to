@@ -1,8 +1,6 @@
 package to.kit.shooter.web;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.Mediaset;
 import to.kit.shooter.entity.Product;
-import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.service.MediasetService;
 import to.kit.shooter.service.ProductService;
 import to.kit.shooter.web.form.FilteringForm;
@@ -64,21 +60,6 @@ public class ProductController implements BasicControllerInterface<Product> {
 		return this.productService.select(id);
 	}
 
-	private Map<VisualType, List<Actor>> makeTypeMap(List<Actor> actorList) {
-		Map<VisualType, List<Actor>> map = new HashMap<>();
-
-		for (VisualType type : VisualType.List) {
-			map.put(type, new ArrayList<>());
-		}
-		for (Actor actor : actorList) {
-			VisualType type = actor.getType();
-			List<Actor> list = map.get(type);
-
-			list.add(actor);
-		}
-		return map;
-	}
-
 	@RequestMapping("/edit/{id}")
 	@Override
 	public String edit(Model model, @PathVariable("id") String id) {
@@ -87,10 +68,8 @@ public class ProductController implements BasicControllerInterface<Product> {
 		if (product == null) {
 			return "error";
 		}
-		Map<VisualType, List<Actor>> typeMap = makeTypeMap(product.getActorList());
 		List<Mediaset> mediasetList = this.mediasetService.list();
 		model.addAttribute("product", product);
-		model.addAttribute("typeMap", typeMap);
 		model.addAttribute("accessRadio", ACCESS_RADIO);
 		model.addAttribute("mediasetList", mediasetList);
 		return "editProduct";

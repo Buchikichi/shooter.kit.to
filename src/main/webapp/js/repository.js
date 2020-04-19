@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', () => new MediasetEditorMain());
 
 class MediasetEditorMain {
 	constructor() {
-		this.mapManager = new MapManager();
-		this.actorManager = new ActorManager();
 		this.imageManager = new ImageManager();
 		this.audioManager = new AudioManager();
+		this.mapManager = new MapManager();
+		this.actorManager = new ActorManager();
 		this.imageChooser = new ImageChooser();
 		this.audioChooser = new AudioChooser();
 		this.setupPanel();
@@ -19,50 +19,40 @@ class MediasetEditorMain {
 		let imageButton = document.getElementById('imageButton');
 		let audioButton = document.getElementById('audioButton');
 
-		mapButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#mapPanel');
-			this.manager = this.mapManager;
-			this.manager.list();
-			this.hideFilter();
-		});
-		actorButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#actorPanel');
-			this.manager = this.actorManager;
-			this.manager.list();
-			this.hideFilter();
-			$('#actorType-select').show();
-		});
 		imageButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#imagePanel');
 			this.manager = this.imageManager;
 			this.manager.list();
-			this.hideFilter();
-			$('#visualType').show();
 		});
 		audioButton.addEventListener('click', ()=> {
 			plusButton.setAttribute('href', '#audioPanel');
 			this.manager = this.audioManager;
 			this.manager.list();
-			this.hideFilter();
-			$('#audioType').show();
+		});
+		mapButton.addEventListener('click', ()=> {
+			plusButton.setAttribute('href', '#mapPanel');
+			this.manager = this.mapManager;
+			this.manager.list();
+		});
+		actorButton.addEventListener('click', ()=> {
+			plusButton.setAttribute('href', '#actorPanel');
+			this.manager = this.actorManager;
+			this.manager.list();
 		});
 		plusButton.addEventListener('click', ()=> {
 			this.manager.resetPanel();
 		});
 		imageButton.click();
 	}
-
-	hideFilter() {
-		$('#actorType-select').hide();
-		$('#visualType').hide();
-		$('#audioType').hide();
-	}
 }
 
 class RepositoryManager {
-	constructor() {
+	constructor(typeSelectionName) {
 		this.mediasetId = document.querySelector('input[name="mediasetId"]').value;
-		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
+		this.typeSelect = document.querySelector('[name="' + typeSelectionName + '"]');
+		if (this.typeSelect) {
+			this.typeSelect.addEventListener('change', () => this.list());
+		}
 		this.listView = document.getElementById('listView');
 		this.valueChangedevent = new Event('valueChanged');
 // 		$(this.listView).sortable({
@@ -172,7 +162,11 @@ console.log('RepositoryManager: saveResource');
 		this.entity.list(param).then(doc => {
 			listView.textContent = null;
 			doc.querySelectorAll('li').forEach(li => {
-				li.querySelector('a').addEventListener('click', () => this.select(li));
+				let anchor = li.querySelector('a');
+
+				if (anchor) {
+					anchor.addEventListener('click', () => this.select(li));
+				}
 				listView.appendChild(li)
 			});
 			$(listView).listview('refresh');
@@ -231,7 +225,7 @@ class MapManager extends RepositoryManager {
  */
 class ActorManager extends RepositoryManager {
 	constructor() {
-		super();
+		super('actorType');
 		this.panel = document.getElementById('actorPanel');
 		this.form = this.panel.querySelector('form');
 		this.entity = new ActorEntity();
@@ -239,7 +233,7 @@ class ActorManager extends RepositoryManager {
 	}
 
 	setupActorType() {
-		let fieldset = document.getElementById('actorType-select');
+		let fieldset = document.getElementById('actorFilter');
 		let select = fieldset.querySelector('select');
 		let actorType = document.getElementById('actorType');
 
@@ -272,7 +266,7 @@ class ActorManager extends RepositoryManager {
 	setupPanel() {
 		let imageButtons = this.form.querySelector('.imageButtons');
 
-		this.setupActorType();
+//		this.setupActorType();
 		super.setupPanel();
 		['ImageId', 'ImageId', 'ImageId'].forEach(name => {
 			let button = new ImageSelectionButton(name, VisualEntity.Type.ACT);
@@ -282,12 +276,10 @@ class ActorManager extends RepositoryManager {
 	}
 
 	createParameter() {
-		let type = $('#actorType-select [name="actorType"]').val();
-		let formData = new FormData();
+		let options = this.typeSelect.querySelectorAll('option');
+		let type = options[this.typeSelect.selectedIndex].value;
 
-		formData.append('keyword', '');
-		formData.append('type', type);
-		return formData;
+		return { criteria: { mediaset: { id: this.mediasetId }, type: type } };
 	}
 }
 
@@ -296,9 +288,7 @@ class ActorManager extends RepositoryManager {
  */
 class ImageManager extends RepositoryManager {
 	constructor() {
-		super();
-		this.typeSelect = document.querySelector('#visualType [name="visualType"]');
-		this.typeSelect.addEventListener('change', () => this.list());
+		super('visualType');
 		this.panel = document.getElementById('imagePanel');
 		this.form = document.getElementById('imageForm');
 		this.entity = new VisualEntity();
@@ -329,12 +319,10 @@ class ImageManager extends RepositoryManager {
  */
 class AudioManager extends RepositoryManager {
 	constructor() {
-		super();
+		super('audioType');
 		this.panel = document.getElementById('audioPanel');
 		this.form = document.getElementById('audioForm');
 		this.entity = new AudioEntity();
-		this.typeSelect = document.querySelector('#audioType [name="audioType"]');
-		this.typeSelect.addEventListener('change', ()=> this.list());
 		this.setupPanel();
 	}
 

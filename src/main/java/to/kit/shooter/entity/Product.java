@@ -48,10 +48,6 @@ public class Product {
 	private List<Stage> stageList = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
-	@OrderBy("type, className")
-	private List<Actor> actorList = new ArrayList<>();
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
 	@OrderBy("score DESC")
 	private List<Scores> scoreList = new ArrayList<>();
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.repository.ActorRepository;
 import to.kit.shooter.web.form.FilteringForm;
 
@@ -19,9 +20,13 @@ public class ActorService implements BasicServiceInterface<Actor> {
 	@Override
 	public List<Actor> list(FilteringForm<Actor> form) {
 		Actor criteria = form.getCriteria();
-		String productId = criteria.getProduct().getId();
+		VisualType type = criteria.getType();
+		String mediasetId = criteria.getMediaset().getId();
 
-		return this.repository.findByProductIdAndTypeOrderByClassName(productId, criteria.getType());
+		if (type == VisualType.None) {
+			return this.repository.findByMediasetIdOrderByTypeAscClassName(mediasetId);
+		}
+		return this.repository.findByMediasetIdAndTypeOrderByClassName(mediasetId, type);
 	}
 
 	@Override

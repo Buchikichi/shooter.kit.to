@@ -32,7 +32,7 @@ class StageEditor extends Stage {
 		}
 	}
 
-	onMousemove(pos = { x: 0, y: 0 }) {
+	onMousemove(pos = { x: Number.MAX_SAFE_INTEGER, y: 0 }) {
 		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
 

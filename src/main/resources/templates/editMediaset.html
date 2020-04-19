@@ -23,53 +23,45 @@
     <h1 th:text="#{mediaset}">Mediaset</h1>
     <a href="#" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-notext ui-icon-plus"></a>
   </div>
-  <div data-role="content">
+  <div>
     <input type="hidden" name="mediasetId" th:value="${mediaset.id}"/>
     <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
-<!--
-    <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-      <input name="filter" id="radio-choice-h-2a" value="on" checked="checked" type="radio">
-      <label for="radio-choice-h-2a">Date</label>
-      <input name="filter" id="radio-choice-h-2b" value="off" type="radio">
-      <label for="radio-choice-h-2b">Name</label>
-      <input name="filter" id="radio-choice-h-2d" value="other" type="radio">
-      <label for="radio-choice-h-2d">Own</label>
-    </fieldset>
--->
-    <fieldset id="actorType-select" data-role="controlgroup" data-type="horizontal" data-mini="true">
-      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <select name="actorType"></select>
-    </fieldset>
-    <fieldset id="visualType" data-role="controlgroup" data-type="horizontal" data-mini="true">
-      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <select name="visualType" th:with="visualTypeList=${T(to.kit.shooter.entity.type.VisualType).List}">
-        <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
-      </select>
-    </fieldset>
-    <fieldset id="audioType" data-role="controlgroup" data-type="horizontal" data-mini="true">
-      <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
-      <select name="audioType" th:with="audioTypeList=${T(to.kit.shooter.entity.type.AudioType).List}">
-        <option th:each="opt:${audioTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
-      </select>
-    </fieldset>
+    <div data-role="tabs" class="ui-bar ui-body">
+      <div data-role="navbar" data-iconpos="left">
+        <ul>
+          <li><a id="imageButton" href="#visualFilter" data-ajax="false" data-icon="heart">Visual</a></li>
+          <li><a id="audioButton" href="#audioFilter" data-ajax="false" data-icon="audio">Audio</a></li>
+          <li><a id="mapButton" href="#mapFilter" data-ajax="false" data-icon="location">Map</a></li>
+          <li><a id="actorButton" href="#actorFilter" data-ajax="false" data-icon="user">Actor</a></li>
+        </ul>
+      </div>
+      <fieldset id="visualFilter" data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+        <select name="visualType" th:with="visualTypeList=${T(to.kit.shooter.entity.type.VisualType).List}">
+          <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
+        </select>
+      </fieldset>
+      <fieldset id="audioFilter" data-role="controlgroup" data-type="horizontal" data-mini="true">
+        <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+        <select name="audioType" th:with="audioTypeList=${T(to.kit.shooter.entity.type.AudioType).List}">
+          <option th:each="opt:${audioTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
+        </select>
+      </fieldset>
+      <div id="mapFilter"></div>
+      <div id="actorFilter">
+        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+          <button class="ui-btn ui-btn-b" disabled="disabled">Type</button>
+          <select name="actorType" th:with="visualTypeList=${T(to.kit.shooter.entity.type.VisualType).List}">
+            <option value="-1">ALL</option>
+            <option th:each="opt:${visualTypeList}" th:value="${opt.ix}" th:text="${opt}"></option>
+          </select>
+        </fieldset>
+      </div>
+    </div>
     <ul id="listView" data-role="listview" data-filter="true" data-split-icon="edit" th:fragment="listview">
       <li>
       </li>
     </ul>
-  </div>
-  <div data-role="footer" data-position="fixed">
-    <div data-role="navbar" data-iconpos="left">
-      <ul>
-        <li><a id="mapButton" data-icon="location">Map</a></li>
-        <li><a id="audioButton" data-icon="audio">Audio</a></li>
-        <li><a id="imageButton" data-icon="heart">Visual</a></li>
-      </ul>
-      <ul>
-        <li><a id="stageButton" data-icon="star" class="ui-state-disabled">Stage</a></li>
-        <li><a id="actorButton" data-icon="user" class="ui-state-disabled">Actor</a></li>
-        <li><a id="castingButton" data-icon="bullets" class="ui-state-disabled">Casting</a></li>
-      </ul>
-    </div>
   </div>
   <div id="mapPanel" data-role="panel" data-position="right" data-display="overlay">
     <div class="ui-bar ui-bar-b ui-corner-all">Map</div>

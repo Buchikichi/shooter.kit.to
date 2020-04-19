@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.service.ActorService;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ResultForm;
@@ -25,17 +26,14 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@Autowired
 	private ActorService service;
 
-	/**
-	 * 一覧取得.
-	 * @param model Model
-	 * @param criteria 条件
-	 * @return 一覧
-	 */
 	@RequestMapping("/list")
 	@Override
-	public String list(Model model, @RequestBody FilteringForm<Actor> criteria) {
-		List<Actor> actorList = this.service.list(criteria);
+	public String list(Model model, @RequestBody FilteringForm<Actor> form) {
+		List<Actor> actorList = this.service.list(form);
+		
+		Boolean hasDivider = Boolean.valueOf(form.getCriteria().getType() == VisualType.None);
 
+		model.addAttribute("hasDivider", hasDivider);
 		model.addAttribute("actorList", actorList);
 		return "_actorList";
 	}

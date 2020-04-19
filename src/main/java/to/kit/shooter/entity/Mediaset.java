@@ -48,4 +48,7 @@ public class Mediaset {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
 	@OrderBy("visualType, visualSeq")
 	private List<VisualView> visualList = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mediaset", cascade = CascadeType.ALL)
+	private List<Actor> actorList = new ArrayList<>();
 }

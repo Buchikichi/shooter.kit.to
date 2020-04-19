@@ -9,15 +9,16 @@ import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.type.VisualType;
 
 /**
- * プロダクトアクター.
+ * Actors.
  * @author H.Sasai
  */
 public interface ActorRepository extends JpaRepository<Actor, String>, JpaSpecificationExecutor<Actor> {
 	/**
-	 * プロダクト内のアクターを全て取得.
-	 * @param productId プロダクトID
-	 * @return アクター一覧
+	 * Make a listing of actors.
+	 * @param mediasetId Mediaset ID
+	 * @param type Visual type
+	 * @return listing of actors
 	 */
-	List<Actor> findByProductId(String productId);
-	List<Actor> findByProductIdAndTypeOrderByClassName(String productId, VisualType type);
+	List<Actor> findByMediasetIdAndTypeOrderByClassName(String mediasetId, VisualType type);
+	List<Actor> findByMediasetIdOrderByTypeAscClassName(String mediasetId);
 }
