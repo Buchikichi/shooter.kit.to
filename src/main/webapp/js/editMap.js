@@ -216,6 +216,7 @@ class EditMain {
 	}
 
 	setupPointingDevice() {
+		let header = document.querySelector('[data-role=header]');
 		let canvas = document.getElementById('canvas');
 		let isValid = false;
 		let touch = e => {
@@ -224,7 +225,7 @@ class EditMain {
 			}
 //console.log('scrollTop:' + document.body.scrollTop);
 			let x = (this.view.scrollLeft + e.clientX) / this.scale;
-			let y = (e.pageY) / this.scale;
+			let y = (e.pageY - header.clientHeight) / this.scale;
 
 			this.fieldMap.touch(x, y, this.brickNum);
 		}

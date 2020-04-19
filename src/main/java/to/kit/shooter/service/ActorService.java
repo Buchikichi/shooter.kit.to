@@ -1,6 +1,8 @@
 package to.kit.shooter.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -8,14 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.Scenario;
+import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.repository.ActorRepository;
+import to.kit.shooter.web.form.ActorRec;
 import to.kit.shooter.web.form.FilteringForm;
 
 @Service
 public class ActorService implements BasicServiceInterface<Actor> {
 	@Autowired
 	private ActorRepository repository;
+	@Autowired
+	private ProductService productService;
 
 	@Override
 	public List<Actor> list(FilteringForm<Actor> form) {
@@ -27,6 +34,22 @@ public class ActorService implements BasicServiceInterface<Actor> {
 			return this.repository.findByMediasetIdOrderByTypeAscClassName(mediasetId);
 		}
 		return this.repository.findByMediasetIdAndTypeOrderByClassName(mediasetId, type);
+	}
+
+	public List<ActorRec> listWithReferrer(FilteringForm<Actor> form) {
+		Actor criteria = form.getCriteria();
+		String mediasetId = criteria.getMediaset().getId();
+		Map<SeqType, List<Scenario>> scenarioMap = this.productService.makeScenarioMap(mediasetId);
+
+		return list(form).stream().map(a -> {
+			SeqType key = a.getSeq();
+			ActorRec rec = ActorRec.create(a);
+
+			if (scenarioMap.containsKey(key)) {
+				rec.setReferrer(scenarioMap.get(key).size());
+			}
+			return rec;
+		}).collect(Collectors.toList());
 	}
 
 	@Override

@@ -50,4 +50,17 @@ public final class SeqType extends Number {
 	public SeqType() {
 		this.value = MurmurHash2.hash64(UUID.randomUUID().toString());
 	}
+
+	@Override
+	public int hashCode() {
+		return (int) this.value;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		return this.value == ((SeqType) obj).value;
+	}
 }

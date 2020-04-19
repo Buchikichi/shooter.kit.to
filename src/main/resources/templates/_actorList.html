@@ -4,7 +4,6 @@
 </head>
 
 <body>
-  <th:block th:with="lastType=${T(to.kit.shooter.entity.type.VisualType).None}" />
   <ul data-role="listview" data-filter="true" data-inset="true">
     <th:block th:each="actor,stat:${actorList}" th:object="${actor}"
         th:with="divider=${hasDivider && (stat.index == 0 || actor.type != actorList[stat.index - 1].type)}">
@@ -13,12 +12,17 @@
       </th:block>
       <li th:attr="data-id=*{id}, data-seq=*{seq}">
         <a th:href="'/actor/edit/' + *{id}" target="_blank">
+          <img/>
           <span th:text="*{className}"></span>
 <!--
           <span th:text="*{seq}"></span>
 -->
           <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>
+          <p th:if="0 < *{referrer}" class="ui-li-aside">
+            <span>Referrer: </span><span th:text="*{referrer}"></span>
+          </p>
         </a>
+        <a></a>
       </li>
     </th:block>
   </ul>

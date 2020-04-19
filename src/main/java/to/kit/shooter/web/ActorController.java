@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import to.kit.shooter.entity.Actor;
 import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.service.ActorService;
+import to.kit.shooter.web.form.ActorRec;
 import to.kit.shooter.web.form.FilteringForm;
 import to.kit.shooter.web.form.ResultForm;
 
@@ -29,8 +30,7 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@RequestMapping("/list")
 	@Override
 	public String list(Model model, @RequestBody FilteringForm<Actor> form) {
-		List<Actor> actorList = this.service.list(form);
-		
+		List<ActorRec> actorList = this.service.listWithReferrer(form);
 		Boolean hasDivider = Boolean.valueOf(form.getCriteria().getType() == VisualType.None);
 
 		model.addAttribute("hasDivider", hasDivider);

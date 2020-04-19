@@ -2,6 +2,7 @@ package to.kit.shooter.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -12,7 +13,9 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Product;
+import to.kit.shooter.entity.Scenario;
 import to.kit.shooter.entity.Stage;
+import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.repository.ProductRepository;
 import to.kit.shooter.repository.StageRepository;
 import to.kit.shooter.web.form.FilteringForm;
@@ -96,5 +99,12 @@ public class ProductService implements BasicServiceInterface<Product> {
 			product.setCount(next);
 			this.productRepository.save(product);
 		}
+	}
+
+	public Map<SeqType, List<Scenario>> makeScenarioMap(String mediasetId) {
+		return this.productRepository.findByMediasetId(mediasetId).stream()
+				.flatMap(p -> p.getStageList().stream())
+				.flatMap(s -> s.getScenarioList().stream())
+				.collect(Collectors.groupingBy(Scenario::getNumber));
 	}
 }

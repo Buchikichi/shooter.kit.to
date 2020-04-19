@@ -7,12 +7,11 @@ class MediasetEditorMain {
 		this.mapManager = new MapManager();
 		this.actorManager = new ActorManager();
 		this.imageChooser = new ImageChooser();
-		this.audioChooser = new AudioChooser();
-		this.setupPanel();
+		this.setupEvents();
 	}
 
-	setupPanel() {
-		// console.log('MediasetEditorMain::setupPanel');
+	setupEvents() {
+		// console.log('MediasetEditorMain::setupEvents');
 		let plusButton = document.querySelector('[data-role="header"] a');
 		let mapButton = document.getElementById('mapButton');
 		let actorButton = document.getElementById('actorButton');
@@ -43,12 +42,15 @@ class MediasetEditorMain {
 			this.manager.resetPanel();
 		});
 		imageButton.click();
+		new ImageSelector();
 	}
 }
 
-class RepositoryManager {
-	constructor(typeSelectionName) {
-		this.mediasetId = document.querySelector('input[name="mediasetId"]').value;
+class RepositoryManager extends PanelBase {
+	constructor(panelId, typeSelectionName) {
+		super(panelId);
+		this.panelId = panelId;
+		this.mediasetId = document.getElementById('mediasetId').value;
 		this.typeSelect = document.querySelector('[name="' + typeSelectionName + '"]');
 		if (this.typeSelect) {
 			this.typeSelect.addEventListener('change', () => this.list());
@@ -63,10 +65,6 @@ class RepositoryManager {
 // console.log(ui.position);
 // 			},
 // 		});
-	}
-
-	get panelId() {
-		return this.panel.getAttribute('id');
 	}
 
 	setupPanel() {
@@ -179,8 +177,7 @@ console.log('RepositoryManager: saveResource');
  */
 class MapManager extends RepositoryManager {
 	constructor() {
-		super();
-		this.panel = document.getElementById('mapPanel');
+		super('mapPanel');
 		this.form = document.getElementById('stageForm');
 		this.entity = new MapEntity();
 		this.setupPanel();
@@ -225,54 +222,21 @@ class MapManager extends RepositoryManager {
  */
 class ActorManager extends RepositoryManager {
 	constructor() {
-		super('actorType');
-		this.panel = document.getElementById('actorPanel');
+		super('actorPanel', 'actorType');
 		this.form = this.panel.querySelector('form');
 		this.entity = new ActorEntity();
 		this.setupPanel();
 	}
 
-	setupActorType() {
-		let fieldset = document.getElementById('actorFilter');
-		let select = fieldset.querySelector('select');
-		let actorType = document.getElementById('actorType');
-
-		Object.keys(Actor.Type).forEach(key => {
-			let value = Actor.Type[key];
-
-			if (value == 0 || key == 'Formation') {
-				return;
-			}
-			// (filter)
-			let option = document.createElement('option');
-			option.setAttribute('value', value);
-			if (key == 'Enemy') {
-				option.setAttribute('selected', 'selected');
-			}
-			option.textContent = key;
-			select.appendChild(option);
-			// option
-			let actorTypeOption = document.createElement('option');
-			actorTypeOption.setAttribute('value', value);
-			actorTypeOption.textContent = key;
-			actorType.appendChild(actorTypeOption);
-		});
-		select.addEventListener('change', ()=> {
-			this.list();
-		});
-		$(select).selectmenu('refresh', true);
-	}
-
 	setupPanel() {
-		let imageButtons = this.form.querySelector('.imageButtons');
+		// let imageButtons = this.form.querySelector('.imageButtons');
 
-//		this.setupActorType();
-		super.setupPanel();
-		['ImageId', 'ImageId', 'ImageId'].forEach(name => {
-			let button = new ImageSelectionButton(name, VisualEntity.Type.ACT);
+		// super.setupPanel();
+		// ['ImageId', 'ImageId', 'ImageId'].forEach(name => {
+		// 	let button = new ImageSelectionButton(name, VisualEntity.Type.ACT);
 
-			imageButtons.appendChild(button.fieldset);
-		});
+		// 	imageButtons.appendChild(button.fieldset);
+		// });
 	}
 
 	createParameter() {
@@ -288,8 +252,7 @@ class ActorManager extends RepositoryManager {
  */
 class ImageManager extends RepositoryManager {
 	constructor() {
-		super('visualType');
-		this.panel = document.getElementById('imagePanel');
+		super('imagePanel', 'visualType');
 		this.form = document.getElementById('imageForm');
 		this.entity = new VisualEntity();
 		this.setupPanel();
@@ -319,8 +282,7 @@ class ImageManager extends RepositoryManager {
  */
 class AudioManager extends RepositoryManager {
 	constructor() {
-		super('audioType');
-		this.panel = document.getElementById('audioPanel');
+		super('audioPanel', 'audioType');
 		this.form = document.getElementById('audioForm');
 		this.entity = new AudioEntity();
 		this.setupPanel();
@@ -364,24 +326,5 @@ class ImageChooser extends ResourceChooser {
 
 	createRow(rec) {
 		return super.createRow(rec, '/visual/src/' + rec.id);
-	}
-}
-
-/**
- * オーディオ選択ダイアログ.
- */
-class AudioChooser extends ResourceChooser {
-	constructor() {
-		super('audioChooser');
-		this.entity = new AudioEntity();
-	}
-
-	createRow(rec) {
-		let listviewRow = super.createRow(rec);
-		let anchor = listviewRow.anchor;
-//		let img = listviewRow.img;
-//
-//		anchor.removeChild(img);
-		return listviewRow;
 	}
 }
