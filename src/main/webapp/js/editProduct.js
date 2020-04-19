@@ -14,6 +14,7 @@ class ProductEditorMain {
 			this.product = product;
 			loading.parentNode.removeChild(loading);
 //			this.start();
+			this.infoPanel = new ProductInfoPanel(product);
 		});
 
 		this.stagePanel = new StagePanel();
@@ -23,15 +24,9 @@ class ProductEditorMain {
 
 	setupEvents() {
 		let plusButton = document.querySelector('a[href="#stagePanel"]');
-		let editMediasetButton = document.getElementById('editMediasetButton');
 
 		plusButton.addEventListener('click', ()=> {
 			this.stagePanel.open(this.addStage);
-		});
-		editMediasetButton.addEventListener('click', ()=> {
-			let mediasetSelect = document.getElementById('mediaset.id');
-
-			window.open('/mediaset/edit/' + mediasetSelect.value);
 		});
 		let saveButton = document.getElementById('saveButton');
 
@@ -170,5 +165,11 @@ console.log(ui);
 			}
 			$(messagePopup).popup('open', {});
 		});
+	}
+}
+
+class ProductInfoPanel extends PanelBase {
+	constructor(product) {
+		super('infoPanel', product);
 	}
 }

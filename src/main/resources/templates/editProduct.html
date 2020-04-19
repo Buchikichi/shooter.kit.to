@@ -15,7 +15,7 @@
 </head>
 
 <body>
-<div id="productDetail" data-role="page">
+<div id="productDetail" data-role="page" th:object="${product}">
   <div data-role="header" data-theme="b" data-position="fixed">
 <!--
     <a href="/" data-ajax="false" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
@@ -55,7 +55,7 @@
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
         <legend>Access:</legend>
         <label th:each="item:${accessRadio}">
-          <input type="radio" name="access" th:value="${item.value}" th:text="${item.key}" th:field="*{product.access}"/>
+          <input type="radio" name="access" th:value="${item.value}" th:text="${item.key}" th:field="*{access}"/>
         </label>
       </fieldset>
       <fieldset class="ui-grid-a">
@@ -67,13 +67,6 @@
           <input id="height" name="height" type="number" required="required" th:value="${product.height}"/>
           </label>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>Mediaset:</legend>
-        <select th:field="*{product.mediaset.id}" data-native-menu="false" data-mini="true" class="filterable-select">
-          <option th:each="item:${mediasetList}" th:value="${item.id}" th:text="${item.name}"></option>
-        </select>
-        <button id="editMediasetButton" type="button" data-icon="edit" data-rel="close" data-mini="true">Edit mediaset</button>
       </fieldset>
       <div data-role="collapsible" data-mini="true">
         <h2>Crash handling</h2>
@@ -102,6 +95,14 @@
           </li>
         </ul>
       </div>
+      <fieldset>
+        <legend>Mediaset:</legend>
+        <select th:field="*{mediaset.id}" data-native-menu="false" data-mini="true" class="filterable-select">
+          <option th:each="item:${mediasetList}" th:value="${item.id}" th:text="${item.name}"></option>
+        </select>
+        <a th:href="'/mediaset/edit/' + *{mediaset.id}" target="_blank"
+            class="ui-btn ui-corner-all ui-mini ui-btn-icon-left ui-icon-edit" data-rel="close">Edit mediaset</a>
+      </fieldset>
       <fieldset class="ui-grid-a">
         <div class="ui-block-a">
           <div class="ui-field-contain">
