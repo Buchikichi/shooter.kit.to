@@ -40,11 +40,11 @@ public class Stage {
 	private int startTransition;
 	private int startSpeed;
 	@Convert(converter = SeqTypeConverter.class)
-	private SeqType startAudioSeq;
+	private SeqType startAudioSeq = new SeqType(0);
 	private int sequelTransition;
 	private int sequelSpeed;
 	@Convert(converter = SeqTypeConverter.class)
-	private SeqType sequelAudioSeq;
+	private SeqType sequelAudioSeq = new SeqType(0);
 	@Column(insertable = false, updatable = false)
 	private Date created;
 	@Column(insertable = false)

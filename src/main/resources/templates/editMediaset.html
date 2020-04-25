@@ -29,8 +29,8 @@
     <div data-role="tabs" class="ui-bar ui-body">
       <div data-role="navbar" data-iconpos="left">
         <ul>
-          <li><a id="imageButton" href="#visualFilter" data-icon="heart">Visual</a></li>
-          <li><a id="audioButton" href="#audioFilter" data-icon="audio">Audio</a></li>
+          <li><a id="imageButton" href="#visualFilter" data-panel="#imagePanel" data-icon="heart">Visual</a></li>
+          <li><a id="audioButton" href="#audioFilter" data-panel="audioPanel" data-icon="audio">Audio</a></li>
           <li><a id="mapButton" href="#mapFilter" data-icon="location">Map</a></li>
           <li><a id="actorButton" href="#actorFilter" data-icon="user">Actor</a></li>
         </ul>
@@ -116,9 +116,8 @@
       <label for="imageThumb">Thumbnail:</label><input type="file" id="imageThumb" name="thumb"/>
 -->
       <button class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
-      <button type="button" data-rel="close" class="ui-btn ui-corner-all">Cancel</button>
-      <button type="button" id="createMapButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-location">Create map</button>
-      <button type="button" id="createActorButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-user">Create actor</button>
+      <button type="button" id="createMapButton" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-location">Create map</button>
+      <button type="button" id="createActorButton" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-user">Create actor</button>
     </form>
     <div class="message"></div>
   </div>
@@ -146,6 +145,10 @@
     <ul data-role="listview" data-inset="true" data-filter="true">
       <li data-role="list-divider">Choose an image</li>
     </ul>
+  </div>
+  <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
+    <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+    <p></p>
   </div>
 </div>
 </body>

@@ -31,7 +31,6 @@ public class Map {
 	private String id;
 	private String mediasetId;
 	private String name;
-	private String description;
 	private String map;
 	private int mainSeq;
 	private int rebirth;

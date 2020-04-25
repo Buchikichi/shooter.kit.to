@@ -43,7 +43,6 @@ public class MapService implements BasicServiceInterface<Map> {
 		if (entity != null) {
 			// 画面で入力するものだけ更新
 			entity.setName(map.getName());
-			entity.setDescription(map.getDescription());
 			entity.setUpdated(new Date());
 			return this.mapRepository.saveAndFlush(entity);
 		}

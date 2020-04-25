@@ -6,7 +6,6 @@ CREATE TABLE map(
 	id varchar(36) NOT NULL DEFAULT gen_random_uuid(),
 	mediaset_id varchar(36) NOT NULL,
 	name text NOT NULL,
-	description text NOT NULL,
 	map text,
 	brick_size integer NOT NULL,
 	rebirth integer NOT NULL DEFAULT 0,
@@ -16,10 +15,8 @@ CREATE TABLE map(
 	PRIMARY KEY (id)
 );
 COMMENT ON COLUMN map.id IS 'ID';
-COMMENT ON COLUMN map.owner IS '所有者';
-COMMENT ON COLUMN map.access IS 'アクセスレベル{0:private, 1:protected, 2:public}';
+COMMENT ON COLUMN map.mediaset_id IS 'Mediaset ID';
 COMMENT ON COLUMN map.name IS '名前';
-COMMENT ON COLUMN map.description IS '説明';
 COMMENT ON COLUMN map.map IS 'map';
 COMMENT ON COLUMN map.brick_size IS 'brick_size';
 COMMENT ON COLUMN map.rebirth IS 'rebirth';
@@ -33,6 +30,7 @@ ALTER TABLE map ADD brick_size integer NOT NULL DEFAULT 1;
 ALTER TABLE map ADD rebirth integer NOT NULL DEFAULT 0;
 ALTER TABLE map ADD main_seq integer NOT NULL DEFAULT 0;
 ALTER TABLE map RENAME owner TO mediaset_id;
+ALTER TABLE map DROP COLUMN description;
 ALTER TABLE map DROP COLUMN access;
 ALTER TABLE map DROP COLUMN theme;
 ALTER TABLE map DROP COLUMN boss;

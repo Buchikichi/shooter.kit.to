@@ -38,8 +38,12 @@ public final class SeqType extends Number {
 		return Long.toHexString(this.value);
 	}
 
+	public SeqType(long value) {
+		this.value = value;
+	}
+
 	public SeqType(Long value) {
-		this.value = value.longValue();
+		this(value.longValue());
 	}
 
 	@JsonCreator

@@ -216,3 +216,9 @@ Bricks.BRICK_TYPE = {
 	WALL: 255,
 	BRITTLE: 254,
 };
+Bricks.SHIFT = {
+	DOWN: 2,
+	LEFT: 4,
+	RIGHT: 6,
+	UP: 8,
+};

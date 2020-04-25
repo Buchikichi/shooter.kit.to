@@ -13,35 +13,30 @@ class MediasetEditorMain {
 	setupEvents() {
 		// console.log('MediasetEditorMain::setupEvents');
 		let plusButton = document.querySelector('[data-role="header"] a');
-		let mapButton = document.getElementById('mapButton');
-		let actorButton = document.getElementById('actorButton');
-		let imageButton = document.getElementById('imageButton');
-		let audioButton = document.getElementById('audioButton');
+		let tabs = document.querySelector('[data-role=tabs]').querySelectorAll('a');
+		let managerMap = {
+			'imageButton': this.imageManager,
+			'audioButton': this.audioManager,
+			'mapButton': this.mapManager,
+			'actorButton': this.actorManager,
+		};
 
-		imageButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#imagePanel');
-			this.manager = this.imageManager;
-			this.manager.list();
+		tabs.forEach(a => {
+			let panel = a.getAttribute('data-panel');
+			let manager = managerMap[a.id];
+
+			manager.tabButton = a;
+			a.addEventListener('click', () => {
+				if (panel) {
+					plusButton.setAttribute('href', panel);
+					$(plusButton).show();
+				} else {
+					$(plusButton).hide();
+				}
+				manager.list();
+			});
 		});
-		audioButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#audioPanel');
-			this.manager = this.audioManager;
-			this.manager.list();
-		});
-		mapButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#mapPanel');
-			this.manager = this.mapManager;
-			this.manager.list();
-		});
-		actorButton.addEventListener('click', ()=> {
-			plusButton.setAttribute('href', '#actorPanel');
-			this.manager = this.actorManager;
-			this.manager.list();
-		});
-		plusButton.addEventListener('click', ()=> {
-			this.manager.resetPanel();
-		});
-		imageButton.click();
+		this.imageManager.tabButton.click();
 		new ImageSelector();
 	}
 }
@@ -93,18 +88,28 @@ console.log('RepositoryManager: saveResource');
 	}
 
 	select(li) {
-		let id = li.getAttribute('data-id');
-
-		console.log('RepositoryManager#select: ' + id);
+		this.dataId = li.getAttribute('data-id');
+		console.log('RepositoryManager#select: ' + this.dataId);
 		$.mobile.loading('show', { textVisible: true });
-		this.entity.select(id).then(data => {
+		this.entity.select(this.dataId).then(data => {
 			this.resetPanel(data);
 			$.mobile.loading('hide');
+			console.log('MediasetEditorMain#select done.');
 		});
 		return {};
 	}
 
+	onOpen() {
+		console.log('RepositoryManager#onOpen');
+	}
+
+	onClose() {
+		this.resetPanel();
+		this.dataId = null;
+	}
+
 	resetPanel(rec = {}) {
+		this.target = rec;
 		rec.mediasetId = this.mediasetId;
 		this.panel.querySelectorAll('input, select').forEach(input => {
 			let name = input.getAttribute('name');
@@ -255,7 +260,47 @@ class ImageManager extends RepositoryManager {
 		super('imagePanel', 'visualType');
 		this.form = document.getElementById('imageForm');
 		this.entity = new VisualEntity();
+		this.createMapButton = document.getElementById('createMapButton');
+		this.createActorButton = document.getElementById('createActorButton');
 		this.setupPanel();
+	}
+
+	setupPanel() {
+		super.setupPanel();
+		this.createMapButton.addEventListener('click', ()=> this.createmap());
+		this.createActorButton.addEventListener('click', ()=> {
+			document.getElementById('actorButton').click();
+		});
+	}
+
+	createmap() {
+		let map = {
+			mediasetId: this.mediasetId,
+			name: this.target.name,
+			mainSeq: 0,
+			brickSize: 2,
+			mapVisualList: [
+				{
+					seq: 0,
+					visualType: this.target.visualType,
+					visualSeq: this.target.visualSeq,
+				},
+			],
+		};
+		let messagePopup = document.getElementById('messagePopup');
+		let content = messagePopup.querySelector('p');
+
+		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		new MapEntity().save(map).then(data => {
+			$.mobile.loading('hide');
+			if (data.ok) {
+				content.textContent = 'Map saved.';
+				document.getElementById('mapButton').click();
+			} else {
+				content.textContent = 'Save failed.';
+			}
+			$(messagePopup).popup('open', {});
+		});
 	}
 
 	createParameter() {
@@ -267,8 +312,23 @@ class ImageManager extends RepositoryManager {
 
 	resetPanel(rec = {}) {
 		super.resetPanel(rec);
+		let hasData = 0 < Object.keys(rec).length;
 		let img = document.getElementById('image.thumbnail');
 
+		$(this.createMapButton).hide();
+		$(this.createActorButton).hide();
+		if (hasData) {
+			if (rec.visualType == VisualEntity.Type.Background
+					|| rec.visualType == VisualEntity.Type.Foreground) {
+				$(this.createMapButton).show();
+			}
+			$(this.createActorButton).show();
+		} else {
+			let visualType = this.panel.querySelector('[name=visualType]');
+
+			visualType.value = this.typeSelect.value;
+			$(visualType).selectmenu('refresh', false);
+		}
 		if (rec.id) {
 			img.setAttribute('src', '/visual/src/' + rec.id);
 		} else {

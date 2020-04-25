@@ -120,26 +120,25 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		if (target instanceof MapVisual) {
 			return;
 		}
-		if (!this.isMoving) {
-			return;
-		}
-		if (this.isLoop) {
-			let cy = mainVisual.y + target.y;
+		if (this.isMoving) {
+			if (this.isLoop) {
+				let cy = mainVisual.y + target.y;
 
-			if (cy < 0) {
-				target.y += this.height;
+				if (cy < 0) {
+					target.y += this.height;
+				}
+				if (this.height < cy) {
+					target.y -= this.height;
+				}
 			}
-			if (this.height < cy) {
-				target.y -= this.height;
+			if (target.effectH) {
+				// console.log('Stage#effect effectH:' + target.constructor.name);
+				target.x -= Math.cos(mainVisual.radian) * mainVisual.speed;
 			}
-		}
-		if (target.effectH) {
-			// console.log('Stage#effect effectH:' + target.constructor.name);
-			target.x -= Math.cos(mainVisual.radian) * mainVisual.speed;
-		}
-		if (target.effectV) {
-			// console.log('Stage#effect effectV:' + target.constructor.name);
-			target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
+			if (target.effectV) {
+				// console.log('Stage#effect effectV:' + target.constructor.name);
+				target.y -= Math.sin(mainVisual.radian) * mainVisual.speed;
+			}
 		}
 		if (this._product.effector.isBrickVisible || !(target instanceof Ship)) {
 			this.map.checkHit(target);

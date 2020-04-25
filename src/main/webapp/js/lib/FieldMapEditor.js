@@ -53,6 +53,21 @@ console.log('ix:' + ix);
 console.log('sx:' + sx);
 	}
 
+	shiftBricks(shift) {
+		let data = this.bricks.bricks.data;
+		let max = data.length - 4 - 1;
+
+		if (shift == Bricks.SHIFT.LEFT) {
+			for (let ix = 0, sx = 4; ix <= max; ix++, sx++) {
+				data[ix] = data[sx];
+			}
+		} else if (shift == Bricks.SHIFT.RIGHT) {
+			for (let ix = max, sx = max - 4; 4 < ix; ix--, sx--) {
+				data[ix] = data[sx];
+			}
+		}
+	}
+
 	clear() {
 		this.bricks.clear(this);
 	}

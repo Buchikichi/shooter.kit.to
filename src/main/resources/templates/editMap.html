@@ -97,6 +97,14 @@
       <label>Rebirth:
         <input type="number" th:field="*{rebirth}" class="numeric"/>
       </label>
+      <fieldset class="ui-grid-a">
+        <div class="ui-block-a">
+          <button id="leftButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-arrow-l">&lt;</button>
+        </div>
+        <div class="ui-block-b">
+          <button id="rightButton" class="ui-btn ui-corner-all ui-btn-icon-right ui-icon-arrow-r">&gt;</button>
+        </div>
+      </fieldset>
       <ul data-role="listview" data-inset="true">
         <li class="ui-field-contain">
           <button id="generateButton" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-grid">Generate brick</button>

@@ -11,18 +11,26 @@
         <li data-role="list-divider" th:text="*{type}"></li>
       </th:block>
       <li th:attr="data-id=*{id}, data-seq=*{seq}">
-        <a th:href="'/actor/edit/' + *{id}" target="_blank">
-          <img/>
-          <span th:text="*{className}"></span>
-<!--
-          <span th:text="*{seq}"></span>
--->
-          <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>
-          <p th:if="0 < *{referrer}" class="ui-li-aside">
-            <span>Referrer: </span><span th:text="*{referrer}"></span>
-          </p>
-        </a>
-        <a></a>
+        <th:block th:if="${edit}">
+          <a th:href="'/actor/edit/' + *{id}" target="_blank">
+            <img/>
+            <span th:text="*{className}"></span>
+            <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>
+            <p th:if="0 < *{referrer}" class="ui-li-aside">
+              <span>Referrer: </span><span th:text="*{referrer}"></span>
+            </p>
+          </a>
+          <a></a>
+        </th:block>
+        <th:block th:unless="${edit}">
+          <a>
+            <span th:text="*{className}"></span>
+            <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>
+            <p th:if="0 < *{referrer}" class="ui-li-aside">
+              <span>Referrer: </span><span th:text="*{referrer}"></span>
+            </p>
+          </a>
+        </th:block>
       </li>
     </th:block>
   </ul>

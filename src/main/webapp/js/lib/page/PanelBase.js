@@ -13,6 +13,9 @@ class PanelBase {
 		this.inputList.forEach(i => {
 			let tagName = i.tagName.toUpperCase();
 			let changeValue = () => {
+				if (!this.target) {
+					return;
+				}
 				let value = i.value;
 
 				if (tagName == 'SELECT') {
@@ -36,6 +39,7 @@ class PanelBase {
 		});
 		if (this.role == 'panel') {
 			$(this.panel).panel({
+				open:  () => this.onOpen(),
 				close: () => this.onClose()
 			});
 		}
@@ -68,6 +72,8 @@ class PanelBase {
 			$(this.panel).popup('open');
 		}
 	}
+
+	onOpen() { }
 
 	onClose() { }
 }

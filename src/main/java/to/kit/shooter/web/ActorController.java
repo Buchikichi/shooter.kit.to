@@ -31,8 +31,10 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@Override
 	public String list(Model model, @RequestBody FilteringForm<Actor> form) {
 		List<ActorRec> actorList = this.service.listWithReferrer(form);
+		Boolean isEdit = Boolean.valueOf(form.isEdit());
 		Boolean hasDivider = Boolean.valueOf(form.getCriteria().getType() == VisualType.None);
 
+		model.addAttribute("isEdit", isEdit);
 		model.addAttribute("hasDivider", hasDivider);
 		model.addAttribute("actorList", actorList);
 		return "_actorList";

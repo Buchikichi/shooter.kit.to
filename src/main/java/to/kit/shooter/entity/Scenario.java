@@ -32,10 +32,10 @@ public class Scenario {
 	private String target;
 	private int type;
 	@Convert(converter = SeqTypeConverter.class)
-	private SeqType number;
+	private SeqType number = new SeqType(0);
 	private String formationId;
 	@Convert(converter = SeqTypeConverter.class)
-	private SeqType belongings;
+	private SeqType belongings = new SeqType(0);
 
 	@ManyToOne
 	@JsonIgnore

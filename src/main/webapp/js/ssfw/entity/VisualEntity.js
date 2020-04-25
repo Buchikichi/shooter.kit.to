@@ -4,8 +4,15 @@ class VisualEntity extends EntityBase {
 	}
 }
 VisualEntity.Type = {
-	OTHER: 0,
-	ACT: 1,
-	BACK: 2,
-	FORE: 3,
+	Player: 0,
+	Shot: 1,
+	Item: 2,
+	Aerial: 3,
+	Subaerial: 4,
+	Boss: 5,
+	Ornament: 6,
+	Explosion: 7,
+	Background: 8,
+	Foreground: 9,
+	Other: 10,
 };

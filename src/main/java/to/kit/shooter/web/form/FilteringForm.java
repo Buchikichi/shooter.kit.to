@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public final class FilteringForm<T> {
 	T criteria;
-	private String owner;
-	private int access;
+	private boolean edit;
+//	private String owner;
+//	private int access;
 }

@@ -67,7 +67,7 @@ class EditMain {
 		$('[name="scale"]').click(()=> this.changeScale());
 		document.getElementById('saveButton').addEventListener('click', ()=> this.saveMap());
 		this.setupImagePanel();
-		this.setupBrickPanel();
+		this.brickPanel = new BrickPanel(this.fieldMap);
 		this.setupPointingDevice();
 		new ImageSelector();
 	}
@@ -172,26 +172,6 @@ class EditMain {
 		this.fieldMap.mapVisualList = list;
 	}
 
-	setupBrickPanel() {
-		let brickSize = document.getElementById('brickSize');
-
-		brickSize.addEventListener('change',()=> this.fieldMap.brickSize = brickSize.value);
-		// generateButton
-		document.getElementById('generateButton').addEventListener('click', ()=> {
-			if (!confirm('Sure?')) {
-				return;
-			}
-			this.fieldMap.generateBrick(this.ctx);
-		});
-		// generateButton
-		document.getElementById('clearButton').addEventListener('click', ()=> {
-			if (!confirm('Sure?')) {
-				return;
-			}
-			this.fieldMap.clear();
-		});
-	}
-
 	openMapVisualPopup(mapVisual) {
 		let mapVisualPopup = document.getElementById('mapVisualPopup');
 		let repeat = mapVisualPopup.querySelector('[name=repeat]');
@@ -259,6 +239,32 @@ class EditMain {
 				content.textContent = 'Save failed.';
 			}
 			$(messagePopup).popup('open', {});
+		});
+	}
+}
+
+class BrickPanel extends PanelBase {
+	constructor(fieldMap) {
+		super('brickPanel', fieldMap);
+	}
+
+	setupEvents() {
+		super.setupEvents();
+		document.getElementById('leftButton').addEventListener('click', () => this.target.shiftBricks(Bricks.SHIFT.LEFT));
+		document.getElementById('rightButton').addEventListener('click', () => this.target.shiftBricks(Bricks.SHIFT.RIGHT));
+		// generateButton
+		document.getElementById('generateButton').addEventListener('click', () => {
+			if (!confirm('Sure?')) {
+				return;
+			}
+			this.target.generateBrick(this.ctx);
+		});
+		// clearButton
+		document.getElementById('clearButton').addEventListener('click', () => {
+			if (!confirm('Sure?')) {
+				return;
+			}
+			this.target.clear();
 		});
 	}
 }

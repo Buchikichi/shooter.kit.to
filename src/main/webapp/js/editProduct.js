@@ -14,8 +14,8 @@ class ProductEditorMain {
 			loading.parentNode.removeChild(loading);
 //			this.start();
 			this.infoPanel = new ProductInfoPanel(product);
+			this.stagePanel = new StagePanel(product);
 		});
-		this.stagePanel = new StagePanel();
 		this.setupEvents();
 	}
 
@@ -144,8 +144,9 @@ class ProductInfoPanel extends PanelBase {
 }
 
 class StagePanel extends PanelBase {
-	constructor() {
+	constructor(product) {
 		super('stagePanel');
+		this.product = product;
 	}
 
 	open(callBack) {
@@ -158,21 +159,23 @@ class StagePanel extends PanelBase {
 			ul.textContent = null;
 			doc.querySelectorAll('li').forEach(li => {
 				let anchor = li.querySelector('a');
+				let mapId = li.getAttribute('data-id');
 
+				anchor.removeAttribute('href');
+				anchor.addEventListener('click', () => this.addStage(mapId, callBack));
 				ul.appendChild(li);
-				anchor.addEventListener('click', () => this.addStage(rec, callBack));
 			});
 			$(ul).listview('refresh');
 		});
 	}
 
-	addStage(rec, callBack) {
+	addStage(mapId, callBack) {
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 		let productId = document.querySelector('input[name=id]');
 		let productStageView = document.getElementById('productStageView');
 		let seq = productStageView.querySelectorAll('li').length;
-		let stage = { product: { id: productId.value }, map: { id: rec.id }, seq: seq };
+		let stage = { product: { id: productId.value }, map: { id: mapId }, seq: seq };
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		new StageEntity().save(stage).then(data => {
