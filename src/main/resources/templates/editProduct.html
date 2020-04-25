@@ -20,7 +20,7 @@
 <!--
     <a href="/" data-ajax="false" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
 -->
-    <h1 th:text="${product.name} + ' - '  + #{product}">Product</h1>
+    <h1 th:text="*{name} + ' - '  + #{product}">Product</h1>
     <a href="#infoPanel" class="ui-btn-left ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-info">Info</a>
     <div data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
       <a href="#stagePanel" class="ui-btn ui-btn-inline ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{stage}">Stage</a>
@@ -29,9 +29,10 @@
   <div data-role="collapsibleset">
     <div data-role="collapsible" data-collapsed="false">
       <h4 th:text="#{stage}">Stage</h4>
-      <ul id="productStageView" data-role="listview" data-split-icon="bars">
-        <li th:each="stage:${product.stageList}">
-          <a href="#" th:with="map=${stage.map}" th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
+      <ul id="productStageView" data-role="listview" data-split-icon="minus">
+        <li th:each="stage:*{stageList}">
+          <a th:href="'/stage/edit/' + ${stage.id}" target="_blank" th:with="map=${stage.map}"
+              th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
             <img src="/img/icon.listview.png"/>
             <span th:text="${map.name}"></span>
             <span th:text="${#lists.size(stage.scenarioList)}" class="ui-li-count"></span>
@@ -47,11 +48,11 @@
     <div id="loading"></div>
   <div id="infoPanel" data-role="panel" data-position="left" data-position-fixed="true" data-display="overlay">
     <form>
-      <input type="hidden" th:field="${product.id}"/>
+      <input type="hidden" th:field="*{id}"/>
       <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
-      <input id="name" name="name" type="text" required="required" th:value="${product.name}"/>
+      <input id="name" name="name" type="text" required="required" th:value="*{name}"/>
       <label for="description">Description:</label>
-      <textarea id="description" name="description" required="required" th:text="${product.description}"></textarea>
+      <textarea id="description" name="description" required="required" th:text="*{description}"></textarea>
       <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
         <legend>Access:</legend>
         <label th:each="item:${accessRadio}">
@@ -60,49 +61,53 @@
       </fieldset>
       <fieldset class="ui-grid-a">
         <div class="ui-block-a">
-          <label>Width:<input name="width" type="number" required="required" th:value="${product.width}"/></label>
+          <label>Width:<input name="width" type="number" required="required" th:value="*{width}"/></label>
         </div>
         <div class="ui-block-b">
           <label>Height:
-          <input id="height" name="height" type="number" required="required" th:value="${product.height}"/>
+          <input id="height" name="height" type="number" required="required" th:value="*{height}"/>
           </label>
         </div>
       </fieldset>
-      <div data-role="collapsible" data-mini="true">
-        <h2>Crash handling</h2>
-        <ul data-role="listview">
-          <li data-role="list-divider">Scroll:</li>
-          <li class="ui-field-contain">
-            <select data-mini="true" th:field="${product.crashScroll}">
-              <option value="0">Keep</option>
-              <option value="1">Stop</option>
+      <div data-role="collapsibleset">
+        <div data-role="collapsible" data-mini="true" data-collapsed="false">
+          <h2>Mediaset</h2>
+          <fieldset>
+            <select th:field="*{mediaset.id}" data-native-menu="false" data-mini="true" class="filterable-select">
+              <option th:each="item:${mediasetList}" th:value="${item.id}" th:text="${item.name}"></option>
             </select>
-          </li>
-          <li data-role="list-divider">BGM:</li>
-          <li class="ui-field-contain">
-            <select data-mini="true" th:field="${product.crashBgm}">
-              <option value="0">Keep</option>
-              <option value="1">Stop</option>
-              <option value="2">Fade</option>
-            </select>
-          </li>
-          <li data-role="list-divider">Player:</li>
-          <li class="ui-field-contain">
-            <select data-mini="true" th:field="${product.crashPlayer}">
-              <option value="0">Rebirth</option>
-              <option value="1">Start over</option>
-            </select>
-          </li>
-        </ul>
+            <a th:href="'/mediaset/edit/' + *{mediaset.id}" target="_blank"
+                class="ui-btn ui-corner-all ui-mini ui-btn-icon-left ui-icon-edit" data-rel="close">Edit mediaset</a>
+          </fieldset>
+        </div>
+        <div data-role="collapsible" data-mini="true">
+          <h2>Crash handling</h2>
+          <ul data-role="listview">
+            <li data-role="list-divider">Scroll:</li>
+            <li class="ui-field-contain">
+              <select data-mini="true" th:field="*{crashScroll}">
+                <option value="0">Keep</option>
+                <option value="1">Stop</option>
+              </select>
+            </li>
+            <li data-role="list-divider">BGM:</li>
+            <li class="ui-field-contain">
+              <select data-mini="true" th:field="*{crashBgm}">
+                <option value="0">Keep</option>
+                <option value="1">Stop</option>
+                <option value="2">Fade</option>
+              </select>
+            </li>
+            <li data-role="list-divider">Player:</li>
+            <li class="ui-field-contain">
+              <select data-mini="true" th:field="*{crashPlayer}">
+                <option value="0">Rebirth</option>
+                <option value="1">Start over</option>
+              </select>
+            </li>
+          </ul>
+        </div>
       </div>
-      <fieldset>
-        <legend>Mediaset:</legend>
-        <select th:field="*{mediaset.id}" data-native-menu="false" data-mini="true" class="filterable-select">
-          <option th:each="item:${mediasetList}" th:value="${item.id}" th:text="${item.name}"></option>
-        </select>
-        <a th:href="'/mediaset/edit/' + *{mediaset.id}" target="_blank"
-            class="ui-btn ui-corner-all ui-mini ui-btn-icon-left ui-icon-edit" data-rel="close">Edit mediaset</a>
-      </fieldset>
       <fieldset class="ui-grid-a">
         <div class="ui-block-a">
           <div class="ui-field-contain">
@@ -130,7 +135,7 @@
   <div data-role="footer" data-position="fixed">
     <div id="footerNav" data-role="navbar">
       <ul>
-        <li><a data-icon="action" th:href="'../play/'+${product.id}" target="_blank">Play</a></li>
+        <li><a data-icon="action" th:href="'../play/'+*{id}" target="_blank">Play</a></li>
 <!--
         <li><a data-icon="bullets" href="/edit.html" target="_blank" class="ui-state-disabled">Stages</a></li>
 -->

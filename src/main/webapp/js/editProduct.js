@@ -10,64 +10,33 @@ class ProductEditorMain {
 		let callback = (loaded, max) => loading.innerHTML = loaded + '/' + max;
 
 		ProductEditor.create(productId, callback).then(product => {
-//			this.setupActors(product);
 			this.product = product;
 			loading.parentNode.removeChild(loading);
 //			this.start();
 			this.infoPanel = new ProductInfoPanel(product);
 		});
-
 		this.stagePanel = new StagePanel();
 		this.setupEvents();
-		this.setupListView();
 	}
 
 	setupEvents() {
 		let plusButton = document.querySelector('a[href="#stagePanel"]');
-
-		plusButton.addEventListener('click', ()=> {
-			this.stagePanel.open(this.addStage);
-		});
 		let saveButton = document.getElementById('saveButton');
 
-		saveButton.addEventListener('click', ()=> this.saveProduct());
-	}
-
-	setupListView() {
 		this.productStageView = document.getElementById('productStageView');
-		this.productStageView.querySelectorAll('li').forEach(li => {
-			let anchor = li.querySelector('a:first-child');
-			let delButton = li.querySelector('a:last-child');
-			let id = anchor.getAttribute('data-id');
-
-			anchor.addEventListener('click', ()=> window.open('/stage/edit/' + id));
-			delButton.addEventListener('click', ()=> {
-//				this.productStageView.removeChild(li);
-			});
-		});
-		$(this.productStageView).sortable({handle: '.sortable'});
-		this.actorList = document.querySelectorAll('.actorList');
-		this.actorList.forEach(ul => {
-			$(ul).sortable({
-				connectWith: '.actorList',
-				items: 'li:not(.divider)',
-				stop: (event, ui)=> {
-					// ソート終了時
-console.log(event);
-console.log(ui);
-					this.actorList.forEach(e => {
-						this.refreshCounter(e);
-					});
-				}
-			});
-		});
+		this.productStageView.querySelectorAll('li').forEach(li => this.setupStageItemEvent(li));
+		$(this.productStageView).sortable();
+		plusButton.addEventListener('click', () => this.stagePanel.open(this.addStage));
+		saveButton.addEventListener('click', () => this.saveProduct());
 	}
 
-	refreshCounter(ul) {
-		let liList = ul.querySelectorAll('li:not(.divider)');
-		let span = ul.previousElementSibling.querySelector('.ui-li-count');
+	setupStageItemEvent(li) {
+		let delButton = li.querySelector('a:last-child');
 
-		span.textContent = liList.length;
+		delButton.addEventListener('click', () => {
+			console.log('delButton!!');
+			// this.productStageView.removeChild(li);
+		});
 	}
 
 	getRec(anchor) {
@@ -171,5 +140,53 @@ console.log(ui);
 class ProductInfoPanel extends PanelBase {
 	constructor(product) {
 		super('infoPanel', product);
+	}
+}
+
+class StagePanel extends PanelBase {
+	constructor() {
+		super('stagePanel');
+	}
+
+	open(callBack) {
+		let ul = this.panel.querySelector('ul');
+		let mediasetId = document.getElementById('mediaset\.id').value;
+		let params = { criteria: { mediasetId: mediasetId } };
+
+		ul.textContent = 'Loading...';
+		new MapEntity().list(params).then(doc => {
+			ul.textContent = null;
+			doc.querySelectorAll('li').forEach(li => {
+				let anchor = li.querySelector('a');
+
+				ul.appendChild(li);
+				anchor.addEventListener('click', () => this.addStage(rec, callBack));
+			});
+			$(ul).listview('refresh');
+		});
+	}
+
+	addStage(rec, callBack) {
+		let messagePopup = document.getElementById('messagePopup');
+		let content = messagePopup.querySelector('p');
+		let productId = document.querySelector('input[name=id]');
+		let productStageView = document.getElementById('productStageView');
+		let seq = productStageView.querySelectorAll('li').length;
+		let stage = { product: { id: productId.value }, map: { id: rec.id }, seq: seq };
+
+		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		new StageEntity().save(stage).then(data => {
+			$.mobile.loading('hide');
+			if (data.ok) {
+				if (!callBack(data.result)) {
+					console.log('Already exists!');
+					return;
+				}
+			} else {
+				content.textContent = 'Save failed.';
+				$(messagePopup).popup('open', {});
+			}
+			$(this.panel).panel('close');
+		});
 	}
 }

@@ -1,4 +1,4 @@
-class StagePanel {
+class StagePanel_bk {
 	constructor() {
 		this.panel = document.getElementById('stagePanel');
 		this.map = new MapEntity();
