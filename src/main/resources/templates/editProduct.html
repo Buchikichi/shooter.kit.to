@@ -30,11 +30,11 @@
     <div data-role="collapsible" data-collapsed="false">
       <h4 th:text="#{stage}">Stage</h4>
       <ul id="productStageView" data-role="listview" data-split-icon="minus">
-        <li th:each="stage:*{stageList}">
-          <a th:href="'/stage/edit/' + ${stage.id}" target="_blank" th:with="map=${stage.map}"
-              th:attr="data-id=${stage.id}, data-stage=${map.id}, data-roll=${stage.roll}">
+        <li th:each="stage:*{stageList}" th:object="${stage}">
+          <a th:href="'/stage/edit/' + *{id}" target="_blank" th:with="map=${stage.map}"
+              th:attr="data-id=*{id}, data-stage=${map.id}, data-roll=${stage.roll}">
             <img src="/img/icon.listview.png"/>
-            <span th:text="${map.name}"></span>
+            <span th:text="*{name}"></span>
             <span th:text="${#lists.size(stage.scenarioList)}" class="ui-li-count"></span>
           </a>
           <a href="#" class="sortable"></a>

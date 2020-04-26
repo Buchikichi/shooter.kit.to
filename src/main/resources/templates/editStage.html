@@ -92,7 +92,7 @@ body {
         <input id="height" type="hidden" th:value="*{product.height}"/>
         <input id="mediasetId" type="hidden" th:value="*{product.mediaset.id}"/>
         <input id="stageId" type="hidden" th:value="*{id}"/>
-        <input id="stageName" type="text" required="required" th:value="*{map.name}"/>
+        <input type="text" required="required" th:field="*{name}"/>
         <label><span>V-Scroll type:</span>
           <select name="roll" data-mini="true" th:field="*{roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
             <option th:each="opt:${scrollList}" th:value="${opt.value}" th:text="${opt}">OFF</option>

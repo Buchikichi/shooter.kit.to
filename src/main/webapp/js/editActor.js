@@ -161,11 +161,12 @@ class ActorEditorMain extends Matter {
 	}
 
 	saveActor() {
+		let actor = ActorEditor.create(this.actor);
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
 		$.mobile.loading('show', { text: 'Save...', textVisible: true });
-		this.actor.save().then(data => {
+		actor.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Actor saved.';

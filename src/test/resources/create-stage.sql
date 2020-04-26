@@ -5,6 +5,7 @@
 CREATE TABLE stage(
 	id varchar(36) NOT NULL DEFAULT gen_random_uuid(),
 	product_id varchar(36) NOT NULL,
+	name text NOT NULL,
 	map_id varchar(36) NOT NULL,
 	seq integer NOT NULL DEFAULT 0,
 	roll integer NOT NULL DEFAULT 0,
@@ -23,6 +24,7 @@ CREATE TABLE stage(
 );
 COMMENT ON COLUMN stage.id IS 'ID';
 COMMENT ON COLUMN stage.product_id IS 'プロダクトID';
+COMMENT ON COLUMN stage.name IS 'Stage name';
 COMMENT ON COLUMN stage.map_id IS 'マップID';
 COMMENT ON COLUMN stage.seq IS '順序';
 COMMENT ON COLUMN stage.roll IS 'スクロール種類';
@@ -43,6 +45,7 @@ ALTER TABLE product_detail RENAME TO stage;
 ALTER TABLE stage RENAME stage_id TO map_id;
 ALTER TABLE stage DROP COLUMN map;
 
+ALTER TABLE stage ADD name text NOT NULL DEFAULT '';
 ALTER TABLE stage ADD repeat integer NOT NULL DEFAULT 1;
 ALTER TABLE stage ADD pos_h integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD pos_v integer NOT NULL DEFAULT 0;
