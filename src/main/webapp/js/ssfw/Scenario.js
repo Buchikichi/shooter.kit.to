@@ -35,7 +35,7 @@ class Scenario {
 
 	getActor() {
 		if (!this._actor) {
-			this._actor = this._stage._product._mediaset.getActor(this.number);
+			this._actor = this._stage._product._mediaset.getActor(this.number, { _stage: this._stage });
 			if (this._actor) {
 				if (this.number != this._actor.seq) {
 					console.log('Scenario#getActor:'
@@ -85,20 +85,21 @@ class Scenario {
 	}
 
 	drawActor(ctx) {
-		let actor = this.getActor();
 		let bw = this._stage.map.brickSize;
 		let bh = bw / 2;
 		let sx = this.v * bw;
 		let sy = this.h * bw;
 
-		if (actor) {
-			actor.x = sx + actor.hW;
-			actor.y = sy + actor.hH;
-			actor.draw(ctx);
-			if (actor.width) {
-				ctx.strokeStyle = 'rgba(80, 255, 80, 0.6)';
-				ctx.strokeRect(sx, sy, actor.width, actor.height);
+		if (this._actor) {
+			this._actor.x = sx + this._actor.hW;
+			this._actor.y = sy + this._actor.hH;
+			if (this._actor.type == Actor.Type.Subaerial) {
+				this._actor.checkInverse();
 			}
+			this._actor.draw(ctx);
+		} else {
+			ctx.strokeStyle = 'rgba(255, 80, 80, 0.8)';
+			ctx.strokeRect(sx, sy, bw, bw);
 		}
 		if (this.op == 'Spw') {
 			ctx.fillStyle = 'orange';
@@ -114,8 +115,12 @@ class Scenario {
 			// ctx.beginPath();
 			// ctx.arc(sx + bh, sy + bh, bh, 0, Math.PI2);
 			// ctx.stroke();
-			ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-			ctx.fillRect(sx, sy, actor.width, actor.height);
+			if (this._actor) {
+				ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+				ctx.fillRect(sx, sy, this._actor.width, this._actor.height);
+				ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+				ctx.strokeRect(sx, sy, this._actor.width, this._actor.height);
+			}
 		}
 	}
 

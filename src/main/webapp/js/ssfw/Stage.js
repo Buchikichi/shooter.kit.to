@@ -210,16 +210,14 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				spawn = true;
 			}
 			if (s.op == 'Rev' && s.v <= rear) {
-console.log(s);
 				spawn = true;
 			}
 			if (!spawn) {
 				return true;
 			}
 			// spawn
-			let x = gx + (isFront ? this._product.width + bw * 1.5 : 16);
+			let x = s.x;
 			let y = (s.h + 1) * bw;
-			// let reserve = Enemy.assign(s.number, x, y);
 			let reserve = this.getActor(s.number, x, y);
 
 			if (reserve != null) {
@@ -243,13 +241,13 @@ console.log(s);
 				if (clazz) {
 					let enemy = new clazz(x, y);
 
-					if (!isFront) enemy.dir = 0;
+					if (!isFront) enemy.dir += Math.PI;
 					enemy._stage = this;
 					result.push(enemy);
 					return false;
 				}
 			}
-			if (!isFront) reserve.dir = 0;
+			if (!isFront) reserve.dir += Math.PI;
 			result.push(reserve);
 			return false;
 		});

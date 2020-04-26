@@ -138,7 +138,7 @@ class EditStage {
 		}
 
 		canvas.addEventListener('mousedown', e => stage.onMousedown(calcPos(e), this.scenario));
-		canvas.addEventListener('mousemove', e => stage.onMousemove(calcPos(e)));
+		canvas.addEventListener('mousemove', e => stage.onMousemove(calcPos(e), this.scenario));
 		canvas.addEventListener('mouseup', () => {
 			if (stage.cursorType == StageEditor.CURSOR_TYPE.EDIT && stage._currentScenario) {
 				this.editEventPanel.open(stage._currentScenario);

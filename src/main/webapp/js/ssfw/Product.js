@@ -7,6 +7,7 @@ class Product extends Matter {
 		this.maxShip = 7;
 		this.maxHibernate = 60;
 
+		this.debugMode = false;
 		this.shipRemain = 0;
 		this.score = 0;
 		this.hiscore = 0;
@@ -165,7 +166,17 @@ class Product extends Matter {
 		ctx.translate(this.stage.fg.x, this.stage.fg.y);
 		this.stage.draw(ctx);
 		ctx.restore();
-		this.drawForDebug(ctx);
+		// DEBUG
+		let kb = Controller.Instance;
+
+		if (kb) {
+			if (kb.isHit('d')) {
+				this.debugMode = !this.debugMode;
+			}
+		}
+		if (this.debugMode) {
+			this.drawForDebug(ctx);
+		}
 	}
 
 	drawForDebug(ctx) {
@@ -202,6 +213,8 @@ class Product extends Matter {
 		if (kb) {
 			if (kb.isHit('n')) {
 				this.stage.phase = Stage.PHASE.NEXT_STAGE;
+			} else if (kb.isHit('s')) {
+				this.shipRemain++;
 			}
 		}
 	}

@@ -248,7 +248,7 @@ class ActorManager extends RepositoryManager {
 		let options = this.typeSelect.querySelectorAll('option');
 		let type = options[this.typeSelect.selectedIndex].value;
 
-		return { criteria: { mediaset: { id: this.mediasetId }, type: type } };
+		return { criteria: { mediaset: { id: this.mediasetId }, type: type }, edit: true };
 	}
 }
 

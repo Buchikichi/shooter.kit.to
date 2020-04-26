@@ -11,7 +11,7 @@
         <li data-role="list-divider" th:text="*{type}"></li>
       </th:block>
       <li th:attr="data-id=*{id}, data-seq=*{seq}">
-        <th:block th:if="${edit}">
+        <th:block th:if="${isEdit}">
           <a th:href="'/actor/edit/' + *{id}" target="_blank">
             <img/>
             <span th:text="*{className}"></span>
@@ -22,7 +22,7 @@
           </a>
           <a></a>
         </th:block>
-        <th:block th:unless="${edit}">
+        <th:block th:unless="${isEdit}">
           <a>
             <span th:text="*{className}"></span>
             <span th:if="0 != *{score}" class="ui-li-count" th:text="*{score}"></span>

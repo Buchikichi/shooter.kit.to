@@ -32,25 +32,30 @@ class StageEditor extends Stage {
 		}
 	}
 
-	onMousemove(pos = { x: Number.MAX_SAFE_INTEGER, y: 0 }) {
+	onMousemove(pos = { x: Number.MAX_SAFE_INTEGER, y: 0 }, scenario) {
 		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
 
 		this.pos = pos;
+		if (pos.x == Number.MAX_SAFE_INTEGER) {
+			this._reservedScenario = null;
+		} else {
+			this._reservedScenario = scenario;
+		}
+		if (!act) {
+			let event = this._eventList.find(s => s.type != Scenario.Type.Actor && s.isHit(pos));
+
+			if (event) {
+				// console.log('event:');
+				// console.log(event);
+				this._currentScenario = event;
+				return;
+			}
+			act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.isHit(pos));
+		}
 		if (act) {
-			// console.log('act:');
-			// console.log(act);
 			act.hasFocus = true;
 			this._currentScenario = act;
-			return;
-		}
-		//
-		let event = this._eventList.find(s => s.type != Scenario.Type.Actor && s.isHit(pos));
-
-		if (event) {
-			// console.log('event:');
-			// console.log(event);
-			this._currentScenario = event;
 			return;
 		}
 		this._currentScenario = null;
@@ -103,6 +108,16 @@ class StageEditor extends Stage {
 		if (this.cursorType == StageEditor.CURSOR_TYPE.ACTOR) {
 			let y = parseInt(this.pos.y / bw) * bw;
 
+			if (this._reservedScenario) {
+				ctx.save();
+				// console.log('this._reservedScenario');
+				// console.log(this._reservedScenario);
+				ctx.globalAlpha = 0.5;
+				this._reservedScenario.v = x / bw;
+				this._reservedScenario.h = y / bw;
+				this._reservedScenario.draw(ctx);
+				ctx.restore();
+			}
 			ctx.fillStyle = 'rgba(120, 60, 255, .5)';
 			ctx.fillRect(x, y, bw, bw);
 			return;

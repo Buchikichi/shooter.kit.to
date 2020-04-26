@@ -24,6 +24,7 @@ class ActorEditor extends Actor {
     save() {
         // console.log('ActorEditor#save');
         // console.log(this);
+        this.actorAudioList.forEach(a => a.actor = { id: this.id });
         this.actorVisualList.forEach(v => v.actor = { id: this.id });
         return new ActorEntity().save(this);
     }
