@@ -5,10 +5,9 @@ class Scenario {
 	}
 
 	includes(pos) {
-		let bw = this._stage.map.brickSize;
-		let bh = bw / 2;
-		let x = this.v * bw + bh;
-		let y = this.h * bw + bh;
+		let bh = this._stage.map.brickSize / 2;
+		let x = this.v + bh;
+		let y = this.h + bh;
 		let diffX = x - pos.x;
 		let diffY = y - pos.y;
 		let distance = Math.sqrt(diffX * diffX + diffY * diffY);
@@ -17,10 +16,9 @@ class Scenario {
 	}
 
 	isHit(pos) {
-		let bw = this._stage.map.brickSize;
-		let bh = bw / 2;
-		let x = this.v * bw + bh;
-		let y = this.h * bw + bh;
+		let bh = this._stage.map.brickSize / 2;
+		let x = this.v + bh;
+		let y = this.h + bh;
 
 		if (this.type == Scenario.Type.Actor) {
 			let width = this._stage.map.brickSize * 2; // FIXME:
@@ -87,8 +85,8 @@ class Scenario {
 	drawActor(ctx) {
 		let bw = this._stage.map.brickSize;
 		let bh = bw / 2;
-		let sx = this.v * bw;
-		let sy = this.h * bw;
+		let sx = this.v;
+		let sy = this.h;
 
 		if (this._actor) {
 			this._actor.x = sx + this._actor.hW;
@@ -132,7 +130,7 @@ class Scenario {
 		let stage = this._stage;
 		let width = stage.map.brickSize;
 		let height = stage._product.height;
-		let sx = this.v * width;
+		let sx = this.v;
 
 		ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
 		ctx.strokeRect(sx, 0, width, height);

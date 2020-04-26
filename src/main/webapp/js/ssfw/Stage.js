@@ -175,15 +175,13 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 
 	scanEvent() {
 		let result = [];
-		let gx = -this.map._mainVisual.x;
-		let bw = this.map.brickSize;
-		let rear = Math.round(gx / bw);
+		let rear = -this.map._mainVisual.x;
 
 		if (rear == this.lastScan) {
 			return result;
 		}
 		//
-		let front = Math.round((gx + this._product.width) / bw);
+		let front = rear + this._product.width;
 
 		this._eventList = this._eventList.filter(s => {
 			if (front < s.v) {
@@ -193,9 +191,9 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				return false;
 			}
 			s.isFront = rear < s.v;
-			s.x = s.v * bw;
+			s.x = s.v;
 			// console.log('Stage#scanEvent op:' + s.op + '/num:' + s.number);
-			// console.log('gx:' + gx + 'front:' + front + '/s.v:' + s.v);
+			// console.log('front:' + front + '/s.v:' + s.v);
 			let evt = this.executeEvent(s);
 			if (evt) {
 				if (evt instanceof Actor) {
@@ -217,7 +215,7 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 			}
 			// spawn
 			let x = s.x;
-			let y = (s.h + 1) * bw;
+			let y = s.h + 1;
 			let reserve = this.getActor(s.number, x, y);
 
 			if (reserve != null) {

@@ -67,6 +67,13 @@ body {
           <label>Select<input type="radio" name="behavior" value="e"/></label>
           <label>Edit<input type="radio" name="behavior" value="s" checked="checked"/></label>
           <label>Remove<input type="radio" name="behavior" value="r"/></label>
+          <button disabled="disabled" data-theme="b">Grid</button>
+          <select name="grid">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4" selected="selected">4</option>
+            <option value="8">8</option>
+          </select>
           <button disabled="disabled" data-theme="b">Guide</button>
           <label>ON<input type="radio" name="guide" value="1" checked="checked"/></label>
           <label>off<input type="radio" name="guide" value="0"/></label>
@@ -75,10 +82,13 @@ body {
           <label>W<input type="radio" name="color" value="w"/></label>
           <label>-<input type="radio" name="color" value="-" checked="checked"/></label>
           <button disabled="disabled" data-theme="b">Scale</button>
-          <label>1<input type="radio" name="scale" value="1"/></label>
-          <label>2<input type="radio" name="scale" value="2" checked="checked"/></label>
-          <label>3<input type="radio" name="scale" value="3"/></label>
-          <label>4<input type="radio" name="scale" value="4"/></label>
+          <select name="scale">
+            <option value="1">1</option>
+            <option value="2" selected="selected">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+<button id="migButton" type="button" data-theme="b">x8</button>
         </fieldset>
       </div>
       <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
@@ -88,8 +98,6 @@ body {
            th:with="transitionList=${T(to.kit.shooter.entity.TransitionType).LIST}">
         <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
         <input id="productId" type="hidden" th:value="*{product.id}"/>
-        <input id="width" type="hidden" th:value="*{product.width}"/>
-        <input id="height" type="hidden" th:value="*{product.height}"/>
         <input id="mediasetId" type="hidden" th:value="*{product.mediaset.id}"/>
         <input id="stageId" type="hidden" th:value="*{id}"/>
         <input type="text" required="required" th:field="*{name}"/>

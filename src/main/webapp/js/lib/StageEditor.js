@@ -2,7 +2,8 @@ class StageEditor extends Stage {
 	constructor() {
 		super();
 		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
-		this.pos = {x:0, y:0};
+		this.pos = { x: 0, y: 0 };
+		this.grid = 1;
 		this._currentScenario = null;
 	}
 
@@ -79,14 +80,14 @@ class StageEditor extends Stage {
 
 	addScenario(pos, rec) {
 		let scenario = Scenario.create(rec, this);
-		let bw = this.map.brickSize;
-		let x = parseInt(pos.x / bw);
-		let y = scenario.type == Scenario.Type.Actor ? parseInt(pos.y / bw) : 0;
+		let cur = this.calcCursorPos(pos);
+		let y = scenario.type == Scenario.Type.Actor ? cur.y : 0;
 
-		scenario.v = x;
+		scenario.v = cur.x;
 		scenario.h = y;
 		this.removeScenario(scenario);
 		this._eventList.push(scenario);
+		this._eventList.sort((a, b) => a.v == b.v ? a.h - b.h : a.v - b.v);
 		console.log('StageEditor#addScenario:');
 		console.log(scenario);
 	}
@@ -97,29 +98,35 @@ class StageEditor extends Stage {
 		this.map._mainVisual.pattern = null;
 	}
 
+	calcCursorPos(pos) {
+		let hG = this.grid / 2;
+
+		return {
+			x: Math.round((pos.x - hG) / this.grid) * this.grid,
+			y: parseInt(pos.y / this.grid) * this.grid,
+		};
+	}
+
 	drawCursor(ctx) {
 		if (this.cursorType == StageEditor.CURSOR_TYPE.NONE) {
 			return;
 		}
 		let bw = this.map.brickSize;
-		let x = parseInt(this.pos.x / bw) * bw;
-		// let y = parseInt(this.cursorY / bw) * bw;
+		let cur = this.calcCursorPos(this.pos);
 
 		if (this.cursorType == StageEditor.CURSOR_TYPE.ACTOR) {
-			let y = parseInt(this.pos.y / bw) * bw;
-
 			if (this._reservedScenario) {
 				ctx.save();
 				// console.log('this._reservedScenario');
 				// console.log(this._reservedScenario);
 				ctx.globalAlpha = 0.5;
-				this._reservedScenario.v = x / bw;
-				this._reservedScenario.h = y / bw;
+				this._reservedScenario.v = cur.x;
+				this._reservedScenario.h = cur.y;
 				this._reservedScenario.draw(ctx);
 				ctx.restore();
 			}
 			ctx.fillStyle = 'rgba(120, 60, 255, .5)';
-			ctx.fillRect(x, y, bw, bw);
+			ctx.fillRect(cur.x, cur.y, bw, bw);
 			return;
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
@@ -127,7 +134,7 @@ class StageEditor extends Stage {
 			let height = ctx.canvas.height;
 
 			ctx.fillStyle = 'rgba(255, 60, 120, .5)';
-			ctx.fillRect(x, y, bw, height);
+			ctx.fillRect(cur.x, y, bw, height);
 		}
 	}
 

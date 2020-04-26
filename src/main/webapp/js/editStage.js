@@ -16,7 +16,7 @@ class EditStage {
 	}
 
 	get scale() {
-		return document.querySelector('[name="scale"]:checked').value;
+		return document.querySelector('[name=scale]').value;
 	}
 
 	// get repeat() {
@@ -86,6 +86,7 @@ class EditStage {
 	setupEvents() {
 		// console.log('EditStage#setupEvents');
 		let stage = this.product.stage;
+		let changeGrid = () => stage.grid = document.querySelector('[name=grid]').value;
 		let changeGuide = () => {
 			stage.hasGuide = document.querySelector('[name="guide"]:checked').value == '1';
 		};
@@ -109,17 +110,25 @@ class EditStage {
 		$('[name="behavior"]:eq(2)').click(() => stage.cursorType = StageEditor.CURSOR_TYPE.REMOVE);
 		// $('[name="behavior"]:eq(2)').checkboxradio('enable').checkboxradio("refresh");
 		$('[name="guide"]').click(() => changeGuide());
-		$('[name="scale"]').click(() => this.resetCanvas());
+		// $('[name="scale"]').change(() => this.resetCanvas());
+		document.querySelector('[name=scale]').addEventListener('change', () => this.resetCanvas());
 		$('[name="color"]').click(() => changeColor());
+		document.querySelector('[name=grid]').addEventListener('click', () => changeGrid());
 		document.getElementById('saveButton').addEventListener('click', () => this.saveMap());
 		window.addEventListener('resize', resize);
 		//
+		changeGrid();
 		changeGuide();
 		changeColor();
 		resize();
 		this.setupPointingDevice();
 		new ActorSelector();
 		new AudioSelector();
+
+		// TODO: remove.
+		document.getElementById('migButton').addEventListener('click', () => {
+			stage._eventList.forEach(s => { s.v *= 8; s.h *= 8 });
+		});
 	}
 
 	setupPointingDevice() {
@@ -336,7 +345,7 @@ class EditEventPanel extends PanelBase {
 		// console.log('EditEventPanel#resetInputs');
 		// console.log(target);
 		super.resetInputs(target);
-		let actor = this.stageEditor.product._mediaset._actorMap[target.belongings];
+		let actor = this.stageEditor.product._mediaset._actorDic[target.belongings];
 		let name = actor ? actor.className : null;
 
 		this.belongings.textContent = name;
