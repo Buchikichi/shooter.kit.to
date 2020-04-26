@@ -48,6 +48,12 @@ input[type=number] {
           <a href="#imagePanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-eye">Images</a>
           <a href="#eventPanel" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets">Event</a>
           <a href="#behaviorPage" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bars">Behavior</a>
+          <button disabled="disabled" data-theme="b">BG</button>
+          <select name="background">
+            <option value="black">Black</option>
+            <option value="lightgray" selected="selected">Glay</option>
+            <option value="white">White</option>
+          </select>
           <button disabled="disabled" data-theme="b">Scale</button>
           <select name="scale">
             <option value="1">1</option>
@@ -57,7 +63,10 @@ input[type=number] {
             <option value="16">16</option>
           </select>
         </fieldset>
-        <button id="saveButton" type="button" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
+        <div class="ui-btn-right ui-mini">
+          <button id="reviewButton" type="button" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-power">Review</button>
+          <button id="saveButton" type="button" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-check" th:text="#{button.save}">Save</button>
+        </div>
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" id="mediasetId"  name="mediasetId" th:value="*{mediaset.id}"/>
         <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>

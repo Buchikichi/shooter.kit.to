@@ -2,7 +2,7 @@ class Mediaset {
 	constructor() {
 		this.audioDic = {};
 		this.visualDic = {};
-		this._actorMap = {};
+		this._actorDic = {};
 	}
 
 	loadAudio() {
@@ -107,29 +107,32 @@ class Mediaset {
 	}
 
 	getActor(seq, params = {}) {
-		let actor = this._actorMap[seq];
+		let actor = this._actorDic[seq];
 
-		if (actor && actor.score == -123) {
-			console.log('Product#getActor -123:' + seq);
-			actor = this.actorList.find(a => a.score != -123 && a.className == actor.className);
-		}
-		if (!actor) {
-			let key12 = seq.substr(0, 12);
-			let key = Object.keys(this._actorMap).find(key => key.substr(0, 12) == key12);
+		// if (actor && actor.score == -123) {
+		// 	console.log('Product#getActor -123:' + seq);
+		// 	actor = this.actorList.find(a => a.score != -123 && a.className == actor.className);
+		// }
+		// if (!actor) {
+		// 	let key12 = seq.substr(0, 12);
+		// 	let key = Object.keys(this._actorDic).find(key => key.substr(0, 12) == key12);
 
-			actor = this._actorMap[key];
-			if (!actor) {
-				let dec = parseInt(seq, 16)
-				let pseudo = Enemy.getActor(dec);
+		// 	actor = this._actorDic[key];
+		// 	if (!actor) {
+		// 		let dec = parseInt(seq, 16)
+		// 		let pseudo = Enemy.getActor(dec);
 
-				if (pseudo) {
-					actor = this.actorList.find(a => a.className == pseudo.name);
-				}
-			}
-		}
+		// 		if (pseudo) {
+		// 			actor = this.actorList.find(a => a.className == pseudo.name);
+		// 		}
+		// 	}
+		// }
 		if (!actor) {
 			console.log('Product#getActor fail:' + seq);
-			return;
+			return null;
+		}
+		if (actor.type == Actor.Type.Player) {
+			return Ship.create(actor, Object.assign(params));
 		}
 		if (actor.type == Actor.Type.Item) {
 			// console.log('Product#getActor Actor.Type.Item');
@@ -139,8 +142,11 @@ class Mediaset {
 	}
 
 	init() {
-		this.actorList.forEach(actor => this._actorMap[actor.seq] = actor);
-		this.actorList.forEach(actor => this._actorMap[actor.seqOld] = actor); // TODO: remove
+		this.actorList.forEach(actor => {
+			this._actorDic[actor.seq] = actor
+			this._actorDic[actor.id] = actor
+		});
+		this.actorList.forEach(actor => this._actorDic[actor.seqOld] = actor); // TODO: remove
 		return this;
 	}
 

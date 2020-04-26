@@ -85,6 +85,10 @@ class Ship extends Actor {
 		}
 		return result;
 	}
+
+	static create(rec, params = {}) {
+		return Object.assign(new Ship(), rec, params).init();
+	}
 }
 Ship.MIN_SPEED = 1.5;
 Ship.MAX_SPEED = 5;

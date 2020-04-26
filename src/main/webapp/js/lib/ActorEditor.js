@@ -6,6 +6,8 @@ class ActorEditor extends Actor {
     draw(ctx) {
         ctx.save();
         super.draw(ctx);
+
+        ctx.translate(this.x, this.y);
         ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
         if (this.regionType == 0) {
             ctx.beginPath();

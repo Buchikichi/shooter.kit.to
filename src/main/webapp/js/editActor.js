@@ -11,14 +11,17 @@ class ActorEditorMain extends Matter {
 		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = canvas.getContext('2d');
-		this.setRect(256, 256);
+		this.header = document.querySelector('[data-role=header]');
+		this.review = false;
+//		this.setRect(256, 256);
 		Mediaset.create(mediasetId).then(mediaset => {
+			this.mediaset = mediaset;
 			return mediaset.load().checkLoading(callback);
 		}).then(() => {
-			return ActorEditor.create(actorId);
+			return this.mediaset.getActor(actorId, { mediaset: { id: this.mediaset.id } });
 		}).then(actor => {
 			this.actor = actor;
-			this.actor.mediaset = { id: mediasetId };
+			// this.actor.mediaset = { id: mediasetId };
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});
@@ -31,34 +34,55 @@ class ActorEditorMain extends Matter {
 	start() {
 		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 		let activate = () => {
+			let ox = (this.canvas.width / 2 - this.actor.hW) / this.scale;
+			let oy = (this.canvas.height / 2 - this.actor.hH) / this.scale;
+
 			this.ctx.save();
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			// this.ctx.strokeStyle = 'red';
+			// this.ctx.strokeRect(0, 0, this.canvas.width - 1, this.canvas.height - 1);
 			this.ctx.scale(this.scale, this.scale);
-			this.ctx.translate(this.actor.hW, this.actor.hH);
-			this.actor.draw(this.ctx);
+			this.ctx.translate(ox, oy);
+			this.moveAvator();
+			this.avator.draw(this.ctx);
 			this.ctx.restore();
 			requestAnimationFrame(activate);
 		};
 
 		this.setupEvents();
+		this.resetAvator();
 		activate();
 	}
 
-	changeColor() {
-		this.fieldMap.brickColor = this.brickColor;
-	}
-
 	setupEvents() {
+		let changeBG = () => {
+			let color = document.querySelector('[name=background]').value;
+
+			this.view.style.backgroundColor = color;
+		};
 		let changeScale = () => {
 			this.canvas.width = this.actor.width * this.scale;
 			this.canvas.height = this.actor.height * this.scale;
 		};
+		let resize = () => {
+			let height = document.body.clientHeight - this.header.clientHeight - 8; // FIXME: for resize canvas.
 
-		changeScale();
+			// console.log('resize:' + this.view.clientHeight + ':' + document.body.clientHeight);
+			// console.log('resize:' + this.view.clientWidth + '/' + this.view.clientWidth);
+			this.canvas.width = document.body.clientWidth;
+			this.canvas.height = height;
+			// this.stopReview();
+		};
+
+		this.reviewButton = document.getElementById('reviewButton');
+		this.reviewButton.addEventListener('click', () => this.review ? this.stopReview() : this.startReview());
+//		changeScale();
 		// this.view.addEventListener('scroll',()=> this.fieldMap.setProgress(this.view.scrollLeft));
-		// $('[name="color"]').click(()=> this.changeColor());
-		document.querySelector('[name="scale"]').addEventListener('change', () => changeScale());
+		document.querySelector('[name="background"]').addEventListener('change', () => changeBG());
+//		document.querySelector('[name="scale"]').addEventListener('change', () => changeScale());
 		document.getElementById('saveButton').addEventListener('click', () => this.saveActor());
+		window.addEventListener('resize', resize);
+		resize();
 		// this.setupPointingDevice();
 		new ActorEditorAttrPanel('attrPanel', this.actor);
 		new ActorEditorImagePanel('imagePanel', this.actor);
@@ -96,6 +120,44 @@ class ActorEditorMain extends Matter {
 		});
 		canvas.addEventListener('mouseup', () => leave());
 		canvas.addEventListener('mouseleave', () => leave());
+	}
+
+	resetAvator() {
+		let ox = (this.canvas.width / 2 - this.actor.hW) / this.scale;
+		let oy = (this.canvas.height / 2 - this.actor.hH) / this.scale;
+
+		this.avator = ActorEditor.create(this.actor);
+		this.avator.x = 0;
+		this.avator.y = 0;
+	}
+
+	moveAvator() {
+		if (!this.review) {
+			return;
+		}
+		let width = this.canvas.width / this.scale;
+		let hW =  this.canvas.width / 2 / this.scale;
+		let target = { x: 0, y: 0 };
+
+		this.avator.move(target);
+		if (this.avator.x < -hW) {
+			this.avator.x += width;
+		} else if (hW < this.avator.x) {
+			this.avator.x -= width;
+		}
+	}
+
+	startReview() {
+		this.reviewButton.classList.remove('ui-icon-power');
+		this.reviewButton.classList.add('ui-icon-minus');
+		this.review = true;
+		this.resetAvator();
+	}
+
+	stopReview() {
+		this.reviewButton.classList.remove('ui-icon-minus');
+		this.reviewButton.classList.add('ui-icon-power');
+		this.review = false;
 	}
 
 	saveActor() {
