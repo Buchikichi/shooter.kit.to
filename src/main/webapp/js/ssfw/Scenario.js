@@ -4,64 +4,63 @@ class Scenario {
 		this.hasFocus = false;
 	}
 
+	setPos(pos) {
+		this.v = pos.x;
+		this.h = pos.y;
+		if (this._actor) {
+			this._actor.x = pos.x;
+			this._actor.y = pos.y;
+		}
+	}
+
 	includes(pos) {
 		let bh = this._stage.map.brickSize / 2;
-		let x = this.v + bh;
-		let y = this.h + bh;
-		let diffX = x - pos.x;
-		let diffY = y - pos.y;
+		let diffX = this.x - pos.x;
+		let diffY = this.y - pos.y;
 		let distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
 		return distance < bh;
 	}
 
 	isHit(pos) {
-		let bh = this._stage.map.brickSize / 2;
-		let x = this.v + bh;
-		let y = this.h + bh;
-
 		if (this.type == Scenario.Type.Actor) {
-			let width = this._stage.map.brickSize * 2; // FIXME:
-			let hW = width / 2;
+			let x = this.x;
+			let y = this.y;
+			let hW = this._actor.width / 2;
+			let hH = this._actor.height / 2;
 
-			return x - hW <= pos.x && pos.x <= x + hW && y - hW <= pos.y && pos.y <= y + hW;
+			return x - hW <= pos.x && pos.x <= x + hW && y - hH <= pos.y && pos.y <= y + hH;
 		}
+		let bh = this._stage.map.brickSize / 2;
+		let x = this.x + bh;
+		// let y = this.y + bh;
 		let height = this._stage.map._mainVisual.image.height;
 
 		return x - bh <= pos.x && pos.x <= x + bh && 0 <= pos.y && pos.y <= height;
 	}
 
-	getActor() {
-		if (!this._actor) {
-			this._actor = this._stage._product._mediaset.getActor(this.number, { _stage: this._stage });
-			if (this._actor) {
-				if (this.number != this._actor.seq) {
-					console.log('Scenario#getActor:'
-						+ this.number + '>' + this._actor.seq + ':' + this._actor.className);
-					console.log(this._actor);
-					this.number = this._actor.seq;
-					this.name = this._actor.className;
-				}
+	getText() {
+		let text = [];
+		let prefix = this.op;
+		let name = this.name ? ':' + this.name : '';
+
+		text.push(prefix + name);
+		if (this.type == Scenario.Type.Actor) {
+			if (this._actor.belongings) {
+				text.push(this._actor.belongings.className);
 			}
 		}
-		return this._actor;
-	}
-
-	getText() {
-		let prefix = this.op;
-
-		if (this.type == Scenario.Type.Actor) {
-			prefix += ':' + this.number;
-		}
-		return prefix + (this.name ? ':' + this.name : '');
+		return text;
 	}
 
 	drawBalloon(ctx, pos) {
 		ctx.font = 'bold ' + Scenario.Balloon.TextHeight + 'px serif';
 		let text = this.getText();
-		let measure = ctx.measureText(text);
+		let maxText = text.reduce((a, c) => a.length < c.length ? c : a);
+		let measure = ctx.measureText(maxText);
+
 		let width = measure.width + 8;
-		let height = 24;
+		let height = 24 * text.length;
 		let x = pos.x - width / 2;
 		let y = pos.y - height - Scenario.Balloon.Margin;
 		let left = -this._stage.startPos + pos.scrollLeft;
@@ -79,33 +78,40 @@ class Scenario {
 		ctx.strokeRect(x, y, width, height);
 		ctx.fillStyle = 'black';
 		ctx.textBaseline = 'top';
-		ctx.fillText(text, x + 4, y + 4);
+		y += 4;
+		text.forEach(s => {
+			ctx.fillText(s, x + 4, y);
+			y += Scenario.Balloon.TextHeight;
+		});
 	}
 
 	drawActor(ctx) {
 		let bw = this._stage.map.brickSize;
 		let bh = bw / 2;
-		let sx = this.v;
-		let sy = this.h;
 
-		if (this._actor) {
-			this._actor.x = sx + this._actor.hW;
-			this._actor.y = sy + this._actor.hH;
-			if (this._actor.type == Actor.Type.Subaerial) {
-				this._actor.checkInverse();
-			}
-			this._actor.draw(ctx);
-		} else {
-			ctx.strokeStyle = 'rgba(255, 80, 80, 0.8)';
-			ctx.strokeRect(sx, sy, bw, bw);
+		if (!this._actor) {
+			ctx.strokeStyle = 'rgba(255, 0, 0, 0.9)';
+			ctx.strokeRect(this.x - bh, this.y - bh, bw, bw);
+			return;
+		}
+		let sx = this.x - this._actor.hW;
+		let sy = this.y - this._actor.hH;
+
+		if (this._actor.type == Actor.Type.Subaerial) {
+			this._actor.checkInverse();
+		}
+		this._actor.draw(ctx);
+		if (this._actor.belongings) {
+			ctx.strokeStyle = 'rgba(255, 80, 80, 0.9)';
+			ctx.strokeRect(sx, sy, this._actor.width, this._actor.height);
 		}
 		if (this.op == 'Spw') {
-			ctx.fillStyle = 'orange';
+			ctx.fillStyle = '#ffa500';
 		} else {
-			ctx.fillStyle = 'tomato';
+			ctx.fillStyle = '#ff6347';
 		}
 		ctx.beginPath();
-		ctx.arc(sx + bh, sy + bh, bh, 0, Math.PI2);
+		ctx.arc(this.x, this.y, bh / 2, 0, Math.PI2);
 		ctx.fill();
 
 		if (this.hasFocus) {
@@ -113,12 +119,10 @@ class Scenario {
 			// ctx.beginPath();
 			// ctx.arc(sx + bh, sy + bh, bh, 0, Math.PI2);
 			// ctx.stroke();
-			if (this._actor) {
-				ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-				ctx.fillRect(sx, sy, this._actor.width, this._actor.height);
-				ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-				ctx.strokeRect(sx, sy, this._actor.width, this._actor.height);
-			}
+			ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+			ctx.fillRect(sx, sy, this._actor.width, this._actor.height);
+			ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+			ctx.strokeRect(sx, sy, this._actor.width, this._actor.height);
 		}
 	}
 
@@ -156,16 +160,31 @@ class Scenario {
 		}
 	}
 
+	getActor(number) {
+		return this._stage._product._mediaset.getActor(number,
+			{ x: this.x, y: this.y, _stage: this._stage });
+	}
+
+	assignActor() {
+		let actor = this.getActor(this.number);
+
+		if (this.belongings && this.belongings != '0') {
+			actor.belongings = this.getActor(this.belongings);
+			// console.log('belongings:');
+			// console.log(this._actor.belongings);
+		}
+		return actor;
+	}
+
 	init() {
+		this.x = this.v;
+		this.y = this.h;
 		this.type = Scenario.TypeMap[this.op];
 		// console.log('Scenario#init');
 		// console.log(this);
 		if (this.type == Scenario.Type.Actor) {
-			let actor = this.getActor();
-
-			if (actor) {
-				this.name = actor.className;
-			}
+			this._actor = this.assignActor();
+			this.name = this._actor.className;
 		}
 		if (this.op == 'Apl') {
 			let audio = this._stage._product._mediaset.getAudio(this.number);

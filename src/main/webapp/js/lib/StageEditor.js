@@ -119,14 +119,11 @@ class StageEditor extends Stage {
 				ctx.save();
 				// console.log('this._reservedScenario');
 				// console.log(this._reservedScenario);
-				ctx.globalAlpha = 0.5;
-				this._reservedScenario.v = cur.x;
-				this._reservedScenario.h = cur.y;
+				ctx.globalAlpha = 0.7;
+				this._reservedScenario.setPos(cur);
 				this._reservedScenario.draw(ctx);
 				ctx.restore();
 			}
-			ctx.fillStyle = 'rgba(120, 60, 255, .5)';
-			ctx.fillRect(cur.x, cur.y, bw, bw);
 			return;
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {

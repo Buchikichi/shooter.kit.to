@@ -99,13 +99,13 @@ class Stage {
 				return;
 			}
 		}
-	//console.log('Y:' + fg.y);
+		//console.log('Y:' + fg.y);
 		if (this.scroll == Stage.SCROLL.TOP && nextY < 0) {
 			this.scroll = Stage.SCROLL.OFF;
 			return;
 		}
 		if (this.scroll == Stage.SCROLL.BOTTOM) {
-console.log('nextY:' + nextY + '/' + fg.image.height);
+			console.log('nextY:' + nextY + '/' + fg.image.height);
 			if (fgViewY < nextY) {
 				this.scroll = Stage.SCROLL.OFF;
 				return;
@@ -169,13 +169,9 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		}
 	}
 
-	getActor(seq, x = 0, y = 0) {
-		return this._product._mediaset.getActor(seq, { x: x, y: y, _stage: this });
-	}
-
 	scanEvent() {
 		let result = [];
-		let rear = -this.map._mainVisual.x;
+		let rear = parseInt(-this.map._mainVisual.x);
 
 		if (rear == this.lastScan) {
 			return result;
@@ -184,16 +180,15 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 		let front = rear + this._product.width;
 
 		this._eventList = this._eventList.filter(s => {
-			if (front < s.v) {
+			if (front < s.x) {
 				return true;
 			}
-			if (s.v < rear) {
+			if (s.x < rear) {
 				return false;
 			}
-			s.isFront = rear < s.v;
-			s.x = s.v;
+			s.isFront = rear < s.x;
 			// console.log('Stage#scanEvent op:' + s.op + '/num:' + s.number);
-			// console.log('front:' + front + '/s.v:' + s.v);
+			// console.log('front:' + front + '/s.x:' + s.x);
 			let evt = this.executeEvent(s);
 			if (evt) {
 				if (evt instanceof Actor) {
@@ -201,51 +196,35 @@ console.log('nextY:' + nextY + '/' + fg.image.height);
 				}
 				return false;
 			}
-			let spawn = false;
-			let isFront = s.op == 'Spw';
-
-			if (isFront && s.v <= front) {
-				spawn = true;
-			}
-			if (s.op == 'Rev' && s.v <= rear) {
-				spawn = true;
-			}
-			if (!spawn) {
+			if (!(s.op == 'Spw' && s.x <= front || s.op == 'Rev' && s.x <= rear)) {
 				return true;
 			}
 			// spawn
-			let x = s.x;
-			let y = s.h + 1;
-			let reserve = this.getActor(s.number, x, y);
+			let reserve = s.assignActor();
 
-			if (reserve != null) {
-				reserve.belongings = s.belongings;
-				// console.log('reserve:' + reserve.className);
-				// console.log(reserve);
-				// let enemy;
+			// console.log('reserve:' + reserve.className);
+			// console.log(reserve);
+			// let enemy;
 
-				// if (reserve.formation) {
-				// 	enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
-				// } else {
-				// 	enemy = new reserve.type(reserve.x, reserve.y);
-				// }
-				let clazz = null;
+			// if (reserve.formation) {
+			// 	enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
+			// } else {
+			// 	enemy = new reserve.type(reserve.x, reserve.y);
+			// }
+			try {
+				let clazz = eval(reserve.className);
 
-				try {
-					clazz = eval(reserve.className);
-				} catch (e) {
-					// nop
-				}
-				if (clazz) {
-					let enemy = new clazz(x, y);
-
-					if (!isFront) enemy.dir += Math.PI;
-					enemy._stage = this;
-					result.push(enemy);
-					return false;
-				}
+				// console.log('supplies:' + reserve.className);
+				reserve = new clazz(s.x, s.y);
+				reserve.belongings = s._belongings;
+				reserve._stage = this;
+			} catch (e) {
+				// nop
 			}
-			if (!isFront) reserve.dir += Math.PI;
+			if (s.op == 'Rev') {
+				reserve.dir += Math.PI;
+				// console.log('dir:' + (reserve.dir / Math.PI * 180));
+			}
 			result.push(reserve);
 			return false;
 		});

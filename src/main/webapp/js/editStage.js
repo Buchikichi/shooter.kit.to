@@ -79,12 +79,10 @@ class EditStage {
 			requestAnimationFrame(activate);
 		};
 
-		console.log('EditStage#start');
 		activate();
 	}
 
 	setupEvents() {
-		// console.log('EditStage#setupEvents');
 		let stage = this.product.stage;
 		let changeGrid = () => stage.grid = document.querySelector('[name=grid]').value;
 		let changeGuide = () => {
@@ -126,9 +124,9 @@ class EditStage {
 		new AudioSelector();
 
 		// TODO: remove.
-		document.getElementById('migButton').addEventListener('click', () => {
-			stage._eventList.forEach(s => { s.v *= 8; s.h *= 8 });
-		});
+		// document.getElementById('migButton').addEventListener('click', () => {
+		// 	stage._eventList.forEach(s => { s.v *= 8; s.h *= 8 });
+		// });
 	}
 
 	setupPointingDevice() {
@@ -345,8 +343,8 @@ class EditEventPanel extends PanelBase {
 		// console.log('EditEventPanel#resetInputs');
 		// console.log(target);
 		super.resetInputs(target);
-		let actor = this.stageEditor.product._mediaset._actorDic[target.belongings];
-		let name = actor ? actor.className : null;
+		let belongings = target._actor.belongings;
+		let name = belongings ? belongings.className : null;
 
 		this.belongings.textContent = name;
 	}
