@@ -157,19 +157,6 @@ body {
             </ul>
           </div>
         </div>
-<!--
-        <fieldset data-role="controlgroup" data-mini="true">
-          <legend>BG1:</legend>
-          <input type="number" name="bg1speed" min="0" max="1" step="0.1"/>
-          <input type="number" name="bg1dir"/>
-          <input type="number" name="bg1blink"/>
-        </fieldset>
-        <button type="button" data-rel="close" class="ui-btn ui-mini ui-btn-b ui-corner-all">Close</button>
-        <fieldset data-role="collapsible" data-mini="true">
-          <legend>Trial</legend>
-          <input id="mapFile" type="file"/>
-        </fieldset>
--->
       </form>
     </div>
     <div id="eventPanel" data-role="panel" data-position="left" data-display="overlay">
@@ -224,11 +211,30 @@ body {
     </div>
     <div id="editEventPanel" data-role="panel" data-position="left" data-display="overlay">
       <input type="text" name="op" readonly/>
-      <label><span>Belongings:</span>
-        <button type="button" name="belongings"
-          th:attr="data-type=${T(to.kit.shooter.entity.type.VisualType).Item.ix}"
-          class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d actorSelector">&nbsp;</button>
+      <div data-role="collapsibleset" data-mini="true" data-inset="false">
+        <div data-role="collapsible" data-collapsed="false">
+          <h3>Belongings</h3>
+          <button type="button" name="belongings"
+            th:attr="data-type=${T(to.kit.shooter.entity.type.VisualType).Item.ix}"
+            class="ui-btn ui-mini ui-corner-all ui-btn-icon-right ui-icon-carat-d actorSelector">&nbsp;</button>
+        </div>
+        <div data-role="collapsible">
+          <h3>Group</h3>
+          <select name="groupId" data-mini="true">
+            <option value="" data-value="" selected="selected">None</option>
+            <option th:each="opt:*{groupList}" th:value="${opt.groupId}" th:text="${opt.groupId}">opt</option>
+          </select>
+          <a href="#newGroupPopup" data-rel="popup" data-position-to="window"
+            class="ui-btn ui-corner-all ui-mini ui-btn-icon-left ui-icon-plus">New group</a>
+        </div>
+      </div>
+    </div>
+    <div id="newGroupPopup" data-role="popup" data-overlay-theme="b" class="ui-content ui-corner-all">
+      <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>
+      <label><span>New group:</span>
+        <input type="text" name="groupName" required/>
       </label>
+      <button name="createGroupButton">Create</button>
     </div>
     <div id="messagePopup" data-role="popup" data-overlay-theme="b" class="ui-content" style="max-width:280px">
       <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left">Close</a>

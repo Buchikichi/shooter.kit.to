@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -29,15 +30,19 @@ public class Scenario {
 	private int h;
 	@Enumerated(EnumType.STRING)
 	private ScenarioType op;
-	private String target;
 	private int type;
 	@Convert(converter = SeqTypeConverter.class)
 	private SeqType number = new SeqType(0);
-	private String formationId;
+	private String groupId;
 	@Convert(converter = SeqTypeConverter.class)
 	private SeqType belongings = new SeqType(0);
 
 	@ManyToOne
 	@JsonIgnore
 	private Stage stage;
+
+	@Transient
+	public boolean isGroup() {
+		return this.op == ScenarioType.Frm;
+	}
 }

@@ -33,3 +33,10 @@ Math.close = Math.close || function(src, target, pitch) {
 	}
 	return src + pitch;
 };
+
+/**
+ * Integer.
+ */
+class Integer {
+}
+Integer.MIN_VALUE= -2147483648;

@@ -2,7 +2,7 @@ class PanelBase {
 	constructor(panelId, target = null) {
 		this.panel = document.getElementById(panelId);
 		this.role = this.panel.getAttribute('data-role');
-		this.inputList = this.panel.querySelectorAll('[type=text], [type=number], textarea, select');
+		this.inputList = this.panel.querySelectorAll('[type=text], [type=number], textarea, select, button');
 		this.target = target;
 		this.setupEvents();
 	}
@@ -19,10 +19,14 @@ class PanelBase {
 				let value = i.value;
 
 				if (tagName == 'SELECT') {
-					let dataValue = i.querySelector('option:checked').getAttribute('data-value');
+					let checked = i.querySelector('option:checked');
 
-					if (dataValue) {
-						value = dataValue;
+					if (checked) {
+						let dataValue = checked.getAttribute('data-value');
+
+						if (dataValue) {
+							value = dataValue;
+						}
 					}
 				}
 				this.target[i.name] = value;
@@ -39,12 +43,13 @@ class PanelBase {
 		});
 		if (this.role == 'panel') {
 			$(this.panel).panel({
-				open:  () => this.onOpen(),
+				open: () => this.onOpen(),
 				close: () => this.onClose()
 			});
 		}
 		if (this.role == 'popup') {
 			$(this.panel).popup({
+				afteropen: () => this.onOpen(),
 				afterclose: () => this.onClose()
 			});
 		}
@@ -74,6 +79,15 @@ class PanelBase {
 	}
 
 	onOpen() { }
+
+	close() {
+		if (this.role == 'panel') {
+			$(this.panel).panel('close');
+		}
+		if (this.role == 'popup') {
+			$(this.panel).popup('close');
+		}
+	}
 
 	onClose() { }
 }

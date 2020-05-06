@@ -26,7 +26,12 @@ class StageEditor extends Stage {
 		if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
 			this.removeScenario();
 		} else {
-			this.addScenario(pos, scenario);
+			let cur = this.calcCursorPos(pos);
+			let y = scenario.type == Scenario.Type.Actor ? cur.y : 0;
+
+			scenario.v = cur.x;
+			scenario.h = y;
+			this.addScenario(scenario);
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
 			this.cursorType = StageEditor.CURSOR_TYPE.NONE;
@@ -78,18 +83,28 @@ class StageEditor extends Stage {
 		this._eventList = this._eventList.filter(s => s.op != op || s.v != v || s.h != h);
 	}
 
-	addScenario(pos, rec) {
+	addScenario(rec) {
 		let scenario = Scenario.create(rec, this);
-		let cur = this.calcCursorPos(pos);
-		let y = scenario.type == Scenario.Type.Actor ? cur.y : 0;
 
-		scenario.v = cur.x;
-		scenario.h = y;
 		this.removeScenario(scenario);
 		this._eventList.push(scenario);
 		this._eventList.sort((a, b) => a.v == b.v ? a.h - b.h : a.v - b.v);
 		console.log('StageEditor#addScenario:');
 		console.log(scenario);
+	}
+
+	addGroup(scenario) {
+		if (!scenario.groupId) {
+			return;
+		}
+		let group = this._eventList.find(s => s.op == 'Frm' && s.groupId == scenario.groupId);
+
+		if (!group) {
+			let v = scenario.v;
+			let h = Integer.MIN_VALUE;
+			// console.log('StageEditor#addGroup groupId:' + scenario.groupId);
+			this.addScenario({ v: v, h: h, op: 'Frm', belongings: '0', groupId: scenario.groupId });
+		}
 	}
 
 	changeRoll(roll) {

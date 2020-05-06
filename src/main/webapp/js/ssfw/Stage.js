@@ -4,7 +4,6 @@ class Stage {
 		this.viewDic = {};
 		this.lastScan = null;
 		this.performersList = [];
-		this.hasGuide = false;
 	}
 
 	get isMoving() {
@@ -184,6 +183,8 @@ class Stage {
 				return true;
 			}
 			if (s.x < rear) {
+				// console.log('Stage#scanEvent drop:' + s.op);
+				// console.log(s);
 				return false;
 			}
 			s.isFront = rear < s.x;
@@ -202,15 +203,6 @@ class Stage {
 			// spawn
 			let reserve = s.assignActor();
 
-			// console.log('reserve:' + reserve.className);
-			// console.log(reserve);
-			// let enemy;
-
-			// if (reserve.formation) {
-			// 	enemy = new Formation(reserve.x, reserve.y).setup(reserve.type, 8);
-			// } else {
-			// 	enemy = new reserve.type(reserve.x, reserve.y);
-			// }
 			try {
 				let clazz = eval(reserve.className);
 
@@ -224,6 +216,9 @@ class Stage {
 			if (s.op == 'Rev') {
 				reserve.dir += Math.PI;
 				// console.log('dir:' + (reserve.dir / Math.PI * 180));
+			}
+			if (this._groupMap[s.groupId]) {
+				this._groupMap[s.groupId].add(reserve);
 			}
 			result.push(reserve);
 			return false;
@@ -273,6 +268,12 @@ class Stage {
 		if (op == 'Apl') {
 			this._product._mediaset.playBgm(rec.number);
 			return true;
+		}
+		if (op == 'Frm') {
+			let group = rec.assign();
+
+			this._groupMap[rec.groupId] = group;
+			return group;
 		}
 		return false;
 	}
@@ -337,9 +338,26 @@ class Stage {
 		this.effectV = 0;
 		this.map.reset();
 		this.map.setProgress(this.progress);
-		this._eventList = this.scenarioList.concat();
+		this._eventList = this.scenarioList.map(s => Scenario.create(s, this));
+		this._groupMap = {};
 		this.performersList = this.performersList.filter(actor => actor instanceof MapVisual);
 		this._product.effector.reset();
+	}
+
+	initGroupDict() {
+		let groupDict = {};
+
+		this.scenarioList.forEach(s => {
+			s.count = 0;
+			if (s.op == 'Frm') {
+				groupDict[s.groupId] = s;
+			}
+		});
+		this.scenarioList.forEach(s => {
+			if (s.groupId && s.op != 'Frm') {
+				groupDict[s.groupId].count++;
+			}
+		});
 	}
 
 	init() {
@@ -348,7 +366,7 @@ class Stage {
 		this.map._mediaset = this._product._mediaset;
 		this.map = this.createFieldMap();
 		// console.log('Stage#init map:' + this.map.constructor.name);
-		this.scenarioList = this.scenarioList.map(s => Scenario.create(s, this));
+		this.initGroupDict();
 		this.progress = this.startProgress;
 		this.reset();
 		this.checkPoint = new CheckPoint(this);

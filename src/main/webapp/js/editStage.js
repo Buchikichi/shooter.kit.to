@@ -101,6 +101,7 @@ class EditStage {
 		this.attrPanel = new AttrPanel(this);
 		this.eventPanel = new EventPanel(this);
 		this.editEventPanel = new EditEventPanel(this);
+		new NewGroupPopup(this);
 		stage.setProgress(0);
 
 		$('[name="behavior"]:eq(0)').click(() => this.eventPanel.open());
@@ -335,8 +336,9 @@ class EditEventPanel extends PanelBase {
 	}
 
 	setupEvents() {
-		this.belongings = this.panel.querySelector('[name=belongings]');
 		super.setupEvents();
+		this.groupId = this.panel.querySelector('[name=groupId]');
+		this.belongings = this.panel.querySelector('[name=belongings]');
 	}
 
 	resetInputs(target) {
@@ -344,13 +346,67 @@ class EditEventPanel extends PanelBase {
 		// console.log(target);
 		super.resetInputs(target);
 		let belongings = target._actor.belongings;
-		let name = belongings ? belongings.className : null;
+		let name = belongings ? belongings.className : '-';
 
 		this.belongings.textContent = name;
 	}
 
+	addGroup(opt) {
+		// console.log('EditEventPanel#addGroup: ' + opt.text);
+		let option = document.createElement('option');
+		let ix = this.groupId.options.length;
+
+		option.textContent = opt.text;
+		option.value = opt.value;
+		console.log(option);
+		this.groupId.appendChild(option);
+		this.groupId.selectedIndex = ix;
+		this.groupId.dispatchEvent(new Event('change'));
+		$(this.groupId).selectmenu('refresh', false);
+	}
+
 	onClose() {
-		this.stageEditor.product.stage.onMousemove();
-		this.target.belongings = this.belongings.value;
+		let stage = this.stageEditor.product.stage;
+
+		stage.onMousemove();
+		stage.addGroup(this.target);
+		this.target.addBelongings(this.belongings.value);
+	}
+}
+
+class NewGroupPopup extends PanelBase {
+	constructor(stageEditor) {
+		super('newGroupPopup', stageEditor.product.stage);
+		this.stageEditor = stageEditor;
+		this.editEventPanel = stageEditor.editEventPanel;
+	}
+
+	setupEvents() {
+		super.setupEvents();
+		let createGroupButton = this.panel.querySelector('[name=createGroupButton]');
+
+		this.groupName = this.panel.querySelector('[name=groupName]');
+		this.groupName.addEventListener('change', () => {
+			let name = this.groupName.value.trim();
+
+			console.log('groupName#change:' + name);
+			createGroupButton.setAttribute('disabled', true);
+			if (name) {
+				createGroupButton.removeAttribute('disabled');
+			}
+		});
+		createGroupButton.addEventListener('click', () => {
+			new UtilsEntity().uuid().then(uuid => {
+				this.editEventPanel.addGroup({ text: this.groupName.value, value: uuid });
+				this.close();
+			});
+		});
+	}
+
+	onOpen() {
+		super.onOpen();
+		let grp = this.target.scenarioList.filter(s => s.op == 'Frm');
+
+		this.groupName.value = 'Group ' + (grp.length + 1);
 	}
 }

@@ -7,7 +7,7 @@ class Matter {
 		this.dir = null;
 		this.radian = 0;
 		this.gravity = 0;
-		this.speed = 1;
+		this.speed = 0;
 	}
 
 	setRect(width, height) {
@@ -223,7 +223,7 @@ class Actor extends Matter {
 		this.explosion--;
 		if (this.explosion == 0) {
 			this.eject();
-			if (this.belongings) {
+			if (this.belongings instanceof Actor) {
 				this.belongings.x = this.x;
 				this.belongings.y = this.y;
 				this.spawn.push(this.belongings);
