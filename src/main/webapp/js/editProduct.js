@@ -175,7 +175,7 @@ class StagePanel extends PanelBase {
 		let productId = document.querySelector('input[name=id]');
 		let productStageView = document.getElementById('productStageView');
 		let seq = productStageView.querySelectorAll('li').length;
-		let stage = { product: { id: productId.value }, map: { id: mapId }, seq: seq };
+		let stage = { product: { id: productId.value }, map: { id: mapId }, seq: seq, name: 'new stage' };
 
 		$.mobile.loading('show', {text: 'Save...', textVisible: true});
 		new StageEntity().save(stage).then(data => {
