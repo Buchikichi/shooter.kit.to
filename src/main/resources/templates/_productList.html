@@ -20,7 +20,9 @@
           </p>
         </th:block>
       </a>
-      <a th:href="'/product/edit/' + ${product.id}" target="_blank"></a>
+      <th:block th:if="${loggedIn}">
+        <a th:href="'/product/edit/' + ${product.id}" target="_blank"></a>
+      </th:block>
     </li>
   </ul>
 </body>

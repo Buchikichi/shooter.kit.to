@@ -1,12 +1,16 @@
 package to.kit.shooter.web;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,8 +51,24 @@ public class ProductController implements BasicControllerInterface<Product> {
 	@RequestMapping("/list")
 	@Override
 	public String list(Model model, @RequestBody FilteringForm<Product> form) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		OAuth2User oauth2User = null;
+		Map<String, Object> userInfo;
+		boolean loggedIn;
 		List<Product> list = this.productService.list(form);
 
+		if (auth instanceof OAuth2AuthenticationToken) {
+			oauth2User = OAuth2AuthenticationToken.class.cast(auth).getPrincipal();
+		}
+		if (oauth2User == null) {
+			loggedIn = false;
+			userInfo = new HashMap<>();
+		} else {
+			loggedIn = true;
+			userInfo = oauth2User.getAttributes();
+		}
+		model.addAttribute("loggedIn", Boolean.valueOf(loggedIn));
+		model.addAttribute("user", userInfo);
 		model.addAttribute("productList", list);
 		return "_productList";
 	}

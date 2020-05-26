@@ -90,4 +90,37 @@ class PanelBase {
 	}
 
 	onClose() { }
+
+	createEntityData() {
+		let entityData = {};
+
+		this.inputList.forEach(i => {
+			if (!i.name) {
+				return;
+			}
+			let value = i.value;
+
+			if (i.tagName == 'SELECT') {
+				let checked = i.querySelector('option:checked');
+
+				if (checked) {
+					let dataValue = checked.getAttribute('data-value');
+
+					if (dataValue) {
+						value = dataValue;
+					}
+				}
+			}
+			if (i.name.includes('.')) {
+				let words = i.name.split('.');
+				let obj = {};
+
+				Object.defineProperty(obj, words[1], { value: value, enumerable: true });
+				Object.defineProperty(entityData, words[0], { value: obj, enumerable: true });
+				return;
+			}
+			entityData[i.name] = value;
+		});
+		return entityData;
+	}
 }

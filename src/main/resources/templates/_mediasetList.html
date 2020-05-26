@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+  <select>
+    <option th:each="mediaset:${list}" th:object="${mediaset}" th:value="*{id}" th:attr="data-id=*{id}" th:text="*{name}"></option>
+  </select>
+</body>
+</html>

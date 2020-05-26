@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -16,10 +17,21 @@
 <body>
 <div data-role="page">
   <div data-role="header" data-theme="b" data-position="fixed">
-    <h1>shooter.kit.to</h1>
+    <h1>shooter.kit.to
+      <th:block th:if="${loggedIn}">
+        &nbsp;<span th:text="${user.name}"></span>
+      </th:block>
+    </h1>
     <a href="#infoPanel" class="ui-btn ui-btn-left ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-info ui-btn-icon-notext"></a>
-    <a href="#loginPanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-user ui-btn-icon-notext"></a>
-  </div>
+    <div class="ui-btn-right ui-mini">
+      <th:block th:if="${loggedIn}">
+        <a href="#newProduct" data-ajax="false" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-plus" th:text="#{button.product}">Product</a>
+      </th:block>
+      <th:block th:unless="${loggedIn}">
+        <a href="/login" data-ajax="false" class="ui-btn ui-btn-b ui-corner-all ui-btn-icon-left ui-icon-user" th:text="#{button.login}">Login</a>
+      </th:block>
+    </div>
+</div>
   <div data-role="content">
 <!--
     <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
@@ -42,14 +54,27 @@
     </ul>
     <input type="hidden" th:name="${_csrf.headerName}" th:value="${_csrf.token}"/>
   </div>
-  <div id="loginPanel" data-role="panel" data-position="right" data-position-fixed="true">
-    <form id="loginForm">
-      <input type="text" name="userid" required="required"/>
-      <input type="password" name="passwd" required="required"/>
-      <button data-theme="b">Sign in</button>
+  <div id="newProduct" data-role="panel" data-position="right" data-position-fixed="true" data-display="overlay">
+    <form>
+      <label for="productName">Name:</label>
+      <input id="productName" name="name" type="text" required/>
+      <label for="productDescription">Description:</label>
+      <textarea id="productDescription" name="description" required></textarea>
+      <fieldset class="ui-grid-a">
+        <div class="ui-block-a">
+          <label>Width:
+            <input name="width" type="number" required="required" value="256" min="160"/>
+          </label>
+        </div>
+        <div class="ui-block-b">
+          <label>Height:
+            <input name="height" type="number" required="required" value="224" min="144"/>
+          </label>
+        </div>
+      </fieldset>
+      <select name="mediaset.id" required></select>
+      <button class="ui-btn ui-corner-all ui-shadow ui-btn-icon-left ui-icon-plus">Create product</button>
     </form>
-    <a id="repositoryButton" href="/repository.html" target="_blank" data-rel="close" class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-bullets ui-state-disabled">Edit repository</a>
-    <div class="message"></div>
   </div>
   <div id="infoPanel" data-role="panel" data-position="left" data-position-fixed="true">
    <div class="ui-corner-all custom-corners">

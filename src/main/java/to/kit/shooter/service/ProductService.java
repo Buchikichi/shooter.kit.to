@@ -68,13 +68,13 @@ public class ProductService implements BasicServiceInterface<Product> {
 	public Product save(Product entity) {
 		String id = entity.getId();
 
-		if (!this.productRepository.existsById(id)) {
-			id = null;
-			entity.setId(null);
-		}
-//		if (id != null && !id.isEmpty()) {
+		if (id != null && !id.isEmpty()) {
+			if (!this.productRepository.existsById(id)) {
+				id = null;
+				entity.setId(null);
+			}
 //			deleteActorByProductId(id);
-//		}
+		}
 
 		prepare(entity);
 
