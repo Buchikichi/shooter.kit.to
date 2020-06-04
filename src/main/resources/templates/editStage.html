@@ -103,13 +103,18 @@ body {
         <input id="mediasetId" type="hidden" th:value="*{product.mediaset.id}"/>
         <input id="stageId" type="hidden" th:value="*{id}"/>
         <input type="text" required="required" th:field="*{name}"/>
-        <label><span>V-Scroll type:</span>
-          <select name="roll" data-mini="true" th:field="*{roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
+        <label><span>Orientation:</span>
+          <select data-mini="true" th:field="*{orientation}" th:with="list=${T(to.kit.shooter.entity.type.OrientationType).List}">
+            <option th:each="opt:${list}" th:value="${opt.value}" th:text="${opt}">Left</option>
+          </select>
+        </label>
+        <label><span>Perpendicular scroll:</span>
+          <select data-mini="true" th:field="*{roll}" th:with="scrollList=${T(to.kit.shooter.entity.ScrollType).DEFAULT_LIST}">
             <option th:each="opt:${scrollList}" th:value="${opt.value}" th:text="${opt}">OFF</option>
           </select>
         </label>
         <label><span>V-Start pos:</span>
-          <input type="text" th:field="*{posH}" disabled="disabled"/>
+          <input type="text" th:field="*{posH}"/>
         </label>
         <label><span>H-Repeat:</span>
           <input type="number" min="1" th:field="*{repeat}" />

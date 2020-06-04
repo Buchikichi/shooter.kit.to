@@ -3,6 +3,8 @@ package to.kit.shooter.web;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +61,7 @@ public class ActorController implements BasicControllerInterface<Actor> {
 	@RequestMapping("/save")
 	@ResponseBody
 	@Override
-	public ResultForm<Actor> save(@RequestBody Actor actor) {
+	public ResultForm<Actor> save(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody Actor actor) {
 		ResultForm<Actor> result = new ResultForm<>();
 		Actor saved = this.service.save(actor);
 

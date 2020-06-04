@@ -47,7 +47,7 @@ class EditStage {
 		let stage = product.stage;
 		let scale = this.scale;
 		let width = product.width / 2 * stage.posV + stage.length;
-		let height = stage.height + (this.hasMargin ? product.height * 2 : 0);
+		let height = stage.editorHeight;
 		let frameWidth = width * scale;
 		let frameHeight = height * scale;
 

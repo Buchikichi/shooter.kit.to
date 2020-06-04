@@ -1,16 +1,17 @@
 package to.kit.shooter.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import to.kit.shooter.entity.Scores;
 import to.kit.shooter.service.ScoreService;
-import to.kit.shooter.web.form.ResultForm;
-
-import java.util.Map;
+import to.kit.shooter.util.UserInfo;
+import to.kit.shooter.web.form.ScoreForm;
 
 /**
  * スコア.
@@ -24,21 +25,14 @@ public class ScoreController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Integer> save(@RequestBody Scores score, OAuth2AuthenticationToken token) {
-		ResultForm<Integer> result = new ResultForm<>();
-		String name;
+	public ScoreForm save(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody Scores score) {
+		ScoreForm result = new ScoreForm();
+		UserInfo userInfo = UserInfo.convertFrom(oauth2User);
 
-		if (token == null) {
-			name = "unknown";
-		} else {
-			Map<String, Object> attr = token.getPrincipal().getAttributes();
-
-			name = (String) attr.get("name");
-		}
-		score.setName(name);
+		score.setName(userInfo.getName());
 		int rank = this.scoreService.save(score);
 
-		result.setResult(Integer.valueOf(rank));
+		result.setRank(rank);
 		result.setOk(true);
 		return result;
 	}

@@ -1,8 +1,5 @@
 package to.kit.shooter.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -10,21 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import to.kit.shooter.util.UserInfo;
+
 @Controller
 public class HelloController {
 	@RequestMapping("/")
 	public String index(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
-		Map<String, Object> userInfo;
-		boolean loggedIn;
+		UserInfo userInfo = UserInfo.convertFrom(oauth2User);
 
-		if (oauth2User == null) {
-			loggedIn = false;
-			userInfo = new HashMap<>();
-		} else {
-			loggedIn = true;
-			userInfo = oauth2User.getAttributes();
-		}
-		model.addAttribute("loggedIn", Boolean.valueOf(loggedIn));
+		model.addAttribute("loggedIn", Boolean.valueOf(userInfo.isLoggedIn()));
 		model.addAttribute("user", userInfo);
 		return "index";
 	}

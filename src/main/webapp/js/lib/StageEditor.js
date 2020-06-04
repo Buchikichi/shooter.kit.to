@@ -7,6 +7,15 @@ class StageEditor extends Stage {
 		this._currentScenario = null;
 	}
 
+	get editorHeight() {
+		if (this.isVertical) {
+			return this.height;
+		}
+		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+
+		return this.height + (hasMargin ? this._product.height * 2 : 0);
+	}
+
 	setProgress(x) {
 		if (this.fg.speed == 0) {
 			return;
@@ -150,14 +159,79 @@ class StageEditor extends Stage {
 		}
 	}
 
+	drawVerticalGuide(ctx) {
+		let img = this.map._mainVisual.image;
+		let left = this.posH - 1;
+		let right = left + Product.Instance.width;
+		let bottom = img.height + 1;
+
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
+		ctx.beginPath();
+		ctx.moveTo(left, -1);
+		ctx.lineTo(left, bottom);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(right, -1);
+		ctx.lineTo(right, bottom);
+		ctx.stroke();
+	}
+
+	drawHorizontalGuide(ctx) {
+		let img = this.map._mainVisual.image;
+		let x = -this.startPos;
+		let height = img.height;
+		let width = this.length;
+
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
+		ctx.beginPath();
+		ctx.moveTo(x, -1);
+		ctx.lineTo(width, -1);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(x, height + 1);
+		ctx.lineTo(width, height + 1);
+		ctx.stroke();
+		//
+		x = 0;
+		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
+		while (x <= width) {
+			ctx.beginPath();
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, height);
+			ctx.stroke();
+			x += img.width;
+		}
+		x = this.length - Product.Instance.width;
+		ctx.setLineDash([4, 1]);
+		ctx.beginPath();
+		ctx.moveTo(x, 0);
+		ctx.lineTo(x, height);
+		ctx.stroke();
+	}
+
+	drawGuide(ctx) {
+		if (!this.hasGuide) {
+			return;
+		}
+		if (this.isVertical) {
+			this.drawVerticalGuide(ctx);
+			return;
+		}
+		this.drawHorizontalGuide(ctx);
+	}
+
 	draw(ctx) {
-		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+		let hasMargin = this.isVertical ? false :
+			this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
 		let ty = hasMargin ? Product.Instance.height : 0;
 
 		ctx.save();
 		ctx.translate(this.startPos, ty);
 		super.draw(ctx);
 		this.map.draw(ctx);
+		this.drawGuide(ctx);
 		this._eventList.forEach(rec => rec.draw(ctx));
 		if (this._currentScenario) {
 			this._currentScenario.drawBalloon(ctx, this.pos);

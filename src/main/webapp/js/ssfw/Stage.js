@@ -6,6 +6,10 @@ class Stage {
 		this.performersList = [];
 	}
 
+	get isVertical() {
+		return this.orientation == 2 || this.orientation == 8;
+	}
+
 	get isMoving() {
 		return this.scroll != Stage.SCROLL.STOP;
 	}

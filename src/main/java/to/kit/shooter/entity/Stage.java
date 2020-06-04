@@ -31,6 +31,7 @@ public class Stage {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
 	private String name;
+	private int orientation;
 	private int seq;
 	private int roll;
 	private int repeat = 1;

@@ -1,5 +1,7 @@
 package to.kit.shooter.web;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,10 +42,11 @@ interface BasicControllerInterface<T> {
 
 	/**
 	 * 保存.
-	 * @param body 保存したい値
+	 * @param body values to be save
+	 * @param oauth2User OAuth2 user
 	 * @return フォーム
 	 */
-	default ResultForm<T> save(@RequestBody T body) {
+	default ResultForm<T> save(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody T body) {
 		return null;
 	}
 }

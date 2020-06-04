@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +61,7 @@ public class StageController implements BasicControllerInterface<Stage> {
 	@RequestMapping("/save")
 	@ResponseBody
 	@Override
-	public ResultForm<Stage> save(@RequestBody Stage stage) {
+	public ResultForm<Stage> save(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody Stage stage) {
 		ResultForm<Stage> result = new ResultForm<>();
 		Stage saved = this.stageService.save(stage);
 

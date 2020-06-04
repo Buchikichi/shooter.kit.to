@@ -100,43 +100,6 @@ console.log('sx:' + sx);
 		this.progress = progress;
 	}
 
-	drawGuide(ctx) {
-		if (!this._stage || !this._stage.hasGuide) {
-			return;
-		}
-		let img = this._mainVisual.image;
-		let x = -this._stage.startPos;
-		let height = img.height;
-		let width = this._stage.length;
-
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
-		ctx.beginPath();
-		ctx.moveTo(x, -1);
-		ctx.lineTo(width, -1);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.moveTo(x, height + 1);
-		ctx.lineTo(width, height + 1);
-		ctx.stroke();
-		//
-		x = 0;
-		ctx.strokeStyle = 'rgba(255, 0, 0, .6)';
-		while (x <= width) {
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, height);
-			ctx.stroke();
-			x += img.width;
-		}
-		x = this._stage.length - Product.Instance.width;
-		ctx.setLineDash([4, 1]);
-		ctx.beginPath();
-		ctx.moveTo(x, 0);
-		ctx.lineTo(x, height);
-		ctx.stroke();
-	}
-
 	draw(ctx) {
 		super.draw(ctx);
 		ctx.save();
@@ -150,7 +113,6 @@ console.log('sx:' + sx);
 		if (this.brickColor != '-') {
 			this.bricks.draw(ctx);
 		}
-		this.drawGuide(ctx);
 		ctx.restore();
 		this.col += this.colDir * 4;
 		if (this.col <= 0 || 255 <= this.col) {

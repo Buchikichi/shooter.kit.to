@@ -8,6 +8,7 @@ CREATE TABLE stage(
 	name text NOT NULL,
 	map_id varchar(36) NOT NULL,
 	seq integer NOT NULL DEFAULT 0,
+	orientation integer NOT NULL DEFAULT 0,
 	roll integer NOT NULL DEFAULT 0,
 	repeat integer NOT NULL DEFAULT 1,
 	pos_h integer NOT NULL DEFAULT 0,
@@ -27,6 +28,7 @@ COMMENT ON COLUMN stage.product_id IS 'プロダクトID';
 COMMENT ON COLUMN stage.name IS 'Stage name';
 COMMENT ON COLUMN stage.map_id IS 'マップID';
 COMMENT ON COLUMN stage.seq IS '順序';
+COMMENT ON COLUMN stage.orientation IS 'スクロール方向';
 COMMENT ON COLUMN stage.roll IS 'スクロール種類';
 COMMENT ON COLUMN stage.repeat IS 'リピート';
 COMMENT ON COLUMN stage.pos_h IS '開始位置H';
@@ -46,6 +48,7 @@ ALTER TABLE stage RENAME stage_id TO map_id;
 ALTER TABLE stage DROP COLUMN map;
 
 ALTER TABLE stage ADD name text NOT NULL DEFAULT '';
+ALTER TABLE stage ADD orientation integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD repeat integer NOT NULL DEFAULT 1;
 ALTER TABLE stage ADD pos_h integer NOT NULL DEFAULT 0;
 ALTER TABLE stage ADD pos_v integer NOT NULL DEFAULT 0;

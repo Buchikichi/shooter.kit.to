@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -97,10 +98,11 @@ public class ProductController implements BasicControllerInterface<Product> {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public ResultForm<Product> save(@RequestBody Product product, OAuth2AuthenticationToken token) {
+	@Override
+	public ResultForm<Product> save(@AuthenticationPrincipal OAuth2User oauth2User, @RequestBody Product product) {
 		ResultForm<Product> result = new ResultForm<>();
 
-		product.setOwner(token.getName());
+//		product.setOwner(token.getName());
 		Product saved = this.productService.save(product);
 
 		if (saved == null) {
