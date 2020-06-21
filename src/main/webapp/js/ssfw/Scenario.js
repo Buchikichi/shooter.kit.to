@@ -23,12 +23,12 @@ class Scenario {
 	}
 
 	isHit(pos) {
-		let bh = this._stage.map.brickSize / 2;
-		let x = this.x + bh;
-		// let y = this.y + bh;
-		let height = this._stage.map._mainVisual.image.height;
+		let right = this.left + this.width;
+		let bottom = this.top + this.height;
 
-		return x - bh <= pos.x && pos.x <= x + bh && 0 <= pos.y && pos.y <= height;
+		// console.log(pos);
+		// console.log({ left: left, right: right, top: top, bottom: bottom });
+		return this.left <= pos.x && pos.x <= right && this.top <= pos.y && pos.y <= bottom;
 	}
 
 	getText() {
@@ -59,13 +59,16 @@ class Scenario {
 		let height = 24 * text.length;
 		let x = pos.x - width / 2;
 		let y = pos.y - height - Scenario.Balloon.Margin;
-		let left = -this._stage.startPos + pos.scrollLeft;
-		let right = left + pos.width - width;
+		let right = pos.limit.right - width;
+		let top = pos.limit.top;
 
-		if (x < left) {
-			x = left;
+		if (x < pos.limit.left) {
+			x = pos.limit.left;
 		} else if (right < x) {
 			x = right;
+		}
+		if (y < top) {
+			y = top;
 		}
 		// console.log('scrollTop:' + pos.width);
 		ctx.fillStyle = 'white';
@@ -82,32 +85,34 @@ class Scenario {
 	}
 
 	draw(ctx) {
-		let stage = this._stage;
-		let width = stage.map.brickSize;
-		let height = stage._product.height;
-		let sx = this.v;
+		let width = this.width;
+		let height = this.height;
+		let sx = this.x;
+		let sy = this.y;
 
-		ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
-		ctx.strokeRect(sx, 0, width, height);
-		ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
-		ctx.strokeRect(sx + 1, 1, width - 2, height - 2);
+		if (this.hasFocus) {
+			ctx.strokeStyle = 'rgba(0, 0, 0, .5)';
+			ctx.strokeRect(sx, sy, width, height);
+			ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
+			ctx.strokeRect(sx + 1, sy + 1, width - 2, height - 2);
+		}
 		if (this.type == Scenario.Type.Mode) {
 			// Mode
 			ctx.fillStyle = 'rgba(255, 100, 100, .5)';
-			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+			ctx.fillRect(sx + 2, sy + 2, width - 4, height - 4);
 			// this.drawMode(ctx, this);
 			return;
 		}
 		if (this.type == Scenario.Type.Effect) {
 			// Effect
 			ctx.fillStyle = 'rgba(100, 255, 100, .5)';
-			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+			ctx.fillRect(sx + 2, sy + 2, width - 4, height - 4);
 			return;
 		}
 		if (this.type == Scenario.Type.Audio) {
 			// Audio
 			ctx.fillStyle = 'rgba(100, 100, 255, .5)';
-			ctx.fillRect(sx + 2, 2, width - 4, height - 4);
+			ctx.fillRect(sx + 2, sy + 2, width - 4, height - 4);
 		}
 	}
 
@@ -131,9 +136,43 @@ class Scenario {
 		return actor;
 	}
 
+	calcRegion() {
+		let stage = this._stage;
+		let bw = stage.map.brickSize;
+		let bh = bw / 2;
+
+		if (stage.isVertical) {
+			this.x = this.h;
+			this.y = stage.orientation == 8 ? stage.height - this.v : this.v;
+			this.left = this.x;
+			this.top = this.y - bh;
+			this.width = stage._product.width;
+			this.height = bw;
+		} else {
+			this.x = this.v;
+			this.y = this.h;
+			this.left = this.x - bh;
+			this.top = this.y;
+			this.width = bw;
+			this.height = stage._product.height;
+		}
+	}
+
 	init() {
-		this.x = this.v;
-		this.y = this.h;
+		let stage = this._stage;
+
+		if (this.cursor) {
+			let cur = this.cursor;
+
+			if (stage.isVertical) {
+				this.h = cur.x;
+				this.v = stage.orientation == 8 ? stage.height - cur.y : cur.y;
+			} else {
+				this.h = cur.y;
+				this.v = cur.x;
+			}
+		}
+		this.calcRegion();
 		if (this.groupId == null) {
 			this.groupId = '';
 		}

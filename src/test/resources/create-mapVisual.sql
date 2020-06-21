@@ -9,7 +9,7 @@ CREATE TABLE map_visual(
 	visual_type integer NOT NULL,
 	visual_seq bigint NOT NULL,
 	repeat integer NOT NULL,
-	radian real NOT NULL,
+	deg integer NOT NULL,
 	speed real NOT NULL,
 	blink real NOT NULL,
 	PRIMARY KEY (id)
@@ -26,3 +26,5 @@ COMMENT ON COLUMN map_visual.blink IS 'ブリンク';
 
 ALTER TABLE map_visual RENAME COLUMN x TO repeat;
 ALTER TABLE map_visual DROP COLUMN y;
+ALTER TABLE map_visual RENAME radian TO deg;
+ALTER TABLE map_visual ALTER COLUMN deg TYPE integer;

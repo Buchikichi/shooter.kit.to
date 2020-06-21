@@ -45,9 +45,10 @@ class EditStage {
 	resetCanvas() {
 		let product = this.product;
 		let stage = product.stage;
+		let editorSize = stage.editorSize;
 		let scale = this.scale;
-		let width = product.width / 2 * stage.posV + stage.length;
-		let height = stage.editorHeight;
+		let width = editorSize.width;
+		let height = editorSize.height;
 		let frameWidth = width * scale;
 		let frameHeight = height * scale;
 
@@ -63,8 +64,10 @@ class EditStage {
 	}
 
 	initView() {
+		let remainW = this.view.scrollWidth - this.view.clientWidth;
 		let remainH = this.view.scrollHeight - this.view.clientHeight;
 
+		this.view.scrollLeft = remainW / 2;
 		this.view.scrollTop = remainH / 2;
 	}
 
@@ -135,14 +138,22 @@ class EditStage {
 		let stage = product.stage;
 		let canvas = document.getElementById('canvas');
 		let calcPos = e => {
-			let scrollLeft = this.view.scrollLeft / this.scale;
+			let scrollLeft = this.view.scrollLeft;
 			let scrollTop = this.view.scrollTop;
-			let width = this.view.clientWidth / this.scale;
-			let x = -stage.startPos + scrollLeft + e.clientX / this.scale;
+			let margin = stage.margin;
+			let x = (scrollLeft + e.clientX) / this.scale - margin.left;
 			let y = (scrollTop + e.clientY - this.header.clientHeight) / this.scale
-				- (this.hasMargin ? product.height : 0);
+				- margin.top;
+			let width = this.view.clientWidth / this.scale;
+			let height = this.view.clientHeight / this.scale;
+			let left = scrollLeft / this.scale - margin.left;
+			let top = scrollTop / this.scale - margin.top;
 
-			return { x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop, width: width };
+			return {
+				x: x, y: y, scrollLeft: scrollLeft, scrollTop: scrollTop,
+				width: width,
+				limit: { left: left, right: left + width, top: top, bottom: top + height },
+			};
 		}
 
 		canvas.addEventListener('mousedown', e => stage.onMousedown(calcPos(e), this.scenario));

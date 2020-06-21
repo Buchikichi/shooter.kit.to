@@ -2,18 +2,20 @@ class StageEditor extends Stage {
 	constructor() {
 		super();
 		this.cursorType = StageEditor.CURSOR_TYPE.EDIT;
-		this.pos = { x: 0, y: 0 };
+		this.pos = StageEditor.UNKNOWN_POS;
 		this.grid = 1;
 		this._currentScenario = null;
 	}
 
-	get editorHeight() {
+	get editorSize() {
 		if (this.isVertical) {
-			return this.height;
+			return { width: this.width, height: this.height };
 		}
 		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+		let width = this._product.width / 2 * this.posV + this.length;
+		let height = this.height + (hasMargin ? this._product.height * 2 : 0);
 
-		return this.height + (hasMargin ? this._product.height * 2 : 0);
+		return { width: width, height: height };
 	}
 
 	setProgress(x) {
@@ -35,11 +37,7 @@ class StageEditor extends Stage {
 		if (this.cursorType == StageEditor.CURSOR_TYPE.REMOVE) {
 			this.removeScenario();
 		} else {
-			let cur = this.calcCursorPos(pos);
-			let y = scenario.type == Scenario.Type.Actor ? cur.y : 0;
-
-			scenario.v = cur.x;
-			scenario.h = y;
+			scenario.cursor = this.calcCursorPos(pos);
 			this.addScenario(scenario);
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
@@ -47,7 +45,7 @@ class StageEditor extends Stage {
 		}
 	}
 
-	onMousemove(pos = { x: Number.MAX_SAFE_INTEGER, y: 0 }, scenario) {
+	onMousemove(pos = StageEditor.UNKNOWN_POS, scenario) {
 		this._eventList.forEach(s => s.hasFocus = false);
 		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
 
@@ -63,6 +61,7 @@ class StageEditor extends Stage {
 			if (event) {
 				// console.log('event:');
 				// console.log(event);
+				event.hasFocus = true;
 				this._currentScenario = event;
 				return;
 			}
@@ -89,7 +88,10 @@ class StageEditor extends Stage {
 		// if (scenario.type == Scenario.Type.Actor) {
 		// 	h = 0;
 		// }
-		this._eventList = this._eventList.filter(s => s.op != op || s.v != v || s.h != h);
+		this._eventList = this._eventList.filter(s => {
+			// TODO:
+			return s.op != op || s.v != v || s.h != h;
+		});
 	}
 
 	addScenario(rec) {
@@ -97,7 +99,9 @@ class StageEditor extends Stage {
 
 		this.removeScenario(scenario);
 		this._eventList.push(scenario);
-		this._eventList.sort((a, b) => a.v == b.v ? a.h - b.h : a.v - b.v);
+		this._eventList.sort((a, b) => this.isVertical
+			? a.h == b.h ? a.v - b.v : a.h - b.h
+			: a.v == b.v ? a.h - b.h : a.v - b.v);
 		console.log('StageEditor#addScenario:');
 		console.log(scenario);
 	}
@@ -127,7 +131,7 @@ class StageEditor extends Stage {
 
 		return {
 			x: Math.round((pos.x - hG) / this.grid) * this.grid,
-			y: parseInt(pos.y / this.grid) * this.grid,
+			y: Math.round((pos.y - hG) / this.grid) * this.grid,
 		};
 	}
 
@@ -151,11 +155,14 @@ class StageEditor extends Stage {
 			return;
 		}
 		if (this.cursorType == StageEditor.CURSOR_TYPE.EVENT) {
-			let y = this.scroll & Stage.SCROLL.LOOP ? 0 : -this._product.height;
-			let height = ctx.canvas.height;
-
 			ctx.fillStyle = 'rgba(255, 60, 120, .5)';
-			ctx.fillRect(cur.x, y, bw, height);
+			if (this.isVertical) {
+				ctx.fillRect(0, cur.y, ctx.canvas.width, this.grid);
+				return;
+			}
+			let y = this.scroll & Stage.SCROLL.LOOP ? 0 : -this._product.height;
+
+			ctx.fillRect(cur.x, y, bw, ctx.canvas.height);
 		}
 	}
 
@@ -179,7 +186,8 @@ class StageEditor extends Stage {
 
 	drawHorizontalGuide(ctx) {
 		let img = this.map._mainVisual.image;
-		let x = -this.startPos;
+		let margin = this.margin;
+		let x = -margin.left;
 		let height = img.height;
 		let width = this.length;
 
@@ -215,6 +223,14 @@ class StageEditor extends Stage {
 		if (!this.hasGuide) {
 			return;
 		}
+		// ctx.strokeStyle = 'tomato';
+		// ctx.beginPath();
+		// ctx.arc(this.pos.limit.right, this.pos.limit.top, 16, 0, Math.PI2);
+		// ctx.stroke();
+		// ctx.strokeStyle = 'orange';
+		// ctx.beginPath();
+		// ctx.arc(0, 0, 16, 0, Math.PI2);
+		// ctx.stroke();
 		if (this.isVertical) {
 			this.drawVerticalGuide(ctx);
 			return;
@@ -223,12 +239,10 @@ class StageEditor extends Stage {
 	}
 
 	draw(ctx) {
-		let hasMargin = this.isVertical ? false :
-			this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
-		let ty = hasMargin ? Product.Instance.height : 0;
+		let margin = this.margin;
 
 		ctx.save();
-		ctx.translate(this.startPos, ty);
+		ctx.translate(margin.left, margin.top);
 		super.draw(ctx);
 		this.map.draw(ctx);
 		this.drawGuide(ctx);
@@ -254,6 +268,7 @@ class StageEditor extends Stage {
 		return Object.assign(new StageEditor(), rec, { _product: product }).init();
 	}
 }
+StageEditor.UNKNOWN_POS = { x: 0, y: 0, limit: { left: 0, right: 0, top: 0, bottom: 0 } };
 StageEditor.CURSOR_TYPE = {
 	NONE: 0,
 	ACTOR: 1,

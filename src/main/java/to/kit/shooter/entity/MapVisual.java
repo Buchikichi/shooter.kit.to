@@ -28,7 +28,7 @@ public class MapVisual {
 	@Convert(converter = SeqTypeConverter.class)
 	private SeqType visualSeq;
 	private int repeat;
-	private double radian;
+	private int deg;
 	private double speed;
 	private double blink;
 

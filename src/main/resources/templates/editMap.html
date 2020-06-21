@@ -73,8 +73,9 @@
         <label>repeat:
           <input type="text" name="repeat"/>
         </label>
-        <label>radian:
-          <input type="text" name="radian"/>
+        <label><span>Degree:</span>
+          <input type="number" required="required" min="-179" max="180" name="deg"/>
+          <div th:replace="_potController"></div>
         </label>
         <label>speed:
           <input type="text" name="speed"/>

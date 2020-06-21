@@ -37,12 +37,18 @@ class Stage {
 		return this.scroll == Stage.SCROLL.LOOP;
 	}
 
-	get startPos() {
-		return this._product.hW * this.posV;
+	get margin() {
+		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+
+		if (this.isVertical) {
+			return { left: 0, top: 0 };
+		}
+		return { left: this._product.hW * this.posV, top: hasMargin ? this._product.height : 0 };
 	}
 
 	get startProgress() {
-		return -this.startPos / this.map._mainVisual.speed;
+		// ToDo startProgress の計算方法
+		return -this.margin.left / this.map._mainVisual.speed;
 	}
 
 	setupVisualList() {
@@ -55,10 +61,10 @@ class Stage {
 			this._product._mediaset.playBgm(this.startAudioSeq);
 			Transition.Instance.play(this.startTransition, this.startSpeed);
 		} else {
-			let pos = this.startPos;
+			let margin = this.margin;
 
 			this.performersList.forEach(a => {
-				a.x -= pos
+				a.x -= margin.left;
 				a._stage = this;
 			});
 			this._product._mediaset.playBgm(this.sequelAudioSeq);

@@ -70,6 +70,7 @@ class EditMain {
 		this.brickPanel = new BrickPanel(this.fieldMap);
 		this.setupPointingDevice();
 		new ImageSelector();
+		PotController.create();
 	}
 
 	setupImagePanel() {
@@ -175,12 +176,12 @@ class EditMain {
 	openMapVisualPopup(mapVisual) {
 		let mapVisualPopup = document.getElementById('mapVisualPopup');
 		let repeat = mapVisualPopup.querySelector('[name=repeat]');
-		let radian = mapVisualPopup.querySelector('[name=radian]');
+		let deg = mapVisualPopup.querySelector('[name=deg]');
 		let speed = mapVisualPopup.querySelector('[name=speed]');
 		let blink = mapVisualPopup.querySelector('[name=blink]');
 
 		repeat.value = mapVisual.repeat;
-		radian.value = mapVisual.radian;
+		deg.value = mapVisual.deg;
 		speed.value = mapVisual.speed;
 		blink.value = mapVisual.blink;
 		$(mapVisualPopup).popup('open');
@@ -188,7 +189,7 @@ class EditMain {
 			afterclose: () => {
 				// console.log('mapVisualPopup.afterclose');
 				mapVisual.repeat = parseInt(repeat.value);
-				mapVisual.radian = parseFloat(radian.value);
+				mapVisual.deg = parseFloat(deg.value);
 				mapVisual.speed = parseFloat(speed.value);
 				mapVisual.blink = parseFloat(blink.value);
 			}

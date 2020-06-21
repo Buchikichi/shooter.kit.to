@@ -139,8 +139,9 @@ this.effectV = 0;
 	setProgress(progress) {
 		let h = this.image.height;
 		let stage = this._fieldMap._stage;
+		let posH = stage.posH;
 
-		this.x = progress * Math.cos(this.radian) * this.speed;
+		this.x = posH + progress * Math.cos(this.radian) * this.speed;
 		this.y = (progress * Math.sin(this.radian) * this.speed + this._fieldMap.progressH) % h;
 		if (!stage) {
 			return;
@@ -228,7 +229,12 @@ this.effectV = 0;
 		ctx.fill();
 	}
 
+	init() {
+		this.radian = this.deg / 180 * Math.PI;
+		return this;
+	}
+
 	static create(mapVisual) {
-		return Object.assign(new MapVisual(), mapVisual);
+		return Object.assign(new MapVisual(), mapVisual).init();
 	}
 }
