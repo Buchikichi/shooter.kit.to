@@ -52,14 +52,14 @@ class RepositoryManager extends PanelBase {
 		}
 		this.listView = document.getElementById('listView');
 		this.valueChangedevent = new Event('valueChanged');
-// 		$(this.listView).sortable({
-// 			update: (event, ui)=> {
-// console.log('item:');
-// console.log(ui.item);
-// console.log('position:');
-// console.log(ui.position);
-// 			},
-// 		});
+		// 		$(this.listView).sortable({
+		// 			update: (event, ui)=> {
+		// console.log('item:');
+		// console.log(ui.item);
+		// console.log('position:');
+		// console.log(ui.position);
+		// 			},
+		// 		});
 	}
 
 	setupPanel() {
@@ -72,8 +72,8 @@ class RepositoryManager extends PanelBase {
 			let formData = new FormData(this.form);
 
 			event.preventDefault();
-			$.mobile.loading('show', {text: 'Save...', textVisible: true});
-console.log('RepositoryManager: saveResource');
+			$.mobile.loading('show', { text: 'Save...', textVisible: true });
+			console.log('RepositoryManager: saveResource');
 			this.entity.saveResource(formData).then(data => {
 				$.mobile.loading('hide');
 				if (data.ok) {
@@ -124,7 +124,7 @@ console.log('RepositoryManager: saveResource');
 			if (defaultData && !val) {
 				val = defaultData;
 			}
-//console.log(name + ':' + element.attr('type'));
+			//console.log(name + ':' + element.attr('type'));
 			if (element.is(':radio')) {
 				element.val([val]).checkboxradio('refresh')
 			} else if (element.is('select')) {
@@ -267,10 +267,8 @@ class ImageManager extends RepositoryManager {
 
 	setupPanel() {
 		super.setupPanel();
-		this.createMapButton.addEventListener('click', ()=> this.createmap());
-		this.createActorButton.addEventListener('click', ()=> {
-			document.getElementById('actorButton').click();
-		});
+		this.createMapButton.addEventListener('click', () => this.createmap());
+		this.createActorButton.addEventListener('click', () => this.createActor());
 	}
 
 	createmap() {
@@ -290,12 +288,59 @@ class ImageManager extends RepositoryManager {
 		let messagePopup = document.getElementById('messagePopup');
 		let content = messagePopup.querySelector('p');
 
-		$.mobile.loading('show', {text: 'Save...', textVisible: true});
+		$.mobile.loading('show', { text: 'Save...', textVisible: true });
 		new MapEntity().save(map).then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
 				content.textContent = 'Map saved.';
 				document.getElementById('mapButton').click();
+			} else {
+				content.textContent = 'Save failed.';
+			}
+			$(messagePopup).popup('open', {});
+		});
+	}
+
+	createActor() {
+		let actor = {
+			type: this.target.visualType,
+			seq: '0',
+			className: this.target.name,
+			orientation: 0,
+			width: 16,
+			height: 16,
+			regionType: 0,
+			regionSize: 8,
+			deg: 0,
+			dirType: Actor.DirType.Manual,
+			dirSpeed: 0,
+			speed: 0,
+			gravity: 0,
+			reaction: 0,
+			hitPoint: 0,
+			score: 0,
+			behavior: '',
+			mediaset: {
+				id: this.mediasetId,
+			},
+			actorVisualList: [
+				{
+					seq: 0,
+					name: this.target.name,
+					visualSeq: this.target.visualSeq,
+					dirType: Actor.DirType.Manual,
+				},
+			],
+		};
+		let messagePopup = document.getElementById('messagePopup');
+		let content = messagePopup.querySelector('p');
+
+		$.mobile.loading('show', { text: 'Save...', textVisible: true });
+		new ActorEntity().save(actor).then(data => {
+			$.mobile.loading('hide');
+			if (data.ok) {
+				content.textContent = 'Actor saved.';
+				document.getElementById('actorButton').click();
 			} else {
 				content.textContent = 'Save failed.';
 			}
@@ -319,7 +364,7 @@ class ImageManager extends RepositoryManager {
 		$(this.createActorButton).hide();
 		if (hasData) {
 			if (rec.visualType == VisualEntity.Type.Background
-					|| rec.visualType == VisualEntity.Type.Foreground) {
+				|| rec.visualType == VisualEntity.Type.Foreground) {
 				$(this.createMapButton).show();
 			}
 			$(this.createActorButton).show();

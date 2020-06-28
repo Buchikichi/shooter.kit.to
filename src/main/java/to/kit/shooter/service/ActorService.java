@@ -1,5 +1,6 @@
 package to.kit.shooter.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import to.kit.shooter.entity.Actor;
+import to.kit.shooter.entity.ActorVisual;
 import to.kit.shooter.entity.Scenario;
 import to.kit.shooter.entity.type.SeqType;
 import to.kit.shooter.entity.type.VisualType;
 import to.kit.shooter.repository.ActorRepository;
+import to.kit.shooter.repository.ActorVisualRepository;
 import to.kit.shooter.web.form.ActorRec;
 import to.kit.shooter.web.form.FilteringForm;
 
@@ -21,6 +24,8 @@ import to.kit.shooter.web.form.FilteringForm;
 public class ActorService implements BasicServiceInterface<Actor> {
 	@Autowired
 	private ActorRepository repository;
+	@Autowired
+	private ActorVisualRepository actorVisualRepository;
 	@Autowired
 	private ProductService productService;
 
@@ -60,6 +65,18 @@ public class ActorService implements BasicServiceInterface<Actor> {
 	@Override
 	@Transactional
 	public Actor save(Actor actor) {
+		if (actor.getId() == null) {
+			List<ActorVisual> actorVisualList = actor.getActorVisualList();
+			List<ActorVisual> newList = new ArrayList<>(actorVisualList);
+			actorVisualList.clear();
+			Actor newActor = this.repository.saveAndFlush(actor);
+			newActor.getActorVisualList().addAll(newList);
+			for (ActorVisual actorVisual : newList) {
+				actorVisual.setActor(newActor);
+				this.actorVisualRepository.saveAndFlush(actorVisual);
+			}
+			return newActor;
+		}
 		return this.repository.saveAndFlush(actor);
 	}
 }

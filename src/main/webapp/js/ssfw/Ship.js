@@ -6,7 +6,7 @@ class Ship extends Actor {
 		super(x, y);
 		this.activityAreaType = Actor.ActivityAreaType.RESTRICTION;
 		this.effectH = true;
-		this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
+//		this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		this.reset();
 	}
 
