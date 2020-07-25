@@ -143,7 +143,7 @@ class Product extends Matter {
 		if (this.stage.phase == Stage.PHASE.INIT) {
 			return;
 		}
-		if (!this.isGameOver && shipList.every(s => s.isGone)) {
+		if (!this.isGameOver && (shipList.length == 0 || shipList.every(s => s.isGone))) {
 			console.log('Product#move crash.');
 			if (this.crashBgm == Product.CrashHandling.Bgm.Stop) {
 				AudioMixer.INSTANCE.stop();
@@ -199,8 +199,10 @@ class Product extends Matter {
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
 		ctx.strokeText('map:' + parseInt(-mainVisual.x) + '/' + mainVisual.y, x, y += 20);
 
+		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = this.stage.performersList.find(a => a instanceof Ship);
 
+		ctx.strokeText('shipList:' + shipList.length, x, y += 20);
 		if (ship) {
 			let shipX = parseInt(ship.x + mainVisual.x);
 			let shipY = parseInt(ship.y + mainVisual.y);

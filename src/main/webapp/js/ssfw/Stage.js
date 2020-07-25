@@ -213,15 +213,17 @@ class Stage {
 			// spawn
 			let reserve = s.assignActor();
 
-			try {
-				let clazz = eval(reserve.className);
+			if (!(reserve instanceof Ship)) {
+				try {
+					let clazz = eval(reserve.className);
 
-				// console.log('supplies:' + reserve.className);
-				reserve = new clazz(s.x, s.y);
-				reserve.belongings = s._belongings;
-				reserve._stage = this;
-			} catch (e) {
-				// nop
+					// console.log('supplies:' + reserve.className);
+					reserve = new clazz(s.x, s.y);
+					reserve.belongings = s._belongings;
+					reserve._stage = this;
+				} catch (e) {
+					// nop
+				}
 			}
 			if (s.op == 'Rev') {
 				reserve.dir += Math.PI;
@@ -229,6 +231,9 @@ class Stage {
 			}
 			if (this._groupMap[s.groupId]) {
 				this._groupMap[s.groupId].add(reserve);
+			}
+			if (reserve instanceof Ship) {
+				this.phase = Stage.PHASE.NORMAL;
 			}
 			result.push(reserve);
 			return false;
@@ -310,7 +315,10 @@ class Stage {
 		return this.performersList;
 	}
 
+	calclatePositions() {}
+
 	move() {
+		this.calclatePositions();
 		this.scanEvent().forEach(enemy => this.performersList.push(enemy));
 		this.performersList.sort((a, b) => a.z - b.z);
 		if (this.scroll == Stage.SCROLL.STOP) {
@@ -384,9 +392,28 @@ class Stage {
 	}
 
 	static create(rec, product) {
-		return Object.assign(new Stage(), rec, { _product: product }).init();
+		let clazz = rec.orientation == 2 ? Stage :
+			rec.orientation == 4 ? Stage :
+				rec.orientation == 6 ? StageGoToTheRight : StageGoUp;
+
+		return Object.assign(new clazz(), rec, { _product: product }).init();
 	}
 }
+
+class StageGoUp extends Stage {
+	constructor() {
+		super();
+		console.log('StageGoUp#constructor');
+	}
+}
+
+class StageGoToTheRight extends Stage {
+	constructor() {
+		super();
+		console.log('StageGoToTheRight#constructor');
+	}
+}
+
 Stage.SCROLL = {
 	OFF: 0,
 	ON: 1,
@@ -425,6 +452,7 @@ class CheckPoint {
 	}
 
 	retrieve() {
+		console.log('CheckPoint#retrieve*************');
 		let ship = new Ship(this.x + this.dx, this.y + this.dy);
 
 		this._stage.progress = this.progress;

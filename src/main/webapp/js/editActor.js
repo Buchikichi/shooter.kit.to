@@ -21,7 +21,6 @@ class ActorEditorMain extends Matter {
 			return this.mediaset.getActor(actorId, { mediaset: { id: this.mediaset.id } });
 		}).then(actor => {
 			this.actor = actor;
-			// this.actor.mediaset = { id: mediasetId };
 			loading.parentNode.removeChild(loading);
 			this.start();
 		});
@@ -49,8 +48,8 @@ class ActorEditorMain extends Matter {
 			requestAnimationFrame(activate);
 		};
 
-		this.setupEvents();
 		this.resetAvator();
+		this.setupEvents();
 		activate();
 	}
 
@@ -189,6 +188,8 @@ class ActorEditorAttrPanel extends PanelBase {
 			let type = this.panel.querySelector('[name=regionType]:checked');
 
 			this.target.regionType = type.getAttribute('data-value');
+			console.log('regionType:' + this.target.regionType);
+			console.log(this.target);
 		});
 	}
 }

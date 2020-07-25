@@ -128,14 +128,15 @@ class Mediaset {
 		// 	}
 		// }
 		if (!actor) {
-			console.log('Product#getActor fail:' + seq);
+			// console.log('Mediaset#getActor fail:' + seq);
 			return null;
 		}
 		if (actor.type == Actor.Type.Player) {
+			// console.log('Mediaset#getActor Actor.Type.Player');
 			return Ship.create(actor, Object.assign(params));
 		}
 		if (actor.type == Actor.Type.Item) {
-			// console.log('Product#getActor Actor.Type.Item');
+			// console.log('Mediaset#getActor Actor.Type.Item');
 			return Capsule.create(actor, Object.assign(params));
 		}
 		return Enemy.create(actor, Object.assign(params));

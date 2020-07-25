@@ -1,37 +1,25 @@
 class ActorEditor extends Actor {
 	constructor() {
-        super();
-    }
+		super();
+	}
 
-    draw(ctx) {
-        ctx.save();
-        super.draw(ctx);
+	draw(ctx) {
+		super.draw(ctx);
+		ctx.save();
+		ctx.translate(this.x, this.y);
+		this.region.draw(ctx);
+		ctx.restore();
+	}
 
-        ctx.translate(this.x, this.y);
-        ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
-        if (this.regionType == 0) {
-            ctx.beginPath();
-            ctx.arc(0, 0, this.regionSize / 2, 0, Math.PI2, false);
-            ctx.stroke();
-        } else {
-            let half = this.regionSize / 2;
-            let left = -half;
-            let top = -half;
+	save() {
+		// console.log('ActorEditor#save');
+		// console.log(this);
+		this.actorAudioList.forEach(a => a.actor = { id: this.id });
+		this.actorVisualList.forEach(v => v.actor = { id: this.id });
+		return new ActorEntity().save(this);
+	}
 
-            ctx.strokeRect(left, top, this.regionSize, this.regionSize);
-        }
-        ctx.restore();
-    }
-
-    save() {
-        // console.log('ActorEditor#save');
-        // console.log(this);
-        this.actorAudioList.forEach(a => a.actor = { id: this.id });
-        this.actorVisualList.forEach(v => v.actor = { id: this.id });
-        return new ActorEntity().save(this);
-    }
-
-    static create(obj) {
+	static create(obj) {
 		if ('string' == typeof obj) {
 			return new ActorEntity().select(obj).then(actor => {
 				return ActorEditor.create(actor);

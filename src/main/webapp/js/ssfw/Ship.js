@@ -2,7 +2,7 @@
  * Ship.
  */
 class Ship extends Actor {
-	constructor(x, y) {
+	constructor(x = 0, y = 0) {
 		super(x, y);
 		this.activityAreaType = Actor.ActivityAreaType.RESTRICTION;
 		this.effectH = true;
@@ -84,6 +84,20 @@ class Ship extends Actor {
 			return;
 		}
 		return result;
+	}
+
+	init() {
+		console.log('Ship#init');
+		super.init();
+		// console.log(this);
+		if (0 < this.actorVisualList.length) {
+			let visual = this.actorVisualList[0];
+			let seq = visual.visualSeq;
+
+			console.log('Ship#init seq:' + seq + 'visual:' + visual.visual.id);
+			this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
+		}
+		return this;
 	}
 
 	static create(rec, params = {}) {

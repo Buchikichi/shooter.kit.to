@@ -60,7 +60,7 @@ class Animator extends Matter {
 	}
 
 	draw(ctx) {
-		let actor = this.actor;
+		let actor = this._actor;
 		let sw = this.width;
 		let sh = this.height;
 		let sx = 0;

@@ -1,35 +1,44 @@
 class Region {
 	constructor(matter, size = Region.DefaultSize, type = Region.Type.CIRCLE) {
-		this.matter = matter;
-		this.size = size;
-		this.type = type;
-		this.width = size * 2;
+		this._matter = matter;
+		if (!this._matter.regionSize) {
+			this._matter.regionSize = size;
+		}
+		if (!this._matter.regionType) {
+			this._matter.regionType = type;
+		}
 	}
 
 	isHit(target) {
-		if (this.type == Region.Type.CIRCLE) {
-			if (target.type == Region.Type.CIRCLE) {
-				let wX = this.matter.x - target.matter.x;
-				let wY = this.matter.y - target.matter.y;
+		let type = this._matter.regionType;
+		let size = this._matter.regionSize;
+
+		if (type == Region.Type.CIRCLE) {
+			if (target._matter.regionType == Region.Type.CIRCLE) {
+				let wX = this._matter.x - target._matter.x;
+				let wY = this._matter.y - target._matter.y;
 				let distance = Math.sqrt(wX * wX + wY * wY);
 
-				return distance < this.size + target.size;
+				return distance < size + target._matter.regionSize;
 			}
 		}
 console.log('*Not implement*');
 	}
 
 	draw(ctx) {
-		let size = this.matter.regionSize;
+		let type = this._matter.regionType;
+		let size = this._matter.regionSize;
 
 		ctx.save();
 		ctx.strokeStyle = 'rgba(80, 255, 80, 0.6)';
-		if (this.type == Region.Type.RECTANGLE) {
-			ctx.strokeRect(-size, -size, this.width, this.width);
-		} else {
+		if (type == Region.Type.CIRCLE) {
 			ctx.beginPath();
 			ctx.arc(0, 0, size, 0, Math.PI2, false);
 			ctx.stroke();
+		} else if (type == Region.Type.RECTANGLE) {
+			let width = size / 2;
+
+			ctx.strokeRect(-size, -size, width, width);
 		}
 		ctx.restore();
 	}

@@ -149,8 +149,10 @@ this.effectV = 0;
 		if (stage.scroll == Stage.SCROLL.LOOP && 0 < this.y) {
 			this.y -= h;
 		}
-		if ((stage.scroll == Stage.SCROLL.OFF | stage.scroll == Stage.SCROLL.TOP) && 0 < this.y) {
-			this.y = 0;
+		if (!stage.isVertical) {
+			if ((stage.scroll == Stage.SCROLL.OFF | stage.scroll == Stage.SCROLL.TOP) && 0 < this.y) {
+				this.y = 0;
+			}
 		}
 	}
 

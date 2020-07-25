@@ -67,11 +67,12 @@ class Actor extends Matter {
 		let height = this.height;
 
 		this.animList.forEach(anim => {
-			anim.actor = this;
+			anim._actor = this;
 			width = Math.max(width, anim.width);
 			height = Math.max(height, anim.height);
 		});
-		this.setRect(width, height);
+		// console.log('Actor#anim width:' + width + '/height:' + height);
+		// this.setRect(width, height);
 	}
 
 	checkInverse() {
@@ -308,7 +309,7 @@ class Actor extends Matter {
 	}
 
 	drawNormal(ctx) {
-        this.actorVisualList.forEach(v => v.draw(ctx));
+		this.actorVisualList.forEach(v => v.draw(ctx));
 		this.animList.forEach(anim => {
 			anim.draw(ctx);
 		});

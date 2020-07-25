@@ -7,6 +7,7 @@ class ActorVisual extends Matter {
 	}
 
 	move(target) {
+if (!target) return;
 		let step = Math.PI / 180 * this.dirSpeed;
 		let dx = target.x - this._actor.x;
 		let dy = target.y - this._actor.y;
