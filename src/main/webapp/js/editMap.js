@@ -235,7 +235,7 @@ class EditMain {
 		this.fieldMap.save().then(data => {
 			$.mobile.loading('hide');
 			if (data.ok) {
-				content.textContent = 'Stage saved.';
+				content.textContent = 'Map saved.';
 			} else {
 				content.textContent = 'Save failed.';
 			}

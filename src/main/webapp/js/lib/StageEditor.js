@@ -8,10 +8,14 @@ class StageEditor extends Stage {
 	}
 
 	get editorSize() {
-		if (this.isVertical) {
-			return { width: this.width, height: this.height };
-		}
 		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
+
+		if (this.isVertical) {
+			return {
+				width: this._product.width + (hasMargin ? this._product.width * 2 : 0),
+				height: this.height + this._product.height / 2 * this.posV,
+			};
+		}
 		let width = this._product.width / 2 * this.posV + this.length;
 		let height = this.height + (hasMargin ? this._product.height * 2 : 0);
 
@@ -19,10 +23,12 @@ class StageEditor extends Stage {
 	}
 
 	setProgress(x) {
-		if (this.fg.speed == 0) {
+		let fg = this.map._mainVisual;
+
+		if (fg.speed == 0) {
 			return;
 		}
-		let progress = x * this.map.brickSize / this.fg.speed;
+		let progress = x * this.map.brickSize / fg.speed;
 
 		this.map.setProgress(progress);
 		this.progress = progress;
@@ -47,16 +53,15 @@ class StageEditor extends Stage {
 
 	onMousemove(pos = StageEditor.UNKNOWN_POS, scenario) {
 		this._eventList.forEach(s => s.hasFocus = false);
-		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(pos));
-
 		this.pos = pos;
 		if (pos.x == Number.MAX_SAFE_INTEGER) {
 			this._reservedScenario = null;
 		} else {
 			this._reservedScenario = scenario;
 		}
+		let act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.includes(this.pos));
 		if (!act) {
-			let event = this._eventList.find(s => s.type != Scenario.Type.Actor && s.isHit(pos));
+			let event = this._eventList.find(s => s.type != Scenario.Type.Actor && s.isHit(this.pos));
 
 			if (event) {
 				// console.log('event:');
@@ -65,7 +70,7 @@ class StageEditor extends Stage {
 				this._currentScenario = event;
 				return;
 			}
-			act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.isHit(pos));
+			act = this._eventList.find(s => s.type == Scenario.Type.Actor && s.isHit(this.pos));
 		}
 		if (act) {
 			act.hasFocus = true;
@@ -136,6 +141,13 @@ class StageEditor extends Stage {
 	}
 
 	drawCursor(ctx) {
+		ctx.save();
+		ctx.fillStyle = 'pink';
+		ctx.beginPath();
+		ctx.arc(this.pos.x, this.pos.y, 2, 0, Math.PI2);
+		ctx.fill();
+		ctx.restore();
+
 		if (this.cursorType == StageEditor.CURSOR_TYPE.NONE) {
 			return;
 		}
@@ -168,20 +180,10 @@ class StageEditor extends Stage {
 
 	drawVerticalGuide(ctx) {
 		let img = this.map._mainVisual.image;
-		let left = this.posH - 1;
-		let right = left + Product.Instance.width;
-		let bottom = img.height + 1;
 
 		ctx.lineWidth = 3;
 		ctx.strokeStyle = 'rgba(255, 255, 255, .6)';
-		ctx.beginPath();
-		ctx.moveTo(left, -1);
-		ctx.lineTo(left, bottom);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.moveTo(right, -1);
-		ctx.lineTo(right, bottom);
-		ctx.stroke();
+		ctx.strokeRect(this.posH, 0, this._product.width, img.height);
 	}
 
 	drawHorizontalGuide(ctx) {

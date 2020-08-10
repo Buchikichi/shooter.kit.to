@@ -7,6 +7,7 @@ class Product extends Matter {
 		this.maxShip = 7;
 		this.maxHibernate = 60;
 
+		this.pause = false;
 		this.debugMode = false;
 		this.shipRemain = 0;
 		this.score = 0;
@@ -76,7 +77,7 @@ class Product extends Matter {
 		if (!this.stage) {
 			return;
 		}
-		if (Transition.Instance.waitForDrawing) {
+		if (Transition.Instance.waitForDrawing || this.pause) {
 			return;
 		}
 		this.stage.move();
@@ -161,16 +162,25 @@ class Product extends Matter {
 		if (!this.stage) {
 			return;
 		}
+		let fg = this.stage.map._mainVisual;
 		// Draw
 		ctx.save();
-		ctx.translate(this.stage.fg.x, this.stage.fg.y);
+		ctx.translate(-this.stage.posH, 0);
+		ctx.translate(fg.x, fg.y);
 		this.stage.draw(ctx);
 		ctx.restore();
 		// DEBUG
 		let kb = Controller.Instance;
 
 		if (kb) {
-			if (kb.isHit('d')) {
+			if (kb.isHit('Escape')) {
+				this.pause = !this.pause;
+				if (this.pause) {
+					AudioMixer.INSTANCE.stop();
+				} else {
+					AudioMixer.INSTANCE.resume();
+				}
+			} else if (kb.isHit('d')) {
 				this.debugMode = !this.debugMode;
 			}
 		}
@@ -184,7 +194,7 @@ class Product extends Matter {
 		let y = 20;
 		let actors = this.stage.performersList.filter(actor => !(actor instanceof MapVisual));
 		let actorNames = [];
-		let mainVisual = this.stage.map._mainVisual;
+		let fg = this.stage.map._mainVisual;
 
 		actors.forEach(actor => {
 			if (10 <= actorNames.length || !(actor instanceof Enemy)) {
@@ -197,15 +207,15 @@ class Product extends Matter {
 		ctx.strokeStyle = 'white';
 		ctx.strokeText('phase:' + this.stage.phase + '/scroll:' + this.stage.scroll + '/progress:' + parseInt(this.stage.progress), x, y += 20);
 		ctx.strokeText('actors:' + actors.length + (0 < actors.length ? '|' + actorNames.join(',') : ''), x, y += 20);
-		ctx.strokeText('map:' + parseInt(-mainVisual.x) + '/' + mainVisual.y, x, y += 20);
+		ctx.strokeText('map:' + parseInt(fg.x) + '/' + parseInt(fg.y), x, y += 20);
 
 		let shipList = this.stage.performersList.filter(a => a instanceof Ship);
 		let ship = this.stage.performersList.find(a => a instanceof Ship);
 
 		ctx.strokeText('shipList:' + shipList.length, x, y += 20);
 		if (ship) {
-			let shipX = parseInt(ship.x + mainVisual.x);
-			let shipY = parseInt(ship.y + mainVisual.y);
+			let shipX = parseInt(ship.x + fg.x);
+			let shipY = parseInt(ship.y + fg.y);
 			ctx.strokeText('ship:' + shipX + '/' + shipY, x, y += 20);
 		}
 		ctx.restore();

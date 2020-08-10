@@ -141,7 +141,7 @@ class EditStage {
 			let scrollLeft = this.view.scrollLeft;
 			let scrollTop = this.view.scrollTop;
 			let margin = stage.margin;
-			let x = (scrollLeft + e.clientX) / this.scale - margin.left;
+			let x = (scrollLeft + e.clientX) / this.scale - margin.left + stage.posH;
 			let y = (scrollTop + e.clientY - this.header.clientHeight) / this.scale
 				- margin.top;
 			let width = this.view.clientWidth / this.scale;

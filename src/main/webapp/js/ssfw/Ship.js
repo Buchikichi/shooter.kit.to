@@ -94,8 +94,8 @@ class Ship extends Actor {
 			let visual = this.actorVisualList[0];
 			let seq = visual.visualSeq;
 
-			console.log('Ship#init seq:' + seq + 'visual:' + visual.visual.id);
-			this.anim = new Animator('prototype.ship', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
+			console.log('Ship#init seq:' + seq + '/visual:' + visual.visual.id);
+			this.anim = new Animator(visual.visual.id, Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		}
 		return this;
 	}

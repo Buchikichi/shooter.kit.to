@@ -82,6 +82,7 @@ class Scenario {
 			ctx.fillText(s, x + 4, y);
 			y += Scenario.Balloon.TextHeight;
 		});
+		// ctx.strokeRect(pos.x, pos.y, 3, 3);
 	}
 
 	draw(ctx) {
@@ -143,7 +144,7 @@ class Scenario {
 
 		if (stage.isVertical) {
 			this.x = this.h;
-			this.y = stage.orientation == 8 ? stage.height - this.v : this.v;
+			this.y = this.v;
 			this.left = this.x;
 			this.top = this.y - bh;
 			this.width = stage._product.width;
@@ -166,7 +167,7 @@ class Scenario {
 
 			if (stage.isVertical) {
 				this.h = cur.x;
-				this.v = stage.orientation == 8 ? stage.height - cur.y : cur.y;
+				this.v = cur.y;
 			} else {
 				this.h = cur.y;
 				this.v = cur.x;

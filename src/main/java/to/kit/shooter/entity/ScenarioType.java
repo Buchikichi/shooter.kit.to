@@ -19,7 +19,7 @@ public enum ScenarioType {
 	Efo("op.effect_fade_out"),
 	// Audio
 	Apa("op.pause_bgm"),
-	Are("op.resuem_bgm"),
+	Are("op.resume_bgm"),
 	Afa("op.fade_bgm"),
 	Apl("op.play_bgm"),
 	;

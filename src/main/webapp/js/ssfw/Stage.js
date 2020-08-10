@@ -1,36 +1,16 @@
 class Stage {
 	constructor() {
-		this.foreground = null;
 		this.viewDic = {};
 		this.lastScan = null;
 		this.performersList = [];
-	}
-
-	get isVertical() {
-		return this.orientation == 2 || this.orientation == 8;
 	}
 
 	get isMoving() {
 		return this.scroll != Stage.SCROLL.STOP;
 	}
 
-	get fg() {
-		if (!this.foreground) {
-			this.foreground = this.map._mainVisual;
-		}
-		return this.foreground;
-	}
-
 	get length() {
 		return this.map._mainVisual.image.width * this.repeat;
-	}
-
-	get width() {
-		return this.map._mainVisual.image.width;
-	}
-
-	get height() {
-		return this.map._mainVisual.image.height;
 	}
 
 	get isLoop() {
@@ -41,7 +21,7 @@ class Stage {
 		let hasMargin = this.roll == Stage.SCROLL.OFF || this.roll == Stage.SCROLL.ON;
 
 		if (this.isVertical) {
-			return { left: 0, top: 0 };
+			return { left: this._product.width, top: 0 };
 		}
 		return { left: this._product.hW * this.posV, top: hasMargin ? this._product.height : 0 };
 	}
@@ -49,6 +29,14 @@ class Stage {
 	get startProgress() {
 		// ToDo startProgress の計算方法
 		return -this.margin.left / this.map._mainVisual.speed;
+	}
+
+	get front() {
+		return this.rear + this._product.width;
+	}
+
+	get rear() {
+		return parseInt(-this.map._mainVisual.x);
 	}
 
 	setupVisualList() {
@@ -77,7 +65,7 @@ class Stage {
 		this.reset(Stage.PHASE.NORMAL);
 		this.performersList.push(this.checkPoint.retrieve());
 		Transition.Instance.play(this.startTransition, this.startSpeed);
-		if (Product.Instance.crashBgm != Product.CrashHandling.Bgm.Keep) {
+		if (this._product.crashBgm != Product.CrashHandling.Bgm.Keep) {
 			this._product._mediaset.playBgm(this.startAudioSeq);
 		}
 	}
@@ -90,7 +78,7 @@ class Stage {
 			return;
 		}
 		let diff = this._product.hH - ship.y;
-		let fg = this.fg;
+		let fg = this.map._mainVisual;
 
 		if (this.scroll == Stage.SCROLL.TOP) {
 			diff = fg.speed * 5;
@@ -124,7 +112,7 @@ class Stage {
 	}
 
 	effect(target) {
-		let mainVisual = this.map._mainVisual/*this.fg*/;
+		let mainVisual = this.map._mainVisual;
 
 		if (target instanceof MapVisual) {
 			return;
@@ -155,7 +143,7 @@ class Stage {
 	}
 
 	effectMap(ship) {
-		let fg = this.map._mainVisual/*this.fg*/;
+		let fg = this.map._mainVisual;
 		let img = fg.image;
 		let h = img.height;
 		let x = ship.x - fg.x;
@@ -180,26 +168,28 @@ class Stage {
 
 	scanEvent() {
 		let result = [];
-		let rear = parseInt(-this.map._mainVisual.x);
+		let rear = this.rear;
 
 		if (rear == this.lastScan) {
 			return result;
 		}
+		this.lastScan = rear;
 		//
-		let front = rear + this._product.width;
+		let front = this.front;
+		let ship = this.performersList.find(a => a instanceof Ship)
 
 		this._eventList = this._eventList.filter(s => {
-			if (front < s.x) {
+			if (front < s.v) {
 				return true;
 			}
-			if (s.x < rear) {
+			if (s.v < rear) {
 				// console.log('Stage#scanEvent drop:' + s.op);
 				// console.log(s);
 				return false;
 			}
-			s.isFront = rear < s.x;
+			s.isFront = rear < s.v;
 			// console.log('Stage#scanEvent op:' + s.op + '/num:' + s.number);
-			// console.log('front:' + front + '/s.x:' + s.x);
+			// console.log('front:' + front + '/s.v:' + s.v);
 			let evt = this.executeEvent(s);
 			if (evt) {
 				if (evt instanceof Actor) {
@@ -207,13 +197,19 @@ class Stage {
 				}
 				return false;
 			}
-			if (!(s.op == 'Spw' && s.x <= front || s.op == 'Rev' && s.x <= rear)) {
+			if (!(s.op == 'Spw' && s.v <= front || s.op == 'Rev' && s.v <= rear)) {
 				return true;
 			}
 			// spawn
 			let reserve = s.assignActor();
 
-			if (!(reserve instanceof Ship)) {
+			if (reserve instanceof Ship) {
+				this.checkPoint.enter(s);
+				this.phase = Stage.PHASE.NORMAL;
+				if (ship) {
+					return false;
+				}
+			} else {
 				try {
 					let clazz = eval(reserve.className);
 
@@ -232,13 +228,9 @@ class Stage {
 			if (this._groupMap[s.groupId]) {
 				this._groupMap[s.groupId].add(reserve);
 			}
-			if (reserve instanceof Ship) {
-				this.phase = Stage.PHASE.NORMAL;
-			}
 			result.push(reserve);
 			return false;
 		});
-		this.lastScan = rear;
 		return result;
 	}
 
@@ -248,12 +240,12 @@ class Stage {
 		if (op == 'Ent') {
 			let ship = this.performersList.find(a => a instanceof Ship)
 
-			this.phase = Stage.PHASE.NORMAL;
-			this.checkPoint.enter({ x: rec.x, y: 104 });
-			if (ship) {
-				return true;
-			}
-			return this.checkPoint.retrieve();
+			// this.phase = Stage.PHASE.NORMAL;
+			// this.checkPoint.enter({ x: rec.x, y: 104 });
+			// if (ship) {
+			// 	return true;
+			// }
+			// return this.checkPoint.retrieve();
 		}
 		if (op == 'Ckp' && !rec.isFront) {
 			this.checkPoint.update();
@@ -297,7 +289,7 @@ class Stage {
 		if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
 			return;
 		}
-		let fg = this.fg;
+		let fg = this.map._mainVisual;
 
 		if (fg.y < fg.image.height / 2) {
 			this.scroll = Stage.SCROLL.TOP;
@@ -338,9 +330,24 @@ class Stage {
 		}
 	}
 
+	drawGuide(ctx) {
+		this.scenarioList.forEach(s => {
+			let x = this.isVertical ? s.h : s.v;
+			let y = this.isVertical ? s.v : s.h;
+
+			ctx.strokeStyle = 'tomato';
+			ctx.beginPath();
+			ctx.arc(x, y, 4, 0, Math.PI2);
+			ctx.stroke();
+		});
+	}
+
 	draw(ctx) {
 		Transition.Instance.draw();
 		this.performersList.forEach(actor => actor.draw(ctx));
+		if (this._product.debugMode) {
+			this.drawGuide(ctx);
+		}
 	}
 
 	createFieldMap() {
@@ -383,7 +390,10 @@ class Stage {
 		this.map._stage = this;
 		this.map._mediaset = this._product._mediaset;
 		this.map = this.createFieldMap();
-		// console.log('Stage#init map:' + this.map.constructor.name);
+		this._fg = this.map._mainVisual;
+		this.width = this.map._mainVisual.image.width;
+		this.height = this.map._mainVisual.image.height;
+		this.isVertical = this.orientation == 2 || this.orientation == 8;
 		this.initGroupDict();
 		this.progress = this.startProgress;
 		this.reset();
@@ -400,14 +410,133 @@ class Stage {
 	}
 }
 
-class StageGoUp extends Stage {
+class VerticalStage extends Stage {
+	constructor() {
+		super();
+	}
+
+	drawGuide(ctx) {
+		let left = this.posH;
+		let front = this.front;
+
+		super.drawGuide(ctx);
+		ctx.save();
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = 'rgba(128, 64, 32, .5)';
+		ctx.strokeRect(left, front, this._product.width, this._product.height);
+		ctx.fillText(left + ',' + front, left, front + 8);
+		ctx.restore();
+	}
+}
+
+class StageGoUp extends VerticalStage {
 	constructor() {
 		super();
 		console.log('StageGoUp#constructor');
 	}
+
+	get startProgress() {
+		console.log('StageGoUp#startProgress');
+		return 0;//this.height / this.map._mainVisual.speed;
+	}
+
+	get front() {
+		return parseInt(-this.map._mainVisual.y);
+	}
+
+	get rear() {
+		return this.front + this._product.height;
+	}
+
+	scanEvent() {
+		let result = [];
+		let rear = this.rear;
+
+		if (rear == this.lastScan) {
+			return result;
+		}
+		this.lastScan = rear;
+		//
+		let front = this.front;
+		let ship = this.performersList.find(a => a instanceof Ship)
+
+		this._eventList = this._eventList.filter(s => {
+			if (front < s.v) {
+				return true;
+			}
+			if (s.v < rear) {
+				console.log('Stage#scanEvent drop:' + s.op);
+				console.log(s);
+				return false;
+			}
+			s.isFront = rear < s.v;
+			// console.log('Stage#scanEvent op:' + s.op + '/num:' + s.number);
+			// console.log('front:' + front + '/s.v:' + s.v);
+			let evt = this.executeEvent(s);
+			if (evt) {
+				if (evt instanceof Actor) {
+					result.push(evt);
+				}
+				return false;
+			}
+			if (!(s.op == 'Spw' && s.v <= front || s.op == 'Rev' && s.v <= rear)) {
+				return true;
+			}
+			// spawn
+			let reserve = s.assignActor();
+
+			if (reserve instanceof Ship) {
+				this.checkPoint.enter(s);
+				this.phase = Stage.PHASE.NORMAL;
+				if (ship) {
+					return false;
+				}
+			} else {
+				try {
+					let clazz = eval(reserve.className);
+
+					// console.log('supplies:' + reserve.className);
+					reserve = new clazz(s.x, s.y);
+					reserve.belongings = s._belongings;
+					reserve._stage = this;
+				} catch (e) {
+					// nop
+				}
+			}
+			if (s.op == 'Rev') {
+				reserve.dir += Math.PI;
+				// console.log('dir:' + (reserve.dir / Math.PI * 180));
+			}
+			if (this._groupMap[s.groupId]) {
+				this._groupMap[s.groupId].add(reserve);
+			}
+			result.push(reserve);
+			return false;
+		});
+		return result;
+	}
+
+	drawGuide(ctx) {
+		super.drawGuide(ctx);
+	}
 }
 
-class StageGoToTheRight extends Stage {
+class HorizontalStage extends Stage {
+	constructor() {
+		super();
+	}
+
+	drawGuide(ctx) {
+		super.drawGuide(ctx);
+		ctx.save();
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = 'rgba(128, 64, 32, .5)';
+		ctx.strokeRect(this.rear, 0, this._product.width, this._product.height);
+		ctx.restore();
+	}
+}
+
+class StageGoToTheRight extends HorizontalStage {
 	constructor() {
 		super();
 		console.log('StageGoToTheRight#constructor');
@@ -433,15 +562,13 @@ Stage.PHASE = {
 class CheckPoint {
 	constructor(stage) {
 		this._stage = stage;
-		this.dx = 0;
-		this.dy = 0;
+		this.scenario = null;
 		this.update();
 	}
 
-	enter(pos) {
+	enter(scenario) {
 		this.update();
-		this.dx = pos.x - this.x;
-		this.dy = pos.y - this.y;
+		this.scenario = scenario;
 	}
 
 	update() {
@@ -453,11 +580,11 @@ class CheckPoint {
 
 	retrieve() {
 		console.log('CheckPoint#retrieve*************');
-		let ship = new Ship(this.x + this.dx, this.y + this.dy);
+		let player = this.scenario.assignActor();
 
 		this._stage.progress = this.progress;
 		this._stage.map.setProgress(this.progress);
-		ship._stage = this._stage;
-		return ship;
+		// player._stage = this._stage;
+		return player;
 	}
 }
