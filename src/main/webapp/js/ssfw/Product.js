@@ -176,7 +176,7 @@ class Product extends Matter {
 			if (kb.isHit('Escape')) {
 				this.pause = !this.pause;
 				if (this.pause) {
-					AudioMixer.INSTANCE.stop();
+					AudioMixer.INSTANCE.pause();
 				} else {
 					AudioMixer.INSTANCE.resume();
 				}

@@ -38,7 +38,7 @@ class AudioMixer extends Repository {
 			this.done();
 			return;
 		}
-		this.ctx.decodeAudioData(data, (buff)=> {
+		this.ctx.decodeAudioData(data, (buff) => {
 			this.dic[key] = buff;
 			if (name) {
 				this.dic[name] = buff;
@@ -57,13 +57,11 @@ class AudioMixer extends Repository {
 		if (isBgm) {
 			//console.log('d:' + buff.duration);
 			this.stop();
-			element.source.loopEnd = buff.duration;
-			element.source.loop = true;
-			// if (offset == 0) {
-			// 	element.source.addEventListener('ended', () => {
-			// 		this.play(key, volume, true);
-			// 	});
-			// }
+			element.source.addEventListener('ended', () => {
+				if (!element.isPause) {
+					this.play(key, volume, true);
+				}
+			});
 			this.bgm.push(element);
 			this.lastKey = key;
 			this.lastTime = this.ctx.currentTime - offset
@@ -74,19 +72,20 @@ class AudioMixer extends Repository {
 	}
 
 	setPan(panValue) {
-		this.bgm.forEach(function(element) {
-			element.setPan(panValue);
-		});
+		this.bgm.forEach(e => e.setPan(panValue));
 	}
 
 	fade() {
-		this.bgm.forEach(function(element) {
-			element.fade();
-		});
+		this.bgm.forEach(e => e.fade());
 	}
 
 	stop() {
 		this.bgm.forEach(e => e.stop());
+		this.bgm = this.bgm.filter(e => !e.done);
+	}
+
+	pause() {
+		this.bgm.forEach(e => e.pause());
 		this.lastOffset = this.ctx.currentTime - this.lastTime;
 	}
 
@@ -95,16 +94,6 @@ class AudioMixer extends Repository {
 	}
 
 	getCurrentTime() {
-		if (0 < this.bgm.length) {
-			let validList = [];
-
-			this.bgm.forEach(function(element) {
-				if (!element.done) {
-					validList.push(element);
-				}
-			});
-			this.bgm = validList;
-		}
 		if (!this.bgm.length) {
 			return null;
 		}
@@ -115,7 +104,7 @@ class AudioMixer extends Repository {
 		if (!this.bgm.length) {
 			return;
 		}
-	//console.log('setCurrentTime:' + time);
+		//console.log('setCurrentTime:' + time);
 		this.stop();
 		this.play(this.lastKey, 1, true, 0, time);
 	}
@@ -128,6 +117,7 @@ AudioMixer.INSTANCE = new AudioMixer();
  */
 class AudioElement {
 	constructor(ctx, buff, offset) {
+		this.isPause = false;
 		this.done = false;
 		this.source = ctx.createBufferSource();
 		this.gainNode = ctx.createGain();
@@ -167,15 +157,12 @@ class AudioElement {
 		fading();
 	}
 
-	start() {
-		if (!this.done) {
-			this.source.start();
-		}
+	pause() {
+		this.isPause = true;
+		this.source.stop();
 	}
 
 	stop() {
-		if (!this.done) {
-			this.source.stop();
-		}
+		this.source.stop();
 	}
 }
